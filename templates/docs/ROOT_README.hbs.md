@@ -23,10 +23,10 @@ $ yarn install
 $ yarn build
 
 # prepare database
-$ yarn workspace @dssp/app migration
+$ yarn workspace @dssp/dssp migration
 
 # execute for dev
-$ yarn workspace @dssp/app serve:dev
+$ yarn workspace @dssp/dssp serve:dev
 ```
 
 ## Release
