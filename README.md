@@ -70,9 +70,9 @@ $ yarn generate page
 
 | Package | Version | Description |
 | ------- | ------- | ----------- |
-| [app](packages/app) | <a href="https://badge.fury.io/js/%40dssp%2Fapp"><img src="https://badge.fury.io/js/%40dssp%2Fapp.svg" width="200px" /></a> | Digital Safety Supervision Platform - Revolutionizing Safety Oversight |
-| [management](packages/management) | <a href="https://badge.fury.io/js/%40dssp%2Fmanagement"><img src="https://badge.fury.io/js/%40dssp%2Fmanagement.svg" width="200px" /></a> | Management module for parking lot, device and video |
-| [vms](packages/vms) | <a href="https://badge.fury.io/js/%40dssp%2Fvms"><img src="https://badge.fury.io/js/%40dssp%2Fvms.svg" width="200px" /></a> | Module for VMS management |
+| [dcsp](packages/dcsp) | <a href="https://badge.fury.io/js/%40dssp%2Fdcsp"><img src="https://badge.fury.io/js/%40dssp%2Fdcsp.svg" width="200px" /></a> | Foundation of the Future: Digitalizing Supervision for Quality Construction |
+| [dssp](packages/dssp) | <a href="https://badge.fury.io/js/%40dssp%2Fdssp"><img src="https://badge.fury.io/js/%40dssp%2Fdssp.svg" width="200px" /></a> | Revolutionizing Safety Oversight: The Future of Digital Supervision |
+| [project](packages/project) | <a href="https://badge.fury.io/js/%40dssp%2Fproject"><img src="https://badge.fury.io/js/%40dssp%2Fproject.svg" width="200px" /></a> | Project management module |
 
 ## Want to contribute?
 
