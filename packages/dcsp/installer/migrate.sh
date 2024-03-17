@@ -1,0 +1,1 @@
+docker exec -it dssp npm run migration -- --mode=production

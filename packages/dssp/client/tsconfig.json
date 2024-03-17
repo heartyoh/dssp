@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig-base.json",
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "strict": true,
+    "declaration": true,
+    "module": "esnext",
+    "outDir": "../dist-client",
+    "baseUrl": "./"
+  },
+  "include": ["./**/*"]
+}

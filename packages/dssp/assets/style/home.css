@@ -1,0 +1,112 @@
+/* ===================================
+    01. Google font
+====================================== */
+
+@import url('https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Poppins:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i&display=swap');
+
+/* ===================================
+    02. Reset
+====================================== */
+
+html,body {
+    height:100%
+}
+*, *::after, *::before {
+    box-sizing: border-box; 
+}
+body {
+    padding: 0; margin: 0; 
+    background: url("../images/home/bg-wrap.png") #43aa7b repeat-x;
+    background-size: cover;
+    font-size: 16px; line-height: 1.6; font-weight: 400; 
+    color: #fff; font-family: 'Roboto', sans-serif; 
+}
+a { 
+    text-decoration: none; 
+}
+a:hover, a:focus { 
+    text-decoration: none; outline: none; outline-offset:0; color: #d6000f; 
+}
+a, a.nav-link, a:active, a:focus { 
+    color: #333; 
+}
+a, a.nav-link, .btn, input, textarea, select { 
+    transition: all 0.3s ease-in-out; 
+    -moz-transition: all 0.3s ease-in-out; 
+    -webkit-transition: all 0.3s ease-in-out; 
+    -ms-transition: all 0.3s ease-in-out; 
+    -o-transition: all 0.3s ease-in-out; 
+}
+img { 
+    max-width: 100%;
+    height: auto; 
+}
+h2{
+    margin:0;
+    padding:0;
+    font-size: 64px;
+}
+
+/* ===================================
+    03. home design
+====================================== */
+.wrap{
+    width:95%;
+    height:100%;
+    overflow: hidden;
+    background: url("../images/home/bg-container-left.png") left top no-repeat, url("../images/home/bg-container-right.png") right top no-repeat;
+    background-size: contain;
+    margin:auto;
+    text-align: center;
+}
+.logo{
+    background: url("../images/home/logo.png") #fff no-repeat center;
+    background-size: 80%;
+    border-bottom-right-radius: 15px;
+    border-bottom-left-radius: 15px;
+    box-shadow: 3px 3px 3px 3px rgba(0, 0, 0, .1);
+    display:block;
+    width:150px;
+    height:100px;
+    margin:auto;
+    margin-bottom: 50px;
+}
+.container{
+    width:60%;
+    margin:auto;
+    margin-top:100px;
+}
+.container a{
+    background: #fff no-repeat center;
+    border-radius:15px;
+    background-size: 55px;
+    background-position-y: 17px;
+    box-shadow: 3px 3px 3px 3px rgba(0, 0, 0, .1);
+    border: 5px solid transparent;
+    display:inline-block;
+    width:40%;
+    margin:40px 4%;
+    padding: 80px 0 15px 0;
+    color:#008c97;
+    font-size:22px;font-weight: bold;
+    cursor: pointer;
+}
+.container a:hover{
+    border-color:#bdeb02;
+}
+a.menu1{
+    background-image: url("../images/home/icon-menu1.png");
+    background-size: 100px;
+    background-position-y: 20px;
+}
+a.menu2{
+    background-image: url("../images/home/icon-menu2.png")
+}
+a.menu3{
+    background-image: url("../images/home/icon-menu3.png");
+    background-position-y: 23px;
+}
+a.menu4{
+    background-image: url("../images/home/icon-menu4.png")
+}

@@ -1,0 +1,45 @@
+{
+  "name": "root",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hatiolab/dssp.git"
+  },
+  "author": "heartyoh <heartyoh@hatiolab.com>",
+  "homepage": "https://github.com/hatiolab/dssp#readme",
+  "scripts": {
+    "publish": "lerna publish",
+    "build": "lerna run build",
+    "build:app": "lerna run build:app",
+    "build:server": "lerna run build:server",
+    "build:client": "lerna run build:client",
+    "build:clean": "rm yarn.lock || echo 'yarn.lock not found.' && yarn clean && yarn install && yarn build",
+    "lint": "eslint '**/*.{ts,tsx}'",
+    "ci:lint-docs": "yarn generate docs && test -z \"$(git status --porcelain)\" || echo 'The root README has not been updated. Run `yarn generate docs` in the root of your dssp directory and try again.'",
+    "_test": "NODE_ICU_DATA=node_modules/full-icu jest",
+    "pretest": "yarn build",
+    "test": "yarn _test --no-coverage",
+    "test:ci": "yarn _test --maxWorkers=3 --coverage",
+    "check": "lerna run check",
+    "release": "lerna publish",
+    "release:force": "lerna publish --force-publish=*",
+    "release-beta": "lerna publish --dist-tag beta",
+    "clean": "rimraf ./packages/*/dist* ./packages/**/*.tsbuildinfo",
+    "generate": "plop",
+    "generate:package": "plop package && yarn plop docs && prettier --write \"./packages/tsconfig.json\"",
+    "tophat": "tophat",
+    "docs": "lerna run docs"
+  },
+  "resolutions": {},
+  "dependencies": {
+    "lerna": "^6.5.1",
+    "lodash": "^4.17.21",
+    "plop": "^3.1.2",
+    "pluralize": "^8.0.0",
+    "rimraf": "^4.4.0",
+    "tophat": "^1.0.3"
+  }
+}
