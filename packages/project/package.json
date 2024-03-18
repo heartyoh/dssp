@@ -9,11 +9,11 @@
   "description": "Project management module",
   "publishConfig": {
     "access": "public",
-    "@dssp:registry": "https://registry.npmjs.org"
+    "@things-factory:registry": "https://registry.npmjs.org"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hatiolab/dssp-m.git",
+    "url": "git+https://github.com/hatiolab/things-factory.git",
     "directory": "packages/project"
   },
   "scripts": {

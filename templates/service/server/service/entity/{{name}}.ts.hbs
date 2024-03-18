@@ -26,7 +26,10 @@ registerEnumType({{pascalCase name}}Status, {
 })
 
 @Entity()
-@Index('ix_{{snakeCase name}}_0', ({{camelCase name}}: {{pascalCase name}}) => [{{camelCase name}}.domain, {{camelCase name}}.name, {{camelCase name}}.deletedAt], { unique: true })
+@Index('ix_{{snakeCase name}}_0', ({{camelCase name}}: {{pascalCase name}}) => [{{camelCase name}}.domain, {{camelCase name}}.name], {
+  unique: true,
+  where: '"deleted_at" IS NULL'
+})
 @ObjectType({ description: 'Entity for {{pascalCase name}}' })
 export class {{pascalCase name}} {
   @PrimaryGeneratedColumn('uuid')
