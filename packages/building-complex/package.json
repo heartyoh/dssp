@@ -18,7 +18,8 @@
   },
   "scripts": {
     "build": "npm run build:server && npm run build:client",
-    "build:client": "npx tsc --p ./client/tsconfig.json",
+    "copy:files": "copyfiles -e \"./client/**/*.{ts,js,json}\" -u 1 \"./client/**/*\" dist-client",
+    "build:client": "npm run copy:files && npx tsc --p ./client/tsconfig.json",
     "build:server": "npx tsc --p ./server/tsconfig.json",
     "clean:client": "npx rimraf dist-client",
     "clean:server": "npx rimraf dist-server",
