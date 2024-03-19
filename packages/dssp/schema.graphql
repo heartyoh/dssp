@@ -1663,6 +1663,9 @@ type Mutation {
   """To create new privilege"""
   createPrivilege(privilege: NewPrivilege!): Privilege!
 
+  """To create new Project"""
+  createProject(project: NewProject!): Project!
+
   """To create new user"""
   createRole(role: NewRole!): User!
 
@@ -1674,6 +1677,9 @@ type Mutation {
 
   """To create new StateRegister"""
   createStateRegister(stateRegister: NewStateRegister!): StateRegister!
+
+  """To create new Task"""
+  createTask(task: NewTask!): Task!
 
   """To create new Terminology"""
   createTerminology(terminology: NewTerminology!): Terminology!
@@ -1865,6 +1871,12 @@ type Mutation {
   """To delete privilege"""
   deletePrivilege(category: String!, name: String!): Boolean!
 
+  """To delete Project"""
+  deleteProject(id: String!): Boolean!
+
+  """To delete multiple Projects"""
+  deleteProjects(ids: [String!]!): Boolean!
+
   """To delete role"""
   deleteRole(id: String!): Boolean!
 
@@ -1891,6 +1903,12 @@ type Mutation {
 
   """To delete multiple steps"""
   deleteSteps(ids: [String!]!): Boolean!
+
+  """To delete Task"""
+  deleteTask(id: String!): Boolean!
+
+  """To delete multiple Tasks"""
+  deleteTasks(ids: [String!]!): Boolean!
 
   """To delete multiple Terminologies"""
   deleteTerminologies(ids: [String!]!): Boolean!
@@ -1979,11 +1997,17 @@ type Mutation {
   """To import multiple Oauth2Clients"""
   importOauth2Clients(oauth2Clients: [Oauth2ClientPatch!]!): Boolean!
 
+  """To import multiple Projects"""
+  importProjects(projects: [ProjectPatch!]!): Boolean!
+
   """To import multiple scenarios"""
   importScenarios(scenarios: [ScenarioPatch!]!): Boolean!
 
   """To import multiple StateRegisters"""
   importStateRegisters(stateRegisters: [StateRegisterPatch!]!): Boolean!
+
+  """To import multiple Tasks"""
+  importTasks(tasks: [TaskPatch!]!): Boolean!
 
   """To import multiple Terminologies"""
   importTerminologies(terminologies: [TerminologyPatch!]!): Boolean!
@@ -2197,6 +2221,9 @@ type Mutation {
   """To modify multiple PrinterDevices' information"""
   updateMultiplePrinterDevice(patches: [PrinterDevicePatch!]!): [PrinterDevice!]!
 
+  """To modify multiple Projects' information"""
+  updateMultipleProject(patches: [ProjectPatch!]!): [Project!]!
+
   """To modify multiple scenarios' information"""
   updateMultipleScenario(patches: [ScenarioPatch!]!): [Scenario!]!
 
@@ -2208,6 +2235,9 @@ type Mutation {
 
   """To modify multiple steps' in a scenario"""
   updateMultipleStep(patches: [StepPatch!]!, scenarioId: String!): [Step!]!
+
+  """To modify multiple Tasks' information"""
+  updateMultipleTask(patches: [TaskPatch!]!): [Task!]!
 
   """To modify multiple Terminologies' information"""
   updateMultipleTerminologies(patches: [TerminologyPatch!]!): [Terminology!]!
@@ -2242,6 +2272,9 @@ type Mutation {
   """To modify privilege information"""
   updatePrivilege(category: String!, name: String!, patch: PrivilegePatch!): Privilege!
 
+  """To modify Project information"""
+  updateProject(id: String!, patch: ProjectPatch!): Project!
+
   """To modify role information"""
   updateRole(id: String!, patch: RolePatch!): Role!
 
@@ -2265,6 +2298,9 @@ type Mutation {
 
   """To update state of StateRegister by name"""
   updateStateRegisterByName(name: String!, state: Object!): StateRegister!
+
+  """To modify Task information"""
+  updateTask(id: String!, patch: TaskPatch!): Task!
 
   """To modify Terminology information"""
   updateTerminology(id: String!, patch: TerminologyPatch!): Terminology!
@@ -2721,6 +2757,15 @@ input NewPrivilege {
   roles: [ObjectRef!]
 }
 
+input NewProject {
+  active: Boolean
+  description: String
+  name: String!
+  params: String
+  state: ProjectStatus
+  thumbnail: Upload
+}
+
 input NewRole {
   description: String
   name: String!
@@ -2752,6 +2797,15 @@ input NewStateRegister {
   state: Object
   ttl: Int
   type: String
+}
+
+input NewTask {
+  active: Boolean
+  description: String
+  name: String!
+  params: String
+  state: TaskStatus
+  thumbnail: Upload
 }
 
 input NewTerminology {
@@ -3227,6 +3281,47 @@ input ProfileInput {
   zoom: Float
 }
 
+"""Entity for Project"""
+type Project {
+  active: Boolean
+  createdAt: DateTimeISO
+  creator: User
+  deletedAt: DateTimeISO
+  description: String
+  domain: Domain
+  endDate: DateTimeISO
+  id: ID!
+  name: String
+  params: String
+  startDate: DateTimeISO
+  state: String
+  tasks: [Task!]
+  thumbnail: String
+  updatedAt: DateTimeISO
+  updater: User
+}
+
+type ProjectList {
+  items: [Project!]!
+  total: Int!
+}
+
+input ProjectPatch {
+  active: Boolean
+  cuFlag: String
+  description: String
+  id: ID
+  name: String
+  state: ProjectStatus
+  thumbnail: Upload
+}
+
+"""state enumeration of a project"""
+enum ProjectStatus {
+  STATUS_A
+  STATUS_B
+}
+
 type PropertySpec {
   label: String!
   name: String!
@@ -3557,6 +3652,12 @@ type Query {
   """To fetch multiple privileges"""
   privileges(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): PrivilegeList!
 
+  """To fetch a Project"""
+  project(id: String!): Project
+
+  """To fetch multiple Projects"""
+  projects(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): ProjectList!
+
   """To fetch role"""
   role(name: String!): Role!
 
@@ -3606,6 +3707,9 @@ type Query {
   """To fetch multiple steps"""
   steps(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): StepList!
 
+  """To fetch a Task"""
+  task(id: String!): Task
+
   """To fetch a task-type"""
   taskType(name: String!): TaskType!
 
@@ -3614,6 +3718,9 @@ type Query {
 
   """To fetch the connector from a task-type"""
   taskTypesByConnection(connectionName: String!): TaskTypeList!
+
+  """To fetch multiple Tasks"""
+  tasks(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): TaskList!
 
   """To fetch multiple Terminologies"""
   terminologies(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): TerminologyList!
@@ -3903,6 +4010,48 @@ type Subscription {
   scenarioInstanceLog(instanceName: String, level: String, scenarioName: String): Log!
   scenarioInstanceState(instanceName: String, scenarioName: String): ScenarioInstanceState!
   scenarioQueueState: ScenarioQueueState!
+}
+
+"""Entity for Task"""
+type Task {
+  active: Boolean
+  createdAt: DateTimeISO
+  creator: User
+  deletedAt: DateTimeISO
+  dependencies: [Task!]
+  description: String
+  domain: Domain
+  endDate: DateTimeISO
+  id: ID!
+  name: String
+  params: String
+  project: Project!
+  startDate: DateTimeISO
+  state: String
+  thumbnail: String
+  updatedAt: DateTimeISO
+  updater: User
+}
+
+type TaskList {
+  items: [Task!]!
+  total: Int!
+}
+
+input TaskPatch {
+  active: Boolean
+  cuFlag: String
+  description: String
+  id: ID
+  name: String
+  state: TaskStatus
+  thumbnail: Upload
+}
+
+"""state enumeration of a task"""
+enum TaskStatus {
+  STATUS_A
+  STATUS_B
 }
 
 type TaskType {

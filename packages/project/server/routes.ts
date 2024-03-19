@@ -1,4 +1,8 @@
-const debug = require('debug')('dssp:management:routes')
+import contentDisposition from 'content-disposition'
+
+import { Task, generateExcel } from './controllers/project-to-excel'
+
+const debug = require('debug')('dssp:project:routes')
 
 process.on('bootstrap-module-global-public-route' as any, (app, globalPublicRouter) => {
   /*
@@ -7,6 +11,60 @@ process.on('bootstrap-module-global-public-route' as any, (app, globalPublicRout
    * ex) routes.get('/path', async(context, next) => {})
    * ex) routes.post('/path', async(context, next) => {})
    */
+  globalPublicRouter.get('/export-project', async (context, next) => {
+    const tasks: Task[] = [
+      {
+        name: 'Task 1',
+        startDate: new Date('2024-03-01'),
+        endDate: new Date('2024-03-05'),
+        subtasks: [
+          {
+            name: 'Subtask 1.1',
+            startDate: new Date('2024-03-02'),
+            endDate: new Date('2024-03-03')
+          },
+          {
+            name: 'Subtask 1.2',
+            startDate: new Date('2024-03-04'),
+            endDate: new Date('2024-03-05')
+          }
+        ]
+      },
+      {
+        name: 'Task 2',
+        startDate: new Date('2024-03-06'),
+        endDate: new Date('2024-03-10'),
+        subtasks: [
+          {
+            name: 'Subtask 2.1',
+            startDate: new Date('2024-03-06'),
+            endDate: new Date('2024-03-07')
+          },
+          {
+            name: 'Subtask 2.2',
+            startDate: new Date('2024-03-08'),
+            endDate: new Date('2024-03-10'),
+            subtasks: [
+              {
+                name: 'Subtask 2.2.1',
+                startDate: new Date('2024-03-08'),
+                endDate: new Date('2024-03-09')
+              },
+              {
+                name: 'Subtask 2.2.2',
+                startDate: new Date('2024-03-10'),
+                endDate: new Date('2024-03-10')
+              }
+            ]
+          }
+        ]
+      }
+    ]
+
+    context.type = 'application/xlsx'
+    context.set('Content-Disposition', contentDisposition(`project.xlsx`))
+    context.body = await generateExcel(tasks)
+  })
 })
 
 process.on('bootstrap-module-global-private-route' as any, (app, globalPrivateRouter) => {

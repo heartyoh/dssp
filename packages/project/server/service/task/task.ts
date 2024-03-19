@@ -16,7 +16,7 @@ import { ObjectType, Field, Int, ID, registerEnumType } from 'type-graphql'
 
 import { Domain } from '@things-factory/shell'
 import { User } from '@things-factory/auth-base'
-import { Project } from 'service/project/project'
+import { Project } from '../project/project'
 
 export enum TaskStatus {
   STATUS_A = 'STATUS_A',

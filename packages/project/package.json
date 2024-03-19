@@ -30,6 +30,7 @@
     "@operato/graphql": "^2.0.0-alpha.0",
     "@operato/shell": "^2.0.0-alpha.0",
     "@things-factory/auth-base": "^7.0.0-alpha.0",
-    "@things-factory/shell": "^7.0.0-alpha.0"
+    "@things-factory/shell": "^7.0.0-alpha.0",
+    "exceljs": "^4.4.0"
   }
 }
