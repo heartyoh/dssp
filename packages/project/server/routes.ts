@@ -14,66 +14,66 @@ process.on('bootstrap-module-global-public-route' as any, (app, globalPublicRout
   globalPublicRouter.get('/export-project', async (context, next) => {
     const tasks: Task[] = [
       {
-        name: 'Task 1',
+        name: '1 Task',
         startDate: new Date('2024-03-01'),
         endDate: new Date('2024-03-05'),
         subtasks: [
           {
-            name: 'Subtask 1.1',
+            name: '1.1 Subtask',
             startDate: new Date('2024-03-02'),
             endDate: new Date('2024-03-03'),
             subtasks: [
               {
-                name: 'Subtask 1.1.1',
+                name: '1.1.1 Subtask',
                 startDate: new Date('2024-03-02'),
                 endDate: new Date('2024-03-02')
               },
               {
-                name: 'Subtask 1.1.2',
+                name: '1.1.2 Subtask',
                 startDate: new Date('2024-03-02'),
                 endDate: new Date('2024-03-03')
               },
               {
-                name: 'Subtask 1.1.2',
+                name: '1.1.2 Subtask',
                 startDate: new Date('2024-03-03'),
                 endDate: new Date('2024-03-03')
               },
               {
-                name: 'Subtask 1.1.2',
+                name: '1.1.2 Subtask',
                 startDate: new Date('2024-03-03'),
                 endDate: new Date('2024-03-03')
               }
             ]
           },
           {
-            name: 'Subtask 1.2',
+            name: '1.2 Subtask',
             startDate: new Date('2024-03-04'),
             endDate: new Date('2024-03-05')
           }
         ]
       },
       {
-        name: 'Task 2',
+        name: '2 Task',
         startDate: new Date('2024-03-06'),
         endDate: new Date('2024-03-10'),
         subtasks: [
           {
-            name: 'Subtask 2.1',
+            name: '2.1 Subtask',
             startDate: new Date('2024-03-06'),
             endDate: new Date('2024-03-07')
           },
           {
-            name: 'Subtask 2.2',
+            name: '2.2 Subtask',
             startDate: new Date('2024-03-08'),
             endDate: new Date('2024-03-10'),
             subtasks: [
               {
-                name: 'Subtask 2.2.1',
+                name: '2.2.1 Subtask',
                 startDate: new Date('2024-03-08'),
                 endDate: new Date('2024-03-09')
               },
               {
-                name: 'Subtask 2.2.2',
+                name: '2.2.2 Subtask',
                 startDate: new Date('2024-03-10'),
                 endDate: new Date('2024-03-10')
               }
