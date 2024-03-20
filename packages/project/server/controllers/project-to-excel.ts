@@ -13,22 +13,20 @@ function createGanttChart(tasks: Task[], worksheet: Worksheet, level: number = 0
 
     row.outlineLevel = level
 
-    row.font = { bold: true }
-
     if (task.subtasks && task.subtasks.length > 0) {
       createGanttChart(task.subtasks, worksheet, level + 1)
     }
   })
-
-  if (level > 0) {
-    const addendum = worksheet.addRow(['sum', level - 1])
-    addendum.outlineLevel = level - 1
-  }
 }
 
 export async function generateExcel(tasks: Task[]) {
   const workbook = new Workbook()
   const worksheet = workbook.addWorksheet('Gantt Chart')
+
+  worksheet.properties.outlineProperties = {
+    summaryBelow: false,
+    summaryRight: false
+  }
 
   worksheet.columns = [
     { header: 'Task Name', key: 'name', width: 30 },

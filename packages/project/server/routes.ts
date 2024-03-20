@@ -21,7 +21,29 @@ process.on('bootstrap-module-global-public-route' as any, (app, globalPublicRout
           {
             name: 'Subtask 1.1',
             startDate: new Date('2024-03-02'),
-            endDate: new Date('2024-03-03')
+            endDate: new Date('2024-03-03'),
+            subtasks: [
+              {
+                name: 'Subtask 1.1.1',
+                startDate: new Date('2024-03-02'),
+                endDate: new Date('2024-03-02')
+              },
+              {
+                name: 'Subtask 1.1.2',
+                startDate: new Date('2024-03-02'),
+                endDate: new Date('2024-03-03')
+              },
+              {
+                name: 'Subtask 1.1.2',
+                startDate: new Date('2024-03-03'),
+                endDate: new Date('2024-03-03')
+              },
+              {
+                name: 'Subtask 1.1.2',
+                startDate: new Date('2024-03-03'),
+                endDate: new Date('2024-03-03')
+              }
+            ]
           },
           {
             name: 'Subtask 1.2',
