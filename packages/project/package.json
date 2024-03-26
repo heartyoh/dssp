@@ -27,10 +27,10 @@
     "migration:create": "node ../../node_modules/typeorm/cli.js migration:create -d ./server/migrations"
   },
   "dependencies": {
-    "@operato/graphql": "^2.0.0-alpha.0",
-    "@operato/shell": "^2.0.0-alpha.0",
-    "@things-factory/auth-base": "^7.0.0-alpha.0",
-    "@things-factory/shell": "^7.0.0-alpha.0",
+    "@operato/graphql": "^2.0.0-alpha",
+    "@operato/shell": "^2.0.0-alpha",
+    "@things-factory/auth-base": "^7.0.1-alpha",
+    "@things-factory/shell": "^7.0.1-alpha",
     "exceljs": "^4.4.0"
   }
 }
