@@ -1,7 +1,7 @@
 {
-  "name": "Digital Construction Supervision Platform",
+  "name": "Construction Site Link",
   "short_name": "dssp",
-  "description": "Digital Construction Supervision Platform, Revolutionizing Safety Oversight",
+  "description": "Construction Site Link, Revolutionizing Safety Oversight",
   "icons": [
     {
       "src": "manifest/icon-192x192.png",

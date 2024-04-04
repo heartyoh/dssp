@@ -56,7 +56,7 @@ export default async function bootstrap() {
     type: APPEND_APP_TOOL,
     tool: {
       name: 'app-brand',
-      template: html` <span style="font-size: 1.2em;">DCSP</span> `,
+      template: html` <span style="font-size: 1.2em;">AIM</span> `,
       position: TOOL_POSITION.FRONT
     }
   })
