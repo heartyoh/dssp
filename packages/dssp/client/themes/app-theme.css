@@ -1,8 +1,8 @@
 body {
   /* theme color */
-  --primary-color-rgb: 92, 163, 234;
+  --primary-color-rgb: 52, 52, 52;
   --primary-color: rgb(var(--primary-color-rgb));
-  --secondary-color-rgb: 52, 69, 99;
+  --secondary-color-rgb: 70, 70, 81;
   --secondary-color: rgb(var(--secondary-color-rgb));
   --focus-color: var(--theme-white-color);
   --primary-background-color: var(--secondary-color);
