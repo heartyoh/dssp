@@ -143,7 +143,7 @@ body {
   --record-view-footer-button-border-width: 0 0 0 1px;
   --record-view-footer-button-font: 17px;
   --record-view-footer-button-color: var(--theme-white-color);
-  --record-view-footer-iconbutton-size: 35px;
+  --record-view-footer-iconbutton-size: 28px;
   --record-view-footer-focus-background: var(--primary-color);
 
   --ox-grist-padding: var(--padding-default) var(--padding-default) 0 var(--padding-default);
