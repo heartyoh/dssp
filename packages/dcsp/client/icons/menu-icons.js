@@ -1,153 +1,94 @@
-const ICON_MONITORING = `
-<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 150 150" style="enable-background:new 0 0 150 150;" xml:space="preserve">
-	 <g>
-	 	<polygon style="fill:none;stroke:{{strokecolor}};stroke-width:7;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;" points="56.7,37.1 20,26.5 20,112.9 56.7,123.5"/>
-	 	<polygon style="fill:none;stroke:{{strokecolor}};stroke-width:7;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;" points="93.3,112.9 56.7,123.5 56.7,37.1 93.3,26.5"/>
-	 	<polygon style="fill:none;stroke:{{strokecolor}};stroke-width:7;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;" points="130,35.1 93.3,26.5 93.3,112.9 130,121.5"/>
- 	 </g>
+const ICON_PROGRESS = `
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 40 40">
+  <defs>
+    <style>
+      .menu-svg {
+        fill: #fff;
+				stroke: {{strokecolor}};
+        stroke-width: 0px;
+      }
+    </style>
+  </defs>
+  
+    <path class="menu-svg" d="M11.8,34c-1.1-.4-1.8-1.1-2.2-2-.4,1-1.2,1.8-2.3,2.2l-.7-1.1c1.6-.5,2.3-1.9,2.3-3.1h0c0-.1-1.9-.1-1.9-.1v-1.1h5.2v1.1h-1.9c0,1.3.7,2.6,2.3,3.1l-.7,1.1ZM14.7,36.7v1.2h-6.6v-3.3h1.4v2.1h5.3ZM14.5,35.2h-1.4v-7.3h1.4v7.3Z"/>
+    <path class="menu-svg" d="M20.2,30.1h-4.7v-1.1h1.7v-.9h1.4v.9h1.7v1.1ZM17.9,33.9c-1.2,0-2.1-.7-2.1-1.8s.9-1.8,2.1-1.8,2.1.7,2.1,1.8-.9,1.8-2.1,1.8ZM17.9,32.9c.5,0,.8-.3.8-.7s-.3-.7-.8-.7-.9.3-.9.7.3.7.9.7ZM23.8,36.2c0,1.2-1.2,1.8-3.3,1.8s-3.3-.7-3.3-1.8,1.2-1.8,3.3-1.8,3.3.7,3.3,1.8ZM22.4,36.2c0-.5-.6-.8-1.9-.8s-1.9.2-1.9.8.6.8,1.9.8,1.9-.2,1.9-.8ZM21.8,33.9h-1.3v-5.8h1.3v2.3h.7v-2.5h1.3v6.3h-1.3v-2.7h-.7v2.3Z"/>
+    <path class="menu-svg" d="M29.7,33.7v.7c1.7.1,2.6.8,2.6,1.8s-1.3,1.8-3.3,1.8-3.3-.7-3.3-1.8,1-1.7,2.7-1.8v-.7h-3.7v-1.2h8.7v1.2h-3.7ZM25,31c1.8-.2,2.7-.8,3-1.5h-2.5v-1.2h7.1v1.2h-2.6c.2.7,1.2,1.3,3,1.5l-.5,1.1c-1.8-.2-3-.9-3.5-1.8-.5,1-1.7,1.7-3.5,1.8l-.5-1.1ZM29,35.5c-1.3,0-1.9.2-1.9.7s.7.7,1.9.7,1.9-.2,1.9-.7-.7-.7-1.9-.7Z"/>
+    <path class="menu-svg" d="M27.3,24.4c-.1,0-.3,0-.4,0-.1,0-.2-.1-.3-.2l-5.6-5.6c-.1-.1-.2-.2-.2-.3,0-.1,0-.2,0-.4s0-.3,0-.4c0-.1.1-.2.2-.3l2.1-2.1c.1-.1.2-.2.3-.2.1,0,.2,0,.4,0s.3,0,.4,0c.1,0,.2.1.3.2l5.6,5.6c.1.1.2.2.2.3,0,.1,0,.2,0,.4s0,.3,0,.4c0,.1-.1.2-.2.3l-2.1,2.1c-.1.1-.2.2-.3.2-.1,0-.2,0-.4,0ZM27.3,22.5l1.2-1.2-4.6-4.6-1.2,1.2,4.6,4.6ZM12.6,24.4c-.1,0-.3,0-.4,0-.1,0-.2-.1-.3-.2l-2.1-2.1c-.1-.1-.2-.2-.2-.3,0-.1,0-.2,0-.4s0-.3,0-.4c0-.1.1-.2.2-.3l5.8-5.8h2.3l.9-.9-4.6-4.6h-1.6l-3.1-3.1,2.7-2.7,3.1,3.1v1.6l4.6,4.6,3.3-3.3-1.6-1.6,1.4-1.4h-2.8l-.6-.6,3.5-3.5.6.6v2.8l1.4-1.4,4.1,4.1c.3.3.5.6.7,1,.1.4.2.7.2,1.2s0,.7-.2,1c-.1.3-.3.6-.5.9l-2.3-2.3-1.6,1.6-1.2-1.2-5.3,5.3v2.3l-5.8,5.7c-.1.1-.2.2-.3.2-.1,0-.2,0-.4,0ZM12.6,22.5l5.1-5.1v-1.2h-1.2l-5.1,5.1s1.2,1.2,1.2,1.2ZM12.6,22.5l-1.2-1.2.6.6.6.6ZM27.3,22.5l1.2-1.2-1.2,1.2Z"/>
 </svg>
 `
 
-const ICON_REPORT = `
-<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 150 150" style="enable-background:new 0 0 150 150;" xml:space="preserve">
-	 <g>
-		<g>
-			<rect x="73.2" y="103.2" style="fill:none;stroke:{{strokecolor}};stroke-width:5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;" width="9.1" height="20.6"/>
-			<rect x="88.7" y="88.8" style="fill:none;stroke:{{strokecolor}};stroke-width:5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;" width="9.1" height="35"/>
-			<rect x="104.1" y="73.8" style="fill:none;stroke:{{strokecolor}};stroke-width:5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;" width="9.1" height="50"/>
-		</g>
-		<g>
-			<g>
-				<g>
-					<path style="fill:none;stroke:{{strokecolor}};stroke-width:5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;" d="M69,121.2H40.8c-1.1,0-2-0.9-2-2v-91c0-1.1,0.9-2,2-2h45.6"/>
-				</g>
-				<g>
-					<line style="fill:none;stroke:{{strokecolor}};stroke-width:5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;" x1="109.9" y1="50.3" x2="109.9" y2="68.8"/>
-				</g>
-				<polyline style="fill:none;stroke:{{strokecolor}};stroke-width:5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;" points="109.9,50.3 86.4,50.3 86.4,26.8 				"/>
-				<line style="fill:none;stroke:{{strokecolor}};stroke-width:5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;" x1="86.4" y1="26.2" x2="109.9" y2="50.3"/>
-			</g>
-		</g>
-	</g>
+const ICON_FINISHED = `
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 40 40">
+  <defs>
+    <style>
+      .menu-svg {
+        fill: #fff;
+				stroke: {{strokecolor}};
+        stroke-width: 0px;
+      }
+    </style>
+  </defs>
+  
+    <path class="menu-svg" d="M16.8,33.9c-2,.4-4.2.4-5.8.4l-.2-1.2c.7,0,1.4,0,2.2,0v-.8c-1-.2-1.7-1-1.7-2s1-2.1,2.4-2.1,2.4.8,2.4,2.1-.7,1.7-1.7,2v.7c.8,0,1.5,0,2.2-.2v1ZM13.5,36.7h5.4v1.2h-6.8v-2.9h1.4v1.7ZM13.8,31.3c.7,0,1.1-.4,1.1-1s-.5-1-1.1-1-1.1.4-1.1,1,.5,1,1.1,1ZM19.9,31.1v1.2h-1.2v3.4h-1.4v-7.7h1.4v3.2h1.2Z"/>
+    <path class="menu-svg" d="M29,35.7v1.2h-8.8v-1.2h2.2v-1.5h-1.2v-3.4h5.4v-1.1h-5.5v-1.2h6.8v3.4h-5.4v1.1h5.7v1.2h-1.4v1.5h2.1ZM23.7,35.7h1.7v-1.5h-1.7v1.5Z"/>
+    <path class="menu-svg" d="M25.5,10h1.9v-1.9h-1.9v1.9ZM25.5,14.4h1.9v-1.9h-1.9v1.9ZM25.5,18.7h1.9v-1.9h-1.9v1.9ZM24.9,22.7v-1.6h4.9V5.7h-10.2v2l-1.6-1.2v-2.4h13.5v18.6s-6.6,0-6.6,0ZM8.4,22.7v-10.1l7.1-5.1,7.1,5.1v10.1h-5.9v-5.2h-2.5v5.2s-5.9,0-5.9,0ZM10.1,21.1h2.6v-5.2h5.8v5.2h2.6v-7.7l-5.5-3.9-5.5,3.9v7.7ZM18.4,21.1v-5.2h-5.8v5.2-5.2h5.8v5.2Z"/>
 </svg>
 `
 
-const ICON_FLEET = `
-<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 150 150" style="enable-background:new 0 0 150 150;" xml:space="preserve">
-	 <g>
-		<path style="fill:none;stroke:{{strokecolor}};stroke-width:5;stroke-miterlimit:10;" d="M108.5,69.1c0,1.8,1.5,3.3,3.4,3.3h1.4c1.9,0,3.4-1.5,3.4-3.3v-7.4c0-1.8-1.5-3.3-3.3-3.3h-1.4
-		c-1.9,0-3.4,1.5-3.4,3.3 M41.4,69l-4.1,11.3V110c0,1.8,1.5,3.3,3.4,3.3h2.4v3.9c0,2.9,1.4,5.2,4.4,5.2h4.9c3,0,4.4-2.3,4.4-5.2
-		v-3.9h36.5v3.9c0,2.9,1.4,5.2,4.4,5.2h4.9c3,0,4.4-2.3,4.4-5.2v-3.9h2.4c1.8,0,3.4-1.5,3.4-3.3l-1-29.7L108.6,69 M41.5,61.8
-		c0-1.8-1.5-3.3-3.4-3.3h-1.4c-1.9,0-3.3,1.5-3.3,3.3v7.4c0,1.8,1.5,3.3,3.3,3.3h1.4c1.9,0,3.4-1.5,3.4-3.3 M108.5,61.6l-1-31.5
-		c-0.3-1.5-1.7-2.6-3.3-2.6H46.8c-1.6,0-2.9,1.1-3.3,2.6l-2,31.6 M50.7,99.9c-2.5,0-4.5-2-4.5-4.4s2-4.4,4.5-4.4
-		c2.5,0,4.5,2,4.5,4.4C55.2,98,53.2,99.9,50.7,99.9z M98.4,99.9c-2.5,0-4.5-2-4.5-4.4s2-4.4,4.5-4.4c2.5,0,4.5,2,4.5,4.4
-		C102.9,98,100.8,99.9,98.4,99.9z M62.5,93.9h25 M48.2,53.4h53.4 M62.5,98.2h25 M62.5,102.5h25 M75,82.4c-12.4,0-17.5-0.6-27.9-3.5
-		L50.2,62l5.5-0.8h38.7l5.5,0.8l3.1,16.8C92.5,81.8,87.4,82.4,75,82.4z"/>
-	</g>
+const ICON_STATUS = `
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 40 40">
+  <defs>
+    <style>
+      .menu-svg {
+        fill: #fff;
+				stroke: {{strokecolor}};
+        stroke-width: 0px;
+      }
+    </style>
+  </defs>
+
+    <path class="menu-svg" d="M7,28.5c0,2.7-1.6,4.5-4.3,5.3l-.5-1.1c2.1-.6,3.2-1.7,3.4-3h-2.9v-1.2h4.4ZM3.8,34h6.3v3.9H3.8v-3.9ZM5.1,36.8h3.6v-1.7h-3.6v1.7ZM10.1,27.9v5.6h-1.4v-2.1h-1.6v-1.2h1.6v-2.4h1.4Z"/>
+    <path class="menu-svg" d="M19.7,32.9v1.2h-8.6v-1.2h8.6ZM11.5,31.4c2.1-.1,3-.8,3.2-1.5h-2.7v-1.1h2.8v-.9h1.4v.9h2.8v1.1h-2.7c.2.7,1.1,1.4,3.2,1.5l-.4,1.1c-1.8-.1-2.9-.7-3.5-1.5-.6.8-1.8,1.3-3.5,1.5l-.4-1.1ZM12.1,34.8h6.6v3.2h-1.4v-2.1h-5.3v-1.1Z"/>
+    <path class="menu-svg" d="M25.4,30.1h-5.2v-1.1h2v-1.1h1.4v1.1h1.9v1.1ZM22.8,34.4c-1.3,0-2.2-.8-2.2-2s.9-2,2.2-2,2.2.8,2.2,2-.9,2-2.2,2ZM28.3,36.7v1.2h-6.5v-2.9h1.4v1.7h5.1ZM22.8,33.3c.5,0,.9-.3.9-.9s-.4-.9-.9-.9-1,.3-1,.9.4.9,1,.9ZM26.7,33.7h-1.2v-1.2h1.2v-1h-1.2v-1.2h1.2v-2.5h1.4v7.7h-1.4v-1.9Z"/>
+    <path class="menu-svg" d="M35,34.1c-2,.4-4.2.4-5.8.4v-1.1c.5,0,1.3,0,2.1,0v-.6c-1-.2-1.6-.7-1.6-1.4s.9-1.5,2.3-1.5,2.3.5,2.3,1.5-.6,1.2-1.6,1.4v.5c.8,0,1.5,0,2.3-.2v1ZM34.7,29.7h-5.4v-1h2v-.8h1.4v.8h2v1ZM36.8,36.4c0,1-1.2,1.6-3.3,1.6s-3.3-.6-3.3-1.6,1.2-1.6,3.3-1.6,3.3.6,3.3,1.6ZM32,31.9c.7,0,1-.2,1-.5s-.4-.5-1-.5-1,.2-1,.5.4.5,1,.5ZM35.4,36.4c0-.4-.6-.6-1.9-.6s-1.9.2-1.9.6.6.5,1.9.5,1.9-.2,1.9-.5ZM37.9,30.8v1.2h-1.2v2.8h-1.4v-6.8h1.4v2.9h1.2Z"/>
+    <path class="menu-svg" d="M11,23.2c-.6,0-1.1-.2-1.5-.6-.4-.4-.6-.9-.6-1.5V5.6c0-.6.2-1.1.6-1.5s.9-.6,1.5-.6h17.8c.6,0,1.1.2,1.5.6s.6.9.6,1.5v15.5c0,.6-.2,1.1-.6,1.5s-.9.6-1.5.6c0,0-17.8,0-17.8,0ZM11,21.5h17.8c0,0,.2,0,.2-.1,0,0,.1-.2.1-.2V5.6c0,0,0-.2-.1-.2,0,0-.2-.1-.2-.1H11c0,0-.2,0-.2.1,0,0-.1.2-.1.2v15.5c0,0,0,.2.1.2,0,0,.2.1.2.1ZM12.1,18.9h5.2v-1.7h-5.2v1.7ZM22.9,16.4l5.3-5.3-1.2-1.2-4.1,4.1-1.7-1.7-1.2,1.2,2.9,2.9ZM12.1,14.3h5.2v-1.7h-5.2v1.7ZM12.1,9.6h5.2v-1.7h-5.2v1.7ZM10.7,21.5V5.3v16.2Z"/>
 </svg>
 `
 
-const ICON_DRIVER = `
-<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 150 150" style="enable-background:new 0 0 150 150;" xml:space="preserve">
-	 <g>
-		<path style="fill:none;stroke:{{strokecolor}};stroke-width:7;stroke-miterlimit:10;" d="M102,119.5c-2.7-12.9-13.8-20.6-27-20.6c-13.1,0-23.6,7.8-27,20.6"/>
-		<path id="user-5" style="fill:none;stroke:{{strokecolor}};stroke-width:7;stroke-miterlimit:10;" d="M97.2,49.7c0,12.3-9.9,22.2-22.2,22.2c-12.3,0-22.2-9.9-22.2-22.2c0-12.3,9.9-22.2,22.2-22.2
-			C87.3,27.5,97.2,37.4,97.2,49.7z"/>
-		<path id="user-5_1_" style="fill:none;stroke:{{strokecolor}};stroke-width:7;stroke-miterlimit:10;" d="M35.3,113.5C35.3,96,53.1,72.3,75,72.3c21.9,0,39.7,23.7,39.7,41.2"/>
-		<line style="fill:none;stroke:{{strokecolor}};stroke-width:7;stroke-miterlimit:10;" x1="100.9" y1="84.2" x2="79.8" y2="99.3"/>
-		<line style="fill:none;stroke:{{strokecolor}};stroke-width:7;stroke-miterlimit:10;" x1="100.1" y1="113.9" x2="87.9" y2="122.5"/>
-		<line style="fill:none;stroke:{{strokecolor}};stroke-width:7;stroke-miterlimit:10;" x1="51" y1="114.1" x2="59.5" y2="121.8"/>
-	</g>
+const ICON_OPERATING = `
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 40 40">
+  <defs>
+    <style>
+      .menu-svg {
+        fill: #fff;
+				stroke: {{strokecolor}};
+        stroke-width: 0px;
+      }
+    </style>
+  </defs>
+    
+    <path class="menu-svg" d="M15,32.4v1.1H6v-1.1h3.3v-1.8h1.4v1.8h4.2ZM14,36.1c0,1.2-1.4,1.9-3.6,1.9s-3.5-.7-3.5-1.9,1.4-1.9,3.5-1.9,3.6.7,3.6,1.9ZM12.2,31.7c.2-.9.3-1.6.3-2.3h-5.5v-1.1h6.9v.8c0,.8,0,1.7-.3,2.7h-1.4ZM12.5,36.1c0-.5-.8-.8-2.1-.8s-2.1.3-2.1.8.8.8,2.1.8,2.1-.3,2.1-.8Z"/>
+    <path class="menu-svg" d="M20.7,33.6c-1.1-.4-1.8-1.1-2.3-2-.4,1-1.2,1.8-2.4,2.2l-.7-1.1c1.6-.6,2.3-1.8,2.4-3.1h-2v-1.2h5.4v1.2h-1.9c0,1.2.7,2.3,2.3,2.8l-.7,1.1ZM23.8,36.1c0,1.2-1.3,1.9-3.4,1.9s-3.4-.7-3.4-1.9,1.3-1.9,3.4-1.9,3.4.7,3.4,1.9ZM22.4,36.1c0-.6-.7-.8-2-.8s-2,.3-2,.8.7.8,2,.8,2-.3,2-.8ZM22.3,30.3v-2.4h1.4v6h-1.4v-2.4h-1.5v-1.2h1.5Z"/>
+    <path class="menu-svg" d="M33.9,35.7v1.2h-9.1v-1.2h2.2v-1.9h-1.5v-1.1h1.3v-2.8h-1.4v-1.2h7.6v1.2h-1.4v2.8h1.3v1.1h-1.5v1.9h2.3ZM28.3,32.7h2v-2.8h-2v2.8ZM28.5,35.7h1.7v-1.9h-1.7v1.9Z"/>
+    <path class="menu-svg" d="M12.2,24.4c-.6,0-1.1-.2-1.5-.6-.4-.4-.6-.9-.6-1.5V6.9c0-.6.2-1.1.6-1.5.4-.4.9-.6,1.5-.6h1.6v-2.4h1.8v2.4h8.7v-2.4h1.7v2.4h1.6c.6,0,1.1.2,1.5.6s.6.9.6,1.5v15.4c0,.6-.2,1.1-.6,1.5-.4.4-.9.6-1.5.6,0,0-15.4,0-15.4,0ZM12.2,22.7h15.4c0,0,.2,0,.2-.1,0,0,.1-.2.1-.2v-10.8H11.9v10.8c0,0,0,.2.1.2,0,0,.2.1.2.1ZM11.9,9.8h16.1v-2.9c0,0,0-.2-.1-.2,0,0-.2-.1-.2-.1h-15.4c0,0-.2,0-.2.1,0,0-.1.2-.1.2,0,0,0,2.9,0,2.9ZM11.9,9.8v-3.2,3.2ZM14.5,15.5v-1.7h10.9v1.7s-10.9,0-10.9,0ZM14.5,20.1v-1.7h7.5v1.7s-7.5,0-7.5,0Z"/>
 </svg>
 `
 
-const ICON_GEOFENCE = `
-<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 150 150" style="enable-background:new 0 0 150 150;" xml:space="preserve">
-	 <g>
-		<path style="fill:none;stroke:{{strokecolor}};stroke-width:7;stroke-miterlimit:10;" d="M121.9,84.7L86.2,65.1c-0.4,0.8-1.2,1.4-2.2,1.4c-1.3,0-2.4-1.1-2.4-2.4c0-1.3,1.1-2.4,2.4-2.4
-			c0.3,0,0.5,0.1,0.7,0.1l5.9-23c-0.5-0.2-0.8-0.6-1.1-1.1l-42,11.7c0.1,0.3,0.2,0.5,0.2,0.8c0,1.3-1.1,2.4-2.4,2.4
-			c-0.4,0-0.8-0.1-1.1-0.3L26.8,92.9c0.8,0.4,1.3,1.2,1.3,2.2c0,0.3-0.1,0.6-0.2,0.9l38.9,16.6c0.3-0.9,1.2-1.6,2.3-1.6
-			c1,0,1.9,0.6,2.2,1.5L122,86c-0.1-0.3-0.2-0.6-0.2-1C121.8,84.9,121.8,84.8,121.9,84.7z"/>
-		<path style="fill:none;stroke:{{strokecolor}};stroke-width:5;stroke-miterlimit:10;" d="M90.6,38.8c0.3,0.2,0.7,0.3,1.1,0.3c1.3,0,2.4-1.1,2.4-2.4c0-1.3-1.1-2.4-2.4-2.4c-1.3,0-2.4,1.1-2.4,2.4
-			c0,0.4,0.1,0.8,0.3,1.1"/>
-		<path style="fill:none;stroke:{{strokecolor}};stroke-width:9;stroke-miterlimit:10;" d="M89.6,37.8c0.2,0.5,0.6,0.8,1.1,1.1"/>
-		<path style="fill:none;stroke:{{strokecolor}};stroke-width:9;stroke-miterlimit:10;" d="M26.8,92.9c-0.3-0.2-0.7-0.3-1.1-0.3c-1.3,0-2.4,1.1-2.4,2.4s1.1,2.4,2.4,2.4c1,0,1.9-0.7,2.3-1.6"/>
-		<path style="fill:none;stroke:{{strokecolor}};stroke-width:9;stroke-miterlimit:10;" d="M47.6,49.4c-0.3-0.9-1.2-1.6-2.3-1.6c-1.3,0-2.4,1.1-2.4,2.4c0,0.9,0.5,1.7,1.3,2.2"/>
-		<path style="fill:none;stroke:{{strokecolor}};stroke-width:9;stroke-miterlimit:10;" d="M122,86c0.4,0.9,1.2,1.5,2.2,1.5c1.3,0,2.4-1.1,2.4-2.4s-1.1-2.4-2.4-2.4c-1.2,0-2.2,0.9-2.4,2.1"/>
-		<path style="fill:none;stroke:{{strokecolor}};stroke-width:9;stroke-miterlimit:10;" d="M86.2,65.1c0.1-0.3,0.2-0.6,0.2-1c0-1.1-0.7-2-1.7-2.3"/>
-		<path style="fill:none;stroke:{{strokecolor}};stroke-width:9;stroke-miterlimit:10;" d="M66.9,112.5c-0.1,0.3-0.1,0.5-0.1,0.8c0,1.3,1.1,2.4,2.4,2.4c1.3,0,2.4-1.1,2.4-2.4c0-0.3-0.1-0.6-0.2-0.9"/>
-	</g>
-</svg>
-`
-
-const ICON_ADMINISTRATOR = `
-<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 150 150" style="enable-background:new 0 0 150 150;" xml:space="preserve">
-	 <g>
-		<g>
-			<path style="fill:none;stroke:{{strokecolor}};stroke-width:7;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;" d="M125,101.5c0,1.1-0.9,2-2,2H27c-1.1,0-2-0.9-2-2V33.6c0-1.1,0.9-2,2-2h96c1.1,0,2,0.9,2,2V101.5z"/>
-		</g>
-		<line style="fill:none;stroke:{{strokecolor}};stroke-width:7;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;" x1="55.1" y1="118.4" x2="94.9" y2="118.4"/>
-		<line style="fill:none;stroke:{{strokecolor}};stroke-width:7;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;" x1="75" y1="103.5" x2="75" y2="118.4"/>
-	</g>
-	<g>
-		<g>
-			<path style="fill:none;stroke:{{strokecolor}};stroke-width:5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;" d="M87.8,70.3l4.7,2.8l-1.8,4.3l-5.3-1.3c-0.8,1-1.7,1.9-2.8,2.7L84,84l-4.3,1.8l-2.8-4.7
-				c-0.6,0.1-1.2,0.1-1.8,0.1c-0.7,0-1.3-0.1-2-0.2h0l-2.8,4.7L65.9,84l1.3-5.3c-1-0.8-2-1.7-2.7-2.8l-5.2,1.4l-1.8-4.3l4.7-2.8
-				c-0.1-0.6-0.1-1.2-0.1-1.8c0-0.7,0.1-1.4,0.2-2.1v0l-4.7-2.7l1.8-4.3l5.2,1.4c0.8-1.1,1.7-2,2.8-2.8L66,52.6l4.3-1.8l2.8,4.7
-				c0.6-0.1,1.2-0.1,1.9-0.1c0.7,0,1.3,0.1,2,0.2l2.8-4.7l4.3,1.8l-1.4,5.3c1.1,0.8,2,1.7,2.8,2.8l5.3-1.4l1.8,4.3l-4.7,2.8
-				c0.1,0.6,0.1,1.2,0.1,1.8C87.9,69,87.9,69.7,87.8,70.3z"/>
-		</g>
-		<path style="fill:none;stroke:{{strokecolor}};stroke-width:5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;" d="M71.2,72.1c2.1,2.1,5.5,2.1,7.5,0c2.1-2.1,2.1-5.5,0-7.5c-2.1-2.1-5.5-2.1-7.5,0C69.2,66.6,69.2,70,71.2,72.1
-			z"/>
-	</g>
-</svg>
-`
-
-const ICON_CLIENT = `
-<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 150 150" style="enable-background:new 0 0 150 150;" xml:space="preserve">
-	 <g>
-		<path style="fill:none;stroke:{{strokecolor}};stroke-width:5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;" d="M86.7,108.5l10.9-6.7c-3.5-1.7-5.9-5.2-6-9.3L91.2,84c0-4.2,2.6-7.8,6.4-9.3V54.8v-23h-58v85.9h30.9h13.1
-			v-4.3C83.6,111.3,84.8,109.4,86.7,108.5z M84.6,43.4l-0.1,22.5L84.6,43.4z M52.9,65.9L53,43.4L52.9,65.9z M63.5,65.9l0.1-22.5
-			L63.5,65.9z M74,65.9l0.1-22.5L74,65.9z M84.6,77.8l-0.1,23.5L84.6,77.8z M52.9,101.3L53,77.8L52.9,101.3z M63.5,101.3l0.1-23.5
-			L63.5,101.3z M74,101.3l0.1-23.5L74,101.3z"/>
-		<path style="fill:none;stroke:{{strokecolor}};stroke-width:5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;" d="M86.7,108.5c-1.9,0.9-3.1,2.8-3.1,4.9v4.3"/>
-		<path style="fill:none;stroke:{{strokecolor}};stroke-width:5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;" d="M91.2,84l0.3,8.5"/>
-		<path style="fill:none;stroke:{{strokecolor}};stroke-width:5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;" d="M82.8,117.7h39v-4.3c0-2.1-1.2-4-3.1-4.9l-10.9-6.7c3.5-1.7,5.9-5.2,6-9.3l0.3-8.5c0-5.6-4.6-10.1-10.2-10.1
-			h-5.3"/>
-	</g>
-</svg>
-`
-
-const ICON_DEVICE = `
-<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 150 150" style="enable-background:new 0 0 150 150;" xml:space="preserve">
-	 <g>
-		<g>
-			<path style="fill:none;stroke:{{strokecolor}};stroke-width:7;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;" d="M110.6,120c0,1.1-0.9,2-2,2H40c-1.1,0-2-0.9-2-2V29c0-1.1,0.9-2,2-2h68.6c1.1,0,2,0.9,2,2V120z"/>
-		</g>
-		<g>
-			<g>
-				<g>
-					<path style="fill:none;stroke:{{strokecolor}};stroke-width:5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;" d="M84.2,66.7c-4.9-5.1-12.8-5.1-17.8,0"/>
-					<path style="fill:none;stroke:{{strokecolor}};stroke-width:5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;" d="M90.5,60.1c-8.4-8.7-22-8.7-30.4,0"/>
-					<path style="fill:none;stroke:{{strokecolor}};stroke-width:5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;" d="M96.8,53.5c-11.9-12.4-31.1-12.4-43,0"/>
-				</g>
-				<g>
-					<path style="fill:{{strokecolor}};" d="M75.3,71.7C69.1,71.7,64,77,64,83.5c0,6.5,11.4,20.7,11.4,20.7s11.4-14.1,11.4-20.7
-						C86.7,77,81.6,71.7,75.3,71.7z M75.3,89.1c-2.9,0-5.3-2.5-5.3-5.6c0-3.1,2.4-5.6,5.3-5.6s5.3,2.5,5.3,5.6
-						C80.7,86.6,78.3,89.1,75.3,89.1z"/>
-				</g>
-			</g>
-		</g>
-		<line style="fill:none;stroke:{{strokecolor}};stroke-width:9;stroke-miterlimit:10;" x1="113.2" y1="40" x2="113.2" y2="53.3"/>
-	</g>
+const ICON_SETTING = `
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 40 40">
+  <defs>
+    <style>
+      .menu-svg {
+        fill: #fff;
+				stroke: {{strokecolor}};
+        stroke-width: 0px;
+      }
+    </style>
+  </defs>
+  
+    <path class="menu-svg" d="M14.6,33.6c-.8-.4-1.4-1-1.7-1.7-.4.8-1,1.5-1.9,1.9l-.8-1.1c1.4-.6,2-1.9,2-3v-1.2h1.4v1.2c0,1.2.5,2.3,1.8,2.9l-.8,1.1ZM16.4,34.5c0,1,1.1,2.1,3.3,2.4l-.5,1.1c-1.7-.2-2.9-.9-3.5-1.8-.6.9-1.8,1.6-3.5,1.8l-.5-1.1c2.2-.3,3.3-1.4,3.3-2.4v-.2h1.5v.2ZM15.7,31.1h-1.2v-1.2h1.2v-1.9h1.4v5.7h-1.4v-2.7ZM19.2,34.8h-1.4v-6.9h1.4v6.9Z"/>
+    <path class="menu-svg" d="M26.5,33.3c-1.5.2-2.7.3-4.9.3h-.9v-5h5v1.1h-3.5v.8h3.2v1.1h-3.2v.8c1.8,0,2.9,0,4.2-.2v1.1ZM28.7,36.1c0,1.2-1.3,1.9-3.5,1.9s-3.5-.7-3.5-1.9,1.3-1.9,3.5-1.9,3.5.7,3.5,1.9ZM27.3,36.1c0-.5-.7-.8-2-.8s-2,.3-2,.8.7.8,2,.8,2-.3,2-.8ZM28.7,34h-1.5v-6.1h1.5v6.1Z"/>
+    <path class="menu-svg" d="M15,17.5h1.4v-4.2h-1.4v1.4h-1.7v1.4h1.7v1.4ZM17.5,16.1h9v-1.4h-9s0,1.4,0,1.4ZM23.5,13.1h1.4v-1.4h1.7v-1.4h-1.7v-1.4h-1.4s0,4.2,0,4.2ZM13.3,11.7h9v-1.4h-9v1.4ZM15.9,24.6v-2.4h-4.9c-.6,0-1.1-.2-1.5-.6-.4-.4-.6-.9-.6-1.5V6.3c0-.6.2-1.1.6-1.5s.9-.6,1.5-.6h17.8c.6,0,1.1.2,1.5.6s.6.9.6,1.5v13.7c0,.6-.2,1.1-.6,1.5-.4.4-.9.6-1.5.6h-4.9v2.4s-8.1,0-8.1,0ZM11,20.4h17.8c0,0,.2,0,.2-.1,0,0,.1-.2.1-.3V6.3c0,0,0-.2-.1-.3,0,0-.2-.1-.2-.1H11c0,0-.2,0-.2.1,0,0-.1.2-.1.3v13.7c0,0,0,.2.1.3,0,0,.2.1.2.1ZM10.7,20.4V5.9v14.5Z"/>
 </svg>
 `
 
@@ -157,11 +98,8 @@ function icons(template) {
   )
 }
 
-export const ICONS_MONITORING = icons(ICON_MONITORING)
-export const ICONS_REPORT = icons(ICON_REPORT)
-export const ICONS_FLEET = icons(ICON_FLEET)
-export const ICONS_DEVICE = icons(ICON_DEVICE)
-export const ICONS_CLIENT = icons(ICON_CLIENT)
-export const ICONS_DRIVER = icons(ICON_DRIVER)
-export const ICONS_GEOFENCE = icons(ICON_GEOFENCE)
-export const ICONS_ADMINISTRATOR = icons(ICON_ADMINISTRATOR)
+export const ICONS_PROGRESS = icons(ICON_PROGRESS)
+export const ICONS_FINISHED = icons(ICON_FINISHED)
+export const ICONS_STATUS = icons(ICON_STATUS)
+export const ICONS_OPERATING = icons(ICON_OPERATING)
+export const ICONS_SETTING = icons(ICON_SETTING)

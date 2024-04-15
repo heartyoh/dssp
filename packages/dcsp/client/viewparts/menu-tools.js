@@ -3,16 +3,7 @@ import { connect } from 'pwa-helpers'
 
 import { store } from '@things-factory/shell'
 
-import {
-  ICONS_MONITORING,
-  ICONS_REPORT,
-  ICONS_FLEET,
-  ICONS_CLIENT,
-  ICONS_DEVICE,
-  ICONS_DRIVER,
-  ICONS_GEOFENCE,
-  ICONS_ADMINISTRATOR
-} from '../icons/menu-icons'
+import { ICONS_PROGRESS, ICONS_FINISHED, ICONS_STATUS, ICONS_OPERATING, ICONS_SETTING } from '../icons/menu-icons'
 
 export class MenuTools extends connect(store)(LitElement) {
   static get properties() {
@@ -133,44 +124,29 @@ export class MenuTools extends connect(store)(LitElement) {
   render() {
     this.menus = [
       {
-        name: 'monitoring',
-        path: 'fleet-monitoring',
-        icons: ICONS_MONITORING
+        name: 'progress',
+        path: 'dcsp-progress',
+        icons: ICONS_PROGRESS
       },
       {
-        name: 'report',
-        path: 'fleet-report',
-        icons: ICONS_REPORT
+        name: 'finished',
+        path: 'dcsp-finished',
+        icons: ICONS_FINISHED
       },
       {
-        name: 'client',
-        path: 'fleet-client',
-        icons: ICONS_CLIENT
+        name: 'status',
+        path: 'dcsp-status',
+        icons: ICONS_STATUS
       },
       {
-        name: 'fleet',
-        path: 'fleet-fleet',
-        icons: ICONS_FLEET
+        name: 'operating',
+        path: 'dcsp-operating',
+        icons: ICONS_OPERATING
       },
       {
-        name: 'driver',
-        path: 'fleet-driver',
-        icons: ICONS_DRIVER
-      },
-      {
-        name: 'device',
-        path: 'fleet-device',
-        icons: ICONS_DEVICE
-      },
-      {
-        name: 'geo-fence',
-        path: 'fleet-geofence',
-        icons: ICONS_GEOFENCE
-      },
-      {
-        name: 'admin',
-        path: 'fleet-admin',
-        icons: ICONS_ADMINISTRATOR
+        name: 'setting',
+        path: 'dcsp-setting',
+        icons: ICONS_SETTING
       }
     ]
 
