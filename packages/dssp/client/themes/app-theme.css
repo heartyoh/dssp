@@ -123,7 +123,7 @@ body {
   --label-color: var(--secondary-color);
   --label-text-transform: capitalize;
   --input-margin: var(--margin-narrow) 0;
-  --input-padding: var(--padding-default);
+  --input-padding: 6px 2px;
   --input-min-width: 200px;
   --input-font: normal var(--fontsize-default) var(--theme-font);
   --input-hint-font: normal var(--fontsize-small) var(--theme-font);
