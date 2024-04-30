@@ -9,33 +9,18 @@ import {
   ManyToOne,
   OneToMany,
   OneToOne,
-  PrimaryGeneratedColumn,
-  VersionColumn
+  PrimaryGeneratedColumn
 } from 'typeorm'
-import { ObjectType, Field, Int, ID, registerEnumType } from 'type-graphql'
+import { ObjectType, Field, ID } from 'type-graphql'
 
-import { Domain } from '@things-factory/shell'
+import { Domain, roundTransformer } from '@things-factory/shell'
 import { User } from '@things-factory/auth-base'
 import { Project } from '@dssp/project'
 
 import { Building } from '../building/building'
 
-export enum BuildingComplexStatus {
-  STATUS_A = 'STATUS_A',
-  STATUS_B = 'STATUS_B'
-}
-
-registerEnumType(BuildingComplexStatus, {
-  name: 'BuildingComplexStatus',
-  description: 'state enumeration of a building complex'
-})
-
-@Entity()
-@Index('ix_building_complex_0', (buildingComplex: BuildingComplex) => [buildingComplex.domain, buildingComplex.name], {
-  unique: true,
-  where: '"deleted_at" IS NULL'
-})
-@ObjectType({ description: 'Entity for BuildingComplex' })
+@Entity('단지 정보')
+@ObjectType({ description: '단지 정보' })
 export class BuildingComplex {
   @PrimaryGeneratedColumn('uuid')
   @Field(type => ID)
@@ -48,29 +33,53 @@ export class BuildingComplex {
   @RelationId((buildingComplex: BuildingComplex) => buildingComplex.domain)
   domainId?: string
 
-  @Column()
-  @Field({ nullable: true })
-  name?: string
-
-  @Column({ nullable: true })
-  @Field({ nullable: true })
-  description?: string
-
-  @Column({ nullable: true })
-  @Field({ nullable: true })
-  active?: boolean
-
-  @Column({ nullable: true })
-  @Field({ nullable: true })
-  state?: BuildingComplexStatus
-
-  @Column({ nullable: true })
-  @Field({ nullable: true })
-  params?: string
-
-  @Column({ nullable: true })
-  @Field({ nullable: true })
+  @Column({ nullable: false, comment: '단지 주소' })
+  @Field({ nullable: false })
   address: string
+
+  @Column({ type: 'float', nullable: false, transformer: roundTransformer, comment: '면적 (㎡)' })
+  @Field({ nullable: false })
+  area: number
+
+  @Column({ nullable: false, comment: '발주처' })
+  @Field({ nullable: false })
+  clientCompany: string
+
+  @Column({ nullable: false, comment: '건설사' })
+  @Field({ nullable: false })
+  constructionCompany: string
+
+  @Column({ nullable: false, comment: '감리사' })
+  @Field({ nullable: false })
+  supervisor: string
+
+  @Column({ nullable: false, comment: '설계사' })
+  @Field({ nullable: false })
+  architect: string
+
+  @Column({ nullable: true, comment: '대표 사진' })
+  @Field({ nullable: true })
+  mainPhoto: string
+
+  @Column({ nullable: false, comment: '건설 구분 (아파트, 공원)' })
+  @Field({ nullable: false })
+  constructionType: string
+
+  @Column({ nullable: true, comment: '공사 금액' })
+  @Field({ nullable: true })
+  constructionCost: number
+
+  @Column({ nullable: true, comment: '기타사항' })
+  @Field({ nullable: true })
+  etc: string
+
+  @Column({ nullable: true, comment: '세대 수' })
+  @Field({ nullable: true })
+  householdCount: number
+
+  @Column({ nullable: true, comment: '동 수' })
+  @Field({ nullable: true })
+  buildingCount: number
 
   @Field(() => [Building], { nullable: true })
   @OneToMany(() => Building, building => building.buildingComplex)
@@ -105,7 +114,4 @@ export class BuildingComplex {
 
   @RelationId((buildingComplex: BuildingComplex) => buildingComplex.updater)
   updaterId?: string
-
-  @Field(type => String, { nullable: true })
-  thumbnail?: string
 }

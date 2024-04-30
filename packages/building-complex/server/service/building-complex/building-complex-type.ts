@@ -4,7 +4,7 @@ import { ObjectType, Field, InputType, Int, ID, registerEnumType } from 'type-gr
 
 import { ObjectRef, ScalarObject } from '@things-factory/shell'
 
-import { BuildingComplex, BuildingComplexStatus } from './building-complex'
+import { BuildingComplex } from './building-complex'
 
 @InputType()
 export class NewBuildingComplex {
@@ -13,9 +13,6 @@ export class NewBuildingComplex {
 
   @Field({ nullable: true })
   description?: string
-
-  @Field(type => BuildingComplexStatus, { nullable: true })
-  state?: BuildingComplexStatus
 
   @Field({ nullable: true })
   active?: boolean
@@ -37,9 +34,6 @@ export class BuildingComplexPatch {
 
   @Field({ nullable: true })
   description?: string
-
-  @Field(type => BuildingComplexStatus, { nullable: true })
-  state?: BuildingComplexStatus
 
   @Field({ nullable: true })
   active?: boolean

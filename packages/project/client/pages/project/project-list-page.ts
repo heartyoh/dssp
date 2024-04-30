@@ -5,12 +5,7 @@ import { PageView, store } from '@operato/shell'
 import { css, html } from 'lit'
 import { customElement, property, query, state } from 'lit/decorators.js'
 import { ScopedElementsMixin } from '@open-wc/scoped-elements'
-import {
-  ColumnConfig,
-  DataGrist,
-  FetchOption,
-  SortersControl
-} from '@operato/data-grist'
+import { ColumnConfig, DataGrist, FetchOption, SortersControl } from '@operato/data-grist'
 import { client } from '@operato/graphql'
 import { i18next, localize } from '@operato/i18n'
 import { notify, openPopup } from '@operato/layout'
@@ -20,11 +15,8 @@ import { isMobileDevice } from '@operato/utils'
 import { connect } from 'pwa-helpers/connect-mixin'
 import gql from 'graphql-tag'
 
-import { ProjectImporter } from './project-importer'
-
 @customElement('project-list-page')
 export class ProjectListPage extends connect(store)(localize(i18next)(ScopedElementsMixin(PageView))) {
-
   static styles = [
     ScrollbarStyles,
     CommonGristStyles,
@@ -39,12 +31,6 @@ export class ProjectListPage extends connect(store)(localize(i18next)(ScopedElem
       }
     `
   ]
-
-  static get scopedElements() {
-    return {
-      'project-importer': ProjectImporter
-    }
-  }
 
   @state() private gristConfig: any
   @state() private mode: 'CARD' | 'GRID' | 'LIST' = isMobileDevice() ? 'CARD' : 'GRID'
@@ -93,11 +79,7 @@ export class ProjectListPage extends connect(store)(localize(i18next)(ScopedElem
     const mode = this.mode || (isMobileDevice() ? 'CARD' : 'GRID')
 
     return html`
-      <ox-grist
-        .mode=${mode}
-        .config=${this.gristConfig}
-        .fetchHandler=${this.fetchHandler.bind(this)}
-      >
+      <ox-grist .mode=${mode} .config=${this.gristConfig} .fetchHandler=${this.fetchHandler.bind(this)}>
         <div slot="headroom">
           <div id="filters">
             <ox-filters-form autofocus></ox-filters-form>
@@ -312,12 +294,7 @@ export class ProjectListPage extends connect(store)(localize(i18next)(ScopedElem
 
   private async exportHandler() {
     const exportTargets = this.grist.selected.length ? this.grist.selected : this.grist.dirtyData.records
-    const targetFieldSet = new Set([
-      'id',
-      'name',
-      'description',
-      'active'
-    ])
+    const targetFieldSet = new Set(['id', 'name', 'description', 'active'])
 
     return exportTargets.map(project => {
       let tempObj = {}
@@ -346,10 +323,9 @@ export class ProjectListPage extends connect(store)(localize(i18next)(ScopedElem
         title: i18next.t('title.import project')
       }
     )
-    
+
     popup.onclosed = () => {
       this.grist.fetch()
     }
   }
 }
-

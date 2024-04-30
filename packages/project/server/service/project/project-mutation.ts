@@ -1,153 +1,26 @@
-import { Resolver, Mutation, Arg, Ctx, Directive } from 'type-graphql'
+import { Resolver, Mutation, Arg, Args, Ctx, Directive } from 'type-graphql'
 import { In } from 'typeorm'
 
 import { createAttachment, deleteAttachmentsByRef } from '@things-factory/attachment-base'
 
 import { Project } from './project'
-import { NewProject, ProjectPatch } from './project-type'
+import { ProjectPatch } from './project-type'
+import { BuildingComplex, Building } from '@dssp/building-complex/server'
 
 @Resolver(Project)
 export class ProjectMutation {
   @Directive('@transaction')
-  @Mutation(returns => Project, { description: 'To create new Project' })
-  async createProject(@Arg('project') project: NewProject, @Ctx() context: ResolverContext): Promise<Project> {
+  @Mutation(returns => Boolean, { description: 'To Send Tax Invoices By Api' })
+  async createProject(@Args() params: ProjectPatch, @Ctx() context: ResolverContext): Promise<boolean> {
     const { domain, user, tx } = context.state
-
-    const result = await tx.getRepository(Project).save({
-      ...project,
-      domain,
-      creator: user,
-      updater: user
-    })
-
-    if (project.thumbnail) {
-      await createAttachment(
-        null,
-        {
-          attachment: {
-            file: project.thumbnail,
-            refType: Project.name,
-            refBy: result.id
-          }
-        },
-        context
-      )
-    }
-
-    return result
-  }
-
-  @Directive('@transaction')
-  @Mutation(returns => Project, { description: 'To modify Project information' })
-  async updateProject(
-    @Arg('id') id: string,
-    @Arg('patch') patch: ProjectPatch,
-    @Ctx() context: ResolverContext
-  ): Promise<Project> {
-    const { domain, user, tx } = context.state
-
-    const repository = tx.getRepository(Project)
-    const project = await repository.findOne({
-      where: { domain: { id: domain.id }, id }
-    })
-
-    const result = await repository.save({
-      ...project,
-      ...patch,
-      updater: user
-    })
-
-    if (patch.thumbnail) {
-      await deleteAttachmentsByRef(null, { refBys: [result.id] }, context)
-      await createAttachment(
-        null,
-        {
-          attachment: {
-            file: patch.thumbnail,
-            refType: Project.name,
-            refBy: result.id
-          }
-        },
-        context
-      )
-    }
-
-    return result
-  }
-
-  @Directive('@transaction')
-  @Mutation(returns => [Project], { description: "To modify multiple Projects' information" })
-  async updateMultipleProject(
-    @Arg('patches', type => [ProjectPatch]) patches: ProjectPatch[],
-    @Ctx() context: ResolverContext
-  ): Promise<Project[]> {
-    const { domain, user, tx } = context.state
-
-    let results = []
-    const _createRecords = patches.filter((patch: any) => patch.cuFlag.toUpperCase() === '+')
-    const _updateRecords = patches.filter((patch: any) => patch.cuFlag.toUpperCase() === 'M')
+    const { project, buildingComplex, buildings } = params
     const projectRepo = tx.getRepository(Project)
+    const buildingComplexRepo = tx.getRepository(BuildingComplex)
+    const buildingRepo = tx.getRepository(Building)
 
-    if (_createRecords.length > 0) {
-      for (let i = 0; i < _createRecords.length; i++) {
-        const newRecord = _createRecords[i]
+    console.log(123123123)
 
-        const result = await projectRepo.save({
-          ...newRecord,
-          domain,
-          creator: user,
-          updater: user
-        })
-
-        if (newRecord.thumbnail) {
-          await createAttachment(
-            null,
-            {
-              attachment: {
-                file: newRecord.thumbnail,
-                refType: Project.name,
-                refBy: result.id
-              }
-            },
-            context
-          )
-        }
-
-        results.push({ ...result, cuFlag: '+' })
-      }
-    }
-
-    if (_updateRecords.length > 0) {
-      for (let i = 0; i < _updateRecords.length; i++) {
-        const updateRecord = _updateRecords[i]
-        const project = await projectRepo.findOneBy({ id: updateRecord.id })
-
-        const result = await projectRepo.save({
-          ...project,
-          ...updateRecord,
-          updater: user
-        })
-
-        if (updateRecord.thumbnail) {
-          await deleteAttachmentsByRef(null, { refBys: [result.id] }, context)
-          await createAttachment(
-            null,
-            {
-              attachment: {
-                file: updateRecord.thumbnail,
-                refType: Project.name,
-                refBy: result.id
-              }
-            },
-            context
-          )
-        }
-
-        results.push({ ...result, cuFlag: 'M' })
-      }
-    }
-
-    return results
+    return true
   }
 
   @Directive('@transaction')
@@ -163,10 +36,7 @@ export class ProjectMutation {
 
   @Directive('@transaction')
   @Mutation(returns => Boolean, { description: 'To delete multiple Projects' })
-  async deleteProjects(
-    @Arg('ids', type => [String]) ids: string[],
-    @Ctx() context: ResolverContext
-  ): Promise<boolean> {
+  async deleteProjects(@Arg('ids', type => [String]) ids: string[], @Ctx() context: ResolverContext): Promise<boolean> {
     const { domain, tx } = context.state
 
     await tx.getRepository(Project).delete({

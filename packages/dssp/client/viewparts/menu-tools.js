@@ -145,7 +145,7 @@ export class MenuTools extends connect(store)(LitElement) {
       },
       {
         name: 'setting',
-        path: 'dssp-setting',
+        path: 'project-setting-list',
         icons: ICONS_SETTING
       }
     ]

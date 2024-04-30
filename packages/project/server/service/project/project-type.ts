@@ -5,57 +5,17 @@ import { ObjectType, Field, InputType, Int, ID, registerEnumType } from 'type-gr
 import { ObjectRef, ScalarObject } from '@things-factory/shell'
 
 import { Project, ProjectStatus } from './project'
-
-@InputType()
-export class NewProject {
-  @Field()
-  name: string
-
-  @Field({ nullable: true })
-  description?: string
-
-  @Field(type => ProjectStatus, { nullable: true })
-  state?: ProjectStatus
-
-  @Field({ nullable: true })
-  active?: boolean
-
-  @Field({ nullable: true })
-  params?: string
-
-  @Field(type => GraphQLUpload, { nullable: true })
-  thumbnail?: FileUpload
-}
+import { BuildingComplex } from '../../../../building-complex/server/service/building-complex/building-complex'
+import { Building } from '../../../../building-complex/server/service/building/building'
 
 @InputType()
 export class ProjectPatch {
-  @Field(type => ID, { nullable: true })
-  id?: string
+  @Field()
+  project: Project
 
-  @Field({ nullable: true })
-  name?: string
+  @Field()
+  buildingComplex: BuildingComplex
 
-  @Field({ nullable: true })
-  description?: string
-
-  @Field(type => ProjectStatus, { nullable: true })
-  state?: ProjectStatus
-
-  @Field({ nullable: true })
-  active?: boolean
-
-  @Field(type => GraphQLUpload, { nullable: true })
-  thumbnail?: FileUpload
-
-  @Field({ nullable: true })
-  cuFlag?: string
-}
-
-@ObjectType()
-export class ProjectList {
-  @Field(type => [Project])
-  items: Project[]
-
-  @Field(type => Int)
-  total: number
+  @Field()
+  buildings: Building[]
 }

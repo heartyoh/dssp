@@ -445,6 +445,116 @@ input BoardTemplatePatch {
   visibility: String
 }
 
+"""동 정보"""
+type Building {
+  buildingComplex: BuildingComplex!
+  buildingLevels: [BuildingLevel!]
+  createdAt: DateTimeISO
+  creator: User
+  deletedAt: DateTimeISO
+  domain: Domain
+  floorCount: Float
+  id: ID!
+  name: String
+  thumbnail: String!
+  updatedAt: DateTimeISO
+  updater: User
+}
+
+"""단지 정보"""
+type BuildingComplex {
+  address: String!
+  architect: String!
+  area: Float!
+  buildingCount: Float
+  buildings: [Building!]
+  clientCompany: String!
+  constructionCompany: String!
+  constructionCost: Float
+  constructionType: String!
+  createdAt: DateTimeISO
+  creator: User
+  deletedAt: DateTimeISO
+  domain: Domain
+  etc: String
+  householdCount: Float
+  id: ID!
+  mainPhoto: String
+  project: Project!
+  supervisor: String!
+  thumbnail: String!
+  updatedAt: DateTimeISO
+  updater: User
+}
+
+type BuildingComplexList {
+  items: [BuildingComplex!]!
+  total: Int!
+}
+
+input BuildingComplexPatch {
+  active: Boolean
+  cuFlag: String
+  description: String
+  id: ID
+  name: String
+  thumbnail: Upload
+}
+
+"""Entity for BuildingLevel"""
+type BuildingLevel {
+  active: Boolean
+  building: Building!
+  createdAt: DateTimeISO
+  creator: User
+  deletedAt: DateTimeISO
+  description: String
+  domain: Domain
+  id: ID!
+  name: String
+  number: Float
+  params: String
+  state: String
+  thumbnail: String
+  updatedAt: DateTimeISO
+  updater: User
+}
+
+type BuildingLevelList {
+  items: [BuildingLevel!]!
+  total: Int!
+}
+
+input BuildingLevelPatch {
+  active: Boolean
+  cuFlag: String
+  description: String
+  id: ID
+  name: String
+  state: BuildingLevelStatus
+  thumbnail: Upload
+}
+
+"""state enumeration of a buildingLevel"""
+enum BuildingLevelStatus {
+  STATUS_A
+  STATUS_B
+}
+
+type BuildingList {
+  items: [Building!]!
+  total: Int!
+}
+
+input BuildingPatch {
+  active: Boolean
+  cuFlag: String
+  description: String
+  id: ID
+  name: String
+  thumbnail: Upload
+}
+
 input ChatCompletionInput {
   content: String!
 }
@@ -1582,6 +1692,15 @@ type Mutation {
   """To create new BoardTemplate"""
   createBoardTemplate(boardTemplate: NewBoardTemplate!): BoardTemplate!
 
+  """To create new Building"""
+  createBuilding(building: NewBuilding!): Building!
+
+  """To create new BuildingComplex"""
+  createBuildingComplex(buildingComplex: NewBuildingComplex!): BuildingComplex!
+
+  """To create new BuildingLevel"""
+  createBuildingLevel(buildingLevel: NewBuildingLevel!): BuildingLevel!
+
   """To create new CommonCode"""
   createCommonCode(commonCode: NewCommonCode!): CommonCode!
 
@@ -1720,6 +1839,24 @@ type Mutation {
 
   """To delete BoardTemplate"""
   deleteBoardTemplate(id: String!): Boolean!
+
+  """To delete Building"""
+  deleteBuilding(id: String!): Boolean!
+
+  """To delete BuildingComplex"""
+  deleteBuildingComplex(id: String!): Boolean!
+
+  """To delete multiple BuildingComplexes"""
+  deleteBuildingComplexes(ids: [String!]!): Boolean!
+
+  """To delete BuildingLevel"""
+  deleteBuildingLevel(id: String!): Boolean!
+
+  """To delete multiple BuildingLevels"""
+  deleteBuildingLevels(ids: [String!]!): Boolean!
+
+  """To delete multiple Buildings"""
+  deleteBuildings(ids: [String!]!): Boolean!
 
   """To delete CommonCode"""
   deleteCommonCode(id: String!): Boolean!
@@ -1955,6 +2092,15 @@ type Mutation {
   """To import some Boards"""
   importBoards(files: [Upload!]!, groupId: String!, overwrite: Boolean!): [Board!]!
 
+  """To import multiple BuildingComplexes"""
+  importBuildingComplexes(buildingComplexes: [BuildingComplexPatch!]!): Boolean!
+
+  """To import multiple BuildingLevels"""
+  importBuildingLevels(buildingLevels: [BuildingLevelPatch!]!): Boolean!
+
+  """To import multiple Buildings"""
+  importBuildings(buildings: [BuildingPatch!]!): Boolean!
+
   """To import multiple CommonCodeDetails"""
   importCommonCodeDetails(commonCodeDetails: [CommonCodeDetailPatch!]!): Boolean!
 
@@ -2112,6 +2258,15 @@ type Mutation {
   """To modify BoardTemplate information"""
   updateBoardTemplate(id: String!, patch: BoardTemplatePatch!): BoardTemplate!
 
+  """To modify Building information"""
+  updateBuilding(id: String!, patch: BuildingPatch!): Building!
+
+  """To modify BuildingComplex information"""
+  updateBuildingComplex(id: String!, patch: BuildingComplexPatch!): BuildingComplex!
+
+  """To modify BuildingLevel information"""
+  updateBuildingLevel(id: String!, patch: BuildingLevelPatch!): BuildingLevel!
+
   """To modify CommonCode information"""
   updateCommonCode(name: String!, patch: CommonCodePatch!): CommonCode!
 
@@ -2175,6 +2330,15 @@ type Mutation {
   """To modify multiple AttributeSets' information"""
   updateMultipleAttributeSet(patches: [AttributeSetPatch!]!): [AttributeSet!]!
   updateMultipleAuthProvider(patches: [AuthProviderPatch!]!): [AuthProvider!]!
+
+  """To modify multiple Buildings' information"""
+  updateMultipleBuilding(patches: [BuildingPatch!]!): [Building!]!
+
+  """To modify multiple BuildingComplexes' information"""
+  updateMultipleBuildingComplex(patches: [BuildingComplexPatch!]!): [BuildingComplex!]!
+
+  """To modify multiple BuildingLevels' information"""
+  updateMultipleBuildingLevel(patches: [BuildingLevelPatch!]!): [BuildingLevel!]!
 
   """To modify multiple CommonCodes' information"""
   updateMultipleCommonCode(patches: [CommonCodePatch!]!): [CommonCode!]!
@@ -2382,6 +2546,31 @@ input NewBoardTemplate {
   name: String!
   thumbnail: String
   visibility: String!
+}
+
+input NewBuilding {
+  active: Boolean
+  description: String
+  name: String!
+  params: String
+  thumbnail: Upload
+}
+
+input NewBuildingComplex {
+  active: Boolean
+  description: String
+  name: String!
+  params: String
+  thumbnail: Upload
+}
+
+input NewBuildingLevel {
+  active: Boolean
+  description: String
+  name: String!
+  params: String
+  state: BuildingLevelStatus
+  thumbnail: Upload
 }
 
 input NewCommonCode {
@@ -3281,24 +3470,28 @@ input ProfileInput {
   zoom: Float
 }
 
-"""Entity for Project"""
+"""프로젝트"""
 type Project {
-  active: Boolean
+  buildingComplex: BuildingComplex
   createdAt: DateTimeISO
   creator: User
   deletedAt: DateTimeISO
-  description: String
   domain: Domain
   endDate: DateTimeISO
   id: ID!
-  name: String
-  params: String
+  inspPassRate: Float
+  kpi: Float
+  name: String!
+  robotProgressRate: Float
   startDate: DateTimeISO
   state: String
+  structuralSafetyRate: Float
   tasks: [Task!]
-  thumbnail: String
+  thumbnail: String!
+  totalProgress: Float
   updatedAt: DateTimeISO
   updater: User
+  weeklyProgress: Float
 }
 
 type ProjectList {
@@ -3316,10 +3509,10 @@ input ProjectPatch {
   thumbnail: Upload
 }
 
-"""state enumeration of a project"""
+"""프로젝트 상태"""
 enum ProjectStatus {
-  STATUS_A
-  STATUS_B
+  COMPLICATED
+  PROCEEDING
 }
 
 type PropertySpec {
@@ -3405,6 +3598,21 @@ type Query {
 
   """To fetch Boards created by me"""
   boardsCreatedByMe(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): BoardList!
+
+  """To fetch a Building"""
+  building(id: String!): Building
+
+  """To fetch a BuildingComplex"""
+  buildingBuildingComplex(id: String!): BuildingComplex
+
+  """To fetch a BuildingLevel"""
+  buildingLevel(id: String!): BuildingLevel
+
+  """To fetch multiple BuildingLevels"""
+  buildingLevels(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): BuildingLevelList!
+
+  """To fetch multiple Buildings"""
+  buildings(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): BuildingList!
   chatCompletion(input: ChatCompletionInput!): ChatCompletionOutput!
 
   """To check if system would provide default password to create new user"""
@@ -3436,6 +3644,9 @@ type Query {
 
   """To fetch multiple CommonCodes"""
   commonCodes(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): CommonCodeList!
+
+  """To fetch multiple BuildingComplexes"""
+  complexes(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): BuildingComplexList!
 
   """To fetch a connector"""
   connection(name: String!): ConnectorType!

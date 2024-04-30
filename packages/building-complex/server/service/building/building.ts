@@ -17,22 +17,12 @@ import { User } from '@things-factory/auth-base'
 import { BuildingComplex } from '../building-complex/building-complex'
 import { BuildingLevel } from '../building-level/building-level'
 
-export enum BuildingStatus {
-  STATUS_A = 'STATUS_A',
-  STATUS_B = 'STATUS_B'
-}
-
-registerEnumType(BuildingStatus, {
-  name: 'BuildingStatus',
-  description: 'state enumeration of a building'
-})
-
-@Entity()
-@Index('ix_building_0', (building: Building) => [building.domain, building.name], {
+@Entity('동 정보')
+@Index('ix_building_0', (building: Building) => [building.buildingComplex, building.name], {
   unique: true,
   where: '"deleted_at" IS NULL'
 })
-@ObjectType({ description: 'Entity for Building' })
+@ObjectType({ description: '동 정보' })
 export class Building {
   @PrimaryGeneratedColumn('uuid')
   @Field(type => ID)
@@ -45,37 +35,13 @@ export class Building {
   @RelationId((building: Building) => building.domain)
   domainId?: string
 
-  @Column()
+  @Column({ nullable: true, comment: '동 이름(101동, 102동...)' })
   @Field({ nullable: true })
-  name?: string
+  name: string
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, comment: '층 개수' })
   @Field({ nullable: true })
-  description?: string
-
-  @Column({ nullable: true })
-  @Field({ nullable: true })
-  active?: boolean
-
-  @Column({ nullable: true })
-  @Field({ nullable: true })
-  state?: BuildingStatus
-
-  @Column({ nullable: true })
-  @Field({ nullable: true })
-  params?: string
-
-  @Column({ nullable: true })
-  @Field({ nullable: true })
-  address: string
-
-  @Column({ nullable: true })
-  @Field({ nullable: true })
-  floors: number
-
-  @Column({ nullable: true })
-  @Field({ nullable: true })
-  units: number
+  floorCount: number
 
   @Field(() => BuildingComplex)
   @ManyToOne(() => BuildingComplex, buildingComplex => buildingComplex.buildings)
@@ -110,7 +76,4 @@ export class Building {
 
   @RelationId((building: Building) => building.updater)
   updaterId?: string
-
-  @Field(type => String, { nullable: true })
-  thumbnail?: string
 }
