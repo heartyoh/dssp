@@ -305,6 +305,7 @@ type AuthProviderParameterSpec {
   name: String!
   placeholder: String
   property: Object
+  styles: Object
   type: String!
 }
 
@@ -482,23 +483,24 @@ type BuildingComplex {
   mainPhoto: String
   project: Project!
   supervisor: String!
-  thumbnail: String!
   updatedAt: DateTimeISO
   updater: User
 }
 
-type BuildingComplexList {
-  items: [BuildingComplex!]!
-  total: Int!
-}
-
 input BuildingComplexPatch {
-  active: Boolean
-  cuFlag: String
-  description: String
-  id: ID
-  name: String
-  thumbnail: Upload
+  address: String!
+  architect: String!
+  area: Float!
+  buildingCount: Float
+  clientCompany: String!
+  constructionCompany: String!
+  constructionCost: Float
+  constructionType: String!
+  etc: String
+  householdCount: Float
+  id: String!
+  mainPhoto: String
+  supervisor: String!
 }
 
 """Entity for BuildingLevel"""
@@ -547,12 +549,9 @@ type BuildingList {
 }
 
 input BuildingPatch {
-  active: Boolean
-  cuFlag: String
-  description: String
+  floorCount: Float
   id: ID
   name: String
-  thumbnail: Upload
 }
 
 input ChatCompletionInput {
@@ -1660,6 +1659,9 @@ type Mutation {
   attachContact(contactId: String!, id: String!): Employee!
   cancelInvitation(email: EmailAddress!, reference: String!, type: String!): Boolean!
 
+  """To clear translations cache"""
+  clearTranslationsCache: Boolean!
+
   """To clone a Board from existing Board"""
   cloneBoard(id: String!, patch: BoardPatch!, targetGroupId: String, targetSubdomain: String!): Board!
 
@@ -1691,12 +1693,6 @@ type Mutation {
 
   """To create new BoardTemplate"""
   createBoardTemplate(boardTemplate: NewBoardTemplate!): BoardTemplate!
-
-  """To create new Building"""
-  createBuilding(building: NewBuilding!): Building!
-
-  """To create new BuildingComplex"""
-  createBuildingComplex(buildingComplex: NewBuildingComplex!): BuildingComplex!
 
   """To create new BuildingLevel"""
   createBuildingLevel(buildingLevel: NewBuildingLevel!): BuildingLevel!
@@ -1782,8 +1778,8 @@ type Mutation {
   """To create new privilege"""
   createPrivilege(privilege: NewPrivilege!): Privilege!
 
-  """To create new Project"""
-  createProject(project: NewProject!): Project!
+  """To Send Tax Invoices By Api"""
+  createProject(project: ProjectPatch!): Boolean!
 
   """To create new user"""
   createRole(role: NewRole!): User!
@@ -2385,9 +2381,6 @@ type Mutation {
   """To modify multiple PrinterDevices' information"""
   updateMultiplePrinterDevice(patches: [PrinterDevicePatch!]!): [PrinterDevice!]!
 
-  """To modify multiple Projects' information"""
-  updateMultipleProject(patches: [ProjectPatch!]!): [Project!]!
-
   """To modify multiple scenarios' information"""
   updateMultipleScenario(patches: [ScenarioPatch!]!): [Scenario!]!
 
@@ -2435,9 +2428,6 @@ type Mutation {
 
   """To modify privilege information"""
   updatePrivilege(category: String!, name: String!, patch: PrivilegePatch!): Privilege!
-
-  """To modify Project information"""
-  updateProject(id: String!, patch: ProjectPatch!): Project!
 
   """To modify role information"""
   updateRole(id: String!, patch: RolePatch!): Role!
@@ -2546,22 +2536,6 @@ input NewBoardTemplate {
   name: String!
   thumbnail: String
   visibility: String!
-}
-
-input NewBuilding {
-  active: Boolean
-  description: String
-  name: String!
-  params: String
-  thumbnail: Upload
-}
-
-input NewBuildingComplex {
-  active: Boolean
-  description: String
-  name: String!
-  params: String
-  thumbnail: Upload
 }
 
 input NewBuildingLevel {
@@ -2944,15 +2918,6 @@ input NewPrivilege {
   description: String
   name: String!
   roles: [ObjectRef!]
-}
-
-input NewProject {
-  active: Boolean
-  description: String
-  name: String!
-  params: String
-  state: ProjectStatus
-  thumbnail: Upload
 }
 
 input NewRole {
@@ -3472,7 +3437,7 @@ input ProfileInput {
 
 """프로젝트"""
 type Project {
-  buildingComplex: BuildingComplex
+  buildingComplex: BuildingComplex!
   createdAt: DateTimeISO
   creator: User
   deletedAt: DateTimeISO
@@ -3500,19 +3465,16 @@ type ProjectList {
 }
 
 input ProjectPatch {
-  active: Boolean
-  cuFlag: String
-  description: String
-  id: ID
-  name: String
-  state: ProjectStatus
-  thumbnail: Upload
-}
-
-"""프로젝트 상태"""
-enum ProjectStatus {
-  COMPLICATED
-  PROCEEDING
+  endDate: DateTimeISO
+  id: String!
+  inspPassRate: Float
+  kpi: Float
+  name: String!
+  robotProgressRate: Float
+  startDate: DateTimeISO
+  structuralSafetyRate: Float
+  totalProgress: Float
+  weeklyProgress: Float
 }
 
 type PropertySpec {
@@ -3520,6 +3482,7 @@ type PropertySpec {
   name: String!
   placeholder: String
   property: Object
+  styles: Object
   type: String!
 }
 
@@ -3644,9 +3607,6 @@ type Query {
 
   """To fetch multiple CommonCodes"""
   commonCodes(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): CommonCodeList!
-
-  """To fetch multiple BuildingComplexes"""
-  complexes(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): BuildingComplexList!
 
   """To fetch a connector"""
   connection(name: String!): ConnectorType!

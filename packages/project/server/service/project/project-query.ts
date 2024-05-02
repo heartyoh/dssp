@@ -3,6 +3,7 @@ import { Attachment } from '@things-factory/attachment-base'
 import { Domain, getQueryBuilderFromListParams, getRepository, ListParam } from '@things-factory/shell'
 import { User } from '@things-factory/auth-base'
 import { Project } from './project'
+import { ProjectList } from './project-type'
 
 @Resolver(Project)
 export class ProjectQuery {
@@ -15,21 +16,21 @@ export class ProjectQuery {
     })
   }
 
-  // @Query(returns => ProjectList, { description: 'To fetch multiple Projects' })
-  // async projects(@Args() params: ListParam, @Ctx() context: ResolverContext): Promise<ProjectList> {
-  //   const { domain } = context.state
+  @Query(returns => ProjectList, { description: 'To fetch multiple Projects' })
+  async projects(@Args() params: ListParam, @Ctx() context: ResolverContext): Promise<ProjectList> {
+    const { domain } = context.state
 
-  //   const queryBuilder = getQueryBuilderFromListParams({
-  //     domain,
-  //     params,
-  //     repository: await getRepository(Project),
-  //     searchables: ['name', 'description']
-  //   })
+    const queryBuilder = getQueryBuilderFromListParams({
+      domain,
+      params,
+      repository: await getRepository(Project),
+      searchables: ['name', 'description']
+    })
 
-  //   const [items, total] = await queryBuilder.getManyAndCount()
+    const [items, total] = await queryBuilder.getManyAndCount()
 
-  //   return { items, total }
-  // }
+    return { items, total }
+  }
 
   @FieldResolver(type => String)
   async thumbnail(@Root() project: Project): Promise<string | undefined> {

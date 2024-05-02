@@ -5,17 +5,45 @@ import { ObjectType, Field, InputType, Int, ID, registerEnumType } from 'type-gr
 import { ObjectRef, ScalarObject } from '@things-factory/shell'
 
 import { Project, ProjectStatus } from './project'
-import { BuildingComplex } from '../../../../building-complex/server/service/building-complex/building-complex'
-import { Building } from '../../../../building-complex/server/service/building/building'
 
 @InputType()
 export class ProjectPatch {
-  @Field()
-  project: Project
+  @Field({ nullable: false })
+  id?: string
 
-  @Field()
-  buildingComplex: BuildingComplex
+  @Field({ nullable: false })
+  name: string
 
-  @Field()
-  buildings: Building[]
+  @Field({ nullable: true })
+  startDate?: Date
+
+  @Field({ nullable: true })
+  endDate?: Date
+
+  @Field({ nullable: true })
+  totalProgress?: number
+
+  @Field({ nullable: true })
+  weeklyProgress?: number
+
+  @Field({ nullable: true })
+  kpi?: number
+
+  @Field({ nullable: true })
+  inspPassRate?: number
+
+  @Field({ nullable: true })
+  robotProgressRate?: number
+
+  @Field({ nullable: true })
+  structuralSafetyRate?: number
+}
+
+@ObjectType()
+export class ProjectList {
+  @Field(type => [Project])
+  items: Project[]
+
+  @Field(type => Int)
+  total: number
 }

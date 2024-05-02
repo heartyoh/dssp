@@ -5,15 +5,21 @@ import { createAttachment, deleteAttachmentsByRef } from '@things-factory/attach
 
 import { Project } from './project'
 import { ProjectPatch } from './project-type'
-import { BuildingComplex, Building } from '@dssp/building-complex/server'
+import { BuildingComplex, Building } from '@dssp/building-complex/dist-server'
+// import { BuildingComplexPatch } from '@dssp/building-complex/dist-server/service/building-complex/building-complex-type'
+// import { BuildingPatch } from '@dssp/building-complex/dist-server/service/building/building-type'
 
 @Resolver(Project)
 export class ProjectMutation {
   @Directive('@transaction')
   @Mutation(returns => Boolean, { description: 'To Send Tax Invoices By Api' })
-  async createProject(@Args() params: ProjectPatch, @Ctx() context: ResolverContext): Promise<boolean> {
+  async createProject(
+    @Arg('project') project: ProjectPatch,
+    // @Arg('buildingComplex') buildingComplex: BuildingComplex,
+    // @Arg('buildings') buildings: [Building],
+    @Ctx() context: ResolverContext
+  ): Promise<boolean> {
     const { domain, user, tx } = context.state
-    const { project, buildingComplex, buildings } = params
     const projectRepo = tx.getRepository(Project)
     const buildingComplexRepo = tx.getRepository(BuildingComplex)
     const buildingRepo = tx.getRepository(Building)

@@ -17,7 +17,7 @@ import { ObjectType, Field, Int, ID, registerEnumType } from 'type-graphql'
 import { Domain, roundTransformer } from '@things-factory/shell'
 import { User } from '@things-factory/auth-base'
 import { Task } from '../task/task'
-import { BuildingComplex } from '@dssp/building-complex'
+import { BuildingComplex } from '@dssp/building-complex/dist-server'
 
 export enum ProjectStatus {
   'PROCEEDING' = '10',
@@ -50,7 +50,7 @@ export class Project {
   @Field({ nullable: false })
   name?: string
 
-  @Column({ nullable: true, default: '10', comment: '프로젝트 상태 (10: 진행중, 20: 완료)' })
+  @Column({ nullable: true, default: ProjectStatus.PROCEEDING, comment: '프로젝트 상태 (10: 진행중, 20: 완료)' })
   @Field({ nullable: true })
   state?: ProjectStatus
 
@@ -87,11 +87,8 @@ export class Project {
   structuralSafetyRate: number
 
   @OneToOne(type => BuildingComplex)
-  @Field({ nullable: true })
+  @Field()
   buildingComplex?: BuildingComplex
-
-  @RelationId((project: Project) => project.buildingComplex)
-  buildingComplexId?: string
 
   @Field(() => [Task], { nullable: true })
   @OneToMany(() => Task, task => task.project)

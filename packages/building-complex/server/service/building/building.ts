@@ -35,7 +35,7 @@ export class Building {
   @RelationId((building: Building) => building.domain)
   domainId?: string
 
-  @Column({ nullable: true, comment: '동 이름(101동, 102동...)' })
+  @Column({ nullable: true, comment: '동 이름(101, 102...)' })
   @Field({ nullable: true })
   name: string
 

@@ -2,7 +2,7 @@ import contentDisposition from 'content-disposition'
 
 import { Task, generateExcel } from './controllers/project-to-excel'
 
-const debug = require('debug')('dssp:project:routes')
+// const debug = require('debug')('dssp:project:routes')
 
 process.on('bootstrap-module-global-public-route' as any, (app, globalPublicRouter) => {
   /*

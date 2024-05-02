@@ -7,49 +7,43 @@ import { ObjectRef, ScalarObject } from '@things-factory/shell'
 import { BuildingComplex } from './building-complex'
 
 @InputType()
-export class NewBuildingComplex {
-  @Field()
-  name: string
-
-  @Field({ nullable: true })
-  description?: string
-
-  @Field({ nullable: true })
-  active?: boolean
-
-  @Field({ nullable: true })
-  params?: string
-
-  @Field(type => GraphQLUpload, { nullable: true })
-  thumbnail?: FileUpload
-}
-
-@InputType()
 export class BuildingComplexPatch {
-  @Field(type => ID, { nullable: true })
+  @Field({ nullable: false })
   id?: string
 
-  @Field({ nullable: true })
-  name?: string
+  @Field({ nullable: false })
+  address: string
+
+  @Field({ nullable: false })
+  area: number
+
+  @Field({ nullable: false })
+  clientCompany: string
+
+  @Field({ nullable: false })
+  constructionCompany: string
+
+  @Field({ nullable: false })
+  supervisor: string
+
+  @Field({ nullable: false })
+  architect: string
 
   @Field({ nullable: true })
-  description?: string
+  mainPhoto?: string
+
+  @Field({ nullable: false })
+  constructionType: string
 
   @Field({ nullable: true })
-  active?: boolean
-
-  @Field(type => GraphQLUpload, { nullable: true })
-  thumbnail?: FileUpload
+  constructionCost?: number
 
   @Field({ nullable: true })
-  cuFlag?: string
-}
+  etc?: string
 
-@ObjectType()
-export class BuildingComplexList {
-  @Field(type => [BuildingComplex])
-  items: BuildingComplex[]
+  @Field({ nullable: true })
+  householdCount?: number
 
-  @Field(type => Int)
-  total: number
+  @Field({ nullable: true })
+  buildingCount?: number
 }

@@ -1,4 +1,4 @@
-const debug = require('debug')('dssp:supervision:routes')
+// const debug = require('debug')('dssp:supervision:routes')
 
 process.on('bootstrap-module-global-public-route' as any, (app, globalPublicRouter) => {
   /*

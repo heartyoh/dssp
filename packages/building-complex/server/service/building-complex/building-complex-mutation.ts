@@ -4,42 +4,10 @@ import { In } from 'typeorm'
 import { createAttachment, deleteAttachmentsByRef } from '@things-factory/attachment-base'
 
 import { BuildingComplex } from './building-complex'
-import { NewBuildingComplex, BuildingComplexPatch } from './building-complex-type'
+import { BuildingComplexPatch } from './building-complex-type'
 
 @Resolver(BuildingComplex)
 export class BuildingComplexMutation {
-  @Directive('@transaction')
-  @Mutation(returns => BuildingComplex, { description: 'To create new BuildingComplex' })
-  async createBuildingComplex(
-    @Arg('buildingComplex') buildingComplex: NewBuildingComplex,
-    @Ctx() context: ResolverContext
-  ): Promise<BuildingComplex> {
-    const { domain, user, tx } = context.state
-
-    const result = await tx.getRepository(BuildingComplex).save({
-      ...buildingComplex,
-      domain,
-      creator: user,
-      updater: user
-    })
-
-    if (buildingComplex.thumbnail) {
-      await createAttachment(
-        null,
-        {
-          attachment: {
-            file: buildingComplex.thumbnail,
-            refType: BuildingComplex.name,
-            refBy: result.id
-          }
-        },
-        context
-      )
-    }
-
-    return result
-  }
-
   @Directive('@transaction')
   @Mutation(returns => BuildingComplex, { description: 'To modify BuildingComplex information' })
   async updateBuildingComplex(
@@ -59,21 +27,6 @@ export class BuildingComplexMutation {
       ...patch,
       updater: user
     })
-
-    if (patch.thumbnail) {
-      await deleteAttachmentsByRef(null, { refBys: [result.id] }, context)
-      await createAttachment(
-        null,
-        {
-          attachment: {
-            file: patch.thumbnail,
-            refType: BuildingComplex.name,
-            refBy: result.id
-          }
-        },
-        context
-      )
-    }
 
     return result
   }
@@ -102,20 +55,6 @@ export class BuildingComplexMutation {
           updater: user
         })
 
-        if (newRecord.thumbnail) {
-          await createAttachment(
-            null,
-            {
-              attachment: {
-                file: newRecord.thumbnail,
-                refType: BuildingComplex.name,
-                refBy: result.id
-              }
-            },
-            context
-          )
-        }
-
         results.push({ ...result, cuFlag: '+' })
       }
     }
@@ -130,21 +69,6 @@ export class BuildingComplexMutation {
           ...updateRecord,
           updater: user
         })
-
-        if (updateRecord.thumbnail) {
-          await deleteAttachmentsByRef(null, { refBys: [result.id] }, context)
-          await createAttachment(
-            null,
-            {
-              attachment: {
-                file: updateRecord.thumbnail,
-                refType: BuildingComplex.name,
-                refBy: result.id
-              }
-            },
-            context
-          )
-        }
 
         results.push({ ...result, cuFlag: 'M' })
       }

@@ -89,6 +89,9 @@ export class BuildingComplex {
   @OneToOne(() => Project)
   project: Project
 
+  @RelationId((buildingComplex: BuildingComplex) => buildingComplex.project)
+  projectId?: string
+
   @CreateDateColumn()
   @Field({ nullable: true })
   createdAt?: Date

@@ -3,7 +3,6 @@ import { Attachment } from '@things-factory/attachment-base'
 import { Domain, getQueryBuilderFromListParams, getRepository, ListParam } from '@things-factory/shell'
 import { User } from '@things-factory/auth-base'
 import { BuildingComplex } from './building-complex'
-import { BuildingComplexList } from './building-complex-type'
 
 @Resolver(BuildingComplex)
 export class BuildingComplexQuery {
@@ -14,35 +13,6 @@ export class BuildingComplexQuery {
     return await getRepository(BuildingComplex).findOne({
       where: { domain: { id: domain.id }, id }
     })
-  }
-
-  @Query(returns => BuildingComplexList, { description: 'To fetch multiple BuildingComplexes' })
-  async complexes(@Args() params: ListParam, @Ctx() context: ResolverContext): Promise<BuildingComplexList> {
-    const { domain } = context.state
-
-    const queryBuilder = getQueryBuilderFromListParams({
-      domain,
-      params,
-      repository: await getRepository(BuildingComplex),
-      searchables: ['name', 'description']
-    })
-
-    const [items, total] = await queryBuilder.getManyAndCount()
-
-    return { items, total }
-  }
-
-  @FieldResolver(type => String)
-  async thumbnail(@Root() buildingComplex: BuildingComplex): Promise<string | undefined> {
-    const attachment: Attachment = await getRepository(Attachment).findOne({
-      where: {
-        domain: { id: buildingComplex.domainId },
-        refType: BuildingComplex.name,
-        refBy: buildingComplex.id
-      }
-    })
-
-    return attachment?.fullpath
   }
 
   @FieldResolver(type => Domain)

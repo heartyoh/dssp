@@ -68,9 +68,9 @@ export class CheckItem {
   @Field({ nullable: true })
   params?: string
 
-  @Field(() => Task)
-  @ManyToOne(() => Task, task => task.checkItems)
-  task: Task
+  // @Field(() => Task)
+  // @ManyToOne(() => Task, task => task.checkItems)
+  // task: Task
 
   @Field(() => Supervisor)
   @ManyToOne(() => Supervisor, supervisor => supervisor.checkItems)

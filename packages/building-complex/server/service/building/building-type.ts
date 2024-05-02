@@ -7,24 +7,6 @@ import { ObjectRef, ScalarObject } from '@things-factory/shell'
 import { Building } from './building'
 
 @InputType()
-export class NewBuilding {
-  @Field()
-  name: string
-
-  @Field({ nullable: true })
-  description?: string
-
-  @Field({ nullable: true })
-  active?: boolean
-
-  @Field({ nullable: true })
-  params?: string
-
-  @Field(type => GraphQLUpload, { nullable: true })
-  thumbnail?: FileUpload
-}
-
-@InputType()
 export class BuildingPatch {
   @Field(type => ID, { nullable: true })
   id?: string
@@ -33,16 +15,7 @@ export class BuildingPatch {
   name?: string
 
   @Field({ nullable: true })
-  description?: string
-
-  @Field({ nullable: true })
-  active?: boolean
-
-  @Field(type => GraphQLUpload, { nullable: true })
-  thumbnail?: FileUpload
-
-  @Field({ nullable: true })
-  cuFlag?: string
+  floorCount?: number
 }
 
 @ObjectType()

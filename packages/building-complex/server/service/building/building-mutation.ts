@@ -4,39 +4,10 @@ import { In } from 'typeorm'
 import { createAttachment, deleteAttachmentsByRef } from '@things-factory/attachment-base'
 
 import { Building } from './building'
-import { NewBuilding, BuildingPatch } from './building-type'
+import { BuildingPatch } from './building-type'
 
 @Resolver(Building)
 export class BuildingMutation {
-  @Directive('@transaction')
-  @Mutation(returns => Building, { description: 'To create new Building' })
-  async createBuilding(@Arg('building') building: NewBuilding, @Ctx() context: ResolverContext): Promise<Building> {
-    const { domain, user, tx } = context.state
-
-    const result = await tx.getRepository(Building).save({
-      ...building,
-      domain,
-      creator: user,
-      updater: user
-    })
-
-    if (building.thumbnail) {
-      await createAttachment(
-        null,
-        {
-          attachment: {
-            file: building.thumbnail,
-            refType: Building.name,
-            refBy: result.id
-          }
-        },
-        context
-      )
-    }
-
-    return result
-  }
-
   @Directive('@transaction')
   @Mutation(returns => Building, { description: 'To modify Building information' })
   async updateBuilding(
@@ -56,21 +27,6 @@ export class BuildingMutation {
       ...patch,
       updater: user
     })
-
-    if (patch.thumbnail) {
-      await deleteAttachmentsByRef(null, { refBys: [result.id] }, context)
-      await createAttachment(
-        null,
-        {
-          attachment: {
-            file: patch.thumbnail,
-            refType: Building.name,
-            refBy: result.id
-          }
-        },
-        context
-      )
-    }
 
     return result
   }
@@ -99,20 +55,6 @@ export class BuildingMutation {
           updater: user
         })
 
-        if (newRecord.thumbnail) {
-          await createAttachment(
-            null,
-            {
-              attachment: {
-                file: newRecord.thumbnail,
-                refType: Building.name,
-                refBy: result.id
-              }
-            },
-            context
-          )
-        }
-
         results.push({ ...result, cuFlag: '+' })
       }
     }
@@ -127,21 +69,6 @@ export class BuildingMutation {
           ...updateRecord,
           updater: user
         })
-
-        if (updateRecord.thumbnail) {
-          await deleteAttachmentsByRef(null, { refBys: [result.id] }, context)
-          await createAttachment(
-            null,
-            {
-              attachment: {
-                file: updateRecord.thumbnail,
-                refType: Building.name,
-                refBy: result.id
-              }
-            },
-            context
-          )
-        }
 
         results.push({ ...result, cuFlag: 'M' })
       }

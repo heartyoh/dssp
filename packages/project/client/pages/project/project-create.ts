@@ -2,6 +2,7 @@ import '@operato/data-grist'
 
 import { CommonButtonStyles, CommonGristStyles, ScrollbarStyles } from '@operato/styles'
 import { PageView, store } from '@operato/shell'
+import { PageLifecycle } from '@operato/shell/dist/src/app/pages/page-view'
 import { css, html } from 'lit'
 import { customElement, property, query, state } from 'lit/decorators.js'
 import { ScopedElementsMixin } from '@open-wc/scoped-elements'
@@ -418,24 +419,50 @@ export class ProjectCreatet extends localize(i18next)(ScopedElementsMixin(PageVi
     `
   }
 
-  async pageInitialized(lifecycle: any) {
-    const urlParams = new URLSearchParams(window.location.search)
-    this.projectId = urlParams.get('projectId')
+  async pageInitialized(lifecycle: PageLifecycle) {
+    this.projectId = lifecycle.resourceId || ''
     this.pageMode = this.projectId ? 'update' : 'create'
 
     // 업데이트 화면이면 초기 데이터 가져오기
-    if (this.pageMode === 'update') {
-      this.getProjectById(this.projectId)
+    if (this.pageMode === 'update' && typeof this.projectId === 'string') {
+      this.initProject(this.projectId)
     }
   }
 
-  async pageUpdated(changes: any, lifecycle: any) {
+  async pageUpdated(changes: any, lifecycle: PageLifecycle) {
     if (this.active) {
       // do something here when this page just became as active
     }
   }
 
-  async getProjectById(projectId) {
+  async initProject(projectId: string) {
+    this.project = {
+      name: 'project name 1',
+      startDate: '2024-05-01',
+      endDate: '2024-05-10',
+      totalProgress: 10,
+      weeklyProgress: 20,
+      kpi: 30,
+      inspPassRate: 40,
+      robotProgressRate: 50,
+      structuralSafetyRate: 60
+    }
+    this.buildingComplex = {
+      address: '단지 주소',
+      area: 100,
+      constructionCompany: '건설사 이름',
+      clientCompany: '발주처 이름',
+      architect: '설계사 이름',
+      supervisor: '감리사 이름',
+      constructionType: '아파트',
+      constructionCost: 10000000,
+      etc: '기타 사항',
+      householdCount: 100,
+      buildingCount: 5
+    }
+
+    return
+
     const response = await client.query({
       query: gql`
         query ($projectId: String) {
@@ -459,11 +486,9 @@ export class ProjectCreatet extends localize(i18next)(ScopedElementsMixin(PageVi
       }
     })
 
-    return {
-      project: response.data.responses.project,
-      buildingComplex: response.data.responses.buildingComplex,
-      buildings: response.data.responses.buildings
-    }
+    this.project = response.data.responses.project
+    this.buildingComplex = response.data.responses.buildingComplex
+    this.buildings = response.data.responses.buildings
   }
 
   private async _saveProject() {
@@ -473,7 +498,11 @@ export class ProjectCreatet extends localize(i18next)(ScopedElementsMixin(PageVi
 
     const response = await client.mutate({
       mutation: gql`
-        mutation CreateProject($project: Project!, $buildingComplex: BuildingComplex!, $buildings: [Building!]) {
+        mutation CreateProject(
+          $project: ProjectPatch!
+          $buildingComplex: BuildingComplexPatch!
+          $buildings: [BuildingPatch]
+        ) {
           response: createProject(project: $project, buildingComplex: $buildingComplex, buildings: $buildings)
         }
       `,
