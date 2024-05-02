@@ -3,6 +3,7 @@ server/
 .vscode
 .prettierrc
 logs/
+cache/
 docs/
 licenses/
 node_modules/

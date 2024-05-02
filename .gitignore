@@ -4,6 +4,7 @@ packages/**/cypress/downloads/
 packages/**/cypress/screenshots/
 packages/**/cypress/fixtures/example.json
 node_modules/
+cache/
 logs/
 uploads/
 attachments/
