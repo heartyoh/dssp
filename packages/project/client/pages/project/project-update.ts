@@ -20,7 +20,7 @@ export enum ProjectStatus {
   'COMPLICATED' = '20'
 }
 
-export interface Project {
+export interface ProjectPatch {
   name: string
   startDate?: string
   endDate?: string
@@ -50,8 +50,8 @@ export interface Building {
   floorCount: number
 }
 
-@customElement('project-create')
-export class ProjectCreatet extends localize(i18next)(ScopedElementsMixin(PageView)) {
+@customElement('project-update')
+export class ProjectUpdate extends localize(i18next)(ScopedElementsMixin(PageView)) {
   static styles = [
     css`
       :host {
@@ -71,7 +71,7 @@ export class ProjectCreatet extends localize(i18next)(ScopedElementsMixin(PageVi
 
   get context() {
     return {
-      title: i18next.t('title.project_create')
+      title: i18next.t('title.project_update')
     }
   }
 
@@ -88,9 +88,8 @@ export class ProjectCreatet extends localize(i18next)(ScopedElementsMixin(PageVi
     constructionType: ''
   }
 
-  @state() projectId: String | null = null
-  @state() pageMode: 'create' | 'update' = 'create'
-  @state() project: Project = { ...this.defaultProject }
+  @state() projectId: string = ''
+  @state() project: ProjectPatch = { ...this.defaultProject }
   @state() buildingComplex: BuildingComplex = { ...this.defaultbuildingComplex }
   @state() buildings: Building[] = []
 
@@ -421,12 +420,7 @@ export class ProjectCreatet extends localize(i18next)(ScopedElementsMixin(PageVi
 
   async pageInitialized(lifecycle: PageLifecycle) {
     this.projectId = lifecycle.resourceId || ''
-    this.pageMode = this.projectId ? 'update' : 'create'
-
-    // 업데이트 화면이면 초기 데이터 가져오기
-    if (this.pageMode === 'update' && typeof this.projectId === 'string') {
-      this.initProject(this.projectId)
-    }
+    this.initProject(this.projectId)
   }
 
   async pageUpdated(changes: any, lifecycle: PageLifecycle) {
@@ -435,7 +429,7 @@ export class ProjectCreatet extends localize(i18next)(ScopedElementsMixin(PageVi
     }
   }
 
-  async initProject(projectId: string) {
+  async initProject(projectId: string = '') {
     this.project = {
       name: 'project name 1',
       startDate: '2024-05-01',
@@ -498,12 +492,12 @@ export class ProjectCreatet extends localize(i18next)(ScopedElementsMixin(PageVi
 
     const response = await client.mutate({
       mutation: gql`
-        mutation CreateProject(
+        mutation UpdateProject(
           $project: ProjectPatch!
           $buildingComplex: BuildingComplexPatch!
           $buildings: [BuildingPatch]
         ) {
-          response: createProject(project: $project, buildingComplex: $buildingComplex, buildings: $buildings)
+          response: updateProject(project: $project, buildingComplex: $buildingComplex, buildings: $buildings)
         }
       `,
       variables: {

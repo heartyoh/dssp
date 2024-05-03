@@ -1,10 +1,11 @@
-import type { FileUpload } from 'graphql-upload/GraphQLUpload.js'
-import GraphQLUpload from 'graphql-upload/GraphQLUpload.js'
-import { ObjectType, Field, InputType, Int, ID, registerEnumType } from 'type-graphql'
+import { ObjectType, Field, InputType, Int } from 'type-graphql'
+import { Project } from './project'
 
-import { ObjectRef, ScalarObject } from '@things-factory/shell'
-
-import { Project, ProjectStatus } from './project'
+@InputType()
+export class NewProject {
+  @Field()
+  name: string
+}
 
 @InputType()
 export class ProjectPatch {

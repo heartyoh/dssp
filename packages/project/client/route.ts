@@ -8,8 +8,8 @@ export default function route(page: string) {
       import('./pages/project/project-setting-list')
       return page
 
-    case 'project-create':
-      import('./pages/project/project-create')
+    case 'project-update':
+      import('./pages/project/project-update')
       return page
   }
 }

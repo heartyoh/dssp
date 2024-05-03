@@ -29,7 +29,7 @@ registerEnumType(ProjectStatus, {
   description: '프로젝트 상태'
 })
 
-@Entity('프로젝트')
+@Entity()
 @Index('ix_project_0', (project: Project) => [project.domain, project.name], {
   where: '"deleted_at" IS NULL'
 })
@@ -56,35 +56,35 @@ export class Project {
 
   @Column({ nullable: true, comment: '착공일정' })
   @Field({ nullable: true })
-  startDate: Date
+  startDate?: Date
 
   @Column({ nullable: true, comment: '준공일정' })
   @Field({ nullable: true })
-  endDate: Date
+  endDate?: Date
 
   @Column({ type: 'float', nullable: true, default: 0, transformer: roundTransformer, comment: '전체 진행현황' })
   @Field({ nullable: true })
-  totalProgress: number
+  totalProgress?: number
 
   @Column({ type: 'float', nullable: true, default: 0, transformer: roundTransformer, comment: '주간 진행현황' })
   @Field({ nullable: true })
-  weeklyProgress: number
+  weeklyProgress?: number
 
   @Column({ type: 'float', nullable: true, default: 0, transformer: roundTransformer, comment: 'KPI' })
   @Field({ nullable: true })
-  kpi: number
+  kpi?: number
 
   @Column({ type: 'float', nullable: true, default: 0, transformer: roundTransformer, comment: '검측/통과 비율' })
   @Field({ nullable: true })
-  inspPassRate: number
+  inspPassRate?: number
 
   @Column({ type: 'float', nullable: true, default: 0, transformer: roundTransformer, comment: '로봇 작업 진행율' })
   @Field({ nullable: true })
-  robotProgressRate: number
+  robotProgressRate?: number
 
   @Column({ type: 'float', nullable: true, default: 0, transformer: roundTransformer, comment: '구조 안전도' })
   @Field({ nullable: true })
-  structuralSafetyRate: number
+  structuralSafetyRate?: number
 
   @OneToOne(type => BuildingComplex)
   @Field()
@@ -92,7 +92,7 @@ export class Project {
 
   @Field(() => [Task], { nullable: true })
   @OneToMany(() => Task, task => task.project)
-  tasks: Task[]
+  tasks?: Task[]
 
   @CreateDateColumn()
   @Field({ nullable: true })

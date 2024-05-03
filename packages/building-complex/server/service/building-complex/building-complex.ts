@@ -19,7 +19,7 @@ import { Project } from '@dssp/project'
 
 import { Building } from '../building/building'
 
-@Entity('단지 정보')
+@Entity()
 @ObjectType({ description: '단지 정보' })
 export class BuildingComplex {
   @PrimaryGeneratedColumn('uuid')
@@ -33,61 +33,61 @@ export class BuildingComplex {
   @RelationId((buildingComplex: BuildingComplex) => buildingComplex.domain)
   domainId?: string
 
-  @Column({ nullable: false, comment: '단지 주소' })
-  @Field({ nullable: false })
-  address: string
+  @Column({ nullable: true, comment: '단지 주소' })
+  @Field({ nullable: true })
+  address?: string
 
-  @Column({ type: 'float', nullable: false, transformer: roundTransformer, comment: '면적 (㎡)' })
-  @Field({ nullable: false })
-  area: number
+  @Column({ type: 'float', nullable: true, default: 0, transformer: roundTransformer, comment: '면적 (㎡)' })
+  @Field({ nullable: true })
+  area?: number
 
-  @Column({ nullable: false, comment: '발주처' })
-  @Field({ nullable: false })
-  clientCompany: string
+  @Column({ nullable: true, comment: '발주처' })
+  @Field({ nullable: true })
+  clientCompany?: string
 
-  @Column({ nullable: false, comment: '건설사' })
-  @Field({ nullable: false })
-  constructionCompany: string
+  @Column({ nullable: true, comment: '건설사' })
+  @Field({ nullable: true })
+  constructionCompany?: string
 
-  @Column({ nullable: false, comment: '감리사' })
-  @Field({ nullable: false })
-  supervisor: string
+  @Column({ nullable: true, comment: '감리사' })
+  @Field({ nullable: true })
+  supervisor?: string
 
-  @Column({ nullable: false, comment: '설계사' })
-  @Field({ nullable: false })
-  architect: string
+  @Column({ nullable: true, comment: '설계사' })
+  @Field({ nullable: true })
+  architect?: string
 
   @Column({ nullable: true, comment: '대표 사진' })
   @Field({ nullable: true })
-  mainPhoto: string
+  mainPhoto?: string
 
-  @Column({ nullable: false, comment: '건설 구분 (아파트, 공원)' })
-  @Field({ nullable: false })
-  constructionType: string
+  @Column({ nullable: true, comment: '건설 구분 (아파트, 공원)' })
+  @Field({ nullable: true })
+  constructionType?: string
 
   @Column({ nullable: true, comment: '공사 금액' })
   @Field({ nullable: true })
-  constructionCost: number
+  constructionCost?: number
 
   @Column({ nullable: true, comment: '기타사항' })
   @Field({ nullable: true })
-  etc: string
+  etc?: string
 
   @Column({ nullable: true, comment: '세대 수' })
   @Field({ nullable: true })
-  householdCount: number
+  householdCount?: number
 
   @Column({ nullable: true, comment: '동 수' })
   @Field({ nullable: true })
-  buildingCount: number
+  buildingCount?: number
 
   @Field(() => [Building], { nullable: true })
   @OneToMany(() => Building, building => building.buildingComplex)
-  buildings: Building[]
+  buildings?: Building[]
 
   @Field(() => Project)
   @OneToOne(() => Project)
-  project: Project
+  project?: Project
 
   @RelationId((buildingComplex: BuildingComplex) => buildingComplex.project)
   projectId?: string

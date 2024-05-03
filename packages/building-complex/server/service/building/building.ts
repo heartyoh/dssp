@@ -17,7 +17,7 @@ import { User } from '@things-factory/auth-base'
 import { BuildingComplex } from '../building-complex/building-complex'
 import { BuildingLevel } from '../building-level/building-level'
 
-@Entity('동 정보')
+@Entity()
 @Index('ix_building_0', (building: Building) => [building.buildingComplex, building.name], {
   unique: true,
   where: '"deleted_at" IS NULL'

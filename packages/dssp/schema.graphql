@@ -1779,7 +1779,7 @@ type Mutation {
   createPrivilege(privilege: NewPrivilege!): Privilege!
 
   """To Send Tax Invoices By Api"""
-  createProject(project: ProjectPatch!): Boolean!
+  createProject(project: NewProject!): BuildingComplex!
 
   """To create new user"""
   createRole(role: NewRole!): User!
@@ -2920,6 +2920,10 @@ input NewPrivilege {
   roles: [ObjectRef!]
 }
 
+input NewProject {
+  name: String!
+}
+
 input NewRole {
   description: String
   name: String!
@@ -3827,7 +3831,7 @@ type Query {
   project(id: String!): Project
 
   """To fetch multiple Projects"""
-  projects(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): ProjectList!
+  projects(projectName: String!): ProjectList!
 
   """To fetch role"""
   role(name: String!): Role!

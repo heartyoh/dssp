@@ -4,7 +4,7 @@ import { In } from 'typeorm'
 import { createAttachment, deleteAttachmentsByRef } from '@things-factory/attachment-base'
 
 import { Project } from './project'
-import { ProjectPatch } from './project-type'
+import { NewProject, ProjectPatch } from './project-type'
 import { BuildingComplex, Building } from '@dssp/building-complex/dist-server'
 // import { BuildingComplexPatch } from '@dssp/building-complex/dist-server/service/building-complex/building-complex-type'
 // import { BuildingPatch } from '@dssp/building-complex/dist-server/service/building/building-type'
@@ -12,22 +12,44 @@ import { BuildingComplex, Building } from '@dssp/building-complex/dist-server'
 @Resolver(Project)
 export class ProjectMutation {
   @Directive('@transaction')
-  @Mutation(returns => Boolean, { description: 'To Send Tax Invoices By Api' })
-  async createProject(
-    @Arg('project') project: ProjectPatch,
-    // @Arg('buildingComplex') buildingComplex: BuildingComplex,
-    // @Arg('buildings') buildings: [Building],
-    @Ctx() context: ResolverContext
-  ): Promise<boolean> {
+  @Mutation(returns => BuildingComplex, { description: 'To Send Tax Invoices By Api' })
+  async createProject(@Arg('project') project: NewProject, @Ctx() context: ResolverContext): Promise<BuildingComplex> {
     const { domain, user, tx } = context.state
     const projectRepo = tx.getRepository(Project)
     const buildingComplexRepo = tx.getRepository(BuildingComplex)
-    const buildingRepo = tx.getRepository(Building)
 
-    console.log(123123123)
+    const newProject = projectRepo.save({
+      name: project.name,
+      domain,
+      creator: user,
+      updater: user
+    })
 
-    return true
+    const result = buildingComplexRepo.save({
+      project: newProject,
+      domain,
+      creator: user,
+      updater: user
+    })
+
+    return result
   }
+
+  // @Directive('@transaction')
+  // @Mutation(returns => Boolean, { description: 'To Send Tax Invoices By Api' })
+  // async createProject(
+  //   @Arg('project') project: ProjectPatch,
+  //   // @Arg('buildingComplex') buildingComplex: BuildingComplex,
+  //   // @Arg('buildings') buildings: [Building],
+  //   @Ctx() context: ResolverContext
+  // ): Promise<boolean> {
+  //   const { domain, user, tx } = context.state
+  //   const projectRepo = tx.getRepository(Project)
+  //   const buildingComplexRepo = tx.getRepository(BuildingComplex)
+  //   const buildingRepo = tx.getRepository(Building)
+
+  //   return true
+  // }
 
   @Directive('@transaction')
   @Mutation(returns => Boolean, { description: 'To delete Project' })

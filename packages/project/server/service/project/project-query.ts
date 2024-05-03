@@ -1,9 +1,12 @@
+import { Brackets } from 'typeorm'
 import { Resolver, Query, FieldResolver, Root, Args, Arg, Ctx, Directive } from 'type-graphql'
 import { Attachment } from '@things-factory/attachment-base'
 import { Domain, getQueryBuilderFromListParams, getRepository, ListParam } from '@things-factory/shell'
 import { User } from '@things-factory/auth-base'
 import { Project } from './project'
 import { ProjectList } from './project-type'
+import { BuildingComplex } from '@dssp/building-complex/dist-server/service/building-complex/building-complex'
+// import { BuildingComplex as BuildingComplexType } from '@dssp/building-complex/dist-server/service/building-complex/building-complex-type'
 
 @Resolver(Project)
 export class ProjectQuery {
@@ -17,15 +20,24 @@ export class ProjectQuery {
   }
 
   @Query(returns => ProjectList, { description: 'To fetch multiple Projects' })
-  async projects(@Args() params: ListParam, @Ctx() context: ResolverContext): Promise<ProjectList> {
+  async projects(@Arg('projectName') projectName: string, @Ctx() context: ResolverContext): Promise<ProjectList> {
     const { domain } = context.state
+    // const { page = 1, limit = 0 } = params.pagination || {}
 
-    const queryBuilder = getQueryBuilderFromListParams({
-      domain,
-      params,
-      repository: await getRepository(Project),
-      searchables: ['name', 'description']
-    })
+    const queryBuilder = await getRepository(Project)
+      .createQueryBuilder('p')
+      .innerJoinAndSelect('building_complexes', 'bc', 'p.id = bc.project_id')
+      .where('p.domain = :domain', { domain: domain.id })
+      .orderBy('p.created_at', 'DESC')
+    // .offset((page - 1) * limit)
+    // .limit(limit)
+
+    if (projectName) {
+      projectName = `%${projectName}%`
+      queryBuilder.andWhere('p.name ILIKE :projectName', { projectName })
+    }
+
+    console.log('queryBuilder : ', await queryBuilder.getQuery())
 
     const [items, total] = await queryBuilder.getManyAndCount()
 
