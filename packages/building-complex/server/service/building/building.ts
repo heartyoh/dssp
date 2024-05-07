@@ -10,7 +10,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn
 } from 'typeorm'
-import { ObjectType, Field, Int, ID, registerEnumType } from 'type-graphql'
+import { ObjectType, Field, ID } from 'type-graphql'
 
 import { User } from '@things-factory/auth-base'
 import { BuildingComplex } from '../building-complex/building-complex'
@@ -36,6 +36,7 @@ export class Building {
   @Field({ nullable: true })
   planImage: string
 
+  // 단지 정보 (상위 테이블 참조)
   @Field(() => BuildingComplex)
   @ManyToOne(() => BuildingComplex, buildingComplex => buildingComplex.buildings)
   buildingComplex: BuildingComplex
@@ -43,8 +44,9 @@ export class Building {
   @RelationId((building: Building) => building.buildingComplex)
   buildingComplexId?: string
 
-  @Field(() => [BuildingLevel], { nullable: true })
+  // 층 정보 (하위 테이블 참조)
   @OneToMany(() => BuildingLevel, buildingLevel => buildingLevel.building)
+  @Field(() => [BuildingLevel], { nullable: true })
   buildingLevels: BuildingLevel[]
 
   @CreateDateColumn()

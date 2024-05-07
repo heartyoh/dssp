@@ -3,19 +3,16 @@ import {
   UpdateDateColumn,
   DeleteDateColumn,
   Entity,
-  Index,
   Column,
   RelationId,
   ManyToOne,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn
 } from 'typeorm'
 import { ObjectType, Field, ID } from 'type-graphql'
 
 import { Domain, roundTransformer } from '@things-factory/shell'
 import { User } from '@things-factory/auth-base'
-
 import { Building } from '../building/building'
 
 @Entity()
@@ -80,8 +77,9 @@ export class BuildingComplex {
   @Field({ nullable: true })
   buildingCount?: number
 
-  @Field(() => [Building], { nullable: true })
+  // 동 정보 (하위 테이블 참조)
   @OneToMany(() => Building, building => building.buildingComplex)
+  @Field(() => [Building], { nullable: true })
   buildings?: Building[]
 
   @CreateDateColumn()

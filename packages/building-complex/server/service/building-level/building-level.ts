@@ -7,13 +7,14 @@ import {
   Column,
   RelationId,
   ManyToOne,
-  PrimaryGeneratedColumn,
-  VersionColumn
+  OneToMany,
+  PrimaryGeneratedColumn
 } from 'typeorm'
-import { ObjectType, Field, Int, ID, registerEnumType } from 'type-graphql'
+import { ObjectType, Field, ID } from 'type-graphql'
 
 import { User } from '@things-factory/auth-base'
 import { Building } from '../building/building'
+import { BuildingInspection } from '../building-inspection/building-inspection'
 
 @Entity()
 @Index('ix_building_level_0', (buildingLevel: BuildingLevel) => [buildingLevel.building], {
@@ -33,9 +34,18 @@ export class BuildingLevel {
   @Field({ nullable: true })
   planImage: string
 
+  // 동 정보 (상위 테이블 참조)
   @Field(() => Building)
   @ManyToOne(() => Building, building => building.buildingLevels)
   building: Building
+
+  @RelationId((buildingLevel: BuildingLevel) => buildingLevel.building)
+  buildingId?: string
+
+  // 시공 검측 정보 (하위 테이블 참조)
+  @OneToMany(() => BuildingInspection, buildingInspection => buildingInspection.buildingLevel)
+  @Field(() => [BuildingInspection], { nullable: true })
+  buildingInspections?: BuildingInspection[]
 
   @CreateDateColumn()
   @Field({ nullable: true })

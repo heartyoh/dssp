@@ -7,12 +7,14 @@ import {
   Column,
   RelationId,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn
 } from 'typeorm'
 import { ObjectType, Field, ID, registerEnumType } from 'type-graphql'
 
 import { User } from '@things-factory/auth-base'
 import { BuildingLevel } from '../building-level/building-level'
+import { BuildingInspectionAttachment } from '../building-inspection-attachment/building-inspection-attachment'
 
 export enum InspectionType {
   COMPLETED = 'COMPLETED',
@@ -51,12 +53,21 @@ export class BuildingInspection {
   @Field({ nullable: true })
   detail?: string
 
+  // 층 정보 (상위 테이블 참조)
   @ManyToOne(type => BuildingLevel)
   @Field({ nullable: true })
   buildingLevel?: BuildingLevel
 
   @RelationId((buildingInspection: BuildingInspection) => buildingInspection.buildingLevel)
   buildingLevelId?: string
+
+  // 시공 검측 첨부 파일 정보 (하위 테이블 참조)
+  @OneToMany(
+    () => BuildingInspectionAttachment,
+    buildingInspectionAttachment => buildingInspectionAttachment.buildingInspection
+  )
+  @Field(() => [BuildingInspectionAttachment], { nullable: true })
+  buildingInspectionAttachments?: BuildingInspectionAttachment[]
 
   @CreateDateColumn()
   @Field({ nullable: true })
