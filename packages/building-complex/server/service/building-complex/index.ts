@@ -4,4 +4,3 @@ import { BuildingComplexMutation } from './building-complex-mutation'
 
 export const entities = [BuildingComplex]
 export const resolvers = [BuildingComplexQuery, BuildingComplexMutation]
-export const subscribers = []

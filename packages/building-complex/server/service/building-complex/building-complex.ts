@@ -15,7 +15,6 @@ import { ObjectType, Field, ID } from 'type-graphql'
 
 import { Domain, roundTransformer } from '@things-factory/shell'
 import { User } from '@things-factory/auth-base'
-import { Project } from '@dssp/project'
 
 import { Building } from '../building/building'
 
@@ -84,13 +83,6 @@ export class BuildingComplex {
   @Field(() => [Building], { nullable: true })
   @OneToMany(() => Building, building => building.buildingComplex)
   buildings?: Building[]
-
-  @Field(() => Project)
-  @OneToOne(() => Project)
-  project?: Project
-
-  @RelationId((buildingComplex: BuildingComplex) => buildingComplex.project)
-  projectId?: string
 
   @CreateDateColumn()
   @Field({ nullable: true })

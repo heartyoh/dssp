@@ -15,5 +15,9 @@ export default function route(page: string) {
     case 'building-level-list':
       import('./pages/building-level/building-level-list-page')
       return page
+  
+    case 'building-inspection-list':
+      import('./pages/building-inspection/building-inspection-list-page')
+      return page
   }
 }

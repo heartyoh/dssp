@@ -29,7 +29,6 @@
   "dependencies": {
     "@things-factory/shell": "^7.0.1-alpha",
     "@things-factory/auth-base": "^7.0.1-alpha",
-    "@dssp/project": "^0.0.0",
     "@operato/graphql": "^2.0.0-alpha",
     "@operato/shell": "^2.0.0-alpha"
   }

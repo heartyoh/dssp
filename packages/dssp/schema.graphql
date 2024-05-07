@@ -464,15 +464,15 @@ type Building {
 
 """단지 정보"""
 type BuildingComplex {
-  address: String!
-  architect: String!
-  area: Float!
+  address: String
+  architect: String
+  area: Float
   buildingCount: Float
   buildings: [Building!]
-  clientCompany: String!
-  constructionCompany: String!
+  clientCompany: String
+  constructionCompany: String
   constructionCost: Float
-  constructionType: String!
+  constructionType: String
   createdAt: DateTimeISO
   creator: User
   deletedAt: DateTimeISO
@@ -481,8 +481,7 @@ type BuildingComplex {
   householdCount: Float
   id: ID!
   mainPhoto: String
-  project: Project!
-  supervisor: String!
+  supervisor: String
   updatedAt: DateTimeISO
   updater: User
 }
@@ -501,6 +500,45 @@ input BuildingComplexPatch {
   id: String!
   mainPhoto: String
   supervisor: String!
+}
+
+"""시공 검측 (층별 도면의 검측 리스트)"""
+type BuildingInspection {
+  active: Boolean
+  createdAt: DateTimeISO
+  creator: User
+  deletedAt: DateTimeISO
+  description: String
+  domain: Domain
+  id: ID!
+  name: String
+  params: String
+  state: String
+  thumbnail: String
+  updatedAt: DateTimeISO
+  updater: User
+  version: Float
+}
+
+type BuildingInspectionList {
+  items: [BuildingInspection!]!
+  total: Int!
+}
+
+input BuildingInspectionPatch {
+  active: Boolean
+  cuFlag: String
+  description: String
+  id: ID
+  name: String
+  state: BuildingInspectionStatus
+  thumbnail: Upload
+}
+
+"""state enumeration of a buildingInspection"""
+enum BuildingInspectionStatus {
+  STATUS_A
+  STATUS_B
 }
 
 """Entity for BuildingLevel"""
@@ -560,6 +598,85 @@ input ChatCompletionInput {
 
 type ChatCompletionOutput {
   message: String
+}
+
+"""Entity for CheckItem"""
+type CheckItem {
+  active: Boolean
+  checklist: Checklist
+  createdAt: DateTimeISO
+  creator: User
+  deletedAt: DateTimeISO
+  description: String
+  domain: Domain
+  id: ID!
+  name: String
+  params: String
+  state: String
+  thumbnail: String
+  updatedAt: DateTimeISO
+  updater: User
+  version: Float
+}
+
+type CheckItemList {
+  items: [CheckItem!]!
+  total: Int!
+}
+
+input CheckItemPatch {
+  active: Boolean
+  cuFlag: String
+  description: String
+  id: ID
+  name: String
+  state: CheckItemStatus
+  thumbnail: Upload
+}
+
+"""state enumeration of a checkItem"""
+enum CheckItemStatus {
+  STATUS_A
+  STATUS_B
+}
+
+"""Entity for Checklist"""
+type Checklist {
+  active: Boolean
+  createdAt: DateTimeISO
+  creator: User
+  deletedAt: DateTimeISO
+  description: String
+  domain: Domain
+  id: ID!
+  name: String
+  params: String
+  state: String
+  thumbnail: String
+  updatedAt: DateTimeISO
+  updater: User
+  version: Float
+}
+
+type ChecklistList {
+  items: [Checklist!]!
+  total: Int!
+}
+
+input ChecklistPatch {
+  active: Boolean
+  cuFlag: String
+  description: String
+  id: ID
+  name: String
+  state: ChecklistStatus
+  thumbnail: Upload
+}
+
+"""state enumeration of a checklist"""
+enum ChecklistStatus {
+  STATUS_A
+  STATUS_B
 }
 
 input CodeDecipherInput {
@@ -1694,8 +1811,17 @@ type Mutation {
   """To create new BoardTemplate"""
   createBoardTemplate(boardTemplate: NewBoardTemplate!): BoardTemplate!
 
+  """To create new BuildingInspection"""
+  createBuildingInspection(buildingInspection: NewBuildingInspection!): BuildingInspection!
+
   """To create new BuildingLevel"""
   createBuildingLevel(buildingLevel: NewBuildingLevel!): BuildingLevel!
+
+  """To create new CheckItem"""
+  createCheckItem(checkItem: NewCheckItem!): CheckItem!
+
+  """To create new Checklist"""
+  createChecklist(checklist: NewChecklist!): Checklist!
 
   """To create new CommonCode"""
   createCommonCode(commonCode: NewCommonCode!): CommonCode!
@@ -1781,6 +1907,9 @@ type Mutation {
   """To Send Tax Invoices By Api"""
   createProject(project: NewProject!): BuildingComplex!
 
+  """To create new Resource"""
+  createResource(resource: NewResource!): Resource!
+
   """To create new user"""
   createRole(role: NewRole!): User!
 
@@ -1845,6 +1974,12 @@ type Mutation {
   """To delete multiple BuildingComplexes"""
   deleteBuildingComplexes(ids: [String!]!): Boolean!
 
+  """To delete BuildingInspection"""
+  deleteBuildingInspection(id: String!): Boolean!
+
+  """To delete multiple BuildingInspections"""
+  deleteBuildingInspections(ids: [String!]!): Boolean!
+
   """To delete BuildingLevel"""
   deleteBuildingLevel(id: String!): Boolean!
 
@@ -1853,6 +1988,18 @@ type Mutation {
 
   """To delete multiple Buildings"""
   deleteBuildings(ids: [String!]!): Boolean!
+
+  """To delete CheckItem"""
+  deleteCheckItem(id: String!): Boolean!
+
+  """To delete multiple CheckItems"""
+  deleteCheckItems(ids: [String!]!): Boolean!
+
+  """To delete Checklist"""
+  deleteChecklist(id: String!): Boolean!
+
+  """To delete multiple Checklists"""
+  deleteChecklists(ids: [String!]!): Boolean!
 
   """To delete CommonCode"""
   deleteCommonCode(id: String!): Boolean!
@@ -2010,6 +2157,12 @@ type Mutation {
   """To delete multiple Projects"""
   deleteProjects(ids: [String!]!): Boolean!
 
+  """To delete Resource"""
+  deleteResource(id: String!): Boolean!
+
+  """To delete multiple Resources"""
+  deleteResources(ids: [String!]!): Boolean!
+
   """To delete role"""
   deleteRole(id: String!): Boolean!
 
@@ -2091,11 +2244,20 @@ type Mutation {
   """To import multiple BuildingComplexes"""
   importBuildingComplexes(buildingComplexes: [BuildingComplexPatch!]!): Boolean!
 
+  """To import multiple BuildingInspections"""
+  importBuildingInspections(buildingInspections: [BuildingInspectionPatch!]!): Boolean!
+
   """To import multiple BuildingLevels"""
   importBuildingLevels(buildingLevels: [BuildingLevelPatch!]!): Boolean!
 
   """To import multiple Buildings"""
   importBuildings(buildings: [BuildingPatch!]!): Boolean!
+
+  """To import multiple CheckItems"""
+  importCheckItems(checkItems: [CheckItemPatch!]!): Boolean!
+
+  """To import multiple Checklists"""
+  importChecklists(checklists: [ChecklistPatch!]!): Boolean!
 
   """To import multiple CommonCodeDetails"""
   importCommonCodeDetails(commonCodeDetails: [CommonCodeDetailPatch!]!): Boolean!
@@ -2141,6 +2303,9 @@ type Mutation {
 
   """To import multiple Projects"""
   importProjects(projects: [ProjectPatch!]!): Boolean!
+
+  """To import multiple Resources"""
+  importResources(resources: [ResourcePatch!]!): Boolean!
 
   """To import multiple scenarios"""
   importScenarios(scenarios: [ScenarioPatch!]!): Boolean!
@@ -2260,8 +2425,17 @@ type Mutation {
   """To modify BuildingComplex information"""
   updateBuildingComplex(id: String!, patch: BuildingComplexPatch!): BuildingComplex!
 
+  """To modify BuildingInspection information"""
+  updateBuildingInspection(id: String!, patch: BuildingInspectionPatch!): BuildingInspection!
+
   """To modify BuildingLevel information"""
   updateBuildingLevel(id: String!, patch: BuildingLevelPatch!): BuildingLevel!
+
+  """To modify CheckItem information"""
+  updateCheckItem(id: String!, patch: CheckItemPatch!): CheckItem!
+
+  """To modify Checklist information"""
+  updateChecklist(id: String!, patch: ChecklistPatch!): Checklist!
 
   """To modify CommonCode information"""
   updateCommonCode(name: String!, patch: CommonCodePatch!): CommonCode!
@@ -2333,8 +2507,17 @@ type Mutation {
   """To modify multiple BuildingComplexes' information"""
   updateMultipleBuildingComplex(patches: [BuildingComplexPatch!]!): [BuildingComplex!]!
 
+  """To modify multiple BuildingInspections' information"""
+  updateMultipleBuildingInspection(patches: [BuildingInspectionPatch!]!): [BuildingInspection!]!
+
   """To modify multiple BuildingLevels' information"""
   updateMultipleBuildingLevel(patches: [BuildingLevelPatch!]!): [BuildingLevel!]!
+
+  """To modify multiple CheckItems' information"""
+  updateMultipleCheckItem(patches: [CheckItemPatch!]!): [CheckItem!]!
+
+  """To modify multiple Checklists' information"""
+  updateMultipleChecklist(patches: [ChecklistPatch!]!): [Checklist!]!
 
   """To modify multiple CommonCodes' information"""
   updateMultipleCommonCode(patches: [CommonCodePatch!]!): [CommonCode!]!
@@ -2380,6 +2563,9 @@ type Mutation {
 
   """To modify multiple PrinterDevices' information"""
   updateMultiplePrinterDevice(patches: [PrinterDevicePatch!]!): [PrinterDevice!]!
+
+  """To modify multiple Resources' information"""
+  updateMultipleResource(patches: [ResourcePatch!]!): [Resource!]!
 
   """To modify multiple scenarios' information"""
   updateMultipleScenario(patches: [ScenarioPatch!]!): [Scenario!]!
@@ -2428,6 +2614,9 @@ type Mutation {
 
   """To modify privilege information"""
   updatePrivilege(category: String!, name: String!, patch: PrivilegePatch!): Privilege!
+
+  """To modify Resource information"""
+  updateResource(id: String!, patch: ResourcePatch!): Resource!
 
   """To modify role information"""
   updateRole(id: String!, patch: RolePatch!): Role!
@@ -2538,12 +2727,39 @@ input NewBoardTemplate {
   visibility: String!
 }
 
+input NewBuildingInspection {
+  active: Boolean
+  description: String
+  name: String!
+  params: String
+  state: BuildingInspectionStatus
+  thumbnail: Upload
+}
+
 input NewBuildingLevel {
   active: Boolean
   description: String
   name: String!
   params: String
   state: BuildingLevelStatus
+  thumbnail: Upload
+}
+
+input NewCheckItem {
+  active: Boolean
+  description: String
+  name: String!
+  params: String
+  state: CheckItemStatus
+  thumbnail: Upload
+}
+
+input NewChecklist {
+  active: Boolean
+  description: String
+  name: String!
+  params: String
+  state: ChecklistStatus
   thumbnail: Upload
 }
 
@@ -2924,6 +3140,15 @@ input NewProject {
   name: String!
 }
 
+input NewResource {
+  active: Boolean
+  description: String
+  name: String!
+  params: String
+  state: ResourceStatus
+  thumbnail: Upload
+}
+
 input NewRole {
   description: String
   name: String!
@@ -2962,7 +3187,6 @@ input NewTask {
   description: String
   name: String!
   params: String
-  state: TaskStatus
   thumbnail: Upload
 }
 
@@ -3572,6 +3796,12 @@ type Query {
   """To fetch a BuildingComplex"""
   buildingBuildingComplex(id: String!): BuildingComplex
 
+  """To fetch a BuildingInspection"""
+  buildingInspection(id: String!): BuildingInspection
+
+  """To fetch multiple BuildingInspections"""
+  buildingInspections(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): BuildingInspectionList!
+
   """To fetch a BuildingLevel"""
   buildingLevel(id: String!): BuildingLevel
 
@@ -3585,6 +3815,12 @@ type Query {
   """To check if system would provide default password to create new user"""
   checkDefaultPassword: Boolean!
 
+  """To fetch a CheckItem"""
+  checkItem(id: String!): CheckItem
+
+  """To fetch multiple CheckItems"""
+  checkItems(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): CheckItemList!
+
   """To check if system would provide default password to create new user"""
   checkResettablePasswordToDefault: Boolean!
 
@@ -3596,6 +3832,12 @@ type Query {
 
   """..."""
   checkUserExistence(email: EmailAddress!): Boolean!
+
+  """To fetch a Checklist"""
+  checklist(id: String!): Checklist
+
+  """To fetch multiple Checklists"""
+  checklists(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): ChecklistList!
 
   """To fetch common approval lines"""
   commonApprovalLines(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): ApprovalLineList!
@@ -3833,6 +4075,12 @@ type Query {
   """To fetch multiple Projects"""
   projects(projectName: String!): ProjectList!
 
+  """To fetch a Resource"""
+  resource(id: String!): Resource
+
+  """To fetch multiple Resources"""
+  resources(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): ResourceList!
+
   """To fetch role"""
   role(name: String!): Role!
 
@@ -3927,6 +4175,45 @@ type RecipientItem {
   recipient: OrgMemberTarget
   type: OrgMemberTargetType
   value: String
+}
+
+"""Entity for Resource"""
+type Resource {
+  active: Boolean
+  createdAt: DateTimeISO
+  creator: User
+  deletedAt: DateTimeISO
+  description: String
+  domain: Domain
+  id: ID!
+  name: String
+  params: String
+  state: String
+  thumbnail: String
+  updatedAt: DateTimeISO
+  updater: User
+  version: Float
+}
+
+type ResourceList {
+  items: [Resource!]!
+  total: Int!
+}
+
+input ResourcePatch {
+  active: Boolean
+  cuFlag: String
+  description: String
+  id: ID
+  name: String
+  state: ResourceStatus
+  thumbnail: Upload
+}
+
+"""state enumeration of a resource"""
+enum ResourceStatus {
+  STATUS_A
+  STATUS_B
 }
 
 type Role {
@@ -4189,21 +4476,19 @@ type Subscription {
 
 """Entity for Task"""
 type Task {
-  active: Boolean
   createdAt: DateTimeISO
   creator: User
   deletedAt: DateTimeISO
   dependencies: [Task!]
-  description: String
   domain: Domain
   endDate: DateTimeISO
   id: ID!
   name: String
-  params: String
+  parentTaskId: String
   project: Project!
   startDate: DateTimeISO
-  state: String
   thumbnail: String
+  type: String
   updatedAt: DateTimeISO
   updater: User
 }
@@ -4219,14 +4504,7 @@ input TaskPatch {
   description: String
   id: ID
   name: String
-  state: TaskStatus
   thumbnail: Upload
-}
-
-"""state enumeration of a task"""
-enum TaskStatus {
-  STATUS_A
-  STATUS_B
 }
 
 type TaskType {

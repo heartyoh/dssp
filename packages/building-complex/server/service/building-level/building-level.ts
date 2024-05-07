@@ -12,61 +12,26 @@ import {
 } from 'typeorm'
 import { ObjectType, Field, Int, ID, registerEnumType } from 'type-graphql'
 
-import { Domain } from '@things-factory/shell'
 import { User } from '@things-factory/auth-base'
 import { Building } from '../building/building'
 
-export enum BuildingLevelStatus {
-  STATUS_A = 'STATUS_A',
-  STATUS_B = 'STATUS_B'
-}
-
-registerEnumType(BuildingLevelStatus, {
-  name: 'BuildingLevelStatus',
-  description: 'state enumeration of a buildingLevel'
-})
-
 @Entity()
-@Index('ix_building_level_0', (buildingLevel: BuildingLevel) => [buildingLevel.domain, buildingLevel.name], {
-  unique: true,
+@Index('ix_building_level_0', (buildingLevel: BuildingLevel) => [buildingLevel.building], {
   where: '"deleted_at" IS NULL'
 })
-@ObjectType({ description: 'Entity for BuildingLevel' })
+@ObjectType({ description: '층 정보' })
 export class BuildingLevel {
   @PrimaryGeneratedColumn('uuid')
   @Field(type => ID)
   readonly id: string
 
-  @ManyToOne(type => Domain)
-  @Field({ nullable: true })
-  domain?: Domain
+  @Column({ nullable: false, comment: '층 번호 (예: 1, -1 등)' })
+  @Field({ nullable: false })
+  number: number
 
-  @RelationId((buildingLevel: BuildingLevel) => buildingLevel.domain)
-  domainId?: string
-
-  @Column()
+  @Column({ nullable: true, comment: '층 도면 이미지 링크' })
   @Field({ nullable: true })
-  name?: string
-
-  @Column({ nullable: true })
-  @Field({ nullable: true })
-  description?: string
-
-  @Column({ nullable: true })
-  @Field({ nullable: true })
-  number: number // 층 번호 (예: 1, -1 등)
-
-  @Column({ nullable: true })
-  @Field({ nullable: true })
-  active?: boolean
-
-  @Column({ nullable: true })
-  @Field({ nullable: true })
-  state?: BuildingLevelStatus
-
-  @Column({ nullable: true })
-  @Field({ nullable: true })
-  params?: string
+  planImage: string
 
   @Field(() => Building)
   @ManyToOne(() => Building, building => building.buildingLevels)
@@ -97,7 +62,4 @@ export class BuildingLevel {
 
   @RelationId((buildingLevel: BuildingLevel) => buildingLevel.updater)
   updaterId?: string
-
-  @Field(type => String, { nullable: true })
-  thumbnail?: string
 }

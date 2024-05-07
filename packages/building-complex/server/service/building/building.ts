@@ -12,28 +12,17 @@ import {
 } from 'typeorm'
 import { ObjectType, Field, Int, ID, registerEnumType } from 'type-graphql'
 
-import { Domain } from '@things-factory/shell'
 import { User } from '@things-factory/auth-base'
 import { BuildingComplex } from '../building-complex/building-complex'
 import { BuildingLevel } from '../building-level/building-level'
 
 @Entity()
-@Index('ix_building_0', (building: Building) => [building.buildingComplex, building.name], {
-  unique: true,
-  where: '"deleted_at" IS NULL'
-})
+@Index('ix_building_0', (building: Building) => [building.buildingComplex], { where: '"deleted_at" IS NULL' })
 @ObjectType({ description: '동 정보' })
 export class Building {
   @PrimaryGeneratedColumn('uuid')
   @Field(type => ID)
   readonly id: string
-
-  @ManyToOne(type => Domain)
-  @Field({ nullable: true })
-  domain?: Domain
-
-  @RelationId((building: Building) => building.domain)
-  domainId?: string
 
   @Column({ nullable: true, comment: '동 이름(101, 102...)' })
   @Field({ nullable: true })
@@ -43,9 +32,16 @@ export class Building {
   @Field({ nullable: true })
   floorCount: number
 
+  @Column({ nullable: true, comment: '동 도면 이미지 링크' })
+  @Field({ nullable: true })
+  planImage: string
+
   @Field(() => BuildingComplex)
   @ManyToOne(() => BuildingComplex, buildingComplex => buildingComplex.buildings)
   buildingComplex: BuildingComplex
+
+  @RelationId((building: Building) => building.buildingComplex)
+  buildingComplexId?: string
 
   @Field(() => [BuildingLevel], { nullable: true })
   @OneToMany(() => BuildingLevel, buildingLevel => buildingLevel.building)
