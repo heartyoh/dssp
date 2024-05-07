@@ -10,7 +10,10 @@ import { NewBuildingLevel, BuildingLevelPatch } from './building-level-type'
 export class BuildingLevelMutation {
   @Directive('@transaction')
   @Mutation(returns => BuildingLevel, { description: 'To create new BuildingLevel' })
-  async createBuildingLevel(@Arg('buildingLevel') buildingLevel: NewBuildingLevel, @Ctx() context: ResolverContext): Promise<BuildingLevel> {
+  async createBuildingLevel(
+    @Arg('buildingLevel') buildingLevel: NewBuildingLevel,
+    @Ctx() context: ResolverContext
+  ): Promise<BuildingLevel> {
     const { domain, user, tx } = context.state
 
     const result = await tx.getRepository(BuildingLevel).save({
@@ -19,20 +22,6 @@ export class BuildingLevelMutation {
       creator: user,
       updater: user
     })
-
-    if (buildingLevel.thumbnail) {
-      await createAttachment(
-        null,
-        {
-          attachment: {
-            file: buildingLevel.thumbnail,
-            refType: BuildingLevel.name,
-            refBy: result.id
-          }
-        },
-        context
-      )
-    }
 
     return result
   }
@@ -48,7 +37,7 @@ export class BuildingLevelMutation {
 
     const repository = tx.getRepository(BuildingLevel)
     const buildingLevel = await repository.findOne({
-      where: { domain: { id: domain.id }, id }
+      where: { id }
     })
 
     const result = await repository.save({
@@ -56,21 +45,6 @@ export class BuildingLevelMutation {
       ...patch,
       updater: user
     })
-
-    if (patch.thumbnail) {
-      await deleteAttachmentsByRef(null, { refBys: [result.id] }, context)
-      await createAttachment(
-        null,
-        {
-          attachment: {
-            file: patch.thumbnail,
-            refType: BuildingLevel.name,
-            refBy: result.id
-          }
-        },
-        context
-      )
-    }
 
     return result
   }
@@ -99,20 +73,6 @@ export class BuildingLevelMutation {
           updater: user
         })
 
-        if (newRecord.thumbnail) {
-          await createAttachment(
-            null,
-            {
-              attachment: {
-                file: newRecord.thumbnail,
-                refType: BuildingLevel.name,
-                refBy: result.id
-              }
-            },
-            context
-          )
-        }
-
         results.push({ ...result, cuFlag: '+' })
       }
     }
@@ -128,21 +88,6 @@ export class BuildingLevelMutation {
           updater: user
         })
 
-        if (updateRecord.thumbnail) {
-          await deleteAttachmentsByRef(null, { refBys: [result.id] }, context)
-          await createAttachment(
-            null,
-            {
-              attachment: {
-                file: updateRecord.thumbnail,
-                refType: BuildingLevel.name,
-                refBy: result.id
-              }
-            },
-            context
-          )
-        }
-
         results.push({ ...result, cuFlag: 'M' })
       }
     }
@@ -155,7 +100,7 @@ export class BuildingLevelMutation {
   async deleteBuildingLevel(@Arg('id') id: string, @Ctx() context: ResolverContext): Promise<boolean> {
     const { domain, tx } = context.state
 
-    await tx.getRepository(BuildingLevel).delete({ domain: { id: domain.id }, id })
+    await tx.getRepository(BuildingLevel).delete({ id })
     await deleteAttachmentsByRef(null, { refBys: [id] }, context)
 
     return true
@@ -170,7 +115,6 @@ export class BuildingLevelMutation {
     const { domain, tx } = context.state
 
     await tx.getRepository(BuildingLevel).delete({
-      domain: { id: domain.id },
       id: In(ids)
     })
 
@@ -189,7 +133,9 @@ export class BuildingLevelMutation {
 
     await Promise.all(
       buildingLevels.map(async (buildingLevel: BuildingLevelPatch) => {
-        const createdBuildingLevel: BuildingLevel = await tx.getRepository(BuildingLevel).save({ domain, ...buildingLevel })
+        const createdBuildingLevel: BuildingLevel = await tx
+          .getRepository(BuildingLevel)
+          .save({ domain, ...buildingLevel })
       })
     )
 

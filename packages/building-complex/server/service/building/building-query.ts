@@ -12,7 +12,7 @@ export class BuildingQuery {
     const { domain } = context.state
 
     return await getRepository(Building).findOne({
-      where: { domain: { id: domain.id }, id }
+      where: { id }
     })
   }
 
@@ -36,18 +36,12 @@ export class BuildingQuery {
   async thumbnail(@Root() building: Building): Promise<string | undefined> {
     const attachment: Attachment = await getRepository(Attachment).findOne({
       where: {
-        domain: { id: building.domainId },
         refType: Building.name,
         refBy: building.id
       }
     })
 
     return attachment?.fullpath
-  }
-
-  @FieldResolver(type => Domain)
-  async domain(@Root() building: Building): Promise<Domain> {
-    return await getRepository(Domain).findOneBy({ id: building.domainId })
   }
 
   @FieldResolver(type => User)

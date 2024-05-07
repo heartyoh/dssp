@@ -45,7 +45,7 @@ export class BuildingInspection {
   @Field({ nullable: true })
   indexY?: number
 
-  @Column({ nullable: true, comment: '상태(완료: completed, 경고: warning, 문의: question)' })
+  @Column({ nullable: true, comment: '상태(completed: 완료, warning: 경고, question: 문의)' })
   @Field({ nullable: true })
   type?: InspectionType
 

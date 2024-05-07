@@ -33,7 +33,7 @@ export class BuildingInspectionAttachment {
   @RelationId(
     (buildingInspectionAttachment: BuildingInspectionAttachment) => buildingInspectionAttachment.buildingInspection
   )
-  buildingLevelId?: string
+  buildingInspectionId?: string
 
   @CreateDateColumn()
   @Field({ nullable: true })

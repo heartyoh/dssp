@@ -12,7 +12,7 @@ export class BuildingLevelQuery {
     const { domain } = context.state
 
     return await getRepository(BuildingLevel).findOne({
-      where: { domain: { id: domain.id }, id }
+      where: { id }
     })
   }
 
@@ -36,18 +36,12 @@ export class BuildingLevelQuery {
   async thumbnail(@Root() buildingLevel: BuildingLevel): Promise<string | undefined> {
     const attachment: Attachment = await getRepository(Attachment).findOne({
       where: {
-        domain: { id: buildingLevel.domainId },
         refType: BuildingLevel.name,
         refBy: buildingLevel.id
       }
     })
 
     return attachment?.fullpath
-  }
-
-  @FieldResolver(type => Domain)
-  async domain(@Root() buildingLevel: BuildingLevel): Promise<Domain> {
-    return await getRepository(Domain).findOneBy({ id: buildingLevel.domainId })
   }
 
   @FieldResolver(type => User)

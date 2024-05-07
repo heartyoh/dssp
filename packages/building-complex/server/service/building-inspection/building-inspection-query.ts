@@ -12,12 +12,15 @@ export class BuildingInspectionQuery {
     const { domain } = context.state
 
     return await getRepository(BuildingInspection).findOne({
-      where: { domain: { id: domain.id }, id }
+      where: { id }
     })
   }
 
   @Query(returns => BuildingInspectionList, { description: 'To fetch multiple BuildingInspections' })
-  async buildingInspections(@Args() params: ListParam, @Ctx() context: ResolverContext): Promise<BuildingInspectionList> {
+  async buildingInspections(
+    @Args() params: ListParam,
+    @Ctx() context: ResolverContext
+  ): Promise<BuildingInspectionList> {
     const { domain } = context.state
 
     const queryBuilder = getQueryBuilderFromListParams({
@@ -36,18 +39,12 @@ export class BuildingInspectionQuery {
   async thumbnail(@Root() buildingInspection: BuildingInspection): Promise<string | undefined> {
     const attachment: Attachment = await getRepository(Attachment).findOne({
       where: {
-        domain: { id: buildingInspection.domainId },
         refType: BuildingInspection.name,
         refBy: buildingInspection.id
       }
     })
 
     return attachment?.fullpath
-  }
-
-  @FieldResolver(type => Domain)
-  async domain(@Root() buildingInspection: BuildingInspection): Promise<Domain> {
-    return await getRepository(Domain).findOneBy({ id: buildingInspection.domainId })
   }
 
   @FieldResolver(type => User)

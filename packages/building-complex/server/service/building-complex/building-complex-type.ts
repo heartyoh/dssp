@@ -30,7 +30,7 @@ export class BuildingComplexPatch {
   architect: string
 
   @Field({ nullable: true })
-  mainPhoto?: string
+  mainPhoto?: FileUpload
 
   @Field({ nullable: false })
   constructionType: string

@@ -19,7 +19,7 @@ export class BuildingMutation {
 
     const repository = tx.getRepository(Building)
     const building = await repository.findOne({
-      where: { domain: { id: domain.id }, id }
+      where: { id }
     })
 
     const result = await repository.save({
@@ -82,7 +82,7 @@ export class BuildingMutation {
   async deleteBuilding(@Arg('id') id: string, @Ctx() context: ResolverContext): Promise<boolean> {
     const { domain, tx } = context.state
 
-    await tx.getRepository(Building).delete({ domain: { id: domain.id }, id })
+    await tx.getRepository(Building).delete({ id })
     await deleteAttachmentsByRef(null, { refBys: [id] }, context)
 
     return true
@@ -97,7 +97,6 @@ export class BuildingMutation {
     const { domain, tx } = context.state
 
     await tx.getRepository(Building).delete({
-      domain: { id: domain.id },
       id: In(ids)
     })
 

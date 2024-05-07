@@ -4,7 +4,7 @@ import { ObjectType, Field, InputType, Int, ID, registerEnumType } from 'type-gr
 
 import { ObjectRef, ScalarObject } from '@things-factory/shell'
 
-import { BuildingInspection, BuildingInspectionStatus } from './building-inspection'
+import { BuildingInspection } from './building-inspection'
 
 @InputType()
 export class NewBuildingInspection {
@@ -14,17 +14,11 @@ export class NewBuildingInspection {
   @Field({ nullable: true })
   description?: string
 
-  @Field(type => BuildingInspectionStatus, { nullable: true })
-  state?: BuildingInspectionStatus
-
   @Field({ nullable: true })
   active?: boolean
 
   @Field({ nullable: true })
   params?: string
-
-  @Field(type => GraphQLUpload, { nullable: true })
-  thumbnail?: FileUpload
 }
 
 @InputType()
@@ -38,14 +32,8 @@ export class BuildingInspectionPatch {
   @Field({ nullable: true })
   description?: string
 
-  @Field(type => BuildingInspectionStatus, { nullable: true })
-  state?: BuildingInspectionStatus
-
   @Field({ nullable: true })
   active?: boolean
-
-  @Field(type => GraphQLUpload, { nullable: true })
-  thumbnail?: FileUpload
 
   @Field({ nullable: true })
   cuFlag?: string

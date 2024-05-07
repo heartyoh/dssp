@@ -10,7 +10,10 @@ import { NewBuildingInspection, BuildingInspectionPatch } from './building-inspe
 export class BuildingInspectionMutation {
   @Directive('@transaction')
   @Mutation(returns => BuildingInspection, { description: 'To create new BuildingInspection' })
-  async createBuildingInspection(@Arg('buildingInspection') buildingInspection: NewBuildingInspection, @Ctx() context: ResolverContext): Promise<BuildingInspection> {
+  async createBuildingInspection(
+    @Arg('buildingInspection') buildingInspection: NewBuildingInspection,
+    @Ctx() context: ResolverContext
+  ): Promise<BuildingInspection> {
     const { domain, user, tx } = context.state
 
     const result = await tx.getRepository(BuildingInspection).save({
@@ -19,20 +22,6 @@ export class BuildingInspectionMutation {
       creator: user,
       updater: user
     })
-
-    if (buildingInspection.thumbnail) {
-      await createAttachment(
-        null,
-        {
-          attachment: {
-            file: buildingInspection.thumbnail,
-            refType: BuildingInspection.name,
-            refBy: result.id
-          }
-        },
-        context
-      )
-    }
 
     return result
   }
@@ -48,7 +37,7 @@ export class BuildingInspectionMutation {
 
     const repository = tx.getRepository(BuildingInspection)
     const buildingInspection = await repository.findOne({
-      where: { domain: { id: domain.id }, id }
+      where: { id }
     })
 
     const result = await repository.save({
@@ -56,21 +45,6 @@ export class BuildingInspectionMutation {
       ...patch,
       updater: user
     })
-
-    if (patch.thumbnail) {
-      await deleteAttachmentsByRef(null, { refBys: [result.id] }, context)
-      await createAttachment(
-        null,
-        {
-          attachment: {
-            file: patch.thumbnail,
-            refType: BuildingInspection.name,
-            refBy: result.id
-          }
-        },
-        context
-      )
-    }
 
     return result
   }
@@ -99,20 +73,6 @@ export class BuildingInspectionMutation {
           updater: user
         })
 
-        if (newRecord.thumbnail) {
-          await createAttachment(
-            null,
-            {
-              attachment: {
-                file: newRecord.thumbnail,
-                refType: BuildingInspection.name,
-                refBy: result.id
-              }
-            },
-            context
-          )
-        }
-
         results.push({ ...result, cuFlag: '+' })
       }
     }
@@ -128,21 +88,6 @@ export class BuildingInspectionMutation {
           updater: user
         })
 
-        if (updateRecord.thumbnail) {
-          await deleteAttachmentsByRef(null, { refBys: [result.id] }, context)
-          await createAttachment(
-            null,
-            {
-              attachment: {
-                file: updateRecord.thumbnail,
-                refType: BuildingInspection.name,
-                refBy: result.id
-              }
-            },
-            context
-          )
-        }
-
         results.push({ ...result, cuFlag: 'M' })
       }
     }
@@ -155,7 +100,7 @@ export class BuildingInspectionMutation {
   async deleteBuildingInspection(@Arg('id') id: string, @Ctx() context: ResolverContext): Promise<boolean> {
     const { domain, tx } = context.state
 
-    await tx.getRepository(BuildingInspection).delete({ domain: { id: domain.id }, id })
+    await tx.getRepository(BuildingInspection).delete({ id })
     await deleteAttachmentsByRef(null, { refBys: [id] }, context)
 
     return true
@@ -170,7 +115,6 @@ export class BuildingInspectionMutation {
     const { domain, tx } = context.state
 
     await tx.getRepository(BuildingInspection).delete({
-      domain: { id: domain.id },
       id: In(ids)
     })
 
@@ -189,7 +133,9 @@ export class BuildingInspectionMutation {
 
     await Promise.all(
       buildingInspections.map(async (buildingInspection: BuildingInspectionPatch) => {
-        const createdBuildingInspection: BuildingInspection = await tx.getRepository(BuildingInspection).save({ domain, ...buildingInspection })
+        const createdBuildingInspection: BuildingInspection = await tx
+          .getRepository(BuildingInspection)
+          .save({ domain, ...buildingInspection })
       })
     )
 
