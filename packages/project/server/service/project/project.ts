@@ -9,15 +9,15 @@ import {
   ManyToOne,
   OneToOne,
   OneToMany,
-  PrimaryGeneratedColumn,
-  VersionColumn
+  JoinColumn,
+  PrimaryGeneratedColumn
 } from 'typeorm'
-import { ObjectType, Field, Int, ID, registerEnumType } from 'type-graphql'
+import { ObjectType, Field, ID, registerEnumType } from 'type-graphql'
 
 import { Domain, roundTransformer } from '@things-factory/shell'
 import { User } from '@things-factory/auth-base'
 import { Task } from '../task/task'
-import { BuildingComplex } from '@dssp/building-complex/dist-server'
+import { BuildingComplex } from '@dssp/building-complex'
 
 export enum ProjectStatus {
   'PROCEEDING' = '10',
@@ -50,8 +50,8 @@ export class Project {
   @Field({ nullable: false })
   name?: string
 
-  @Column({ nullable: true, default: ProjectStatus.PROCEEDING, comment: '프로젝트 상태 (10: 진행중, 20: 완료)' })
-  @Field({ nullable: true })
+  @Column({ nullable: false, default: ProjectStatus.PROCEEDING, comment: '프로젝트 상태 (10: 진행중, 20: 완료)' })
+  @Field({ nullable: false })
   state?: ProjectStatus
 
   @Column({ nullable: true, comment: '착공일정' })
@@ -87,6 +87,7 @@ export class Project {
   structuralSafetyRate?: number
 
   @OneToOne(type => BuildingComplex)
+  @JoinColumn()
   @Field()
   buildingComplex?: BuildingComplex
 

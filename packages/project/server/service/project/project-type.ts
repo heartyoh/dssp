@@ -3,7 +3,7 @@ import { Project } from './project'
 
 @InputType()
 export class NewProject {
-  @Field()
+  @Field({ nullable: false })
   name: string
 }
 

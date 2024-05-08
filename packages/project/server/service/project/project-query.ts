@@ -19,14 +19,14 @@ export class ProjectQuery {
     })
   }
 
-  @Query(returns => ProjectList, { description: 'To fetch multiple Projects' })
+  @Query(returns => ProjectList, { description: '프로젝트 리스트' })
   async projects(@Arg('projectName') projectName: string, @Ctx() context: ResolverContext): Promise<ProjectList> {
     const { domain } = context.state
     // const { page = 1, limit = 0 } = params.pagination || {}
 
     const queryBuilder = await getRepository(Project)
       .createQueryBuilder('p')
-      .innerJoinAndSelect('building_complexes', 'bc', 'p.id = bc.project_id')
+      .innerJoinAndSelect('p.buildingComplex', 'bc')
       .where('p.domain = :domain', { domain: domain.id })
       .orderBy('p.created_at', 'DESC')
     // .offset((page - 1) * limit)
@@ -34,7 +34,7 @@ export class ProjectQuery {
 
     if (projectName) {
       projectName = `%${projectName}%`
-      queryBuilder.andWhere('p.name ILIKE :projectName', { projectName })
+      queryBuilder.andWhere('p.name LIKE :projectName', { projectName })
     }
 
     console.log('queryBuilder : ', await queryBuilder.getQuery())

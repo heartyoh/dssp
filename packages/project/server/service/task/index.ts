@@ -4,4 +4,3 @@ import { TaskMutation } from './task-mutation'
 
 export const entities = [Task]
 export const resolvers = [TaskQuery, TaskMutation]
-export const subscribers = []

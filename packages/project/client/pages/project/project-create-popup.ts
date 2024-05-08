@@ -1,7 +1,6 @@
 import '@material/mwc-icon'
 import '@operato/data-grist'
 
-import { CommonHeaderStyles, ScrollbarStyles } from '@operato/styles'
 import { css, html, LitElement } from 'lit'
 import { customElement, property, query, state } from 'lit/decorators.js'
 import { client } from '@operato/graphql'
@@ -12,8 +11,6 @@ import gql from 'graphql-tag'
 @customElement('project-create-popup')
 export class ProjectCreatePopup extends localize(i18next)(LitElement) {
   static styles = [
-    ScrollbarStyles,
-    CommonHeaderStyles,
     css`
       :host {
         display: flex;
@@ -49,22 +46,25 @@ export class ProjectCreatePopup extends localize(i18next)(LitElement) {
     `
   }
 
+  // 프로젝트 생성
   private async _createProject() {
-    console.log('this.projectName : ', this.projectName)
-
     const response = await client.mutate({
       mutation: gql`
-        mutation CreateProject($projectName: String!) {
-          response: createProject(projectName: $projectName)
+        mutation CreateProject($project: NewProject!) {
+          response: createProject(project: $project) {
+            id
+          }
         }
       `,
       variables: {
-        projectName: this.projectName
+        project: {
+          name: this.projectName
+        }
       }
     })
 
     if (!response.errors) {
-      notify({ message: i18next.t('text.info_x_successfully', { x: i18next.t('text.save') }) })
+      notify({ message: '저장되었습니다.' })
     }
 
     // 설정 정보 리스트 다시 조회

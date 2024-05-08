@@ -7,18 +7,10 @@ export * from './project/project'
 
 /* IMPORT ENTITIES AND RESOLVERS */
 import { entities as ResourceEntities, resolvers as ResourceResolvers } from './resource'
-import {
-  entities as CheckItemEntities,
-  resolvers as CheckItemResolvers,
-  subscribers as CheckItemSubscribers
-} from './check-item'
+import { entities as CheckItemEntities, resolvers as CheckItemResolvers } from './check-item'
 import { entities as ChecklistEntities, resolvers as ChecklistResolvers } from './checklist'
-import { entities as TaskEntities, resolvers as TaskResolvers, subscribers as TaskSubscribers } from './task'
-import {
-  entities as ProjectEntities,
-  resolvers as ProjectResolvers,
-  subscribers as ProjectSubscribers
-} from './project'
+import { entities as TaskEntities, resolvers as TaskResolvers } from './task'
+import { entities as ProjectEntities, resolvers as ProjectResolvers } from './project'
 
 export const entities = [
   /* ENTITIES */
@@ -27,13 +19,6 @@ export const entities = [
   ...ChecklistEntities,
   ...TaskEntities,
   ...ProjectEntities
-]
-
-export const subscribers = [
-  /* SUBSCRIBERS */
-  ...CheckItemSubscribers,
-  ...TaskSubscribers,
-  ...ProjectSubscribers
 ]
 
 export const schema = {

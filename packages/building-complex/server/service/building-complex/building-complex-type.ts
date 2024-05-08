@@ -1,10 +1,4 @@
-import type { FileUpload } from 'graphql-upload/GraphQLUpload.js'
-import GraphQLUpload from 'graphql-upload/GraphQLUpload.js'
-import { ObjectType, Field, InputType, Int, ID, registerEnumType } from 'type-graphql'
-
-import { ObjectRef, ScalarObject } from '@things-factory/shell'
-
-import { BuildingComplex } from './building-complex'
+import { Field, InputType } from 'type-graphql'
 
 @InputType()
 export class BuildingComplexPatch {
@@ -30,7 +24,7 @@ export class BuildingComplexPatch {
   architect: string
 
   @Field({ nullable: true })
-  mainPhoto?: FileUpload
+  mainPhoto?: string
 
   @Field({ nullable: false })
   constructionType: string

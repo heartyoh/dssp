@@ -453,10 +453,10 @@ type Building {
   createdAt: DateTimeISO
   creator: User
   deletedAt: DateTimeISO
-  domain: Domain
   floorCount: Float
   id: ID!
   name: String
+  planImage: String
   thumbnail: String!
   updatedAt: DateTimeISO
   updater: User
@@ -504,20 +504,30 @@ input BuildingComplexPatch {
 
 """시공 검측 (층별 도면의 검측 리스트)"""
 type BuildingInspection {
-  active: Boolean
+  buildingInspectionAttachments: [BuildingInspectionAttachment!]
+  buildingLevel: BuildingLevel
   createdAt: DateTimeISO
   creator: User
   deletedAt: DateTimeISO
-  description: String
-  domain: Domain
+  detail: String
   id: ID!
-  name: String
-  params: String
-  state: String
-  thumbnail: String
+  indexX: Float
+  indexY: Float
+  thumbnail: String!
+  type: String
   updatedAt: DateTimeISO
   updater: User
-  version: Float
+}
+
+"""시공 검측 첨부 파일"""
+type BuildingInspectionAttachment {
+  buildingInspection: BuildingInspection
+  createdAt: DateTimeISO
+  creator: User
+  deletedAt: DateTimeISO
+  id: ID!
+  updatedAt: DateTimeISO
+  updater: User
 }
 
 type BuildingInspectionList {
@@ -531,31 +541,19 @@ input BuildingInspectionPatch {
   description: String
   id: ID
   name: String
-  state: BuildingInspectionStatus
-  thumbnail: Upload
 }
 
-"""state enumeration of a buildingInspection"""
-enum BuildingInspectionStatus {
-  STATUS_A
-  STATUS_B
-}
-
-"""Entity for BuildingLevel"""
+"""층 정보"""
 type BuildingLevel {
-  active: Boolean
   building: Building!
+  buildingInspections: [BuildingInspection!]
   createdAt: DateTimeISO
   creator: User
   deletedAt: DateTimeISO
-  description: String
-  domain: Domain
   id: ID!
-  name: String
-  number: Float
-  params: String
-  state: String
-  thumbnail: String
+  number: Float!
+  planImage: String
+  thumbnail: String!
   updatedAt: DateTimeISO
   updater: User
 }
@@ -571,14 +569,6 @@ input BuildingLevelPatch {
   description: String
   id: ID
   name: String
-  state: BuildingLevelStatus
-  thumbnail: Upload
-}
-
-"""state enumeration of a buildingLevel"""
-enum BuildingLevelStatus {
-  STATUS_A
-  STATUS_B
 }
 
 type BuildingList {
@@ -600,23 +590,20 @@ type ChatCompletionOutput {
   message: String
 }
 
-"""Entity for CheckItem"""
+"""체크 리스트 항목"""
 type CheckItem {
-  active: Boolean
   checklist: Checklist
   createdAt: DateTimeISO
   creator: User
   deletedAt: DateTimeISO
-  description: String
-  domain: Domain
   id: ID!
+  measuresToBeTaken: String
   name: String
-  params: String
-  state: String
-  thumbnail: String
+  reference: String
+  result: Boolean
+  thumbnail: String!
   updatedAt: DateTimeISO
   updater: User
-  version: Float
 }
 
 type CheckItemList {
@@ -630,32 +617,29 @@ input CheckItemPatch {
   description: String
   id: ID
   name: String
-  state: CheckItemStatus
-  thumbnail: Upload
 }
 
-"""state enumeration of a checkItem"""
-enum CheckItemStatus {
-  STATUS_A
-  STATUS_B
-}
-
-"""Entity for Checklist"""
+"""체크리스트"""
 type Checklist {
-  active: Boolean
+  checkItems: CheckItem!
+  constructionInspectorDate: DateTimeISO
   createdAt: DateTimeISO
   creator: User
   deletedAt: DateTimeISO
-  description: String
-  domain: Domain
+  documentNo: String
   id: ID!
+  location: String
   name: String
-  params: String
-  state: String
-  thumbnail: String
+  overallConstructionSignature: String
+  overallSupervisorySignature: String
+  part: String
+  supervisorInspectorDate: DateTimeISO
+  task: Task!
+  taskConstructionSignature: String
+  taskSupervisorySignature: String
+  thumbnail: String!
   updatedAt: DateTimeISO
   updater: User
-  version: Float
 }
 
 type ChecklistList {
@@ -669,14 +653,6 @@ input ChecklistPatch {
   description: String
   id: ID
   name: String
-  state: ChecklistStatus
-  thumbnail: Upload
-}
-
-"""state enumeration of a checklist"""
-enum ChecklistStatus {
-  STATUS_A
-  STATUS_B
 }
 
 input CodeDecipherInput {
@@ -1905,7 +1881,7 @@ type Mutation {
   createPrivilege(privilege: NewPrivilege!): Privilege!
 
   """To Send Tax Invoices By Api"""
-  createProject(project: NewProject!): BuildingComplex!
+  createProject(project: NewProject!): Project!
 
   """To create new Resource"""
   createResource(resource: NewResource!): Resource!
@@ -2732,8 +2708,6 @@ input NewBuildingInspection {
   description: String
   name: String!
   params: String
-  state: BuildingInspectionStatus
-  thumbnail: Upload
 }
 
 input NewBuildingLevel {
@@ -2741,8 +2715,6 @@ input NewBuildingLevel {
   description: String
   name: String!
   params: String
-  state: BuildingLevelStatus
-  thumbnail: Upload
 }
 
 input NewCheckItem {
@@ -2750,8 +2722,6 @@ input NewCheckItem {
   description: String
   name: String!
   params: String
-  state: CheckItemStatus
-  thumbnail: Upload
 }
 
 input NewChecklist {
@@ -2759,8 +2729,6 @@ input NewChecklist {
   description: String
   name: String!
   params: String
-  state: ChecklistStatus
-  thumbnail: Upload
 }
 
 input NewCommonCode {
@@ -3145,8 +3113,6 @@ input NewResource {
   description: String
   name: String!
   params: String
-  state: ResourceStatus
-  thumbnail: Upload
 }
 
 input NewRole {
@@ -3187,7 +3153,6 @@ input NewTask {
   description: String
   name: String!
   params: String
-  thumbnail: Upload
 }
 
 input NewTerminology {
@@ -3677,7 +3642,7 @@ type Project {
   name: String!
   robotProgressRate: Float
   startDate: DateTimeISO
-  state: String
+  state: String!
   structuralSafetyRate: Float
   tasks: [Task!]
   thumbnail: String!
@@ -4072,7 +4037,7 @@ type Query {
   """To fetch a Project"""
   project(id: String!): Project
 
-  """To fetch multiple Projects"""
+  """프로젝트 리스트"""
   projects(projectName: String!): ProjectList!
 
   """To fetch a Resource"""
@@ -4177,22 +4142,16 @@ type RecipientItem {
   value: String
 }
 
-"""Entity for Resource"""
+"""리소스 관리 (작업자)"""
 type Resource {
-  active: Boolean
   createdAt: DateTimeISO
   creator: User
   deletedAt: DateTimeISO
-  description: String
-  domain: Domain
   id: ID!
   name: String
-  params: String
-  state: String
-  thumbnail: String
+  thumbnail: String!
   updatedAt: DateTimeISO
   updater: User
-  version: Float
 }
 
 type ResourceList {
@@ -4206,14 +4165,6 @@ input ResourcePatch {
   description: String
   id: ID
   name: String
-  state: ResourceStatus
-  thumbnail: Upload
-}
-
-"""state enumeration of a resource"""
-enum ResourceStatus {
-  STATUS_A
-  STATUS_B
 }
 
 type Role {
@@ -4474,20 +4425,19 @@ type Subscription {
   scenarioQueueState: ScenarioQueueState!
 }
 
-"""Entity for Task"""
+"""공정표 작업 정보"""
 type Task {
+  checklists: Checklist!
   createdAt: DateTimeISO
   creator: User
   deletedAt: DateTimeISO
-  dependencies: [Task!]
-  domain: Domain
   endDate: DateTimeISO
   id: ID!
   name: String
   parentTaskId: String
   project: Project!
   startDate: DateTimeISO
-  thumbnail: String
+  thumbnail: String!
   type: String
   updatedAt: DateTimeISO
   updater: User
@@ -4504,7 +4454,6 @@ input TaskPatch {
   description: String
   id: ID
   name: String
-  thumbnail: Upload
 }
 
 type TaskType {
