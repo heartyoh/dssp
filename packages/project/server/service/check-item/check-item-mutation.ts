@@ -3,18 +3,21 @@ import { In } from 'typeorm'
 
 import { createAttachment, deleteAttachmentsByRef } from '@things-factory/attachment-base'
 
-import { Task } from './task'
-import { NewTask, TaskPatch } from './task-type'
+import { CheckItem } from './check-item'
+import { NewCheckItem, CheckItemPatch } from './check-item-type'
 
-@Resolver(Task)
-export class TaskMutation {
+@Resolver(CheckItem)
+export class CheckItemMutation {
   @Directive('@transaction')
-  @Mutation(returns => Task, { description: 'To create new Task' })
-  async createTask(@Arg('task') task: NewTask, @Ctx() context: ResolverContext): Promise<Task> {
+  @Mutation(returns => CheckItem, { description: 'To create new CheckItem' })
+  async createCheckItem(
+    @Arg('checkItem') checkItem: NewCheckItem,
+    @Ctx() context: ResolverContext
+  ): Promise<CheckItem> {
     const { domain, user, tx } = context.state
 
-    const result = await tx.getRepository(Task).save({
-      ...task,
+    const result = await tx.getRepository(CheckItem).save({
+      ...checkItem,
       domain,
       creator: user,
       updater: user
@@ -24,21 +27,21 @@ export class TaskMutation {
   }
 
   @Directive('@transaction')
-  @Mutation(returns => Task, { description: 'To modify Task information' })
-  async updateTask(
+  @Mutation(returns => CheckItem, { description: 'To modify CheckItem information' })
+  async updateCheckItem(
     @Arg('id') id: string,
-    @Arg('patch') patch: TaskPatch,
+    @Arg('patch') patch: CheckItemPatch,
     @Ctx() context: ResolverContext
-  ): Promise<Task> {
+  ): Promise<CheckItem> {
     const { domain, user, tx } = context.state
 
-    const repository = tx.getRepository(Task)
-    const task = await repository.findOne({
+    const repository = tx.getRepository(CheckItem)
+    const checkItem = await repository.findOne({
       where: { id }
     })
 
     const result = await repository.save({
-      ...task,
+      ...checkItem,
       ...patch,
       updater: user
     })
@@ -47,23 +50,23 @@ export class TaskMutation {
   }
 
   @Directive('@transaction')
-  @Mutation(returns => [Task], { description: "To modify multiple Tasks' information" })
-  async updateMultipleTask(
-    @Arg('patches', type => [TaskPatch]) patches: TaskPatch[],
+  @Mutation(returns => [CheckItem], { description: "To modify multiple CheckItems' information" })
+  async updateMultipleCheckItem(
+    @Arg('patches', type => [CheckItemPatch]) patches: CheckItemPatch[],
     @Ctx() context: ResolverContext
-  ): Promise<Task[]> {
+  ): Promise<CheckItem[]> {
     const { domain, user, tx } = context.state
 
     let results = []
     const _createRecords = patches.filter((patch: any) => patch.cuFlag.toUpperCase() === '+')
     const _updateRecords = patches.filter((patch: any) => patch.cuFlag.toUpperCase() === 'M')
-    const taskRepo = tx.getRepository(Task)
+    const checkItemRepo = tx.getRepository(CheckItem)
 
     if (_createRecords.length > 0) {
       for (let i = 0; i < _createRecords.length; i++) {
         const newRecord = _createRecords[i]
 
-        const result = await taskRepo.save({
+        const result = await checkItemRepo.save({
           ...newRecord,
           domain,
           creator: user,
@@ -77,10 +80,10 @@ export class TaskMutation {
     if (_updateRecords.length > 0) {
       for (let i = 0; i < _updateRecords.length; i++) {
         const updateRecord = _updateRecords[i]
-        const task = await taskRepo.findOneBy({ id: updateRecord.id })
+        const checkItem = await checkItemRepo.findOneBy({ id: updateRecord.id })
 
-        const result = await taskRepo.save({
-          ...task,
+        const result = await checkItemRepo.save({
+          ...checkItem,
           ...updateRecord,
           updater: user
         })
@@ -93,22 +96,25 @@ export class TaskMutation {
   }
 
   @Directive('@transaction')
-  @Mutation(returns => Boolean, { description: 'To delete Task' })
-  async deleteTask(@Arg('id') id: string, @Ctx() context: ResolverContext): Promise<boolean> {
+  @Mutation(returns => Boolean, { description: 'To delete CheckItem' })
+  async deleteCheckItem(@Arg('id') id: string, @Ctx() context: ResolverContext): Promise<boolean> {
     const { domain, tx } = context.state
 
-    await tx.getRepository(Task).delete({ id })
+    await tx.getRepository(CheckItem).delete({ id })
     await deleteAttachmentsByRef(null, { refBys: [id] }, context)
 
     return true
   }
 
   @Directive('@transaction')
-  @Mutation(returns => Boolean, { description: 'To delete multiple Tasks' })
-  async deleteTasks(@Arg('ids', type => [String]) ids: string[], @Ctx() context: ResolverContext): Promise<boolean> {
+  @Mutation(returns => Boolean, { description: 'To delete multiple CheckItems' })
+  async deleteCheckItems(
+    @Arg('ids', type => [String]) ids: string[],
+    @Ctx() context: ResolverContext
+  ): Promise<boolean> {
     const { domain, tx } = context.state
 
-    await tx.getRepository(Task).delete({
+    await tx.getRepository(CheckItem).delete({
       id: In(ids)
     })
 
@@ -118,16 +124,16 @@ export class TaskMutation {
   }
 
   @Directive('@transaction')
-  @Mutation(returns => Boolean, { description: 'To import multiple Tasks' })
-  async importTasks(
-    @Arg('tasks', type => [TaskPatch]) tasks: TaskPatch[],
+  @Mutation(returns => Boolean, { description: 'To import multiple CheckItems' })
+  async importCheckItems(
+    @Arg('checkItems', type => [CheckItemPatch]) checkItems: CheckItemPatch[],
     @Ctx() context: ResolverContext
   ): Promise<boolean> {
     const { domain, tx } = context.state
 
     await Promise.all(
-      tasks.map(async (task: TaskPatch) => {
-        const createdTask: Task = await tx.getRepository(Task).save({ domain, ...task })
+      checkItems.map(async (checkItem: CheckItemPatch) => {
+        const createdCheckItem: CheckItem = await tx.getRepository(CheckItem).save({ domain, ...checkItem })
       })
     )
 

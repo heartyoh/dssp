@@ -29,12 +29,9 @@
   "dependencies": {
     "@operato/graphql": "^2.0.0-alpha",
     "@operato/shell": "^2.0.0-alpha",
+    "@dssp/building-complex": "^0.0.0",
     "@things-factory/auth-base": "^7.0.1-alpha",
     "@things-factory/shell": "^7.0.1-alpha",
     "exceljs": "^4.4.0"
-  },
-  "devDependencies": {
-    "@dssp/project": "^0.0.0",
-    "@dssp/building-complex": "^0.0.0"
   }
 }

@@ -4,10 +4,10 @@ import { ObjectType, Field, InputType, Int, ID, registerEnumType } from 'type-gr
 
 import { ObjectRef, ScalarObject } from '@things-factory/shell'
 
-import { Task } from './task'
+import { Resource } from './resource'
 
 @InputType()
-export class NewTask {
+export class NewResource {
   @Field()
   name: string
 
@@ -22,7 +22,7 @@ export class NewTask {
 }
 
 @InputType()
-export class TaskPatch {
+export class ResourcePatch {
   @Field(type => ID, { nullable: true })
   id?: string
 
@@ -40,9 +40,9 @@ export class TaskPatch {
 }
 
 @ObjectType()
-export class TaskList {
-  @Field(type => [Task])
-  items: Task[]
+export class ResourceList {
+  @Field(type => [Resource])
+  items: Resource[]
 
   @Field(type => Int)
   total: number

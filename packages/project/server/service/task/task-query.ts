@@ -12,7 +12,7 @@ export class TaskQuery {
     const { domain } = context.state
 
     return await getRepository(Task).findOne({
-      where: { domain: { id: domain.id }, id }
+      where: { id }
     })
   }
 
@@ -36,18 +36,12 @@ export class TaskQuery {
   async thumbnail(@Root() task: Task): Promise<string | undefined> {
     const attachment: Attachment = await getRepository(Attachment).findOne({
       where: {
-        domain: { id: task.domainId },
         refType: Task.name,
         refBy: task.id
       }
     })
 
     return attachment?.fullpath
-  }
-
-  @FieldResolver(type => Domain)
-  async domain(@Root() task: Task): Promise<Domain> {
-    return await getRepository(Domain).findOneBy({ id: task.domainId })
   }
 
   @FieldResolver(type => User)

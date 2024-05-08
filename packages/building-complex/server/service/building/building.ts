@@ -32,7 +32,7 @@ export class Building {
   @Field({ nullable: true })
   floorCount: number
 
-  @Column({ nullable: true, comment: '동 도면 이미지 링크' })
+  @Column({ nullable: true, comment: '동 도면 이미지 BIM' })
   @Field({ nullable: true })
   planImage: string
 

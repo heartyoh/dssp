@@ -11,5 +11,13 @@ export default function route(page: string) {
     case 'project-update':
       import('./pages/project/project-update')
       return page
+
+    case 'checklist-list':
+      import('./pages/checklist/checklist-list-page')
+      return page
+
+    case 'resource-list':
+      import('./pages/resource/resource-list-page')
+      return page
   }
 }

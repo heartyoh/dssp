@@ -9,79 +9,65 @@ import {
   RelationId,
   ManyToMany,
   ManyToOne,
-  PrimaryGeneratedColumn,
-  VersionColumn
+  OneToMany,
+  PrimaryGeneratedColumn
 } from 'typeorm'
-import { ObjectType, Field, Int, ID, registerEnumType } from 'type-graphql'
+import { ObjectType, Field, ID, registerEnumType } from 'type-graphql'
 
-import { Domain } from '@things-factory/shell'
 import { User } from '@things-factory/auth-base'
 import { Project } from '../project/project'
+import { Checklist } from '../checklist/checklist'
 
-export enum TaskStatus {
-  STATUS_A = 'STATUS_A',
-  STATUS_B = 'STATUS_B'
+export enum TaskType {
+  GROUP = 'GROUP',
+  TASK = 'TASK'
 }
 
-registerEnumType(TaskStatus, {
-  name: 'TaskStatus',
-  description: 'state enumeration of a task'
+registerEnumType(TaskType, {
+  name: 'TaskType',
+  description: '작업 타입'
 })
 
 @Entity()
-@Index('ix_task_0', (task: Task) => [task.domain, task.name], {
-  unique: true,
-  where: '"deleted_at" IS NULL'
-})
-@ObjectType({ description: 'Entity for Task' })
+@Index('ix_task_0', (task: Task) => [task.project], { where: '"deleted_at" IS NULL' })
+@ObjectType({ description: '공정표 작업 정보' })
 export class Task {
   @PrimaryGeneratedColumn('uuid')
   @Field(type => ID)
   readonly id: string
 
-  @ManyToOne(type => Domain)
-  @Field({ nullable: true })
-  domain?: Domain
-
-  @RelationId((task: Task) => task.domain)
-  domainId?: string
-
-  @Column()
+  @Column({ nullable: true, comment: '작업 명' })
   @Field({ nullable: true })
   name?: string
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, comment: '테스크 타입 (group: 공종, task: 세부 공종)' })
   @Field({ nullable: true })
-  description?: string
+  type?: TaskType
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, comment: '테스크에 그룹(부모)가 있을 시 taskId' })
   @Field({ nullable: true })
-  active?: boolean
+  parentTaskId?: string
 
-  @Column({ nullable: true })
-  @Field({ nullable: true })
-  state?: TaskStatus
-
-  @Column({ nullable: true })
-  @Field({ nullable: true })
-  params?: string
-
-  @Column({ nullable: true })
+  @Column({ nullable: true, comment: '시작일' })
   @Field({ nullable: true })
   startDate?: Date
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, comment: '종료일' })
   @Field({ nullable: true })
   endDate?: Date
 
-  @Field(() => [Task], { nullable: true })
-  @ManyToMany(() => Task)
-  @JoinTable()
-  dependencies?: Task[]
-
+  // 프로젝트 정보 (상위 테이블 참조)
   @Field(() => Project)
   @ManyToOne(() => Project, project => project.tasks)
   project?: Project
+
+  @RelationId((task: Task) => task.project)
+  projectId?: string
+
+  // 체크리스트 정보 (하위 테이블 참조)
+  @Field(() => Checklist)
+  @OneToMany(() => Checklist, checklist => checklist.task)
+  checklists?: Checklist[]
 
   @CreateDateColumn()
   @Field({ nullable: true })
@@ -108,7 +94,4 @@ export class Task {
 
   @RelationId((task: Task) => task.updater)
   updaterId?: string
-
-  @Field(type => String, { nullable: true })
-  thumbnail?: string
 }

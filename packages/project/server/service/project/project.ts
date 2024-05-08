@@ -90,6 +90,10 @@ export class Project {
   @Field()
   buildingComplex?: BuildingComplex
 
+  @RelationId((project: Project) => project.buildingComplex)
+  buildingComplexId?: string
+
+  // 작업 정보 (하위 테이블 참조)
   @Field(() => [Task], { nullable: true })
   @OneToMany(() => Task, task => task.project)
   tasks?: Task[]

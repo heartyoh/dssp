@@ -53,7 +53,7 @@ export class BuildingComplex {
   @Field({ nullable: true })
   architect?: string
 
-  @Column({ nullable: true, comment: '대표 사진' })
+  @Column({ nullable: true, comment: '대표 사진 (BIM)' })
   @Field({ nullable: true })
   mainPhoto?: string
 
