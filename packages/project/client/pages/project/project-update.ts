@@ -21,6 +21,7 @@ export enum ProjectStatus {
 }
 
 export interface ProjectPatch {
+  id?: string
   name: string
   startDate?: string
   endDate?: string
@@ -32,6 +33,7 @@ export interface ProjectPatch {
   structuralSafetyRate?: number
 }
 export interface BuildingComplex {
+  id?: string
   address: string
   area: number
   constructionCompany: string
@@ -46,6 +48,7 @@ export interface BuildingComplex {
   buildingCount?: number
 }
 export interface Building {
+  id?: string
   name: string
   floorCount: number
 }
@@ -430,32 +433,31 @@ export class ProjectUpdate extends localize(i18next)(ScopedElementsMixin(PageVie
   }
 
   async initProject(projectId: string = '') {
-    this.project = {
-      name: 'project name 1',
-      startDate: '2024-05-01',
-      endDate: '2024-05-10',
-      totalProgress: 10,
-      weeklyProgress: 20,
-      kpi: 30,
-      inspPassRate: 40,
-      robotProgressRate: 50,
-      structuralSafetyRate: 60
-    }
-    this.buildingComplex = {
-      address: '단지 주소',
-      area: 100,
-      constructionCompany: '건설사 이름',
-      clientCompany: '발주처 이름',
-      architect: '설계사 이름',
-      supervisor: '감리사 이름',
-      constructionType: '아파트',
-      constructionCost: 10000000,
-      etc: '기타 사항',
-      householdCount: 100,
-      buildingCount: 5
-    }
-
-    return
+    // this.project = {
+    //   id: '632b2037-9335-4db2-8461-c8dd16dbb918',
+    //   name: 'OO산업 단지 대규모 그린지오',
+    //   startDate: '2024-05-01',
+    //   endDate: '2024-05-10',
+    //   totalProgress: 10,
+    //   weeklyProgress: 20,
+    //   kpi: 30,
+    //   inspPassRate: 40,
+    //   robotProgressRate: 50,
+    //   structuralSafetyRate: 60
+    // }
+    // this.buildingComplex = {
+    //   address: '단지 주소',
+    //   area: 100,
+    //   constructionCompany: '건설사 이름',
+    //   clientCompany: '발주처 이름',
+    //   architect: '설계사 이름',
+    //   supervisor: '감리사 이름',
+    //   constructionType: '아파트',
+    //   constructionCost: 10000000,
+    //   etc: '기타 사항',
+    //   householdCount: 100,
+    //   buildingCount: 5
+    // }
 
     const response = await client.query({
       query: gql`
@@ -463,14 +465,16 @@ export class ProjectUpdate extends localize(i18next)(ScopedElementsMixin(PageVie
           responses: project(projectId: $projectId) {
             id
             name
-            description
-            active
+            startDate
+            endDate
             updater {
               id
               name
             }
             updatedAt
-            buildingComplex
+            buildingComplex {
+              id
+            }
             buildings
           }
         }
@@ -495,9 +499,11 @@ export class ProjectUpdate extends localize(i18next)(ScopedElementsMixin(PageVie
         mutation UpdateProject(
           $project: ProjectPatch!
           $buildingComplex: BuildingComplexPatch!
-          $buildings: [BuildingPatch]
+          $buildings: [BuildingPatch!]!
         ) {
-          response: updateProject(project: $project, buildingComplex: $buildingComplex, buildings: $buildings)
+          updateProject(buildings: $buildings, buildingComplex: $buildingComplex, project: $project) {
+            id
+          }
         }
       `,
       variables: {

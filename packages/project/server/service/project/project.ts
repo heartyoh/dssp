@@ -54,13 +54,13 @@ export class Project {
   @Field({ nullable: false })
   state?: ProjectStatus
 
-  @Column({ nullable: true, comment: '착공일정' })
+  @Column({ type: 'date', nullable: true, comment: '착공일정' })
   @Field({ nullable: true })
-  startDate?: Date
+  startDate?: string
 
-  @Column({ nullable: true, comment: '준공일정' })
+  @Column({ type: 'date', nullable: true, comment: '준공일정' })
   @Field({ nullable: true })
-  endDate?: Date
+  endDate?: string
 
   @Column({ type: 'float', nullable: true, default: 0, transformer: roundTransformer, comment: '전체 진행현황' })
   @Field({ nullable: true })

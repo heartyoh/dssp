@@ -79,8 +79,8 @@ export class BuildingComplex {
 
   // 동 정보 (하위 테이블 참조)
   @OneToMany(() => Building, building => building.buildingComplex)
-  @Field(() => [Building], { nullable: true })
-  buildings?: Building[]
+  @Field(() => [Building])
+  buildings: Building[]
 
   @CreateDateColumn()
   @Field({ nullable: true })

@@ -60,7 +60,7 @@ export class ProjectSettingList extends localize(i18next)(ScopedElementsMixin(Pa
         </div>
         <div body>
           ${this.projectList?.map(project => {
-            return html` <div><a href="/project-update/${project.id}">${project.name}</a></div> `
+            return html` <div><a href="project-update/${project.id}">${project.name}</a></div> `
           })}
         </div>
       </div>

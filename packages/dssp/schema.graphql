@@ -449,7 +449,7 @@ input BoardTemplatePatch {
 """동 정보"""
 type Building {
   buildingComplex: BuildingComplex!
-  buildingLevels: [BuildingLevel!]
+  buildingLevels: [BuildingLevel!]!
   createdAt: DateTimeISO
   creator: User
   deletedAt: DateTimeISO
@@ -468,7 +468,7 @@ type BuildingComplex {
   architect: String
   area: Float
   buildingCount: Float
-  buildings: [Building!]
+  buildings: [Building!]!
   clientCompany: String
   constructionCompany: String
   constructionCost: Float
@@ -497,7 +497,7 @@ input BuildingComplexPatch {
   constructionType: String!
   etc: String
   householdCount: Float
-  id: String!
+  id: String
   mainPhoto: String
   supervisor: String!
 }
@@ -1880,7 +1880,7 @@ type Mutation {
   """To create new privilege"""
   createPrivilege(privilege: NewPrivilege!): Privilege!
 
-  """To Send Tax Invoices By Api"""
+  """프로젝트 생성"""
   createProject(project: NewProject!): Project!
 
   """To create new Resource"""
@@ -2130,9 +2130,6 @@ type Mutation {
   """To delete Project"""
   deleteProject(id: String!): Boolean!
 
-  """To delete multiple Projects"""
-  deleteProjects(ids: [String!]!): Boolean!
-
   """To delete Resource"""
   deleteResource(id: String!): Boolean!
 
@@ -2276,9 +2273,6 @@ type Mutation {
 
   """To import multiple Oauth2Clients"""
   importOauth2Clients(oauth2Clients: [Oauth2ClientPatch!]!): Boolean!
-
-  """To import multiple Projects"""
-  importProjects(projects: [ProjectPatch!]!): Boolean!
 
   """To import multiple Resources"""
   importResources(resources: [ResourcePatch!]!): Boolean!
@@ -2590,6 +2584,9 @@ type Mutation {
 
   """To modify privilege information"""
   updatePrivilege(category: String!, name: String!, patch: PrivilegePatch!): Privilege!
+
+  """프로젝트 업데이트"""
+  updateProject(buildingComplex: BuildingComplexPatch!, buildings: [BuildingPatch!]!, project: ProjectPatch!): Project!
 
   """To modify Resource information"""
   updateResource(id: String!, patch: ResourcePatch!): Resource!
@@ -3635,13 +3632,13 @@ type Project {
   creator: User
   deletedAt: DateTimeISO
   domain: Domain
-  endDate: DateTimeISO
+  endDate: String
   id: ID!
   inspPassRate: Float
   kpi: Float
   name: String!
   robotProgressRate: Float
-  startDate: DateTimeISO
+  startDate: String
   state: String!
   structuralSafetyRate: Float
   tasks: [Task!]
@@ -3658,13 +3655,13 @@ type ProjectList {
 }
 
 input ProjectPatch {
-  endDate: DateTimeISO
+  endDate: String
   id: String!
   inspPassRate: Float
   kpi: Float
   name: String!
   robotProgressRate: Float
-  startDate: DateTimeISO
+  startDate: String
   structuralSafetyRate: Float
   totalProgress: Float
   weeklyProgress: Float

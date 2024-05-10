@@ -10,16 +10,16 @@ export class NewProject {
 @InputType()
 export class ProjectPatch {
   @Field({ nullable: false })
-  id?: string
+  id: string
 
   @Field({ nullable: false })
   name: string
 
   @Field({ nullable: true })
-  startDate?: Date
+  startDate?: string
 
   @Field({ nullable: true })
-  endDate?: Date
+  endDate?: string
 
   @Field({ nullable: true })
   totalProgress?: number

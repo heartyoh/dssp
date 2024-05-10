@@ -5,14 +5,12 @@ import { createAttachment, deleteAttachmentsByRef } from '@things-factory/attach
 
 import { Project } from './project'
 import { NewProject, ProjectPatch } from './project-type'
-import { BuildingComplex, Building } from '@dssp/building-complex'
-// import { BuildingComplexPatch } from '@dssp/building-complex/dist-server/service/building-complex/building-complex-type'
-// import { BuildingPatch } from '@dssp/building-complex/dist-server/service/building/building-type'
+import { BuildingComplex, Building, BuildingComplexPatch, BuildingPatch } from '@dssp/building-complex'
 
 @Resolver(Project)
 export class ProjectMutation {
   @Directive('@transaction')
-  @Mutation(returns => Project, { description: 'To Send Tax Invoices By Api' })
+  @Mutation(returns => Project, { description: '프로젝트 생성' })
   async createProject(@Arg('project') project: NewProject, @Ctx() context: ResolverContext): Promise<Project> {
     const { domain, user, tx } = context.state
     const projectRepo = tx.getRepository(Project)
@@ -35,21 +33,31 @@ export class ProjectMutation {
     return result
   }
 
-  // @Directive('@transaction')
-  // @Mutation(returns => Boolean, { description: 'To Send Tax Invoices By Api' })
-  // async createProject(
-  //   @Arg('project') project: ProjectPatch,
-  //   // @Arg('buildingComplex') buildingComplex: BuildingComplex,
-  //   // @Arg('buildings') buildings: [Building],
-  //   @Ctx() context: ResolverContext
-  // ): Promise<boolean> {
-  //   const { domain, user, tx } = context.state
-  //   const projectRepo = tx.getRepository(Project)
-  //   const buildingComplexRepo = tx.getRepository(BuildingComplex)
-  //   const buildingRepo = tx.getRepository(Building)
+  @Directive('@transaction')
+  @Mutation(returns => Project, { description: '프로젝트 업데이트' })
+  async updateProject(
+    @Arg('project') project: ProjectPatch,
+    @Arg('buildingComplex', type => BuildingComplexPatch) buildingComplex: BuildingComplexPatch,
+    @Arg('buildings', type => [BuildingPatch]) buildings: BuildingPatch[],
+    @Ctx() context: ResolverContext
+  ): Promise<Project> {
+    console.log('project :', project)
+    console.log('buildingComplex :', buildingComplex)
+    console.log('buildings :', buildings)
 
-  //   return true
-  // }
+    const { user, tx } = context.state
+    const projectRepo = tx.getRepository(Project)
+    const buildingComplexRepo = tx.getRepository(BuildingComplex)
+    const buildingRepo = tx.getRepository(Building)
+
+    const projectResult = await projectRepo.save({ ...project, updater: user })
+    const buildingComplexResult = await buildingComplexRepo.save({ ...buildingComplex, updater: user })
+    buildings.forEach(async building => {
+      const buildingsResult = await buildingRepo.save({ ...building, updater: user })
+    })
+
+    return projectResult
+  }
 
   @Directive('@transaction')
   @Mutation(returns => Boolean, { description: 'To delete Project' })
@@ -58,38 +66,6 @@ export class ProjectMutation {
 
     await tx.getRepository(Project).delete({ domain: { id: domain.id }, id })
     await deleteAttachmentsByRef(null, { refBys: [id] }, context)
-
-    return true
-  }
-
-  @Directive('@transaction')
-  @Mutation(returns => Boolean, { description: 'To delete multiple Projects' })
-  async deleteProjects(@Arg('ids', type => [String]) ids: string[], @Ctx() context: ResolverContext): Promise<boolean> {
-    const { domain, tx } = context.state
-
-    await tx.getRepository(Project).delete({
-      domain: { id: domain.id },
-      id: In(ids)
-    })
-
-    await deleteAttachmentsByRef(null, { refBys: ids }, context)
-
-    return true
-  }
-
-  @Directive('@transaction')
-  @Mutation(returns => Boolean, { description: 'To import multiple Projects' })
-  async importProjects(
-    @Arg('projects', type => [ProjectPatch]) projects: ProjectPatch[],
-    @Ctx() context: ResolverContext
-  ): Promise<boolean> {
-    const { domain, tx } = context.state
-
-    await Promise.all(
-      projects.map(async (project: ProjectPatch) => {
-        const createdProject: Project = await tx.getRepository(Project).save({ domain, ...project })
-      })
-    )
 
     return true
   }

@@ -2,7 +2,7 @@ import { Field, InputType } from 'type-graphql'
 
 @InputType()
 export class BuildingComplexPatch {
-  @Field({ nullable: false })
+  @Field({ nullable: true })
   id?: string
 
   @Field({ nullable: false })

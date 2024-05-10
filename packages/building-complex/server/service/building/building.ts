@@ -26,15 +26,15 @@ export class Building {
 
   @Column({ nullable: true, comment: '동 이름(101, 102...)' })
   @Field({ nullable: true })
-  name: string
+  name?: string
 
   @Column({ nullable: true, comment: '층 개수' })
   @Field({ nullable: true })
-  floorCount: number
+  floorCount?: number
 
   @Column({ nullable: true, comment: '동 도면 이미지 BIM' })
   @Field({ nullable: true })
-  planImage: string
+  planImage?: string
 
   // 단지 정보 (상위 테이블 참조)
   @Field(() => BuildingComplex)
@@ -46,7 +46,7 @@ export class Building {
 
   // 층 정보 (하위 테이블 참조)
   @OneToMany(() => BuildingLevel, buildingLevel => buildingLevel.building)
-  @Field(() => [BuildingLevel], { nullable: true })
+  @Field(() => [BuildingLevel])
   buildingLevels: BuildingLevel[]
 
   @CreateDateColumn()

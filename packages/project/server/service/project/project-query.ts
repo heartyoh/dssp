@@ -37,8 +37,6 @@ export class ProjectQuery {
       queryBuilder.andWhere('p.name LIKE :projectName', { projectName })
     }
 
-    console.log('queryBuilder : ', await queryBuilder.getQuery())
-
     const [items, total] = await queryBuilder.getManyAndCount()
 
     return { items, total }
