@@ -1,6 +1,6 @@
 module.exports = {
   subdomain: null,
-  publicHomeRoute: '/public/home',
+  publicHomeRoute: '/auth/signin',
   applianceJwtExpiresIn: '10y',
   /* database field encryption key : 32 bytes - must be changed by every installation */
   dataEncryptionKey: 'V6g5oHJZb7KcazJyL6cM95XvIDouon5b',
@@ -25,10 +25,12 @@ module.exports = {
   */
   disableUserSignupProcess: true,
   i18n: {
-    languages: [{
-      code: 'ko-KR',
-      display: '한국어'
-    }],
+    languages: [
+      {
+        code: 'ko-KR',
+        display: '한국어'
+      }
+    ],
     defaultLanguage: 'ko-KR',
     disableUserFavoredLanguage: true
   },
