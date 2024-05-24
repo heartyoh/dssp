@@ -59,11 +59,6 @@ export class ProjectQuery {
     return await getRepository(BuildingComplex).findOneBy({ id: project.buildingComplexId })
   }
 
-  @FieldResolver(type => [Building])
-  async buildings(@Root() buildingComplex: BuildingComplex): Promise<Building[]> {
-    return await getRepository(Building).findBy({ buildingComplexId: buildingComplex.id })
-  }
-
   @FieldResolver(type => Domain)
   async domain(@Root() project: Project): Promise<Domain> {
     return await getRepository(Domain).findOneBy({ id: project.domainId })

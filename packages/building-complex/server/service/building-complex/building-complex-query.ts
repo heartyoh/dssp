@@ -3,6 +3,7 @@ import { Attachment } from '@things-factory/attachment-base'
 import { Domain, getQueryBuilderFromListParams, getRepository, ListParam } from '@things-factory/shell'
 import { User } from '@things-factory/auth-base'
 import { BuildingComplex } from './building-complex'
+import { Building } from '../building/building'
 
 @Resolver(BuildingComplex)
 export class BuildingComplexQuery {
@@ -13,6 +14,11 @@ export class BuildingComplexQuery {
     return await getRepository(BuildingComplex).findOne({
       where: { domain: { id: domain.id }, id }
     })
+  }
+
+  @FieldResolver(type => [Building])
+  async buildings(@Root() buildingComplex: BuildingComplex): Promise<Building[]> {
+    return await getRepository(Building).findBy({ buildingComplex: { id: buildingComplex.id } })
   }
 
   @FieldResolver(type => Domain)

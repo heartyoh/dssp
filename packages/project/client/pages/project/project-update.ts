@@ -51,8 +51,8 @@ export interface BuildingComplex {
 }
 export interface Building {
   id?: string
-  name: string
-  floorCount: number
+  name: string | undefined
+  floorCount: number | undefined
 }
 
 @customElement('project-update')
@@ -102,7 +102,7 @@ export class ProjectUpdate extends localize(i18next)(ScopedElementsMixin(PageVie
     return html`
       <div main>
         <div header>
-          <h2>신규 프로젝트 생성</h2>
+          <h2>프로젝트 정보 관리</h2>
           <div button-container>
             <button @click=${this._reset}>초기화</button>
             <button @click=${this._saveProject}>정보 저장</button>
@@ -293,17 +293,18 @@ export class ProjectUpdate extends localize(i18next)(ScopedElementsMixin(PageVie
               </div>
               <div>
                 ${this.buildings?.map(
-                  building => html`
+                  (building, idx) => html`
                     <div>
                       <span>
                         <input
                           type="text"
                           building
                           name="name"
-                          .value=${building.name || ''}
-                          @input=${this._onInputChange}
+                          .value=${building?.name || ''}
+                          @input=${e => this._onInputChange(e, idx)}
+                          placeholder="ooo동"
                         />
-                        동 층수
+                        층수
                       </span>
                       <span
                         ><input
@@ -312,7 +313,8 @@ export class ProjectUpdate extends localize(i18next)(ScopedElementsMixin(PageVie
                           building
                           name="floorCount"
                           .value=${building?.floorCount?.toString() || ''}
-                          @input=${this._onInputChange}
+                          @input=${e => this._onInputChange(e, idx)}
+                          placeholder="oo"
                       /></span>
                     </div>
                   `
@@ -424,14 +426,14 @@ export class ProjectUpdate extends localize(i18next)(ScopedElementsMixin(PageVie
   }
 
   async pageInitialized(lifecycle: PageLifecycle) {
-    this.projectId = lifecycle.resourceId || ''
-    await this.initProject(this.projectId)
+    // this.projectId = lifecycle.resourceId || ''
+    // await this.initProject(this.projectId)
   }
 
   async pageUpdated(changes: any, lifecycle: PageLifecycle) {
     if (this.active) {
-      // this.projectId = lifecycle.resourceId || ''
-      // this.initProject(this.projectId)
+      this.projectId = lifecycle.resourceId || ''
+      await this.initProject(this.projectId)
     }
   }
 
@@ -468,7 +470,6 @@ export class ProjectUpdate extends localize(i18next)(ScopedElementsMixin(PageVie
                 id
                 name
                 floorCount
-                planImage
               }
             }
           }
@@ -479,11 +480,11 @@ export class ProjectUpdate extends localize(i18next)(ScopedElementsMixin(PageVie
       }
     })
 
-    console.log('response.data.project : ', response.data.project)
+    console.log('initProject : ', response.data?.project)
 
-    this.project = { ...response.data?.project } || {}
-    this.buildingComplex = response.data.project?.buildingComplex || {}
-    this.buildings = response.data.project?.buildingComplex?.buildings || []
+    this.project = { ...(response.data?.project || {}) }
+    this.buildingComplex = { ...(response.data.project?.buildingComplex || {}) }
+    this.buildings = [...(response.data.project?.buildingComplex?.buildings || [])]
 
     delete this.project.buildingComplex
     delete this.buildingComplex?.buildings
@@ -514,16 +515,25 @@ export class ProjectUpdate extends localize(i18next)(ScopedElementsMixin(PageVie
     })
 
     if (!response.errors) {
-      notify({ message: i18next.t('text.success to save') })
+      notify({ message: '저장에 성공하였습니다.' })
     }
   }
 
   // 동 적용 버튼을 누르면 입력한 수 만큼 해당 단지에 동 데이터 생성
   private _setBuilding() {
-    const buildingCount = this.buildingComplex.buildingCount
-    this.buildings = Array(buildingCount).fill({ name: undefined, floorCount: undefined })
+    const buildingCount: number = this.buildingComplex.buildingCount || 0
+    // this.buildings = Array(buildingCount).fill({ name: undefined, floorCount: undefined })
+    const buildingInitData = { name: undefined, floorCount: undefined }
 
-    this.buildingComplex.buildingCount = undefined
+    if (this.buildings.length >= buildingCount) {
+      // 동 수가 더 작게 들어오면 기존 배열을 필요한 크기만큼 잘라내기
+      this.buildings = [...this.buildings.slice(0, buildingCount)]
+    } else {
+      // 동수가 더 크게 들어오면 기존 배열 + 빈 값을 채움
+      const additionalCount = buildingCount - this.buildings.length
+      const additionalBuildings = Array.from({ length: additionalCount }, () => ({ ...buildingInitData }))
+      this.buildings = [...this.buildings, ...additionalBuildings]
+    }
   }
 
   // 모든 값 초기화 (초기화 버튼은 TODO 이거 없애는게 좋겠음)

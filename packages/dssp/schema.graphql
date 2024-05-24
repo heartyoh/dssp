@@ -448,7 +448,7 @@ input BoardTemplatePatch {
 
 """동 정보"""
 type Building {
-  buildingComplex: BuildingComplex!
+  buildingComplex: BuildingComplex
   buildingLevels: [BuildingLevel!]!
   createdAt: DateTimeISO
   creator: User
@@ -3628,7 +3628,6 @@ input ProfileInput {
 """프로젝트"""
 type Project {
   buildingComplex: BuildingComplex
-  buildings: [Building!]!
   createdAt: DateTimeISO
   creator: User
   deletedAt: DateTimeISO
@@ -3656,7 +3655,7 @@ type ProjectList {
 }
 
 input ProjectPatch {
-  BuildingComplexPatch: BuildingComplexPatch
+  buildingComplexPatch: BuildingComplexPatch
   endDate: String
   id: String!
   inspPassRate: Float

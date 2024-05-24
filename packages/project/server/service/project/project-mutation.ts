@@ -1,5 +1,5 @@
 import { Resolver, Mutation, Arg, Args, Ctx, Directive } from 'type-graphql'
-import { In } from 'typeorm'
+import { In, Not } from 'typeorm'
 
 import { createAttachment, deleteAttachmentsByRef } from '@things-factory/attachment-base'
 
@@ -41,21 +41,42 @@ export class ProjectMutation {
     @Arg('buildings', type => [BuildingPatch]) buildings: BuildingPatch[],
     @Ctx() context: ResolverContext
   ): Promise<Project> {
-    console.log('project :', project)
-    console.log('buildingComplex :', buildingComplex)
-    console.log('buildings :', buildings)
-
     const { user, tx } = context.state
     const projectRepo = tx.getRepository(Project)
     const buildingComplexRepo = tx.getRepository(BuildingComplex)
     const buildingRepo = tx.getRepository(Building)
 
+    // 1. 프로젝트 수정
     const projectResult = await projectRepo.save({ ...project, updater: user })
+
+    // 2. 단지 정보 수정
     const buildingComplexResult = await buildingComplexRepo.save({ ...buildingComplex, updater: user })
 
+    // 3. 단지 내 동 정보들 수정
     buildings.forEach(async building => {
-      const buildingsResult = await buildingRepo.save({ ...building, updater: user })
+      const buildingsResult = await buildingRepo.save({
+        buildingComplex: { id: buildingComplex.id },
+        ...building,
+        updater: user
+      })
     })
+
+    // 4. 현재 업데이트 된 동을 제외한 사용되지 않을 동들을 조회하여 제거
+    // 4-1. 업데이트 된 동 아이디 추출
+    const updatedBuildingIds = buildings.map(building => building.id)
+
+    // 4-2. 기존 동 중에 사용되지 않은 동들 아이디 추출
+    const excludedBuildingIds = await buildingRepo
+      .createQueryBuilder('b')
+      .where('b.building_complex_id = :buildingComplexId', { buildingComplexId: buildingComplex.id })
+      .andWhere('b.id NOT IN (:...updatedBuildingIds)', { updatedBuildingIds })
+      .getMany()
+
+    // 4-3. 사용 안된 동들 삭제
+    if (excludedBuildingIds.length > 0) {
+      const ids = excludedBuildingIds.map(building => building.id)
+      await buildingRepo.softDelete({ id: In(ids) })
+    }
 
     return projectResult
   }

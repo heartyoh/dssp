@@ -42,7 +42,7 @@ export class ProjectPatch {
   structuralSafetyRate?: number
 
   @Field({ nullable: true })
-  BuildingComplexPatch?: BuildingComplexPatch
+  buildingComplexPatch?: BuildingComplexPatch
 }
 
 @ObjectType()

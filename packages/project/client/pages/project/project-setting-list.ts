@@ -10,19 +10,7 @@ import { openPopup } from '@operato/layout'
 
 import gql from 'graphql-tag'
 import './project-create-popup'
-
-export interface Project {
-  id: string
-  name: string
-  startDate?: string
-  endDate?: string
-  totalProgress?: number
-  weeklyProgress?: number
-  kpi?: number
-  inspPassRate?: number
-  robotProgressRate?: number
-  structuralSafetyRate?: number
-}
+import { Project } from './project-list-page'
 
 @customElement('project-setting-list')
 export class ProjectSettingList extends localize(i18next)(ScopedElementsMixin(PageView)) {
