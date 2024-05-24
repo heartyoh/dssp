@@ -20,7 +20,7 @@ export enum ProjectStatus {
   'COMPLICATED' = '20'
 }
 
-export interface ProjectPatch {
+export interface Project {
   id?: string
   name: string
   startDate?: string
@@ -31,6 +31,7 @@ export interface ProjectPatch {
   inspPassRate?: number
   robotProgressRate?: number
   structuralSafetyRate?: number
+  buildingComplex?: BuildingComplex
 }
 export interface BuildingComplex {
   id?: string
@@ -38,14 +39,15 @@ export interface BuildingComplex {
   area: number
   constructionCompany: string
   clientCompany: string
-  architect: string
-  supervisor: string
+  designCompany: string
+  supervisoryCompany: string
   mainPhoto?: string
   constructionType: string
   constructionCost?: number
   etc?: string
   householdCount?: number
   buildingCount?: number
+  buildings?: Building[]
 }
 export interface Building {
   id?: string
@@ -86,13 +88,13 @@ export class ProjectUpdate extends localize(i18next)(ScopedElementsMixin(PageVie
     area: 0,
     constructionCompany: '',
     clientCompany: '',
-    supervisor: '',
-    architect: '',
+    supervisoryCompany: '',
+    designCompany: '',
     constructionType: ''
   }
 
   @state() projectId: string = ''
-  @state() project: ProjectPatch = { ...this.defaultProject }
+  @state() project: Project = { ...this.defaultProject }
   @state() buildingComplex: BuildingComplex = { ...this.defaultbuildingComplex }
   @state() buildings: Building[] = []
 
@@ -103,7 +105,7 @@ export class ProjectUpdate extends localize(i18next)(ScopedElementsMixin(PageVie
           <h2>신규 프로젝트 생성</h2>
           <div button-container>
             <button @click=${this._reset}>초기화</button>
-            <button @click=${this._saveProject}>프로젝트 생성</button>
+            <button @click=${this._saveProject}>정보 저장</button>
             <button>검측현황 관리</button>
             <button>공정표 관리</button>
           </div>
@@ -196,9 +198,9 @@ export class ProjectUpdate extends localize(i18next)(ScopedElementsMixin(PageVie
               <span
                 ><input
                   type="text"
-                  name="architect"
+                  name="designCompany"
                   building-complex
-                  .value=${this.buildingComplex.architect || ''}
+                  .value=${this.buildingComplex.designCompany || ''}
                   @input=${this._onInputChange}
               /></span>
             </div>
@@ -207,9 +209,9 @@ export class ProjectUpdate extends localize(i18next)(ScopedElementsMixin(PageVie
               <span
                 ><input
                   type="text"
-                  name="supervisor"
+                  name="supervisoryCompany"
                   building-complex
-                  .value=${this.buildingComplex.supervisor || ''}
+                  .value=${this.buildingComplex.supervisoryCompany || ''}
                   @input=${this._onInputChange}
               /></span>
             </div>
@@ -286,7 +288,7 @@ export class ProjectUpdate extends localize(i18next)(ScopedElementsMixin(PageVie
                     value=${this.buildingComplex.buildingCount?.toString() || ''}
                     @input=${this._onInputChange}
                   />
-                  <button>동 적용</button>
+                  <button @click=${this._setBuilding}>적용</button>
                 </span>
               </div>
               <div>
@@ -423,70 +425,68 @@ export class ProjectUpdate extends localize(i18next)(ScopedElementsMixin(PageVie
 
   async pageInitialized(lifecycle: PageLifecycle) {
     this.projectId = lifecycle.resourceId || ''
-    this.initProject(this.projectId)
+    await this.initProject(this.projectId)
   }
 
   async pageUpdated(changes: any, lifecycle: PageLifecycle) {
     if (this.active) {
-      // do something here when this page just became as active
+      // this.projectId = lifecycle.resourceId || ''
+      // this.initProject(this.projectId)
     }
   }
 
   async initProject(projectId: string = '') {
-    // this.project = {
-    //   id: '632b2037-9335-4db2-8461-c8dd16dbb918',
-    //   name: 'OO산업 단지 대규모 그린지오',
-    //   startDate: '2024-05-01',
-    //   endDate: '2024-05-10',
-    //   totalProgress: 10,
-    //   weeklyProgress: 20,
-    //   kpi: 30,
-    //   inspPassRate: 40,
-    //   robotProgressRate: 50,
-    //   structuralSafetyRate: 60
-    // }
-    // this.buildingComplex = {
-    //   address: '단지 주소',
-    //   area: 100,
-    //   constructionCompany: '건설사 이름',
-    //   clientCompany: '발주처 이름',
-    //   architect: '설계사 이름',
-    //   supervisor: '감리사 이름',
-    //   constructionType: '아파트',
-    //   constructionCost: 10000000,
-    //   etc: '기타 사항',
-    //   householdCount: 100,
-    //   buildingCount: 5
-    // }
-
     const response = await client.query({
       query: gql`
-        query ($projectId: String) {
-          responses: project(projectId: $projectId) {
+        query Project($id: String!) {
+          project(id: $id) {
             id
             name
             startDate
             endDate
-            updater {
-              id
-              name
-            }
-            updatedAt
+            totalProgress
+            weeklyProgress
+            kpi
+            inspPassRate
+            robotProgressRate
+            structuralSafetyRate
             buildingComplex {
               id
+              address
+              area
+              clientCompany
+              constructionCompany
+              supervisoryCompany
+              designCompany
+              mainPhoto
+              constructionType
+              constructionCost
+              etc
+              householdCount
+              buildingCount
+              buildings {
+                id
+                name
+                floorCount
+                planImage
+              }
             }
-            buildings
           }
         }
       `,
       variables: {
-        projectId
+        id: projectId
       }
     })
 
-    this.project = response.data.responses.project
-    this.buildingComplex = response.data.responses.buildingComplex
-    this.buildings = response.data.responses.buildings
+    console.log('response.data.project : ', response.data.project)
+
+    this.project = { ...response.data?.project } || {}
+    this.buildingComplex = response.data.project?.buildingComplex || {}
+    this.buildings = response.data.project?.buildingComplex?.buildings || []
+
+    delete this.project.buildingComplex
+    delete this.buildingComplex?.buildings
   }
 
   private async _saveProject() {
@@ -518,9 +518,16 @@ export class ProjectUpdate extends localize(i18next)(ScopedElementsMixin(PageVie
     }
   }
 
+  // 동 적용 버튼을 누르면 입력한 수 만큼 해당 단지에 동 데이터 생성
+  private _setBuilding() {
+    const buildingCount = this.buildingComplex.buildingCount
+    this.buildings = Array(buildingCount).fill({ name: undefined, floorCount: undefined })
+
+    this.buildingComplex.buildingCount = undefined
+  }
+
   // 모든 값 초기화 (초기화 버튼은 TODO 이거 없애는게 좋겠음)
   private _reset() {
-    console.log('reset')
     this.project = { ...this.defaultProject }
     this.buildingComplex = { ...this.defaultbuildingComplex }
     this.buildings = []
@@ -533,16 +540,15 @@ export class ProjectUpdate extends localize(i18next)(ScopedElementsMixin(PageVie
 
     // 숫자 타입은 다른 문자 입력 제거
     if (target.hasAttribute('numeric')) {
-      inputVal = Number(inputVal.replace(/\D/g, ''))
-      target.value = inputVal
+      inputVal = Number(inputVal.replace(/\D./g, ''))
     }
 
     if (target.hasAttribute('project')) {
-      this.project[target.name] = target.value
+      this.project[target.name] = inputVal
     } else if (target.hasAttribute('building-complex')) {
-      this.buildingComplex[target.name] = target.value
+      this.buildingComplex[target.name] = inputVal
     } else if (target.hasAttribute('building')) {
-      this.buildings[idx][target.name] = target.value
+      this.buildings[idx][target.name] = inputVal
     }
   }
 }

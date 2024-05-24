@@ -465,10 +465,9 @@ type Building {
 """단지 정보"""
 type BuildingComplex {
   address: String
-  architect: String
   area: Float
   buildingCount: Float
-  buildings: [Building!]!
+  buildings: [Building!]
   clientCompany: String
   constructionCompany: String
   constructionCost: Float
@@ -476,30 +475,31 @@ type BuildingComplex {
   createdAt: DateTimeISO
   creator: User
   deletedAt: DateTimeISO
+  designCompany: String
   domain: Domain
   etc: String
   householdCount: Float
   id: ID!
   mainPhoto: String
-  supervisor: String
+  supervisoryCompany: String
   updatedAt: DateTimeISO
   updater: User
 }
 
 input BuildingComplexPatch {
   address: String!
-  architect: String!
   area: Float!
   buildingCount: Float
   clientCompany: String!
   constructionCompany: String!
   constructionCost: Float
   constructionType: String!
+  designCompany: String!
   etc: String
   householdCount: Float
   id: String
   mainPhoto: String
-  supervisor: String!
+  supervisoryCompany: String!
 }
 
 """시공 검측 (층별 도면의 검측 리스트)"""
@@ -3627,7 +3627,8 @@ input ProfileInput {
 
 """프로젝트"""
 type Project {
-  buildingComplex: BuildingComplex!
+  buildingComplex: BuildingComplex
+  buildings: [Building!]!
   createdAt: DateTimeISO
   creator: User
   deletedAt: DateTimeISO
@@ -3655,6 +3656,7 @@ type ProjectList {
 }
 
 input ProjectPatch {
+  BuildingComplexPatch: BuildingComplexPatch
   endDate: String
   id: String!
   inspPassRate: Float

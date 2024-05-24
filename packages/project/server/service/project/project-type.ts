@@ -1,5 +1,7 @@
-import { ObjectType, Field, InputType, Int } from 'type-graphql'
+import { ObjectType, Field, InputType, Int, Float } from 'type-graphql'
 import { Project } from './project'
+import { Building } from '@dssp/building-complex'
+import { BuildingComplexPatch } from '@dssp/building-complex'
 
 @InputType()
 export class NewProject {
@@ -21,23 +23,26 @@ export class ProjectPatch {
   @Field({ nullable: true })
   endDate?: string
 
-  @Field({ nullable: true })
+  @Field(type => Float, { nullable: true })
   totalProgress?: number
 
-  @Field({ nullable: true })
+  @Field(type => Float, { nullable: true })
   weeklyProgress?: number
 
-  @Field({ nullable: true })
+  @Field(type => Float, { nullable: true })
   kpi?: number
 
-  @Field({ nullable: true })
+  @Field(type => Float, { nullable: true })
   inspPassRate?: number
 
-  @Field({ nullable: true })
+  @Field(type => Float, { nullable: true })
   robotProgressRate?: number
 
-  @Field({ nullable: true })
+  @Field(type => Float, { nullable: true })
   structuralSafetyRate?: number
+
+  @Field({ nullable: true })
+  BuildingComplexPatch?: BuildingComplexPatch
 }
 
 @ObjectType()

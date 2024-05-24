@@ -1,4 +1,5 @@
-import { Field, InputType } from 'type-graphql'
+import { Building } from '../building/building'
+import { Field, InputType, Float } from 'type-graphql'
 
 @InputType()
 export class BuildingComplexPatch {
@@ -8,7 +9,7 @@ export class BuildingComplexPatch {
   @Field({ nullable: false })
   address: string
 
-  @Field({ nullable: false })
+  @Field(type => Float, { nullable: false })
   area: number
 
   @Field({ nullable: false })
@@ -18,10 +19,10 @@ export class BuildingComplexPatch {
   constructionCompany: string
 
   @Field({ nullable: false })
-  supervisor: string
+  supervisoryCompany: string
 
   @Field({ nullable: false })
-  architect: string
+  designCompany: string
 
   @Field({ nullable: true })
   mainPhoto?: string
@@ -29,15 +30,15 @@ export class BuildingComplexPatch {
   @Field({ nullable: false })
   constructionType: string
 
-  @Field({ nullable: true })
+  @Field(type => Float, { nullable: true })
   constructionCost?: number
 
   @Field({ nullable: true })
   etc?: string
 
-  @Field({ nullable: true })
+  @Field(type => Float, { nullable: true })
   householdCount?: number
 
-  @Field({ nullable: true })
+  @Field(type => Float, { nullable: true })
   buildingCount?: number
 }

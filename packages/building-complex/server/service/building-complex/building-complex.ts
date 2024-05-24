@@ -47,11 +47,11 @@ export class BuildingComplex {
 
   @Column({ nullable: true, comment: '감리사' })
   @Field({ nullable: true })
-  supervisor?: string
+  supervisoryCompany?: string
 
   @Column({ nullable: true, comment: '설계사' })
   @Field({ nullable: true })
-  architect?: string
+  designCompany?: string
 
   @Column({ nullable: true, comment: '대표 사진 (BIM)' })
   @Field({ nullable: true })
@@ -79,8 +79,8 @@ export class BuildingComplex {
 
   // 동 정보 (하위 테이블 참조)
   @OneToMany(() => Building, building => building.buildingComplex)
-  @Field(() => [Building])
-  buildings: Building[]
+  @Field(() => [Building], { nullable: true })
+  buildings?: Building[]
 
   @CreateDateColumn()
   @Field({ nullable: true })

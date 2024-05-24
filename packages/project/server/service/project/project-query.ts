@@ -4,9 +4,8 @@ import { Attachment } from '@things-factory/attachment-base'
 import { Domain, getQueryBuilderFromListParams, getRepository, ListParam } from '@things-factory/shell'
 import { User } from '@things-factory/auth-base'
 import { Project } from './project'
-import { ProjectList } from './project-type'
-import { BuildingComplex } from '@dssp/building-complex/dist-server/service/building-complex/building-complex'
-// import { BuildingComplex as BuildingComplexType } from '@dssp/building-complex/dist-server/service/building-complex/building-complex-type'
+import { ProjectList, ProjectPatch } from './project-type'
+import { BuildingComplex, Building } from '@dssp/building-complex'
 
 @Resolver(Project)
 export class ProjectQuery {
@@ -53,6 +52,16 @@ export class ProjectQuery {
     })
 
     return attachment?.fullpath
+  }
+
+  @FieldResolver(type => BuildingComplex)
+  async buildingComplex(@Root() project: Project): Promise<BuildingComplex> {
+    return await getRepository(BuildingComplex).findOneBy({ id: project.buildingComplexId })
+  }
+
+  @FieldResolver(type => [Building])
+  async buildings(@Root() buildingComplex: BuildingComplex): Promise<Building[]> {
+    return await getRepository(Building).findBy({ buildingComplexId: buildingComplex.id })
   }
 
   @FieldResolver(type => Domain)

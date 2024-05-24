@@ -30,9 +30,7 @@ registerEnumType(ProjectStatus, {
 })
 
 @Entity()
-@Index('ix_project_0', (project: Project) => [project.domain, project.name], {
-  where: '"deleted_at" IS NULL'
-})
+@Index('ix_project_0', (project: Project) => [project.buildingComplex], { unique: true, where: '"deleted_at" IS NULL' })
 @ObjectType({ description: '프로젝트' })
 export class Project {
   @PrimaryGeneratedColumn('uuid')
@@ -86,9 +84,10 @@ export class Project {
   @Field({ nullable: true })
   structuralSafetyRate?: number
 
+  // 단지 정보 (1:1 테이블 참조)
   @OneToOne(type => BuildingComplex)
   @JoinColumn()
-  @Field()
+  @Field({ nullable: true })
   buildingComplex?: BuildingComplex
 
   @RelationId((project: Project) => project.buildingComplex)

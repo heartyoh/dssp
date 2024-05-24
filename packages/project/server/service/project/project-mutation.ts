@@ -52,6 +52,7 @@ export class ProjectMutation {
 
     const projectResult = await projectRepo.save({ ...project, updater: user })
     const buildingComplexResult = await buildingComplexRepo.save({ ...buildingComplex, updater: user })
+
     buildings.forEach(async building => {
       const buildingsResult = await buildingRepo.save({ ...building, updater: user })
     })
