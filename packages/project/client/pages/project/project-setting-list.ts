@@ -10,7 +10,6 @@ import { openPopup } from '@operato/layout'
 
 import gql from 'graphql-tag'
 import './project-create-popup'
-import { Project } from './project-list-page'
 
 @customElement('project-setting-list')
 export class ProjectSettingList extends localize(i18next)(ScopedElementsMixin(PageView)) {
@@ -34,7 +33,7 @@ export class ProjectSettingList extends localize(i18next)(ScopedElementsMixin(Pa
   }
 
   @state() private projectName: string = ''
-  @state() private projectList: Project[] = []
+  @state() private projectList: any[] = []
   @state() private projectCount: number = 0
 
   render() {
