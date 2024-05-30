@@ -15,6 +15,19 @@ import { isMobileDevice } from '@operato/utils'
 import { connect } from 'pwa-helpers/connect-mixin'
 import gql from 'graphql-tag'
 
+export interface Project {
+  id: string
+  name: string
+  startDate?: string
+  endDate?: string
+  totalProgress?: number
+  weeklyProgress?: number
+  kpi?: number
+  inspPassRate?: number
+  robotProgressRate?: number
+  structuralSafetyRate?: number
+}
+
 @customElement('project-list-page')
 export class ProjectListPage extends connect(store)(localize(i18next)(ScopedElementsMixin(PageView))) {
   static styles = [
@@ -32,300 +45,63 @@ export class ProjectListPage extends connect(store)(localize(i18next)(ScopedElem
     `
   ]
 
-  @state() private gristConfig: any
-  @state() private mode: 'CARD' | 'GRID' | 'LIST' = isMobileDevice() ? 'CARD' : 'GRID'
-
-  @query('ox-grist') private grist!: DataGrist
-  @query('#sorter-control') private sortersControl!: OxPopup
-
   get context() {
     return {
-      title: i18next.t('title.project list'),
-      search: {
-        handler: (search: string) => {
-          this.grist.searchText = search
-        },
-        value: this.grist.searchText
-      },
-      filter: {
-        handler: () => {
-          this.grist.toggleHeadroom()
-        }
-      },
-      help: 'project/project',
-      actions: [
-        {
-          title: i18next.t('button.save'),
-          action: this.updateProject.bind(this),
-          ...CommonButtonStyles.save
-        },
-        {
-          title: i18next.t('button.delete'),
-          action: this.deleteProject.bind(this),
-          ...CommonButtonStyles.delete
-        }
-      ],
-      exportable: {
-        name: i18next.t('title.project list'),
-        data: this.exportHandler.bind(this)
-      },
-      importable: {
-        handler: this.importHandler.bind(this)
-      }
+      title: i18next.t('title.project_setting_list')
     }
   }
 
+  @state() private projectName: string = ''
+  @state() private projectList: Project[] = []
+  @state() private projectCount: number = 0
+
   render() {
-    const mode = this.mode || (isMobileDevice() ? 'CARD' : 'GRID')
-
     return html`
-      <ox-grist .mode=${mode} .config=${this.gristConfig} .fetchHandler=${this.fetchHandler.bind(this)}>
-        <div slot="headroom">
-          <div id="filters">
-            <ox-filters-form autofocus></ox-filters-form>
-          </div>
-
-          <div id="sorters">
-            Sort
-            <mwc-icon
-              @click=${e => {
-                const target = e.currentTarget
-                this.sortersControl.open({
-                  right: 0,
-                  top: target.offsetTop + target.offsetHeight
-                })
-              }}
-              >expand_more</mwc-icon
-            >
-            <ox-popup id="sorter-control">
-              <ox-sorters-control> </ox-sorters-control>
-            </ox-popup>
-          </div>
-
-          <div id="modes">
-            <mwc-icon @click=${() => (this.mode = 'GRID')} ?active=${mode == 'GRID'}>grid_on</mwc-icon>
-            <mwc-icon @click=${() => (this.mode = 'LIST')} ?active=${mode == 'LIST'}>format_list_bulleted</mwc-icon>
-            <mwc-icon @click=${() => (this.mode = 'CARD')} ?active=${mode == 'CARD'}>apps</mwc-icon>
-          </div>
+      <div main>
+        <div header></div>
+        <div body>
+          ${this.projectList?.map(project => {
+            return html`
+              <a href="project-update/${project.id}">
+                <div>
+                  <img />
+                  <span> </span></div
+              ></a>
+            `
+          })}
         </div>
-      </ox-grist>
+      </div>
     `
   }
 
-  async pageInitialized(lifecycle: any) {
-    this.gristConfig = {
-      list: {
-        fields: ['name', 'description'],
-        details: ['active', 'updatedAt']
-      },
-      columns: [
-        { type: 'gutter', gutterName: 'sequence' },
-        { type: 'gutter', gutterName: 'row-selector', multiple: true },
-        {
-          type: 'string',
-          name: 'name',
-          header: i18next.t('field.name'),
-          record: {
-            editable: true
-          },
-          filter: 'search',
-          sortable: true,
-          width: 150
-        },
-        {
-          type: 'string',
-          name: 'description',
-          header: i18next.t('field.description'),
-          record: {
-            editable: true
-          },
-          filter: 'search',
-          width: 200
-        },
-        {
-          type: 'checkbox',
-          name: 'active',
-          label: true,
-          header: i18next.t('field.active'),
-          record: {
-            editable: true
-          },
-          filter: true,
-          sortable: true,
-          width: 60
-        },
-        {
-          type: 'resource-object',
-          name: 'updater',
-          header: i18next.t('field.updater'),
-          record: {
-            editable: false
-          },
-          sortable: true,
-          width: 120
-        },
-        {
-          type: 'datetime',
-          name: 'updatedAt',
-          header: i18next.t('field.updated_at'),
-          record: {
-            editable: false
-          },
-          sortable: true,
-          width: 180
-        }
-      ],
-      rows: {
-        selectable: {
-          multiple: true
-        }
-      },
-      sorters: [
-        {
-          name: 'name'
-        }
-      ]
-    }
-  }
+  async pageInitialized(lifecycle: any) {}
 
   async pageUpdated(changes: any, lifecycle: any) {
     if (this.active) {
-      // do something here when this page just became as active
+      this.getProjectList()
     }
   }
 
-  async fetchHandler({ page = 1, limit = 100, sortings = [], filters = [] }: FetchOption) {
+  async getProjectList() {
     const response = await client.query({
       query: gql`
-        query ($filters: [Filter!], $pagination: Pagination, $sortings: [Sorting!]) {
-          responses: projects(filters: $filters, pagination: $pagination, sortings: $sortings) {
+        query Projects($projectName: String!) {
+          projects(projectName: $projectName) {
             items {
               id
               name
-              description
-              active
-              updater {
-                id
-                name
-              }
-              updatedAt
+              createdAt
             }
             total
           }
         }
       `,
       variables: {
-        filters,
-        pagination: { page, limit },
-        sortings
+        projectName: this.projectName || ''
       }
     })
 
-    return {
-      total: response.data.responses.total || 0,
-      records: response.data.responses.items || []
-    }
-  }
-
-  private async deleteProject() {
-    if (
-      await OxPrompt.open({
-        title: i18next.t('text.are_you_sure'),
-        text: i18next.t('text.sure_to_x', { x: i18next.t('text.delete') }),
-        confirmButton: { text: i18next.t('button.confirm') },
-        cancelButton: { text: i18next.t('button.cancel') }
-      })
-    ) {
-      const ids = this.grist.selected.map(record => record.id)
-      if (ids && ids.length > 0) {
-        const response = await client.mutate({
-          mutation: gql`
-            mutation ($ids: [String!]!) {
-              deleteProjects(ids: $ids)
-            }
-          `,
-          variables: {
-            ids
-          }
-        })
-
-        if (!response.errors) {
-          this.grist.fetch()
-          notify({
-            message: i18next.t('text.info_x_successfully', { x: i18next.t('text.delete') })
-          })
-        }
-      }
-    }
-  }
-
-  private async updateProject() {
-    let patches = this.grist.dirtyRecords
-    if (patches && patches.length) {
-      patches = patches.map(patch => {
-        let patchField: any = patch.id ? { id: patch.id } : {}
-        const dirtyFields = patch.__dirtyfields__
-        for (let key in dirtyFields) {
-          patchField[key] = dirtyFields[key].after
-        }
-        patchField.cuFlag = patch.__dirty__
-
-        return patchField
-      })
-
-      const response = await client.mutate({
-        mutation: gql`
-          mutation ($patches: [ProjectPatch!]!) {
-            updateMultipleProject(patches: $patches) {
-              name
-            }
-          }
-        `,
-        variables: {
-          patches
-        }
-      })
-
-      if (!response.errors) {
-        this.grist.fetch()
-      }
-    }
-  }
-
-  private async exportHandler() {
-    const exportTargets = this.grist.selected.length ? this.grist.selected : this.grist.dirtyData.records
-    const targetFieldSet = new Set(['id', 'name', 'description', 'active'])
-
-    return exportTargets.map(project => {
-      let tempObj = {}
-      for (const field of targetFieldSet) {
-        tempObj[field] = project[field]
-      }
-
-      return tempObj
-    })
-  }
-
-  private async importHandler(records) {
-    const popup = openPopup(
-      html`
-        <project-importer
-          .projects=${records}
-          @imported=${() => {
-            history.back()
-            this.grist.fetch()
-          }}
-        ></project-importer>
-      `,
-      {
-        backdrop: true,
-        size: 'large',
-        title: i18next.t('title.import project')
-      }
-    )
-
-    popup.onclosed = () => {
-      this.grist.fetch()
-    }
+    this.projectList = response.data.projects?.items || []
+    this.projectCount = response.data.projects?.total || 0
   }
 }

@@ -1,6 +1,5 @@
 import { ObjectType, Field, InputType, Int, Float } from 'type-graphql'
 import { Project } from './project'
-import { Building } from '@dssp/building-complex'
 import { BuildingComplexPatch } from '@dssp/building-complex'
 
 @InputType()
@@ -42,7 +41,7 @@ export class ProjectPatch {
   structuralSafetyRate?: number
 
   @Field({ nullable: true })
-  buildingComplexPatch?: BuildingComplexPatch
+  buildingComplex?: BuildingComplexPatch
 }
 
 @ObjectType()

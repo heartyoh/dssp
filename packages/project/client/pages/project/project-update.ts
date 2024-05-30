@@ -1,17 +1,11 @@
 import '@operato/data-grist'
-
-import { CommonButtonStyles, CommonGristStyles, ScrollbarStyles } from '@operato/styles'
-import { PageView, store } from '@operato/shell'
+import { PageView } from '@operato/shell'
 import { PageLifecycle } from '@operato/shell/dist/src/app/pages/page-view'
 import { css, html } from 'lit'
-import { customElement, property, query, state } from 'lit/decorators.js'
+import { customElement, state } from 'lit/decorators.js'
 import { ScopedElementsMixin } from '@open-wc/scoped-elements'
-import { ColumnConfig, DataGrist, FetchOption, SortersControl } from '@operato/data-grist'
 import { client } from '@operato/graphql'
-import { i18next, localize } from '@operato/i18n'
-import { notify, openPopup } from '@operato/layout'
-import { OxPopup, OxPrompt } from '@operato/popup'
-import { isMobileDevice } from '@operato/utils'
+import { notify } from '@operato/layout'
 
 import gql from 'graphql-tag'
 
@@ -31,7 +25,7 @@ export interface Project {
   inspPassRate?: number
   robotProgressRate?: number
   structuralSafetyRate?: number
-  buildingComplex?: BuildingComplex
+  buildingComplex: BuildingComplex
 }
 export interface BuildingComplex {
   id?: string
@@ -56,7 +50,7 @@ export interface Building {
 }
 
 @customElement('project-update')
-export class ProjectUpdate extends localize(i18next)(ScopedElementsMixin(PageView)) {
+export class ProjectUpdate extends ScopedElementsMixin(PageView) {
   static styles = [
     css`
       :host {
@@ -76,27 +70,25 @@ export class ProjectUpdate extends localize(i18next)(ScopedElementsMixin(PageVie
 
   get context() {
     return {
-      title: i18next.t('title.project_update')
+      title: '프로젝트 정보 관리'
     }
   }
 
   private defaultProject = {
-    name: ''
+    name: '',
+    buildingComplex: {
+      address: '',
+      area: 0,
+      constructionCompany: '',
+      clientCompany: '',
+      supervisoryCompany: '',
+      designCompany: '',
+      constructionType: '',
+      buildings: []
+    }
   }
-  private defaultbuildingComplex = {
-    address: '',
-    area: 0,
-    constructionCompany: '',
-    clientCompany: '',
-    supervisoryCompany: '',
-    designCompany: '',
-    constructionType: ''
-  }
-
   @state() projectId: string = ''
   @state() project: Project = { ...this.defaultProject }
-  @state() buildingComplex: BuildingComplex = { ...this.defaultbuildingComplex }
-  @state() buildings: Building[] = []
 
   render() {
     return html`
@@ -133,7 +125,7 @@ export class ProjectUpdate extends localize(i18next)(ScopedElementsMixin(PageVie
                     type="text"
                     name="address"
                     building-complex
-                    .value=${this.buildingComplex.address || ''}
+                    .value=${this.project?.buildingComplex?.address || ''}
                     @input=${this._onInputChange}
                   />
                 </div>
@@ -147,7 +139,7 @@ export class ProjectUpdate extends localize(i18next)(ScopedElementsMixin(PageVie
                   name="area"
                   numeric
                   building-complex
-                  .value=${this.buildingComplex.area?.toString() || ''}
+                  .value=${this.project?.buildingComplex?.area?.toString() || ''}
                   @input=${this._onInputChange}
                 />
                 ㎡</span
@@ -178,7 +170,7 @@ export class ProjectUpdate extends localize(i18next)(ScopedElementsMixin(PageVie
                   type="text"
                   name="clientCompany"
                   building-complex
-                  .value=${this.buildingComplex.clientCompany || ''}
+                  .value=${this.project?.buildingComplex?.clientCompany || ''}
                   @input=${this._onInputChange}
               /></span>
             </div>
@@ -189,7 +181,7 @@ export class ProjectUpdate extends localize(i18next)(ScopedElementsMixin(PageVie
                   type="text"
                   name="constructionCompany"
                   building-complex
-                  .value=${this.buildingComplex.constructionCompany || ''}
+                  .value=${this.project?.buildingComplex?.constructionCompany || ''}
                   @input=${this._onInputChange}
               /></span>
             </div>
@@ -200,7 +192,7 @@ export class ProjectUpdate extends localize(i18next)(ScopedElementsMixin(PageVie
                   type="text"
                   name="designCompany"
                   building-complex
-                  .value=${this.buildingComplex.designCompany || ''}
+                  .value=${this.project?.buildingComplex?.designCompany || ''}
                   @input=${this._onInputChange}
               /></span>
             </div>
@@ -211,7 +203,7 @@ export class ProjectUpdate extends localize(i18next)(ScopedElementsMixin(PageVie
                   type="text"
                   name="supervisoryCompany"
                   building-complex
-                  .value=${this.buildingComplex.supervisoryCompany || ''}
+                  .value=${this.project?.buildingComplex?.supervisoryCompany || ''}
                   @input=${this._onInputChange}
               /></span>
             </div>
@@ -222,7 +214,7 @@ export class ProjectUpdate extends localize(i18next)(ScopedElementsMixin(PageVie
                   type="text"
                   name="constructionType"
                   building-complex
-                  .value=${this.buildingComplex.constructionType || ''}
+                  .value=${this.project?.buildingComplex?.constructionType || ''}
                   @input=${this._onInputChange}
               /></span>
             </div>
@@ -233,7 +225,7 @@ export class ProjectUpdate extends localize(i18next)(ScopedElementsMixin(PageVie
                   type="file"
                   name="mainPhoto"
                   building-complex
-                  .value=${this.buildingComplex.mainPhoto || ''}
+                  .value=${this.project?.buildingComplex?.mainPhoto || ''}
                   @input=${this._onInputChange}
               /></span>
             </div>
@@ -245,7 +237,7 @@ export class ProjectUpdate extends localize(i18next)(ScopedElementsMixin(PageVie
                   name="constructionCost"
                   numeric
                   building-complex
-                  .value=${this.buildingComplex.constructionCost?.toString() || ''}
+                  .value=${this.project?.buildingComplex?.constructionCost?.toString() || ''}
                   @input=${this._onInputChange}
               /></span>
             </div>
@@ -255,7 +247,7 @@ export class ProjectUpdate extends localize(i18next)(ScopedElementsMixin(PageVie
                 <textarea
                   name="etc"
                   building-complex
-                  .value=${this.buildingComplex.clientCompany || ''}
+                  .value=${this.project?.buildingComplex?.clientCompany || ''}
                   @input=${this._onInputChange}
                 ></textarea>
               </span>
@@ -272,7 +264,7 @@ export class ProjectUpdate extends localize(i18next)(ScopedElementsMixin(PageVie
                     numeric
                     building-complex
                     name="householdCount"
-                    .value=${this.buildingComplex.householdCount?.toString() || ''}
+                    .value=${this.project?.buildingComplex?.householdCount?.toString() || ''}
                     @input=${this._onInputChange}
                   />
                 </span>
@@ -285,14 +277,14 @@ export class ProjectUpdate extends localize(i18next)(ScopedElementsMixin(PageVie
                     numeric
                     building-complex
                     name="buildingCount"
-                    value=${this.buildingComplex.buildingCount?.toString() || ''}
+                    value=${this.project?.buildingComplex?.buildingCount?.toString() || ''}
                     @input=${this._onInputChange}
                   />
                   <button @click=${this._setBuilding}>적용</button>
                 </span>
               </div>
               <div>
-                ${this.buildings?.map(
+                ${this.project?.buildingComplex?.buildings?.map(
                   (building, idx) => html`
                     <div>
                       <span>
@@ -482,35 +474,20 @@ export class ProjectUpdate extends localize(i18next)(ScopedElementsMixin(PageVie
 
     console.log('initProject : ', response.data?.project)
 
-    this.project = { ...(response.data?.project || {}) }
-    this.buildingComplex = { ...(response.data.project?.buildingComplex || {}) }
-    this.buildings = [...(response.data.project?.buildingComplex?.buildings || [])]
-
-    delete this.project.buildingComplex
-    delete this.buildingComplex?.buildings
+    this.project = response.data?.project
   }
 
   private async _saveProject() {
-    console.log('this.project : ', this.project)
-    console.log('this.buildingComplex : ', this.buildingComplex)
-    console.log('this.buildings : ', this.buildings)
-
     const response = await client.mutate({
       mutation: gql`
-        mutation UpdateProject(
-          $project: ProjectPatch!
-          $buildingComplex: BuildingComplexPatch!
-          $buildings: [BuildingPatch!]!
-        ) {
-          updateProject(buildings: $buildings, buildingComplex: $buildingComplex, project: $project) {
+        mutation UpdateProject($project: ProjectPatch!) {
+          updateProject(project: $project) {
             id
           }
         }
       `,
       variables: {
-        project: this.project,
-        buildingComplex: this.buildingComplex,
-        buildings: this.buildings
+        project: this.project
       }
     })
 
@@ -521,26 +498,28 @@ export class ProjectUpdate extends localize(i18next)(ScopedElementsMixin(PageVie
 
   // 동 적용 버튼을 누르면 입력한 수 만큼 해당 단지에 동 데이터 생성
   private _setBuilding() {
-    const buildingCount: number = this.buildingComplex.buildingCount || 0
-    // this.buildings = Array(buildingCount).fill({ name: undefined, floorCount: undefined })
+    const buildingCount: number = this.project?.buildingComplex?.buildingCount || 0
     const buildingInitData = { name: undefined, floorCount: undefined }
 
-    if (this.buildings.length >= buildingCount) {
+    // 빌딩 데이터가 없으면 빈 배열 넣어줌
+    if (!this.project?.buildingComplex?.buildings?.length) {
+      this.project.buildingComplex.buildings = []
+    }
+
+    if (this.project.buildingComplex.buildings.length >= buildingCount) {
       // 동 수가 더 작게 들어오면 기존 배열을 필요한 크기만큼 잘라내기
-      this.buildings = [...this.buildings.slice(0, buildingCount)]
+      this.project.buildingComplex.buildings = [...this.project.buildingComplex.buildings!.slice(0, buildingCount)]
     } else {
       // 동수가 더 크게 들어오면 기존 배열 + 빈 값을 채움
-      const additionalCount = buildingCount - this.buildings.length
+      const additionalCount = buildingCount - this.project.buildingComplex.buildings.length
       const additionalBuildings = Array.from({ length: additionalCount }, () => ({ ...buildingInitData }))
-      this.buildings = [...this.buildings, ...additionalBuildings]
+      this.project.buildingComplex.buildings = [...this.project.buildingComplex.buildings, ...additionalBuildings]
     }
   }
 
   // 모든 값 초기화 (초기화 버튼은 TODO 이거 없애는게 좋겠음)
   private _reset() {
     this.project = { ...this.defaultProject }
-    this.buildingComplex = { ...this.defaultbuildingComplex }
-    this.buildings = []
   }
 
   // Input 요소의 값이 변경될 때 호출되는 콜백 함수
@@ -556,9 +535,9 @@ export class ProjectUpdate extends localize(i18next)(ScopedElementsMixin(PageVie
     if (target.hasAttribute('project')) {
       this.project[target.name] = inputVal
     } else if (target.hasAttribute('building-complex')) {
-      this.buildingComplex[target.name] = inputVal
+      this.project.buildingComplex![target.name] = inputVal
     } else if (target.hasAttribute('building')) {
-      this.buildings[idx][target.name] = inputVal
+      this.project.buildingComplex.buildings![idx][target.name] = inputVal
     }
   }
 }

@@ -16,6 +16,9 @@ export class BuildingPatch {
 
   @Field({ nullable: true })
   floorCount?: number
+
+  @Field({ nullable: true })
+  planImage?: string
 }
 
 @ObjectType()

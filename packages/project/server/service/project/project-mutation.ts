@@ -35,16 +35,13 @@ export class ProjectMutation {
 
   @Directive('@transaction')
   @Mutation(returns => Project, { description: '프로젝트 업데이트' })
-  async updateProject(
-    @Arg('project') project: ProjectPatch,
-    @Arg('buildingComplex', type => BuildingComplexPatch) buildingComplex: BuildingComplexPatch,
-    @Arg('buildings', type => [BuildingPatch]) buildings: BuildingPatch[],
-    @Ctx() context: ResolverContext
-  ): Promise<Project> {
+  async updateProject(@Arg('project') project: ProjectPatch, @Ctx() context: ResolverContext): Promise<Project> {
     const { user, tx } = context.state
     const projectRepo = tx.getRepository(Project)
     const buildingComplexRepo = tx.getRepository(BuildingComplex)
     const buildingRepo = tx.getRepository(Building)
+    const buildingComplex = project.buildingComplex
+    const buildings = project.buildingComplex?.buildings || []
 
     // 1. 프로젝트 수정
     const projectResult = await projectRepo.save({ ...project, updater: user })

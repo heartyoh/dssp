@@ -1,5 +1,6 @@
+import { BuildingPatch } from '../building/building-type'
 import { Building } from '../building/building'
-import { Field, InputType, Float } from 'type-graphql'
+import { Field, InputType, ObjectType, Float } from 'type-graphql'
 
 @InputType()
 export class BuildingComplexPatch {
@@ -41,4 +42,7 @@ export class BuildingComplexPatch {
 
   @Field(type => Float, { nullable: true })
   buildingCount?: number
+
+  @Field(type => [BuildingPatch], { nullable: true })
+  buildings?: BuildingPatch[]
 }
