@@ -7,9 +7,14 @@ import { ScopedElementsMixin } from '@open-wc/scoped-elements'
 import { client } from '@operato/graphql'
 import { i18next, localize } from '@operato/i18n'
 import { openPopup } from '@operato/layout'
+import '@material/web/button/elevated-button.js'
+import '@material/web/button/outlined-button.js'
+import '@material/web/progress/linear-progress.js'
+import '@material/web/textfield/filled-text-field.js'
 
 import gql from 'graphql-tag'
 import './project-create-popup'
+import { Project } from './project-list-page'
 
 @customElement('project-setting-list')
 export class ProjectSettingList extends localize(i18next)(ScopedElementsMixin(PageView)) {
@@ -17,11 +22,138 @@ export class ProjectSettingList extends localize(i18next)(ScopedElementsMixin(Pa
     css`
       :host {
         display: flex;
+        flex-direction: column;
+        overflow-y: auto;
 
         width: 100%;
+        height: 100%;
+        background-color: #f7f7f7;
 
         --grid-record-emphasized-background-color: red;
         --grid-record-emphasized-color: yellow;
+      }
+
+      div[header] {
+        display: flex;
+        height: 100px;
+        align-items: center;
+        background-color: #2ea4df1a;
+        border: 1px solid #2ea4df33;
+        margin: 15px 23px;
+        font-size: 18px;
+        padding: 7px;
+        border-radius: 5px;
+
+        md-filled-text-field[type='search'] {
+          margin-left: 5px;
+          margin-right: 26px;
+
+          --md-filled-text-field-container-shape: 0px;
+          --md-sys-color-primary: #006a6a;
+          --md-sys-color-surface-container-highest: transparent;
+          --md-filled-text-field-label-text-color: #999999;
+          --md-filled-text-field-input-text-color: #4e5055;
+        }
+
+        md-elevated-button[add-project] {
+          font-weight: bold;
+          font-size: 16px;
+          margin-left: 17px;
+          padding: 13px 20px;
+
+          --md-sys-color-surface-container-low: #24be7b;
+          --md-sys-color-primary: #ffffff;
+          --md-elevated-button-container-shape: 7px;
+        }
+      }
+
+      div[body] {
+        div[project-container] {
+          display: flex;
+          flex-direction: row;
+          height: 140px;
+          margin: 17px 23px;
+          background-color: #ffffff;
+          border: 1px solid #cccccc80;
+          border-radius: 5px;
+
+          img[project-img] {
+            width: 285px;
+            background-color: #cccccc80;
+          }
+
+          span[project-info] {
+            flex: 0.45;
+            padding: 6px 15px;
+            font-size: 16px;
+
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+
+            div[name] {
+              color: #2e79be;
+              font-weight: bold;
+              font-size: 19px;
+              margin-bottom: 2px;
+            }
+          }
+
+          span[project-state] {
+            flex: 0.55;
+            padding: 10px 20px;
+
+            & > div {
+              margin-bottom: 13px;
+            }
+
+            div[progress] {
+              position: relative;
+
+              md-linear-progress {
+                --md-linear-progress-track-height: 18px;
+                --md-linear-progress-active-indicator-height: 18px;
+                --md-linear-progress-track-shape: 5px;
+                --md-sys-color-primary: #0595e51a;
+                --md-sys-color-surface-container-highest: #0595e533;
+              }
+
+              span {
+                position: absolute;
+                top: 0;
+                left: 12px;
+                font-size: 12px;
+                font-weight: bold;
+                color: #2e79be;
+
+                &:last-child {
+                  left: unset;
+                  right: 12px;
+                }
+              }
+            }
+
+            div[filled] span {
+              margin-right: 18px;
+            }
+
+            strong[filled] {
+              color: #1bb401;
+            }
+            strong[not-filled] {
+              color: #ff4444;
+            }
+
+            md-outlined-button {
+              min-height: 33px;
+              padding: 0px 13px;
+              margin-right: 2px;
+              box-shadow: 1px 1px 1px #0000001a;
+              --md-sys-color-primary: #586878;
+              --md-outlined-button-label-text-weight: bold;
+            }
+          }
+        }
       }
     `
   ]
@@ -33,23 +165,69 @@ export class ProjectSettingList extends localize(i18next)(ScopedElementsMixin(Pa
   }
 
   @state() private projectName: string = ''
-  @state() private projectList: any[] = []
+  @state() private projectList: Project[] = []
   @state() private projectCount: number = 0
 
   render() {
     return html`
-      <div main>
-        <div header>
-          <label>프로젝트 이름 (검색)</label>
-          <input type="text" name="projectName" .value=${this.projectName} @input=${this._onInputChange} />
-          <label>총 ${this.projectCount}개</label>
-          <button @click=${this._openCreateProjectPopup}>+ 신규 프로젝트 추가</button>
-        </div>
-        <div body>
-          ${this.projectList?.map(project => {
-            return html` <div><a href="project-update/${project.id}">${project.name}</a></div> `
-          })}
-        </div>
+      <div header>
+        <label>프로젝트 이름</label>
+        <md-filled-text-field
+          name="projectName"
+          type="search"
+          label="프로젝트 이름"
+          .value=${this.projectName}
+          @input=${this._onInputChange}
+          @keypress=${this._onKeypress}
+        >
+          <md-icon slot="leading-icon">search</md-icon>
+        </md-filled-text-field>
+
+        <strong>총 ${this.projectCount}개</strong>
+        <md-elevated-button add-project @click=${this._openCreateProjectPopup}>+ 신규 프로젝트 추가</md-elevated-button>
+      </div>
+
+      <div body>
+        ${this.projectList?.map((project: Project) => {
+          const filledText = html`<strong filled>등록완료</strong>`
+          const nonFilledText = html`<strong not-filled>미등록</strong>`
+
+          const projectFilledState = project.buildingComplex.address ? filledText : nonFilledText
+          const supervisoryFilledState = true ? filledText : nonFilledText
+          const taskFilledState = false ? filledText : nonFilledText
+
+          return html`
+            <div project-container>
+              <img project-img src=${project.buildingComplex.mainPhoto || ''} />
+
+              <span project-info>
+                <div name>${project.name}</div>
+                <div content>${project.buildingComplex.address}</div>
+                <div content>면적: ${project.buildingComplex.area}㎡</div>
+                <div content>착공~준공: ${project.startDate}~${project.endDate}</div>
+                <div content>발주처: <strong>${project.buildingComplex.clientCompany}</strong></div>
+              </span>
+
+              <span project-state>
+                <div progress>
+                  <md-linear-progress buffer="100" max="100" value=${project.totalProgress || 0}> </md-linear-progress>
+                  <span>${project.totalProgress == 100 ? '완료' : '진행중'}</span>
+                  <span>${project.totalProgress || 0}%</span>
+                </div>
+                <div filled>
+                  <span>프로젝트 정보 ${projectFilledState}</span>
+                  <span>시공감리 자료 ${supervisoryFilledState}</span>
+                  <span>공정표 ${taskFilledState}</span>
+                </div>
+                <div>
+                  <md-outlined-button href="project-update/${project.id}">프로젝트 정보 수정</md-outlined-button>
+                  <md-outlined-button href="project-update/${project.id}">시공감리 관리</md-outlined-button>
+                  <md-outlined-button href="project-update/${project.id}">공정표 관리</md-outlined-button>
+                </div>
+              </span>
+            </div>
+          `
+        })}
       </div>
     `
   }
@@ -72,7 +250,15 @@ export class ProjectSettingList extends localize(i18next)(ScopedElementsMixin(Pa
             items {
               id
               name
-              createdAt
+              startDate
+              endDate
+              totalProgress
+              buildingComplex {
+                address
+                area
+                clientCompany
+                mainPhoto
+              }
             }
             total
           }
@@ -92,7 +278,7 @@ export class ProjectSettingList extends localize(i18next)(ScopedElementsMixin(Pa
   private _openCreateProjectPopup() {
     openPopup(html`<project-create-popup .refreshFn=${this.getProjectList.bind(this)}></project-create-popup>`, {
       backdrop: true,
-      size: 'small',
+      size: 'medium',
       title: i18next.t('title.project_create')
     })
   }
@@ -101,5 +287,12 @@ export class ProjectSettingList extends localize(i18next)(ScopedElementsMixin(Pa
   private _onInputChange(event: InputEvent) {
     const target = event.target as HTMLInputElement
     this[target.name] = target.value
+  }
+
+  // 검색창에서 엔터입력시 검색
+  private _onKeypress(event: KeyboardEvent) {
+    if (event.code === 'Enter') {
+      this.getProjectList()
+    }
   }
 }

@@ -15,4 +15,5 @@ body {
   --md-outlined-button-container-shape: var(--md-sys-shape-corner-small);
   --md-elevated-button-container-shape: var(--md-sys-shape-corner-small);
   --md-filled-button-container-shape: var(--md-sys-shape-corner-small);
+  --md-elevated-button-label-text-font: 'Noto Sans CJK KR';
 }

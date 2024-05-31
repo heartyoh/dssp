@@ -8,46 +8,7 @@ import { client } from '@operato/graphql'
 import { notify } from '@operato/layout'
 
 import gql from 'graphql-tag'
-
-export enum ProjectStatus {
-  'PROCEEDING' = '10',
-  'COMPLICATED' = '20'
-}
-
-export interface Project {
-  id?: string
-  name: string
-  startDate?: string
-  endDate?: string
-  totalProgress?: number
-  weeklyProgress?: number
-  kpi?: number
-  inspPassRate?: number
-  robotProgressRate?: number
-  structuralSafetyRate?: number
-  buildingComplex: BuildingComplex
-}
-export interface BuildingComplex {
-  id?: string
-  address: string
-  area: number
-  constructionCompany: string
-  clientCompany: string
-  designCompany: string
-  supervisoryCompany: string
-  mainPhoto?: string
-  constructionType: string
-  constructionCost?: number
-  etc?: string
-  householdCount?: number
-  buildingCount?: number
-  buildings?: Building[]
-}
-export interface Building {
-  id?: string
-  name: string | undefined
-  floorCount: number | undefined
-}
+import { Project } from './project-list-page'
 
 @customElement('project-update')
 export class ProjectUpdate extends ScopedElementsMixin(PageView) {
@@ -417,10 +378,7 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
     `
   }
 
-  async pageInitialized(lifecycle: PageLifecycle) {
-    // this.projectId = lifecycle.resourceId || ''
-    // await this.initProject(this.projectId)
-  }
+  async pageInitialized(lifecycle: PageLifecycle) {}
 
   async pageUpdated(changes: any, lifecycle: PageLifecycle) {
     if (this.active) {

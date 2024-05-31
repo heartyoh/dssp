@@ -15,8 +15,13 @@ import { isMobileDevice } from '@operato/utils'
 import { connect } from 'pwa-helpers/connect-mixin'
 import gql from 'graphql-tag'
 
+export enum ProjectStatus {
+  'PROCEEDING' = '10',
+  'COMPLICATED' = '20'
+}
+
 export interface Project {
-  id: string
+  id?: string
   name: string
   startDate?: string
   endDate?: string
@@ -26,8 +31,29 @@ export interface Project {
   inspPassRate?: number
   robotProgressRate?: number
   structuralSafetyRate?: number
+  buildingComplex: BuildingComplex
 }
-
+export interface BuildingComplex {
+  id?: string
+  address: string
+  area: number
+  constructionCompany: string
+  clientCompany: string
+  designCompany: string
+  supervisoryCompany: string
+  mainPhoto?: string
+  constructionType: string
+  constructionCost?: number
+  etc?: string
+  householdCount?: number
+  buildingCount?: number
+  buildings?: Building[]
+}
+export interface Building {
+  id?: string
+  name: string | undefined
+  floorCount: number | undefined
+}
 @customElement('project-list-page')
 export class ProjectListPage extends connect(store)(localize(i18next)(ScopedElementsMixin(PageView))) {
   static styles = [
