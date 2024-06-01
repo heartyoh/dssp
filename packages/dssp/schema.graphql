@@ -29,7 +29,7 @@ type AppBinding {
   email: EmailAddress!
   id: ID!
   locale: String
-  name: String!
+  name: String
   owner: Boolean
   reference: String
   refreshToken: String
@@ -133,7 +133,7 @@ type ApprovalLine {
   createdAt: DateTimeISO
   creator: User
   description: String
-  domain: Domain
+  domain: Domain!
   id: ID!
   model: [ApprovalLineItem!]
   name: String
@@ -283,11 +283,10 @@ type AuthProvider {
   clientSecret: String
   createdAt: DateTimeISO
   creator: User
-  domain: Domain
+  domain: Domain!
   id: ID!
   params: Object
   privateKey: String
-  state: String
   tenantId: String
   type: String
   updatedAt: DateTimeISO
@@ -419,7 +418,7 @@ type BoardTemplate {
   createdAt: DateTimeISO
   creator: User
   description: String
-  domain: Domain
+  domain: Domain!
   id: ID!
   mine: Boolean!
   model: String
@@ -673,7 +672,7 @@ type CommonCode {
   creator: User
   description: String
   details: [CommonCodeDetail!]!
-  domain: Domain
+  domain: Domain!
   id: ID!
   name: String!
   updatedAt: DateTimeISO
@@ -686,7 +685,7 @@ type CommonCodeDetail {
   createdAt: DateTimeISO
   creator: User
   description: String
-  domain: Domain
+  domain: Domain!
   id: ID!
   labels: Object
   name: String!
@@ -759,7 +758,7 @@ input ConnectionPatch {
 
 type ConnectionState {
   description: String
-  domain: Domain
+  domain: Domain!
   edge: Appliance
   id: String
   name: String
@@ -789,7 +788,7 @@ type Contact {
   creator: User
   deletedAt: DateTimeISO
   department: String
-  domain: Domain
+  domain: Domain!
   email: EmailAddress
   id: ID!
   items: [ContactItem!]
@@ -860,7 +859,7 @@ type Department {
   creator: User
   deletedAt: DateTimeISO
   description: String
-  domain: Domain
+  domain: Domain!
   extension: String
   id: ID!
   manager: Employee
@@ -967,7 +966,7 @@ type Employee {
   creator: User
   deletedAt: DateTimeISO
   department: Department
-  domain: Domain
+  domain: Domain!
   email: EmailAddress
   extension: String
   hiredOn: String
@@ -1033,7 +1032,7 @@ type Entity {
   dataProp: String
   delStrategy: String
   description: String
-  domain: Domain
+  domain: Domain!
   extEntity: Boolean
   fixedColumns: Float
   id: ID!
@@ -1058,7 +1057,7 @@ type EntityColumn {
   creator: User
   defVal: String
   description: String
-  domain: Domain
+  domain: Domain!
   entity: Entity!
   formEditor: String
   formFormat: String
@@ -1231,7 +1230,7 @@ type Font {
   active: Boolean!
   createdAt: DateTimeISO
   creator: User
-  domain: Domain
+  domain: Domain!
   files: [Attachment!]
   id: ID!
   name: String!
@@ -1331,9 +1330,11 @@ type LiteMenu {
   createdAt: DateTimeISO
   creator: User
   description: String
-  domain: Domain
+  domain: Domain!
   icon: String
   id: ID!
+  label: String!
+  labels: Object
   name: String!
   parent: String
   privilege: PrivilegeObject
@@ -1354,6 +1355,7 @@ input LiteMenuPatch {
   appName: String
   description: String
   icon: String
+  labels: Object
   name: String
   parent: String
   privilege: PrivilegeInput
@@ -1393,14 +1395,14 @@ type LoginHistoryList {
 type Menu {
   buttons: [MenuButton!]!
   category: String
-  children: [Menu!]!
+  children(permittedOnly: Boolean! = false): [Menu!]!
   columns: [MenuColumn!]!
   createdAt: DateTimeISO
   creator: User
   description: String
   detailFormId: String
   detailLayout: String
-  domain: Domain
+  domain: Domain!
   fixedColumns: Float
   gridSaveUrl: String
   hiddenFlag: Boolean
@@ -1412,6 +1414,7 @@ type Menu {
   name: String
   pagination: Boolean
   parent: Menu
+  privilege: PrivilegeObject
   rank: Float
   resourceId: String
   resourceName: String
@@ -1433,7 +1436,7 @@ type MenuButton {
   auth: String
   createdAt: DateTimeISO
   creator: User
-  domain: Domain
+  domain: Domain!
   icon: String
   id: ID!
   logic: String
@@ -1468,7 +1471,7 @@ type MenuColumn {
   creator: User
   defVal: String
   description: String
-  domain: Domain
+  domain: Domain!
   extField: Boolean
   formEditor: String
   formFormat: String
@@ -1557,7 +1560,7 @@ type MenuDetail {
   creator: User
   customView: String
   dataProp: String
-  domain: Domain
+  domain: Domain!
   entityId: String
   id: ID!
   masterField: String
@@ -1574,7 +1577,7 @@ type MenuDetail {
 type MenuDetailButton {
   createdAt: DateTimeISO
   creator: User
-  domain: Domain
+  domain: Domain!
   icon: String
   id: ID!
   logic: String
@@ -1608,7 +1611,7 @@ type MenuDetailColumn {
   creator: User
   defVal: String
   description: String
-  domain: Domain
+  domain: Domain!
   extField: Boolean
   formEditor: String
   formFormat: String
@@ -1733,6 +1736,7 @@ input MenuPatch {
   name: String
   pagination: Boolean
   parent: ObjectRef
+  privilege: PrivilegeInput
   rank: Int
   resourceId: String
   resourceName: String
@@ -1860,6 +1864,9 @@ type Mutation {
 
   """To create new ApprovalLine for current user"""
   createMyApprovalLine(approvalLine: NewApprovalLine!): ApprovalLine!
+
+  """To create my new PagePreference"""
+  createMyPagePreference(pagePreference: NewPagePreference!): PagePreference!
 
   """To create new Notification"""
   createNotification(notification: NewNotification!): Notification!
@@ -2090,6 +2097,9 @@ type Mutation {
   """To delete multiple ApprovalLines for current user"""
   deleteMyApprovalLines(ids: [String!]!): Boolean!
 
+  """To delete my PagePreference"""
+  deleteMyPagePreference(element: String!, page: String!): Boolean!
+
   """To delete Notification"""
   deleteNotification(id: String!): Boolean!
 
@@ -2107,6 +2117,12 @@ type Mutation {
 
   """To delete multiple Oauth2Clients"""
   deleteOauth2Clients(ids: [String!]!): Boolean!
+
+  """To delete PagePreference"""
+  deletePagePreference(id: String!): Boolean!
+
+  """To delete multiple PagePreferences"""
+  deletePagePreferences(ids: [String!]!): Boolean!
 
   """To delete multiple partnerSettings"""
   deletePartnerSettings(ids: [String!]!): Boolean!
@@ -2566,6 +2582,9 @@ type Mutation {
   """To modify ApprovalLine information for current user"""
   updateMyApprovalLine(id: String!, patch: ApprovalLinePatch!): ApprovalLine!
 
+  """To create or update my PagePreference"""
+  updateMyPagePreference(element: String!, page: String!, preference: Object!): PagePreference!
+
   """To modify Notification information"""
   updateNotification(id: String!, patch: NotificationPatch!): Notification!
 
@@ -2875,6 +2894,7 @@ input NewLiteMenu {
   appName: String
   description: String
   icon: String
+  labels: Object
   name: String!
   parent: String
   privilege: PrivilegeInput
@@ -2901,6 +2921,7 @@ input NewMenu {
   name: String!
   pagination: Boolean
   parent: ObjectRef
+  privilege: PrivilegeInput
   rank: Int
   resourceId: String
   resourceName: String
@@ -3068,6 +3089,13 @@ input NewOauth2Client {
   webhook: String
 }
 
+input NewPagePreference {
+  element: String
+  page: String
+  preference: Object!
+  user: ObjectRef!
+}
+
 input NewPayloadLog {
   description: String
   name: String!
@@ -3193,7 +3221,7 @@ type Notification {
   body: String
   createdAt: DateTimeISO
   creator: User
-  domain: Domain
+  domain: Domain!
   id: ID!
   image: String
   owner: User
@@ -3227,7 +3255,7 @@ type NotificationRule {
   creator: User
   deletedAt: DateTimeISO
   description: String
-  domain: Domain
+  domain: Domain!
   id: ID!
   name: String
 
@@ -3284,7 +3312,7 @@ type Oauth2Client {
   createdAt: DateTimeISO
   creator: User
   description: String
-  domain: Domain
+  domain: Domain!
   expires: DateTimeISO
   grantType: String
   icon: String
@@ -3411,18 +3439,37 @@ enum OrgMemberTargetType {
   Role
 }
 
+"""Entity for PagePreference"""
+type PagePreference {
+  createdAt: DateTimeISO
+  creator: User
+  domain: Domain!
+  element: String
+  id: ID!
+  page: String
+  preference: Object
+  updatedAt: DateTimeISO
+  updater: User
+  user: User!
+}
+
+type PagePreferenceList {
+  items: [PagePreference!]!
+  total: Int!
+}
+
 input Pagination {
   limit: Int
   page: Int
 }
 
 type Partner {
-  approvedAt: DateTimeISO!
+  approvedAt: DateTimeISO
   approver: User
   domain: Domain!
   id: ID!
   partnerDomain: Domain!
-  requestedAt: DateTimeISO!
+  requestedAt: DateTimeISO
   requester: User
 }
 
@@ -3437,7 +3484,7 @@ type PartnerSetting {
   createdAt: DateTimeISO
   creator: User
   description: String
-  domain: Domain
+  domain: Domain!
   id: ID!
   name: String
   partnerDomain: Domain
@@ -3466,7 +3513,7 @@ input PartnerSettingPatch {
 type PayloadLog {
   createdAt: DateTimeISO
   creator: User
-  domain: Domain
+  domain: Domain!
   endpoint: String!
   id: ID!
   name: String!
@@ -3976,8 +4023,20 @@ type Query {
   myLiteMenus(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): LiteMenuList!
   myLoginHistories(limit: Float!): [LoginHistory!]!
 
+  """To fetch my own Menus"""
+  myMenus(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): MenuList!
+
   """To fetch my notifications"""
   myNotifications(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): NotificationList!
+
+  """To fetch a User's own PagePreference"""
+  myPageAllPreferences(page: String!): [PagePreference!]
+
+  """To fetch a User's own PagePreference"""
+  myPagePreference(element: String!, page: String!): PagePreference
+
+  """To fetch multiple PagePreferences"""
+  myPagePreferences(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): PagePreferenceList!
 
   """To fetch roles of current user"""
   myRoles: [Role!]!
@@ -3999,6 +4058,9 @@ type Query {
 
   """To fetch multiple Oauth2Clients"""
   oauth2Clients(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): Oauth2ClientList!
+
+  """To fetch a PagePreference"""
+  pagePreference(id: String!): PagePreference
 
   """To fetch specific domain's CommonCodes by given name"""
   partnerCommonCode(name: String!, partnerDomainId: String!): CommonCode!
@@ -4173,7 +4235,7 @@ type Role {
   description: String
   domain: Domain!
   id: ID!
-  name: String!
+  name: String
   privileges: [Privilege!]
   updatedAt: DateTimeISO
   updater: User
@@ -4209,7 +4271,7 @@ type Scenario {
   createdAt: DateTimeISO
   creator: User
   description: String
-  domain: Domain
+  domain: Domain!
   id: ID!
   instances: [ScenarioInstance!]
   name: String!
@@ -4305,7 +4367,7 @@ type Setting {
   createdAt: DateTimeISO
   creator: User
   description: String
-  domain: Domain
+  domain: Domain!
   id: ID!
   name: String!
   updatedAt: DateTimeISO
@@ -4342,7 +4404,7 @@ type StateRegister {
   createdAt: DateTimeISO
   creator: User
   description: String
-  domain: Domain
+  domain: Domain!
   id: ID!
   name: String
   refBy: String
@@ -4473,13 +4535,15 @@ type TaskTypeList {
 type Terminology {
   category: String!
   createdAt: DateTimeISO
+  creator: User
   description: String
   display: String!
-  domain: Domain
+  domain: Domain!
   id: ID!
   locale: String!
   name: String!
   updatedAt: DateTimeISO
+  updater: User
 }
 
 type TerminologyList {
@@ -4488,12 +4552,12 @@ type TerminologyList {
 }
 
 input TerminologyPatch {
-  category: String!
+  category: String
   cuFlag: String
   description: String
-  display: String!
+  display: String
   id: ID
-  locale: String!
+  locale: String
   name: String
 }
 
@@ -4504,7 +4568,7 @@ type Theme {
   creator: User
   deletedAt: DateTimeISO
   description: String
-  domain: Domain
+  domain: Domain!
   id: ID!
   name: String
   type: String
@@ -4544,7 +4608,7 @@ type User {
   email: EmailAddress!
   id: ID!
   locale: String
-  name: String!
+  name: String
   owner: Boolean
   reference: String
   roles: [Role!]!
@@ -4585,7 +4649,7 @@ type UserRole {
 type UsersAuthProviders {
   authProvider: AuthProvider
   createdAt: DateTimeISO
-  domain: Domain
+  domain: Domain!
   id: ID!
   ssoId: String
   updatedAt: DateTimeISO
