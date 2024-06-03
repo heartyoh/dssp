@@ -1,7 +1,7 @@
 export default function route(page: string) {
   switch (page) {
     case 'project-list':
-      import('./pages/project/project-list-page')
+      import('./pages/project/project-list')
       return page
 
     case 'project-setting-list':

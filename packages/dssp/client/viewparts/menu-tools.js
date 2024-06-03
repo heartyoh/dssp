@@ -1,9 +1,23 @@
-import { css, html, LitElement } from 'lit'
-import { connect } from 'pwa-helpers'
+import {
+  css,
+  html,
+  LitElement
+} from 'lit'
+import {
+  connect
+} from 'pwa-helpers'
 
-import { store } from '@things-factory/shell'
+import {
+  store
+} from '@things-factory/shell'
 
-import { ICONS_PROGRESS, ICONS_FINISHED, ICONS_STATUS, ICONS_OPERATING, ICONS_SETTING } from '../icons/menu-icons'
+import {
+  ICONS_PROGRESS,
+  ICONS_FINISHED,
+  ICONS_STATUS,
+  ICONS_OPERATING,
+  ICONS_SETTING
+} from '../icons/menu-icons'
 
 export class MenuTools extends connect(store)(LitElement) {
   static get properties() {
@@ -18,7 +32,7 @@ export class MenuTools extends connect(store)(LitElement) {
 
   static get styles() {
     return [
-      css`
+      css `
         :host {
           display: flex;
           background-color: var(--secondary-color);
@@ -122,15 +136,14 @@ export class MenuTools extends connect(store)(LitElement) {
   }
 
   render() {
-    this.menus = [
-      {
-        name: 'progress',
-        path: 'dssp-progress',
+    this.menus = [{
+        name: '진행중',
+        path: 'project-list',
         icons: ICONS_PROGRESS
       },
       {
-        name: 'finished',
-        path: 'dssp-finished',
+        name: '완료',
+        path: 'project-finished-list',
         icons: ICONS_FINISHED
       },
       {
@@ -144,7 +157,7 @@ export class MenuTools extends connect(store)(LitElement) {
         icons: ICONS_OPERATING
       },
       {
-        name: 'setting',
+        name: '셋팅',
         path: 'project-setting-list',
         icons: ICONS_SETTING
       }
@@ -152,7 +165,7 @@ export class MenuTools extends connect(store)(LitElement) {
 
     var page = this.page || ''
 
-    return html`
+    return html `
       <ul>
         ${this.menus.map(
           menu => html`

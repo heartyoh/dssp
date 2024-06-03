@@ -8,7 +8,7 @@ import { client } from '@operato/graphql'
 import { notify } from '@operato/layout'
 
 import gql from 'graphql-tag'
-import { Project } from './project-list-page'
+import { Project } from './project-list'
 
 @customElement('project-update')
 export class ProjectUpdate extends ScopedElementsMixin(PageView) {

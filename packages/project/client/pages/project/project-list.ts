@@ -5,18 +5,49 @@ import { css, html } from 'lit'
 import { customElement, state } from 'lit/decorators.js'
 import { ScopedElementsMixin } from '@open-wc/scoped-elements'
 import { client } from '@operato/graphql'
-import { openPopup } from '@operato/layout'
-import '@material/web/button/elevated-button.js'
-import '@material/web/button/outlined-button.js'
-import '@material/web/progress/linear-progress.js'
-import '@material/web/textfield/filled-text-field.js'
-
 import gql from 'graphql-tag'
-import './project-create-popup'
-import { Project } from './project-list'
 
-@customElement('project-setting-list')
-export class ProjectSettingList extends ScopedElementsMixin(PageView) {
+export enum ProjectStatus {
+  'PROCEEDING' = '10',
+  'COMPLICATED' = '20'
+}
+
+export interface Project {
+  id?: string
+  name: string
+  startDate?: string
+  endDate?: string
+  totalProgress?: number
+  weeklyProgress?: number
+  kpi?: number
+  inspPassRate?: number
+  robotProgressRate?: number
+  structuralSafetyRate?: number
+  buildingComplex: BuildingComplex
+}
+export interface BuildingComplex {
+  id?: string
+  address: string
+  area: number
+  constructionCompany: string
+  clientCompany: string
+  designCompany: string
+  supervisoryCompany: string
+  mainPhoto?: string
+  constructionType: string
+  constructionCost?: number
+  etc?: string
+  householdCount?: number
+  buildingCount?: number
+  buildings?: Building[]
+}
+export interface Building {
+  id?: string
+  name: string | undefined
+  floorCount: number | undefined
+}
+@customElement('project-list')
+export class ProjectListPage extends ScopedElementsMixin(PageView) {
   static styles = [
     css`
       :host {
@@ -68,13 +99,19 @@ export class ProjectSettingList extends ScopedElementsMixin(PageView) {
 
       div[body] {
         div[project-container] {
-          display: flex;
-          flex-direction: row;
           height: 140px;
           margin: 17px 23px;
           background-color: #ffffff;
           border: 1px solid #cccccc80;
           border-radius: 5px;
+
+          & > a {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            text-decoration: none;
+            color: #000;
+          }
 
           img[project-img] {
             width: 285px;
@@ -103,7 +140,7 @@ export class ProjectSettingList extends ScopedElementsMixin(PageView) {
             padding: 10px 20px;
 
             & > div {
-              margin-bottom: 13px;
+              margin-bottom: 3px;
             }
 
             div[progress] {
@@ -131,26 +168,6 @@ export class ProjectSettingList extends ScopedElementsMixin(PageView) {
                 }
               }
             }
-
-            div[filled] span {
-              margin-right: 18px;
-            }
-
-            strong[filled] {
-              color: #1bb401;
-            }
-            strong[not-filled] {
-              color: #ff4444;
-            }
-
-            md-outlined-button {
-              min-height: 33px;
-              padding: 0px 13px;
-              margin-right: 2px;
-              box-shadow: 1px 1px 1px #0000001a;
-              --md-sys-color-primary: #586878;
-              --md-outlined-button-label-text-weight: bold;
-            }
           }
         }
       }
@@ -159,7 +176,7 @@ export class ProjectSettingList extends ScopedElementsMixin(PageView) {
 
   get context() {
     return {
-      title: '셋팅'
+      title: '진행중 프로젝트'
     }
   }
 
@@ -183,47 +200,60 @@ export class ProjectSettingList extends ScopedElementsMixin(PageView) {
         </md-filled-text-field>
 
         <strong>총 ${this.projectCount}개</strong>
-        <md-elevated-button add-project @click=${this._openCreateProjectPopup}>+ 신규 프로젝트 추가</md-elevated-button>
       </div>
 
       <div body>
         ${this.projectList?.map((project: Project) => {
-          const filledText = html`<strong filled>등록완료</strong>`
-          const nonFilledText = html`<strong not-filled>미등록</strong>`
-
-          const projectFilledState = project.buildingComplex.address ? filledText : nonFilledText
-          const supervisoryFilledState = true ? filledText : nonFilledText
-          const taskFilledState = false ? filledText : nonFilledText
-
           return html`
             <div project-container>
-              <img project-img src=${project.buildingComplex.mainPhoto || ''} />
+              <a href=${`project-detail/${project.id}`}>
+                <img project-img src=${project.buildingComplex.mainPhoto || ''} />
 
-              <span project-info>
-                <div name>${project.name}</div>
-                <div content>${project.buildingComplex.address}</div>
-                <div content>면적: ${project.buildingComplex.area}㎡</div>
-                <div content>착공~준공: ${project.startDate}~${project.endDate}</div>
-                <div content>발주처: <strong>${project.buildingComplex.clientCompany}</strong></div>
-              </span>
+                <span project-info>
+                  <div name>${project.name}</div>
+                  <div content>${project.buildingComplex.address}</div>
+                  <div content>면적: ${project.buildingComplex.area}㎡</div>
+                  <div content>착공~준공: ${project.startDate}~${project.endDate}</div>
+                  <div content>발주처: <strong>${project.buildingComplex.clientCompany}</strong></div>
+                </span>
 
-              <span project-state>
-                <div progress>
-                  <md-linear-progress buffer="100" max="100" value=${project.totalProgress || 0}> </md-linear-progress>
-                  <span>${project.totalProgress == 100 ? '완료' : '진행중'}</span>
-                  <span>${project.totalProgress || 0}%</span>
-                </div>
-                <div filled>
-                  <span>프로젝트 정보 ${projectFilledState}</span>
-                  <span>시공감리 자료 ${supervisoryFilledState}</span>
-                  <span>공정표 ${taskFilledState}</span>
-                </div>
-                <div>
-                  <md-outlined-button href="project-update/${project.id}">프로젝트 정보 수정</md-outlined-button>
-                  <md-outlined-button href="supervisory-management/${project.id}">시공감리 관리</md-outlined-button>
-                  <md-outlined-button href="task-management/${project.id}">공정표 관리</md-outlined-button>
-                </div>
-              </span>
+                <span project-state>
+                  <div progress>
+                    <md-linear-progress buffer="100" max="100" value=${project.totalProgress || 0}>
+                    </md-linear-progress>
+                    <span>전체</span>
+                    <span>${project.totalProgress || 0}%</span>
+                  </div>
+                  <div progress>
+                    <md-linear-progress buffer="100" max="100" value=${project.weeklyProgress || 0}>
+                    </md-linear-progress>
+                    <span>주간</span>
+                    <span>${project.weeklyProgress || 0}%</span>
+                  </div>
+                  <div progress>
+                    <md-linear-progress buffer="100" max="100" value=${project.kpi || 0}> </md-linear-progress>
+                    <span>KPI</span>
+                    <span>${project.kpi || 0}%</span>
+                  </div>
+                  <div progress>
+                    <md-linear-progress buffer="100" max="100" value=${project.inspPassRate || 0}> </md-linear-progress>
+                    <span>Inspection Passing Rate</span>
+                    <span>${project.inspPassRate || 0}%</span>
+                  </div>
+                  <div progress>
+                    <md-linear-progress buffer="100" max="100" value=${project.robotProgressRate || 0}>
+                    </md-linear-progress>
+                    <span>Robot Progress</span>
+                    <span>${project.robotProgressRate || 0}%</span>
+                  </div>
+                  <div progress>
+                    <md-linear-progress buffer="100" max="100" value=${project.structuralSafetyRate || 0}>
+                    </md-linear-progress>
+                    <span>Structural safety</span>
+                    <span>${project.structuralSafetyRate || 0}%</span>
+                  </div>
+                </span>
+              </a>
             </div>
           `
         })}
@@ -235,11 +265,7 @@ export class ProjectSettingList extends ScopedElementsMixin(PageView) {
     this.getProjectList()
   }
 
-  async pageUpdated(changes: any, lifecycle: any) {
-    if (this.active) {
-      // do something here when this page just became as active
-    }
-  }
+  async pageUpdated(changes: any, lifecycle: any) {}
 
   async getProjectList() {
     const response = await client.query({
@@ -252,6 +278,11 @@ export class ProjectSettingList extends ScopedElementsMixin(PageView) {
               startDate
               endDate
               totalProgress
+              weeklyProgress
+              kpi
+              inspPassRate
+              robotProgressRate
+              structuralSafetyRate
               buildingComplex {
                 address
                 area
@@ -270,14 +301,6 @@ export class ProjectSettingList extends ScopedElementsMixin(PageView) {
 
     this.projectList = response.data.projects?.items || []
     this.projectCount = response.data.projects?.total || 0
-  }
-
-  private _openCreateProjectPopup() {
-    openPopup(html`<project-create-popup .refreshFn=${this.getProjectList.bind(this)}></project-create-popup>`, {
-      backdrop: true,
-      size: 'small',
-      title: '신규 프로젝트 생성'
-    })
   }
 
   // Input 요소의 값이 변경될 때 호출되는 콜백 함수
