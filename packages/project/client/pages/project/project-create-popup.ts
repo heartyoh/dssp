@@ -2,11 +2,13 @@ import '@material/mwc-icon'
 import '@operato/data-grist'
 
 import { css, html, LitElement } from 'lit'
-import { customElement, property, query, state } from 'lit/decorators.js'
+import { customElement, property, state } from 'lit/decorators.js'
 import { client } from '@operato/graphql'
 import { i18next, localize } from '@operato/i18n'
 import { notify } from '@operato/layout'
 import gql from 'graphql-tag'
+import '@material/web/textfield/outlined-text-field.js'
+import '@material/web/button/elevated-button.js'
 
 @customElement('project-create-popup')
 export class ProjectCreatePopup extends localize(i18next)(LitElement) {
@@ -15,20 +17,63 @@ export class ProjectCreatePopup extends localize(i18next)(LitElement) {
       :host {
         display: flex;
         flex-direction: column;
-        background-color: var(--main-section-background-color);
+        background-color: #fff;
         width: 100%;
       }
 
-      .header .filters {
-        flex-direction: column;
-        align-items: start;
-      }
+      div[body] {
+        flex: 1;
 
-      input {
-        border: var(--border-dark-color);
-        padding: var(--padding-narrow) var(--padding-default);
-        max-width: 100px;
-        font: var(--input-font);
+        label {
+          color: #4e5055;
+          font-size: 16px;
+        }
+
+        div[input-container] {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-top: 22px;
+
+          md-outlined-text-field {
+            width: 60%;
+            margin-left: 15px;
+
+            --md-outlined-text-field-container-shape: 9px;
+            --md-sys-color-primary: #586878;
+            --md-sys-color-surface-container-highest: transparent;
+            --md-outlined-text-field-label-text-color: #999999;
+            --md-outlined-text-field-input-text-line-height: 20px;
+            --md-outlined-text-field-input-text-size: 16px;
+            --md-outlined-field-bottom-space: 10px;
+            --md-outlined-field-top-space: 10px;
+          }
+        }
+
+        div[button-container] {
+          margin-top: 50px;
+          margin-bottom: 20px;
+          text-align: center;
+
+          md-elevated-button {
+            margin: 0px 5px;
+
+            --md-elevated-button-container-height: 40px;
+            --md-elevated-button-container-color: #fff;
+            --md-elevated-button-label-text-size: 16px;
+          }
+          md-elevated-button:first-child {
+            --md-elevated-button-container-color: #0595e5;
+            --md-elevated-button-label-text-color: #fff;
+            --md-elevated-button-hover-label-text-color: #fff;
+            --md-elevated-button-pressed-label-text-color: #fff;
+            --md-elevated-button-focus-label-text-color: #fff;
+            --md-elevated-button-icon-color: #fff;
+            --md-elevated-button-hover-icon-color: #fff;
+            --md-elevated-button-pressed-icon-color: #fff;
+            --md-elevated-button-focus-icon-color: #fff;
+          }
+        }
       }
     `
   ]
@@ -38,16 +83,36 @@ export class ProjectCreatePopup extends localize(i18next)(LitElement) {
 
   render() {
     return html`
-      <div class="header">
-        <label>${i18next.t('label.project_name')}</label>
-        <input type="text" name="projectName" .value=${this.projectName} @input=${this._onInputChange} />
-        <button @click=${this._createProject}>${i18next.t('button.project_create')}</button>
+      <div body>
+        <div input-container>
+          <label>프로젝트 이름</label>
+          <md-outlined-text-field
+            name="projectName"
+            type="text"
+            placeholder="신규 프로젝트명"
+            .value=${this.projectName}
+            @input=${this._onInputChange}
+          >
+          </md-outlined-text-field>
+        </div>
+
+        <div button-container>
+          <md-elevated-button @click=${this._createProject}>
+            <md-icon slot="icon">add</md-icon>프로젝트 생성
+          </md-elevated-button>
+          <md-elevated-button @click=${this._close}> <md-icon slot="icon">close</md-icon>취소 </md-elevated-button>
+        </div>
       </div>
     `
   }
 
   // 프로젝트 생성
   private async _createProject() {
+    if (!this.projectName) {
+      notify({ level: 'warn', message: '프로젝트 이름은 필수 값 입니다.' })
+      return
+    }
+
     const response = await client.mutate({
       mutation: gql`
         mutation CreateProject($project: NewProject!) {
@@ -71,6 +136,10 @@ export class ProjectCreatePopup extends localize(i18next)(LitElement) {
     this.refreshFn()
 
     // 팝업 템플릿을 닫기 위한 동작
+    history.back()
+  }
+
+  private _close() {
     history.back()
   }
 

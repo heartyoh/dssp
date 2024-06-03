@@ -221,8 +221,8 @@ export class ProjectSettingList extends localize(i18next)(ScopedElementsMixin(Pa
                 </div>
                 <div>
                   <md-outlined-button href="project-update/${project.id}">프로젝트 정보 수정</md-outlined-button>
-                  <md-outlined-button href="project-update/${project.id}">시공감리 관리</md-outlined-button>
-                  <md-outlined-button href="project-update/${project.id}">공정표 관리</md-outlined-button>
+                  <md-outlined-button href="supervisory-management/${project.id}">시공감리 관리</md-outlined-button>
+                  <md-outlined-button href="task-management/${project.id}">공정표 관리</md-outlined-button>
                 </div>
               </span>
             </div>
@@ -269,8 +269,6 @@ export class ProjectSettingList extends localize(i18next)(ScopedElementsMixin(Pa
       }
     })
 
-    console.log('getProjectList : ', response.data)
-
     this.projectList = response.data.projects?.items || []
     this.projectCount = response.data.projects?.total || 0
   }
@@ -278,8 +276,8 @@ export class ProjectSettingList extends localize(i18next)(ScopedElementsMixin(Pa
   private _openCreateProjectPopup() {
     openPopup(html`<project-create-popup .refreshFn=${this.getProjectList.bind(this)}></project-create-popup>`, {
       backdrop: true,
-      size: 'medium',
-      title: i18next.t('title.project_create')
+      size: 'small',
+      title: '신규 프로젝트 생성'
     })
   }
 
