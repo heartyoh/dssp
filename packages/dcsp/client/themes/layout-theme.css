@@ -17,7 +17,7 @@ body {
   --aside-background-color: var(--secondary-background-color);
   --aside-list-textbtton: 18px var(--theme-font);
   --aside-list-icon: var(--icon-default-size);
-  --aside-list-bottom-line: var(--border-dark-color);
+  --aside-list-bottom-line: var(--border-dim-color);
   --aside-list-detail-background-color: #fff;
   --aside-list-detail-text: 14px var(--primary-background-color);
 

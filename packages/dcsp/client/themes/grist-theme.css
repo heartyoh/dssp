@@ -93,7 +93,7 @@ body {
 
   --data-card-background-color: var(--main-section-background-color);
   --data-card-record-card-background-color: var(--theme-white-color);
-  --data-card-record-card-border: var(--border-dark-color);
+  --data-card-record-card-border: var(--border-dim-color);
   --data-card-record-card-border-hover: 1px solid var(--primary-color);
   --data-card-record-card-boxshadow-hover: 1px 1px 2px 1px rgba(0, 0, 0, 0.15);
   --data-card-record-card-selected-border: 1px solid var(--primary-color);
@@ -112,7 +112,7 @@ body {
   --data-card-item-etc-color: var(--secondary-color);
   --data-card-item-icon-font: normal 1em/1em;
   --data-card-item-icon-color: var(--secondary-text-color);
-  --data-card-item-btn-border: var(--border-dark-color);
+  --data-card-item-btn-border: var(--border-dim-color);
   --data-card-item-btn-border-radius: var(--border-radius);
   --data-card-item-btn-padding: var(--padding-narrow);
   --data-card-selected-background-color: var(--grid-record-selected-background-color);
@@ -122,7 +122,7 @@ body {
   --data-card-fab-shadow: var(--box-shadow);
   --data-card-template: repeat(auto-fit, minmax(32%, auto));
   --data-card-thumbnail-height: 140px;
-  --data-card-thumbnail-border-bottom: var(--border-dark-color);
+  --data-card-thumbnail-border-bottom: var(--border-dim-color);
   --data-card-attachimg-height: 70px;
 
   --record-view-background-color: var(--main-section-background-color);
