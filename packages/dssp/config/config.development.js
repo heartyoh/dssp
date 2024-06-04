@@ -23,7 +23,7 @@ module.exports = {
     a user-initiated user registration process is provided. 
     When this value is true, the 'defaultPassword' for the password must be configured.
   */
-  disableUserSignupProcess: true,
+  disableUserSignupProcess: false,
   i18n: {
     languages: [
       {
