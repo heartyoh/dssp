@@ -9,6 +9,8 @@ import { notify } from '@operato/layout'
 
 import gql from 'graphql-tag'
 import { Project } from './project-list'
+import '@material/web/button/elevated-button.js'
+import '@material/web/textfield/outlined-text-field.js'
 
 @customElement('project-update')
 export class ProjectUpdate extends ScopedElementsMixin(PageView) {
@@ -16,15 +18,202 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
     css`
       :host {
         display: flex;
+        flex-direction: column;
+        color: #4e5055;
 
         width: 100%;
+        background-color: #f7f7f7;
+        overflow-y: auto;
 
         --grid-record-emphasized-background-color: red;
         --grid-record-emphasized-color: yellow;
       }
 
+      md-outlined-text-field {
+        width: 100%;
+
+        --md-outlined-text-field-container-shape: 5px;
+        --md-sys-color-primary: #586878;
+        --md-outlined-text-field-input-text-size: 14px;
+        --md-outlined-field-bottom-space: 4px;
+        --md-outlined-field-top-space: 4px;
+      }
+      md-outlined-text-field[type='textarea'] {
+        width: 100%;
+        height: 130px;
+      }
+
+      div[header] {
+        display: flex;
+        margin: 0px 20px;
+
+        h2 {
+          flex: 0.5;
+          color: #3f71a0;
+        }
+
+        div[button-container] {
+          display: flex;
+          align-items: center;
+          justify-content: end;
+          flex: 0.5;
+
+          md-elevated-button {
+            margin: 0px 3px;
+
+            --md-elevated-button-container-height: 35px;
+            --md-elevated-button-label-text-size: 16px;
+            --md-elevated-button-container-color: #0595e5;
+
+            --md-elevated-button-label-text-color: #fff;
+            --md-elevated-button-hover-label-text-color: #fff;
+            --md-elevated-button-pressed-label-text-color: #fff;
+            --md-elevated-button-focus-label-text-color: #fff;
+            --md-elevated-button-icon-color: #fff;
+            --md-elevated-button-hover-icon-color: #fff;
+            --md-elevated-button-pressed-icon-color: #fff;
+            --md-elevated-button-focus-icon-color: #fff;
+
+            &[green] {
+              --md-elevated-button-container-color: #42b382;
+            }
+          }
+        }
+      }
+
       div[body] {
         display: flex;
+        margin: 0px 25px 25px 25px;
+        gap: 10px;
+
+        & > div {
+          display: flex;
+          height: fit-content;
+          flex-direction: column;
+          padding: 15px;
+          background-color: #ffffff;
+          border: 1px solid #cccccc80;
+          border-radius: 5px;
+          gap: 10px;
+
+          h3 {
+            color: #2e79be;
+            font-size: 18px;
+            margin: 0px;
+          }
+
+          div[row] {
+            display: flex;
+            align-items: center;
+
+            span:first-child {
+              flex: 0.3;
+              text-align: right;
+            }
+
+            span:last-child {
+              flex: 0.7;
+              display: flex;
+              gap: 10px;
+              margin-left: 12px;
+              align-items: center;
+
+              &[align-end] {
+                align-items: end;
+              }
+            }
+          }
+        }
+
+        div[project-info] {
+          flex: 0.55;
+        }
+
+        div[detail-info] {
+          flex: 0.45;
+          padding: 0px;
+          gap: 10px;
+          background-color: transparent;
+          border: none;
+
+          & > div {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            border: 1px solid #cccccc80;
+            border-radius: 5px;
+            padding: 15px;
+            background-color: #fff;
+
+            md-outlined-text-field {
+              width: 60%;
+            }
+
+            md-elevated-button {
+              --md-elevated-button-container-height: 30px;
+              --md-elevated-button-container-color: #fff;
+              --md-elevated-button-label-text-size: 16px;
+            }
+            hr {
+              border: 1px #cccccc dashed;
+              width: 100%;
+            }
+
+            div[row] {
+              span:first-child {
+                flex: 0.2;
+              }
+              span:last-child {
+                flex: 0.8;
+              }
+            }
+
+            div[separate-container] {
+              display: grid;
+              grid-template-columns: repeat(2, 1fr);
+              gap: 10px;
+
+              md-outlined-text-field {
+                width: 70px;
+              }
+
+              & > div {
+                display: flex;
+
+                span[floor-title] {
+                  min-width: 33px;
+                  margin-right: 5px;
+                }
+                span:first-child {
+                  flex: 0.4;
+                  justify-content: end;
+                  display: flex;
+                }
+                span:last-child {
+                  flex: 0.6;
+                  display: flex;
+                  align-items: center;
+                  padding-left: 17px;
+                }
+              }
+            }
+
+            &[project] {
+              div[separate-container] {
+                & > div {
+                  span:first-child {
+                    flex: 0.6;
+                    min-width: 100px;
+                  }
+                  span:last-child {
+                    flex: 0.4;
+                    margin-left: 0;
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     `
   ]
@@ -53,324 +242,339 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
 
   render() {
     return html`
-      <div main>
-        <div header>
-          <h2>프로젝트 정보 관리</h2>
-          <div button-container>
-            <button @click=${this._reset}>초기화</button>
-            <button @click=${this._saveProject}>정보 저장</button>
-            <button>검측현황 관리</button>
-            <button>공정표 관리</button>
+      <div header>
+        <h2>프로젝트 정보 관리</h2>
+        <div button-container>
+          <md-elevated-button green @click=${this._saveProject}>
+            <md-icon slot="icon">save</md-icon>정보 저장
+          </md-elevated-button>
+          <md-elevated-button> <md-icon slot="icon">description</md-icon>검측현황 관리 </md-elevated-button>
+          <md-elevated-button> <md-icon slot="icon">event_note</md-icon>공정표 관리 </md-elevated-button>
+        </div>
+      </div>
+      <div body>
+        <div project-info>
+          <h3>기본 정보</h3>
+          <div row>
+            <span>프로젝트명</span>
+            <span
+              ><md-outlined-text-field
+                type="text"
+                name="name"
+                project
+                .value=${this.project.name || ''}
+                @input=${this._onInputChange}
+              ></md-outlined-text-field>
+            </span>
+          </div>
+          <div row>
+            <span>프로젝트 주소</span>
+            <span>
+              <md-outlined-text-field
+                type="text"
+                name="address"
+                building-complex
+                .value=${this.project?.buildingComplex?.address || ''}
+                @input=${this._onInputChange}
+              ></md-outlined-text-field>
+            </span>
+          </div>
+          <div row>
+            <span>면적</span>
+            <span align-end
+              ><md-outlined-text-field
+                type="text"
+                name="area"
+                numeric
+                building-complex
+                .value=${this.project?.buildingComplex?.area?.toString() || ''}
+                @input=${this._onInputChange}
+              ></md-outlined-text-field>
+              ㎡</span
+            >
+          </div>
+          <div row>
+            <span>착공일정 ~ 준공일정</span>
+            <span
+              ><md-outlined-text-field
+                type="date"
+                name="startDate"
+                project
+                .value=${this.project.startDate || ''}
+                @input=${this._onInputChange}
+              ></md-outlined-text-field>
+              ~
+              <md-outlined-text-field
+                type="date"
+                name="endDate"
+                project
+                .value=${this.project.endDate || ''}
+                @input=${this._onInputChange}
+              ></md-outlined-text-field
+            ></span>
+          </div>
+          <div row>
+            <span>발주처</span>
+            <span
+              ><md-outlined-text-field
+                type="text"
+                name="clientCompany"
+                building-complex
+                .value=${this.project?.buildingComplex?.clientCompany || ''}
+                @input=${this._onInputChange}
+              ></md-outlined-text-field>
+            </span>
+          </div>
+          <div row>
+            <span>건설사</span>
+            <span
+              ><md-outlined-text-field
+                type="text"
+                name="constructionCompany"
+                building-complex
+                .value=${this.project?.buildingComplex?.constructionCompany || ''}
+                @input=${this._onInputChange}
+              ></md-outlined-text-field>
+            </span>
+          </div>
+          <div row>
+            <span>설계사</span>
+            <span
+              ><md-outlined-text-field
+                type="text"
+                name="designCompany"
+                building-complex
+                .value=${this.project?.buildingComplex?.designCompany || ''}
+                @input=${this._onInputChange}
+              ></md-outlined-text-field>
+            </span>
+          </div>
+          <div row>
+            <span>감리사</span>
+            <span
+              ><md-outlined-text-field
+                type="text"
+                name="supervisoryCompany"
+                building-complex
+                .value=${this.project?.buildingComplex?.supervisoryCompany || ''}
+                @input=${this._onInputChange}
+              ></md-outlined-text-field>
+            </span>
+          </div>
+          <div row>
+            <span>건설구분</span>
+            <span
+              ><md-outlined-text-field
+                type="text"
+                name="constructionType"
+                building-complex
+                .value=${this.project?.buildingComplex?.constructionType || ''}
+                @input=${this._onInputChange}
+              ></md-outlined-text-field>
+            </span>
+          </div>
+          <div row>
+            <span>대표사진 업로드</span>
+            <span
+              ><input
+                type="file"
+                name="mainPhoto"
+                building-complex
+                value=${this.project?.buildingComplex?.mainPhoto || ''}
+                @input=${this._onInputChange}
+              />
+            </span>
+          </div>
+          <div row>
+            <span>공사금액</span>
+            <span
+              ><md-outlined-text-field
+                type="text"
+                name="constructionCost"
+                numeric
+                building-complex
+                .value=${this.project?.buildingComplex?.constructionCost?.toString() || ''}
+                @input=${this._onInputChange}
+              ></md-outlined-text-field>
+            </span>
+          </div>
+          <div row>
+            <span>기타사항</span>
+            <span>
+              <md-outlined-text-field
+                type="textarea"
+                name="etc"
+                building-complex
+                .value=${this.project?.buildingComplex?.clientCompany || ''}
+                @input=${this._onInputChange}
+              ></md-outlined-text-field>
+            </span>
           </div>
         </div>
-        <div body>
-          <div project-info>
-            <h3>기본 정보</h3>
-            <div>
-              <span>프로젝트명</span>
+        <div detail-info>
+          <div>
+            <h3>건설구분 상세 정보</h3>
+            <div row>
+              <span>세대수</span>
               <span
-                ><input
+                ><md-outlined-text-field
                   type="text"
-                  name="name"
-                  project
-                  .value=${this.project.name || ''}
-                  @input=${this._onInputChange}
-                />
-              </span>
-            </div>
-            <div>
-              <span>프로젝트 주소</span>
-              <span>
-                <div>
-                  <input
-                    type="text"
-                    name="address"
-                    building-complex
-                    .value=${this.project?.buildingComplex?.address || ''}
-                    @input=${this._onInputChange}
-                  />
-                </div>
-              </span>
-            </div>
-            <div>
-              <span>면적</span>
-              <span
-                ><input
-                  type="text"
-                  name="area"
                   numeric
                   building-complex
-                  .value=${this.project?.buildingComplex?.area?.toString() || ''}
+                  name="householdCount"
+                  .value=${this.project?.buildingComplex?.householdCount?.toString() || ''}
                   @input=${this._onInputChange}
-                />
-                ㎡</span
-              >
+                ></md-outlined-text-field>
+              </span>
             </div>
-            <div>
-              <span>착공일정 ~ 준공일정</span>
+            <div row>
+              <span>동수</span>
               <span
-                ><input
-                  type="date"
-                  name="startDate"
-                  project
-                  .value=${this.project.startDate || ''}
-                  @input=${this._onInputChange} />
-                ~
-                <input
-                  type="date"
-                  name="endDate"
-                  project
-                  .value=${this.project.endDate || ''}
-                  @input=${this._onInputChange}
-              /></span>
-            </div>
-            <div>
-              <span>발주처</span>
-              <span
-                ><input
+                ><md-outlined-text-field
                   type="text"
-                  name="clientCompany"
-                  building-complex
-                  .value=${this.project?.buildingComplex?.clientCompany || ''}
-                  @input=${this._onInputChange}
-              /></span>
-            </div>
-            <div>
-              <span>건설사</span>
-              <span
-                ><input
-                  type="text"
-                  name="constructionCompany"
-                  building-complex
-                  .value=${this.project?.buildingComplex?.constructionCompany || ''}
-                  @input=${this._onInputChange}
-              /></span>
-            </div>
-            <div>
-              <span>설계사</span>
-              <span
-                ><input
-                  type="text"
-                  name="designCompany"
-                  building-complex
-                  .value=${this.project?.buildingComplex?.designCompany || ''}
-                  @input=${this._onInputChange}
-              /></span>
-            </div>
-            <div>
-              <span>감리사</span>
-              <span
-                ><input
-                  type="text"
-                  name="supervisoryCompany"
-                  building-complex
-                  .value=${this.project?.buildingComplex?.supervisoryCompany || ''}
-                  @input=${this._onInputChange}
-              /></span>
-            </div>
-            <div>
-              <span>건설구분</span>
-              <span
-                ><input
-                  type="text"
-                  name="constructionType"
-                  building-complex
-                  .value=${this.project?.buildingComplex?.constructionType || ''}
-                  @input=${this._onInputChange}
-              /></span>
-            </div>
-            <div>
-              <span>대표사진 업로드</span>
-              <span
-                ><input
-                  type="file"
-                  name="mainPhoto"
-                  building-complex
-                  .value=${this.project?.buildingComplex?.mainPhoto || ''}
-                  @input=${this._onInputChange}
-              /></span>
-            </div>
-            <div>
-              <span>공사금액</span>
-              <span
-                ><input
-                  type="text"
-                  name="constructionCost"
                   numeric
                   building-complex
-                  .value=${this.project?.buildingComplex?.constructionCost?.toString() || ''}
+                  name="buildingCount"
+                  value=${this.project?.buildingComplex?.buildingCount?.toString() || ''}
                   @input=${this._onInputChange}
-              /></span>
-            </div>
-            <div>
-              <span>기타사항</span>
-              <span>
-                <textarea
-                  name="etc"
-                  building-complex
-                  .value=${this.project?.buildingComplex?.clientCompany || ''}
-                  @input=${this._onInputChange}
-                ></textarea>
+                ></md-outlined-text-field>
+                <md-elevated-button @click=${this._setBuilding}>적용</md-elevated-button>
               </span>
+            </div>
+            <hr />
+            <div separate-container>
+              ${this.project?.buildingComplex?.buildings?.map(
+                (building, idx) => html`
+                  <div>
+                    <span>
+                      <md-outlined-text-field
+                        type="text"
+                        building
+                        name="name"
+                        .value=${building?.name || ''}
+                        @input=${e => this._onInputChange(e, idx)}
+                        placeholder="ooo동"
+                      ></md-outlined-text-field>
+                    </span>
+                    <span>
+                      <span floor-title>층수</span>
+                      <md-outlined-text-field
+                        type="text"
+                        numeric
+                        building
+                        name="floorCount"
+                        .value=${building?.floorCount?.toString() || ''}
+                        @input=${e => this._onInputChange(e, idx)}
+                        placeholder="oo"
+                      ></md-outlined-text-field>
+                    </span>
+                  </div>
+                `
+              )}
             </div>
           </div>
-          <div detail-info>
-            <div>
-              <h3>건설구분 상세 정보</h3>
+
+          <div project>
+            <h3>프로젝트 현황</h3>
+            <div row separate-container>
               <div>
-                <span>세대수</span>
+                <span>전체 진행현황</span>
                 <span
-                  ><input
+                  ><md-outlined-text-field
                     type="text"
                     numeric
-                    building-complex
-                    name="householdCount"
-                    .value=${this.project?.buildingComplex?.householdCount?.toString() || ''}
+                    project
+                    name="totalProgress"
+                    .value=${this.project.totalProgress?.toString() || ''}
                     @input=${this._onInputChange}
-                  />
+                    suffix-text="%"
+                  ></md-outlined-text-field>
                 </span>
               </div>
               <div>
-                <span>동수</span>
+                <span>검측/통과비율</span>
                 <span
-                  ><input
+                  ><md-outlined-text-field
                     type="text"
                     numeric
-                    building-complex
-                    name="buildingCount"
-                    value=${this.project?.buildingComplex?.buildingCount?.toString() || ''}
+                    project
+                    name="inspPassRate"
+                    .value=${this.project.inspPassRate?.toString() || ''}
                     @input=${this._onInputChange}
-                  />
-                  <button @click=${this._setBuilding}>적용</button>
+                    suffix-text="%"
+                  ></md-outlined-text-field>
+                </span>
+              </div>
+            </div>
+            <div row separate-container>
+              <div>
+                <span>주간 진행현황</span>
+                <span
+                  ><md-outlined-text-field
+                    type="text"
+                    numeric
+                    project
+                    name="weeklyProgress"
+                    .value=${this.project.weeklyProgress?.toString() || ''}
+                    @input=${this._onInputChange}
+                    suffix-text="%"
+                  ></md-outlined-text-field>
                 </span>
               </div>
               <div>
-                ${this.project?.buildingComplex?.buildings?.map(
-                  (building, idx) => html`
-                    <div>
-                      <span>
-                        <input
-                          type="text"
-                          building
-                          name="name"
-                          .value=${building?.name || ''}
-                          @input=${e => this._onInputChange(e, idx)}
-                          placeholder="ooo동"
-                        />
-                        층수
-                      </span>
-                      <span
-                        ><input
-                          type="text"
-                          numeric
-                          building
-                          name="floorCount"
-                          .value=${building?.floorCount?.toString() || ''}
-                          @input=${e => this._onInputChange(e, idx)}
-                          placeholder="oo"
-                      /></span>
-                    </div>
-                  `
-                )}
-              </div>
-            </div>
-
-            <div>
-              <h3>프로젝트 현황</h3>
-              <div>
-                <div>
-                  <span>전체 진행현황</span> 주간 진행현황 KPI
-                  <span
-                    ><input
-                      type="text"
-                      numeric
-                      project
-                      name="totalProgress"
-                      .value=${this.project.totalProgress?.toString() || ''}
-                      @input=${this._onInputChange}
-                    />
-                  </span>
-                </div>
-                <div>
-                  <span>검측/통과비율</span> 로봇작업진행율 구조안전도
-                  <span
-                    ><input
-                      type="text"
-                      numeric
-                      project
-                      name="inspPassRate"
-                      .value=${this.project.inspPassRate?.toString() || ''}
-                      @input=${this._onInputChange}
-                    />
-                  </span>
-                </div>
-              </div>
-              <div>
-                <div>
-                  <span>주간 진행현황</span>
-                  <span
-                    ><input
-                      type="text"
-                      numeric
-                      project
-                      name="weeklyProgress"
-                      .value=${this.project.weeklyProgress?.toString() || ''}
-                      @input=${this._onInputChange}
-                    />
-                  </span>
-                </div>
-                <div>
-                  <span>로봇작업진행율</span>
-                  <span
-                    ><input
-                      type="text"
-                      numeric
-                      project
-                      name="robotProgressRate"
-                      .value=${this.project.robotProgressRate?.toString() || ''}
-                      @input=${this._onInputChange}
-                    />
-                  </span>
-                </div>
-              </div>
-              <div>
-                <div>
-                  <span>KPI</span>
-                  <span
-                    ><input
-                      type="text"
-                      numeric
-                      project
-                      name="kpi"
-                      .value=${this.project.kpi?.toString() || ''}
-                      @input=${this._onInputChange}
-                    />
-                  </span>
-                </div>
-                <div>
-                  <span>구조안전도</span>
-                  <span
-                    ><input
-                      type="text"
-                      numeric
-                      project
-                      name="structuralSafetyRate"
-                      .value=${this.project.structuralSafetyRate?.toString() || ''}
-                      @input=${this._onInputChange}
-                    />
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <h3>공지사항</h3>
-              <div>
-                <span></span>
-                <span>
-                  <textarea></textarea>
+                <span>로봇작업진행율</span>
+                <span
+                  ><md-outlined-text-field
+                    type="text"
+                    numeric
+                    project
+                    name="robotProgressRate"
+                    .value=${this.project.robotProgressRate?.toString() || ''}
+                    @input=${this._onInputChange}
+                    suffix-text="%"
+                  ></md-outlined-text-field>
                 </span>
               </div>
+            </div>
+            <div row separate-container>
+              <div>
+                <span>KPI</span>
+                <span
+                  ><md-outlined-text-field
+                    type="text"
+                    numeric
+                    project
+                    name="kpi"
+                    .value=${this.project.kpi?.toString() || ''}
+                    @input=${this._onInputChange}
+                    suffix-text="%"
+                  ></md-outlined-text-field>
+                </span>
+              </div>
+              <div>
+                <span>구조안전도</span>
+                <span
+                  ><md-outlined-text-field
+                    type="text"
+                    numeric
+                    project
+                    name="structuralSafetyRate"
+                    .value=${this.project.structuralSafetyRate?.toString() || ''}
+                    @input=${this._onInputChange}
+                    suffix-text="%"
+                  ></md-outlined-text-field>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h3>공지사항</h3>
+            <div>
+              <span></span>
+              <span>
+                <md-outlined-text-field type="textarea"></md-outlined-text-field>
+              </span>
             </div>
           </div>
         </div>
@@ -430,12 +634,12 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
       }
     })
 
-    console.log('initProject : ', response.data?.project)
-
     this.project = response.data?.project
   }
 
   private async _saveProject() {
+    console.log('this.project :', this.project)
+
     const response = await client.mutate({
       mutation: gql`
         mutation UpdateProject($project: ProjectPatch!) {
@@ -473,11 +677,9 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
       const additionalBuildings = Array.from({ length: additionalCount }, () => ({ ...buildingInitData }))
       this.project.buildingComplex.buildings = [...this.project.buildingComplex.buildings, ...additionalBuildings]
     }
-  }
 
-  // 모든 값 초기화 (초기화 버튼은 TODO 이거 없애는게 좋겠음)
-  private _reset() {
-    this.project = { ...this.defaultProject }
+    // 리렌더링
+    this.project = { ...this.project }
   }
 
   // Input 요소의 값이 변경될 때 호출되는 콜백 함수
@@ -487,7 +689,7 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
 
     // 숫자 타입은 다른 문자 입력 제거
     if (target.hasAttribute('numeric')) {
-      inputVal = Number(inputVal.replace(/\D./g, ''))
+      inputVal = Number(inputVal.replace(/\D/g, ''))
     }
 
     if (target.hasAttribute('project')) {

@@ -235,12 +235,6 @@ export class ProjectSettingList extends ScopedElementsMixin(PageView) {
     this.getProjectList()
   }
 
-  async pageUpdated(changes: any, lifecycle: any) {
-    if (this.active) {
-      // do something here when this page just became as active
-    }
-  }
-
   async getProjectList() {
     const response = await client.query({
       query: gql`
