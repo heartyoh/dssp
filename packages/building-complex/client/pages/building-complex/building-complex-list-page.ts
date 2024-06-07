@@ -16,6 +16,25 @@ import { connect } from 'pwa-helpers/connect-mixin'
 import gql from 'graphql-tag'
 
 import { BuildingComplexImporter } from './building-complex-importer'
+import { Building } from '../building/building-list-page'
+
+export interface BuildingComplex {
+  id?: string
+  domainId?: string
+  address?: string
+  area?: number
+  clientCompany?: string
+  constructionCompany?: string
+  supervisoryCompany?: string
+  designCompany?: string
+  mainPhoto?: string
+  constructionType?: string
+  constructionCost?: number
+  etc?: string
+  householdCount?: number
+  buildingCount?: number
+  buildings?: Building[]
+}
 
 @customElement('building-complex-list-page')
 export class BuildingComplexListPage extends connect(store)(localize(i18next)(ScopedElementsMixin(PageView))) {

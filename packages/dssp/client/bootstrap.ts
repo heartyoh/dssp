@@ -9,12 +9,12 @@ import { registerDefaultGroups } from '@operato/board'
 import { navigate, store } from '@operato/shell'
 
 import { appendViewpart, toggleOverlay, TOOL_POSITION, VIEWPART_POSITION } from '@operato/layout'
-import { APPEND_APP_TOOL } from '@things-factory/apptool-base'
-import { setupAppToolPart } from '@things-factory/apptool-ui'
+import { APPEND_APP_TOOL } from '@things-factory/apptool-base/client'
+import { setupAppToolPart } from '@things-factory/apptool-ui/dist-client'
 import { hasPrivilege } from '@things-factory/auth-base/dist-client'
-import { setAuthManagementMenus } from '@things-factory/auth-ui'
-import { ADD_MORENDA } from '@things-factory/more-base'
-import { ADD_SETTING } from '@things-factory/setting-base'
+import { setAuthManagementMenus } from '@things-factory/auth-ui/dist-client'
+import { ADD_MORENDA } from '@things-factory/more-base/client'
+import { ADD_SETTING } from '@things-factory/setting-base/dist-client'
 
 console.log(
   `%c

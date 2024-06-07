@@ -22,6 +22,34 @@ import gql from 'graphql-tag'
 
 import { BuildingLevelImporter } from './building-level-importer'
 
+export interface BuildingLevel {
+  id?: string
+  number: number
+  planImage: string
+  buildingId?: string
+  buildingInspections?: BuildingInspection[]
+}
+
+export enum InspectionType {
+  COMPLETED = 'COMPLETED',
+  WARNING = 'WARNING',
+  QUESTION = 'QUESTION'
+}
+export interface BuildingInspection {
+  id?: string
+  indexX?: number
+  indexY?: number
+  type?: InspectionType
+  detail?: string
+  buildingLevelId?: string
+  buildingInspectionAttachments?: BuildingInspectionAttachment[]
+}
+
+export class BuildingInspectionAttachment {
+  id?: string
+}
+
+
 @customElement('building-level-list-page')
 export class BuildingLevelListPage extends connect(store)(localize(i18next)(ScopedElementsMixin(PageView))) {
 

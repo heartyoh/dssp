@@ -16,6 +16,18 @@ export class BuildingComplexQuery {
     })
   }
 
+  @FieldResolver(type => String)
+  async mainPhoto(@Root() buildingComplex: BuildingComplex): Promise<string | undefined> {
+    const attachment: Attachment = await getRepository(Attachment).findOne({
+      where: {
+        domain: { id: buildingComplex.domainId },
+        refBy: buildingComplex.id
+      }
+    })
+
+    return attachment.fullpath
+  }
+
   @FieldResolver(type => [Building])
   async buildings(@Root() buildingComplex: BuildingComplex): Promise<Building[]> {
     return await getRepository(Building).findBy({ buildingComplex: { id: buildingComplex.id } })
