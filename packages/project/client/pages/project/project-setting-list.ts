@@ -48,8 +48,7 @@ export class ProjectSettingList extends ScopedElementsMixin(PageView) {
           margin-right: 26px;
 
           --md-filled-text-field-container-shape: 0px;
-          --md-sys-color-primary: #006a6a;
-          --md-sys-color-surface-container-highest: transparent;
+          --md-filled-text-field-container-color: transparent;
           --md-filled-text-field-label-text-color: #999999;
           --md-filled-text-field-input-text-color: #4e5055;
         }
@@ -60,8 +59,8 @@ export class ProjectSettingList extends ScopedElementsMixin(PageView) {
           margin-left: 17px;
           padding: 13px 20px;
 
-          --md-sys-color-surface-container-low: #24be7b;
-          --md-sys-color-primary: #ffffff;
+          --md-elevated-button-container-color: #24be7b;
+          --md-elevated-button-label-text-color: #ffffff;
           --md-elevated-button-container-shape: 7px;
         }
       }
@@ -113,8 +112,8 @@ export class ProjectSettingList extends ScopedElementsMixin(PageView) {
                 --md-linear-progress-track-height: 18px;
                 --md-linear-progress-active-indicator-height: 18px;
                 --md-linear-progress-track-shape: 5px;
-                --md-sys-color-primary: #0595e51a;
-                --md-sys-color-surface-container-highest: #0595e533;
+                --md-linear-progress-active-indicator-color: #0595e51a;
+                --md-linear-progress-track-color: #0595e533;
               }
 
               span {
@@ -148,7 +147,7 @@ export class ProjectSettingList extends ScopedElementsMixin(PageView) {
               padding: 0px 13px;
               margin-right: 2px;
               box-shadow: 1px 1px 1px #0000001a;
-              --md-sys-color-primary: #586878;
+              --md-outlined-button-label-text-color: #586878;
               --md-outlined-button-label-text-weight: bold;
             }
           }

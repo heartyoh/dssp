@@ -480,6 +480,7 @@ type BuildingComplex {
   householdCount: Float
   id: ID!
   mainPhoto: String
+  notice: String
   supervisoryCompany: String
   updatedAt: DateTimeISO
   updater: User
@@ -498,7 +499,8 @@ input BuildingComplexPatch {
   etc: String
   householdCount: Float
   id: String
-  mainPhoto: String
+  mainPhoto: Upload
+  notice: String
   supervisoryCompany: String!
 }
 
@@ -1918,6 +1920,9 @@ type Mutation {
 
   """To create new user"""
   createUser(user: NewUser!): User!
+
+  """To create new UserPreference"""
+  createUserPreference(preference: NewUserPreference!): UserPreference!
   deleteAppBinding(id: String!): Boolean!
 
   """To delete appliance"""
@@ -2100,6 +2105,9 @@ type Mutation {
   """To delete my PagePreference"""
   deleteMyPagePreference(element: String!, page: String!): Boolean!
 
+  """To delete my preference"""
+  deleteMyUserPreference(element: String!, key: String!): Boolean!
+
   """To delete Notification"""
   deleteNotification(id: String!): Boolean!
 
@@ -2201,6 +2209,12 @@ type Mutation {
 
   """To delete a user"""
   deleteUser(email: EmailAddress!): Boolean!
+
+  """To delete UserPreference"""
+  deleteUserPreference(id: String!): Boolean!
+
+  """To delete multiple UserPreferences"""
+  deleteUserPreferences(ids: [String!]!): Boolean!
 
   """To delete some users"""
   deleteUsers(emails: [String!]!): Boolean!
@@ -2585,6 +2599,9 @@ type Mutation {
   """To create or update my PagePreference"""
   updateMyPagePreference(element: String!, page: String!, preference: Object!): PagePreference!
 
+  """To create or update my preference"""
+  updateMyUserPreference(key: String!, preference: Object!): UserPreference!
+
   """To modify Notification information"""
   updateNotification(id: String!, patch: NotificationPatch!): Notification!
 
@@ -2647,6 +2664,9 @@ type Mutation {
 
   """To modify user information"""
   updateUser(email: EmailAddress!, patch: UserPatch!): User!
+
+  """To modify UserPreference information"""
+  updateUserPreference(id: String!, patch: UserPreferencePatch!): UserPreference!
 
   """To update roles for a user"""
   updateUserRoles(availableRoles: [ObjectRef!]!, selectedRoles: [ObjectRef!]!, userId: String!): User!
@@ -3214,6 +3234,12 @@ input NewUserByDomainWizardInput {
   owner: Boolean!
   password: String
   roles: [NewRole!]!
+}
+
+input NewUserPreference {
+  key: String!
+  preference: Object!
+  user: ObjectRef!
 }
 
 """Entity for Notification"""
@@ -4041,6 +4067,12 @@ type Query {
   """To fetch roles of current user"""
   myRoles: [Role!]!
 
+  """To fetch a User's own UserPreference"""
+  myUserPreference(element: String!, key: String!): UserPreference
+
+  """To fetch multiple UserPreferences"""
+  myUserPreferences(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): UserPreferenceList!
+
   """To fetch a Notification"""
   notification(id: String!): Notification
 
@@ -4086,6 +4118,9 @@ type Query {
 
   """To fetch multiple PlayGroups"""
   playGroups(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): PlayGroupList!
+
+  """To fetch a UserPreference"""
+  preference(id: String!): UserPreference
 
   """To fetch a PrinterDevice"""
   printerDevice(id: String!): PrinterDevice!
@@ -4636,6 +4671,32 @@ input UserPatch {
   roles: [ObjectRef!]
   status: String
   userType: String
+}
+
+"""Entity for UserPreference"""
+type UserPreference {
+  createdAt: DateTimeISO
+  creator: User
+  domain: Domain
+  id: ID!
+  key: String
+  preference: Object
+  updatedAt: DateTimeISO
+  updater: User
+  user: User!
+}
+
+type UserPreferenceList {
+  items: [UserPreference!]!
+  total: Int!
+}
+
+input UserPreferencePatch {
+  cuFlag: String
+  id: ID
+  key: String!
+  preference: Object!
+  user: ObjectRef!
 }
 
 type UserRole {

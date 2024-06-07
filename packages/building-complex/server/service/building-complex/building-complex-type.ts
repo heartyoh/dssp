@@ -1,6 +1,8 @@
 import { BuildingPatch } from '../building/building-type'
 import { Building } from '../building/building'
 import { Field, InputType, ObjectType, Float } from 'type-graphql'
+import type { FileUpload } from 'graphql-upload/GraphQLUpload.js'
+import GraphQLUpload from 'graphql-upload/GraphQLUpload.js'
 
 @InputType()
 export class BuildingComplexPatch {
@@ -25,8 +27,8 @@ export class BuildingComplexPatch {
   @Field({ nullable: false })
   designCompany: string
 
-  @Field({ nullable: true })
-  mainPhoto?: string
+  @Field(type => GraphQLUpload, { nullable: true })
+  mainPhoto?: FileUpload
 
   @Field({ nullable: false })
   constructionType: string
@@ -42,6 +44,9 @@ export class BuildingComplexPatch {
 
   @Field(type => Float, { nullable: true })
   buildingCount?: number
+
+  @Field({ nullable: true })
+  notice?: string
 
   @Field(type => [BuildingPatch], { nullable: true })
   buildings?: BuildingPatch[]

@@ -39,6 +39,7 @@ export interface BuildingComplex {
   etc?: string
   householdCount?: number
   buildingCount?: number
+  notice?: string
   buildings?: Building[]
 }
 export interface Building {

@@ -43,6 +43,11 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
         height: 130px;
       }
 
+      ox-input-image {
+        width: 100px;
+        height: 100px;
+      }
+
       div[header] {
         display: flex;
         margin: 0px 20px;
@@ -375,14 +380,12 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
           </div>
           <div row>
             <span>대표사진 업로드</span>
-            <span
-              ><input
-                type="file"
-                name="mainPhoto"
-                building-complex
-                value=${this.project?.buildingComplex?.mainPhoto || ''}
-                @input=${this._onInputChange}
-              />
+            <span>
+              <ox-input-image
+                id="mainPhoto"
+                .value=${this.project?.buildingComplex?.mainPhoto}
+                @change=${this.onCreateAttachment.bind(this)}
+              ></ox-input-image>
             </span>
           </div>
           <div row>
@@ -405,7 +408,7 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
                 type="textarea"
                 name="etc"
                 building-complex
-                .value=${this.project?.buildingComplex?.clientCompany || ''}
+                .value=${this.project?.buildingComplex?.etc || ''}
                 @input=${this._onInputChange}
               ></md-outlined-text-field>
             </span>
@@ -635,6 +638,8 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
     })
 
     this.project = response.data?.project
+
+    console.log('project : ', this.project)
   }
 
   private async _saveProject() {
@@ -650,6 +655,9 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
       `,
       variables: {
         project: this.project
+      },
+      context: {
+        hasUpload: true
       }
     })
 
@@ -699,5 +707,29 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
     } else if (target.hasAttribute('building')) {
       this.project.buildingComplex.buildings![idx][target.name] = inputVal
     }
+  }
+
+  // 이미지 업로드
+  async onCreateAttachment(e: CustomEvent) {
+    const file = e.detail
+
+    const response = await client.mutate({
+      mutation: gql`
+        mutation ($attachment: NewAttachment!) {
+          createAttachment(attachment: $attachment) {
+            id
+            path
+          }
+        }
+      `,
+      variables: {
+        attachment: { file, refBy: this.project.buildingComplex.id }
+      },
+      context: {
+        hasUpload: true
+      }
+    })
+
+    this.project.buildingComplex.mainPhoto = file
   }
 }

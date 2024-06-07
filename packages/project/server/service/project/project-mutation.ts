@@ -49,6 +49,22 @@ export class ProjectMutation {
     // 2. 단지 정보 수정
     const buildingComplexResult = await buildingComplexRepo.save({ ...buildingComplex, updater: user })
 
+    // // 2-1. 단지 메인 이미지 첨부파일 나머지 삭제 후 저장
+    if (project.buildingComplex.mainPhoto) {
+      await deleteAttachmentsByRef(null, { refBys: [buildingComplexResult.id] }, context)
+      await createAttachment(
+        null,
+        {
+          attachment: {
+            file: project.buildingComplex.mainPhoto,
+            refType: BuildingComplex.name,
+            refBy: buildingComplexResult.id
+          }
+        },
+        context
+      )
+    }
+
     // 3. 단지 내 동 정보들 수정
     buildings.forEach(async building => {
       const buildingsResult = await buildingRepo.save({

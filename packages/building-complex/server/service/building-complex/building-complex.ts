@@ -53,8 +53,8 @@ export class BuildingComplex {
   @Field({ nullable: true })
   designCompany?: string
 
-  @Column({ nullable: true, comment: '대표 사진 (BIM)' })
-  @Field({ nullable: true })
+  // 대표 사진
+  @Field(type => String, { nullable: true })
   mainPhoto?: string
 
   @Column({ nullable: true, comment: '건설 구분 (아파트, 공원)' })
@@ -76,6 +76,10 @@ export class BuildingComplex {
   @Column({ nullable: true, comment: '동 수' })
   @Field({ nullable: true })
   buildingCount?: number
+
+  @Column({ nullable: true, comment: '공지사항' })
+  @Field({ nullable: true })
+  notice?: string
 
   // 동 정보 (하위 테이블 참조)
   @OneToMany(() => Building, building => building.buildingComplex)
