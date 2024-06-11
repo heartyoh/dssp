@@ -61,9 +61,9 @@ export class BuildingComplex {
   @Field({ nullable: true })
   designCompany?: string
 
-  // 대표 사진
+  // BIM 모델
   @Field(type => String, { nullable: true })
-  mainPhoto?: string
+  bim?: string
 
   @Column({ nullable: true, comment: '건설 구분 (아파트, 공원)' })
   @Field({ nullable: true })

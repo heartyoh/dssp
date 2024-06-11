@@ -1,6 +1,8 @@
 import { ObjectType, Field, InputType, Int, Float } from 'type-graphql'
 import { Project } from './project'
 import { BuildingComplexPatch } from '@dssp/building-complex'
+import type { FileUpload } from 'graphql-upload/GraphQLUpload.js'
+import GraphQLUpload from 'graphql-upload/GraphQLUpload.js'
 
 @InputType()
 export class NewProject {
@@ -21,6 +23,9 @@ export class ProjectPatch {
 
   @Field({ nullable: true })
   endDate?: string
+
+  @Field(type => GraphQLUpload, { nullable: true })
+  mainPhoto?: FileUpload
 
   @Field(type => Float, { nullable: true })
   totalProgress?: number

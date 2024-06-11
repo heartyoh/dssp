@@ -196,7 +196,7 @@ export class ProjectSettingList extends ScopedElementsMixin(PageView) {
 
           return html`
             <div project-container>
-              <img project-img src=${project.buildingComplex?.mainPhoto || ''} />
+              <img project-img src=${project.mainPhoto || ''} />
 
               <span project-info>
                 <div name>${project.name}</div>

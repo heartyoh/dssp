@@ -4,6 +4,7 @@ import { User } from '@things-factory/auth-base'
 import { Project } from './project'
 import { ProjectList } from './project-type'
 import { BuildingComplex } from '@dssp/building-complex'
+import { Attachment } from '@things-factory/attachment-base'
 
 @Resolver(Project)
 export class ProjectQuery {
@@ -37,6 +38,19 @@ export class ProjectQuery {
     const [items, total] = await queryBuilder.getManyAndCount()
 
     return { items, total }
+  }
+
+  @FieldResolver(type => String)
+  async mainPhoto(@Root() project: Project): Promise<string | undefined> {
+    const attachment: Attachment = await getRepository(Attachment).findOne({
+      where: {
+        domain: { id: project.domainId },
+        refBy: project.id
+      },
+      order: { createdAt: 'ASC' }
+    })
+
+    return attachment?.fullpath
   }
 
   @FieldResolver(type => BuildingComplex)

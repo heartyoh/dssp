@@ -49,16 +49,32 @@ export class ProjectMutation {
     // 2. 단지 정보 수정
     const buildingComplexResult = await buildingComplexRepo.save({ ...buildingComplex, updater: user })
 
-    // 2-1. 단지 메인 이미지 첨부파일 나머지 삭제 후 저장
-    if (project.buildingComplex.mainPhoto) {
-      await deleteAttachmentsByRef(null, { refBys: [buildingComplexResult.id] }, context)
+    // 2-1. 프로젝트 메인 이미지 첨부파일 나머지 삭제 후 저장
+    if (project.mainPhoto) {
+      await deleteAttachmentsByRef(null, { refBys: [project.id] }, context)
       await createAttachment(
         null,
         {
           attachment: {
-            file: project.buildingComplex.mainPhoto,
+            file: project.mainPhoto,
+            refType: Project.name,
+            refBy: project.id
+          }
+        },
+        context
+      )
+    }
+
+    // 2-2. 단지 BIM 이미지 첨부파일 나머지 삭제 후 저장
+    if (project.buildingComplex.bim) {
+      await deleteAttachmentsByRef(null, { refBys: [project.buildingComplex.id] }, context)
+      await createAttachment(
+        null,
+        {
+          attachment: {
+            file: project.buildingComplex.bim,
             refType: BuildingComplex.name,
-            refBy: buildingComplexResult.id
+            refBy: project.buildingComplex.id
           }
         },
         context

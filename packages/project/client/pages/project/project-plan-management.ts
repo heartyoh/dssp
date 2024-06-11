@@ -351,7 +351,7 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
 
   private async _saveProject() {
     console.log('this.project :', this.project)
-    delete this.project.buildingComplex.mainPhoto
+    delete this.project.mainPhoto
 
     const response = await client.mutate({
       mutation: gql`
@@ -402,7 +402,7 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
       }
     })
 
-    this.project.buildingComplex.mainPhoto = file
+    this.project.mainPhoto = file
   }
 
   _onClickBuildingChange(building: Building) {

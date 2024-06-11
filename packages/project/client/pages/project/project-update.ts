@@ -47,6 +47,11 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
         width: 100px;
         height: 100px;
       }
+      ox-input-file {
+        width: 100px;
+        height: 100px;
+        padding: 0;
+      }
 
       div[header] {
         display: flex;
@@ -414,9 +419,22 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
             <span>대표사진 업로드</span>
             <span>
               <ox-input-image
-                value=${this.project?.buildingComplex?.mainPhoto || ''}
+                mainPhoto
+                value=${this.project?.mainPhoto || ''}
                 @change=${this.onCreateAttachment.bind(this)}
               ></ox-input-image>
+            </span>
+          </div>
+          <div row>
+            <span>단지 BIM</span>
+            <span>
+              <ox-input-file
+                bim
+                value=${this.project?.buildingComplex?.bim || ''}
+                label=" "
+                description="BIM 업로드"
+                @change=${this.onCreateAttachment.bind(this)}
+              ></ox-input-file>
             </span>
           </div>
           <div row>
@@ -640,6 +658,7 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
             name
             startDate
             endDate
+            mainPhoto
             totalProgress
             weeklyProgress
             kpi
@@ -656,7 +675,7 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
               constructionCompany
               supervisoryCompany
               designCompany
-              mainPhoto
+              bim
               constructionType
               constructionCost
               etc
@@ -685,8 +704,13 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
     console.log('this.project :', this.project)
 
     // 이미지 첨부가 없으면 제거
-    if (typeof this.project.buildingComplex.mainPhoto === 'string') {
-      delete this.project.buildingComplex.mainPhoto
+    if (typeof this.project.mainPhoto === 'string') {
+      delete this.project.mainPhoto
+    }
+
+    // BIM 첨부가 없으면 제거
+    if (typeof this.project.buildingComplex.bim === 'string') {
+      delete this.project.buildingComplex.bim
     }
 
     const response = await client.mutate({
@@ -756,6 +780,8 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
   // 이미지 업로드
   async onCreateAttachment(e: CustomEvent) {
     const file = e.detail
+    const target = e.target as HTMLInputElement
+    const refBy = target.hasAttribute('mainPhoto') ? this.project.id : this.project.buildingComplex.id
 
     const response = await client.mutate({
       mutation: gql`
@@ -767,13 +793,17 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
         }
       `,
       variables: {
-        attachment: { file, refBy: this.project.buildingComplex.id }
+        attachment: { file, refBy }
       },
       context: {
         hasUpload: true
       }
     })
 
-    this.project.buildingComplex.mainPhoto = file
+    if (target.hasAttribute('mainPhoto')) {
+      this.project.mainPhoto = file
+    } else {
+      this.project.buildingComplex.bim = file
+    }
   }
 }

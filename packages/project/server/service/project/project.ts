@@ -60,6 +60,10 @@ export class Project {
   @Field({ nullable: true })
   endDate?: string
 
+  // 대표 사진
+  @Field(type => String, { nullable: true })
+  mainPhoto?: string
+
   @Column({ type: 'float', nullable: true, default: 0, transformer: roundTransformer, comment: '전체 진행현황' })
   @Field({ nullable: true })
   totalProgress?: number

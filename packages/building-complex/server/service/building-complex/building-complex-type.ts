@@ -34,7 +34,7 @@ export class BuildingComplexPatch {
   designCompany?: string
 
   @Field(type => GraphQLUpload, { nullable: true })
-  mainPhoto?: FileUpload
+  bim?: FileUpload
 
   @Field({ nullable: true })
   constructionType?: string

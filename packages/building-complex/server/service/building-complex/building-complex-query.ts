@@ -17,7 +17,7 @@ export class BuildingComplexQuery {
   }
 
   @FieldResolver(type => String)
-  async mainPhoto(@Root() buildingComplex: BuildingComplex): Promise<string | undefined> {
+  async bim(@Root() buildingComplex: BuildingComplex): Promise<string | undefined> {
     const attachment: Attachment = await getRepository(Attachment).findOne({
       where: {
         domain: { id: buildingComplex.domainId },
