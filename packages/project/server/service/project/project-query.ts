@@ -1,11 +1,9 @@
-import { Brackets } from 'typeorm'
-import { Resolver, Query, FieldResolver, Root, Args, Arg, Ctx, Directive } from 'type-graphql'
-import { Attachment } from '@things-factory/attachment-base'
-import { Domain, getQueryBuilderFromListParams, getRepository, ListParam } from '@things-factory/shell'
+import { Resolver, Query, FieldResolver, Root, Arg, Ctx } from 'type-graphql'
+import { Domain, getRepository } from '@things-factory/shell'
 import { User } from '@things-factory/auth-base'
 import { Project } from './project'
-import { ProjectList, ProjectPatch } from './project-type'
-import { BuildingComplex, Building } from '@dssp/building-complex'
+import { ProjectList } from './project-type'
+import { BuildingComplex } from '@dssp/building-complex'
 
 @Resolver(Project)
 export class ProjectQuery {
@@ -39,19 +37,6 @@ export class ProjectQuery {
     const [items, total] = await queryBuilder.getManyAndCount()
 
     return { items, total }
-  }
-
-  @FieldResolver(type => String)
-  async thumbnail(@Root() project: Project): Promise<string | undefined> {
-    const attachment: Attachment = await getRepository(Attachment).findOne({
-      where: {
-        domain: { id: project.domainId },
-        refType: Project.name,
-        refBy: project.id
-      }
-    })
-
-    return attachment?.fullpath
   }
 
   @FieldResolver(type => BuildingComplex)

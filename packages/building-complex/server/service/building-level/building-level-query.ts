@@ -33,7 +33,7 @@ export class BuildingLevelQuery {
   }
 
   @FieldResolver(type => String)
-  async thumbnail(@Root() buildingLevel: BuildingLevel): Promise<string | undefined> {
+  async planImage(@Root() buildingLevel: BuildingLevel): Promise<string | undefined> {
     const attachment: Attachment = await getRepository(Attachment).findOne({
       where: {
         refType: BuildingLevel.name,

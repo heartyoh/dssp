@@ -27,19 +27,23 @@ export interface Project {
 }
 export interface BuildingComplex {
   id?: string
-  address: string
-  area: number
-  constructionCompany: string
-  clientCompany: string
-  designCompany: string
-  supervisoryCompany: string
+  address?: string
+  latitude?: number
+  longitude?: number
+  area?: number
+  constructionCompany?: string
+  clientCompany?: string
+  designCompany?: string
+  supervisoryCompany?: string
   mainPhoto?: string
-  constructionType: string
+  constructionType?: string
   constructionCost?: number
   etc?: string
   householdCount?: number
   buildingCount?: number
   notice?: string
+  planXScale?: number
+  planYScale?: number
   buildings?: Building[]
 }
 export interface Building {

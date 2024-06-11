@@ -30,7 +30,8 @@ export class BuildingLevel {
   @Field({ nullable: false })
   number: number
 
-  @Column({ nullable: true, comment: '층 도면 이미지 링크' })
+  // @Column({ nullable: true, comment: '층 도면 이미지 링크' })
+  // 층 도면 이미지 링크
   @Field({ nullable: true })
   planImage: string
 

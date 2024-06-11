@@ -5,38 +5,21 @@ import { ObjectType, Field, InputType, Int, ID, registerEnumType } from 'type-gr
 import { ObjectRef, ScalarObject } from '@things-factory/shell'
 
 import { BuildingLevel } from './building-level'
-
-@InputType()
-export class NewBuildingLevel {
-  @Field()
-  name: string
-
-  @Field({ nullable: true })
-  description?: string
-
-  @Field({ nullable: true })
-  active?: boolean
-
-  @Field({ nullable: true })
-  params?: string
-}
+import { BuildingInspection } from '../building-inspection/building-inspection'
 
 @InputType()
 export class BuildingLevelPatch {
   @Field(type => ID, { nullable: true })
   id?: string
 
-  @Field({ nullable: true })
-  name?: string
+  @Field({ nullable: false })
+  number?: number
 
-  @Field({ nullable: true })
-  description?: string
+  @Field(type => GraphQLUpload, { nullable: true })
+  planImage?: FileUpload
 
-  @Field({ nullable: true })
-  active?: boolean
-
-  @Field({ nullable: true })
-  cuFlag?: string
+  @Field(() => [BuildingInspection], { nullable: true })
+  buildingInspections?: BuildingInspection[]
 }
 
 @ObjectType()

@@ -36,7 +36,7 @@ export class ProjectMutation {
   @Directive('@transaction')
   @Mutation(returns => Project, { description: '프로젝트 업데이트' })
   async updateProject(@Arg('project') project: ProjectPatch, @Ctx() context: ResolverContext): Promise<Project> {
-    const { user, tx } = context.state
+    const { user, tx, domain } = context.state
     const projectRepo = tx.getRepository(Project)
     const buildingComplexRepo = tx.getRepository(BuildingComplex)
     const buildingRepo = tx.getRepository(Building)
@@ -49,7 +49,7 @@ export class ProjectMutation {
     // 2. 단지 정보 수정
     const buildingComplexResult = await buildingComplexRepo.save({ ...buildingComplex, updater: user })
 
-    // // 2-1. 단지 메인 이미지 첨부파일 나머지 삭제 후 저장
+    // 2-1. 단지 메인 이미지 첨부파일 나머지 삭제 후 저장
     if (project.buildingComplex.mainPhoto) {
       await deleteAttachmentsByRef(null, { refBys: [buildingComplexResult.id] }, context)
       await createAttachment(
@@ -66,7 +66,7 @@ export class ProjectMutation {
     }
 
     // 3. 단지 내 동 정보들 수정
-    buildings.forEach(async building => {
+    buildings.forEach(async (building: Building) => {
       const buildingsResult = await buildingRepo.save({
         buildingComplex: { id: buildingComplex.id },
         ...building,

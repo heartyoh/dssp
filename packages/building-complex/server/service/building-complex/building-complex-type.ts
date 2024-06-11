@@ -9,29 +9,35 @@ export class BuildingComplexPatch {
   @Field({ nullable: true })
   id?: string
 
-  @Field({ nullable: false })
-  address: string
+  @Field({ nullable: true })
+  address?: string
 
-  @Field(type => Float, { nullable: false })
-  area: number
+  @Field(type => Float, { nullable: true })
+  area?: number
 
-  @Field({ nullable: false })
-  clientCompany: string
+  @Field(type => Float, { nullable: true })
+  latitude?: number
 
-  @Field({ nullable: false })
-  constructionCompany: string
+  @Field(type => Float, { nullable: true })
+  longitude?: number
 
-  @Field({ nullable: false })
-  supervisoryCompany: string
+  @Field({ nullable: true })
+  clientCompany?: string
 
-  @Field({ nullable: false })
-  designCompany: string
+  @Field({ nullable: true })
+  constructionCompany?: string
+
+  @Field({ nullable: true })
+  supervisoryCompany?: string
+
+  @Field({ nullable: true })
+  designCompany?: string
 
   @Field(type => GraphQLUpload, { nullable: true })
   mainPhoto?: FileUpload
 
-  @Field({ nullable: false })
-  constructionType: string
+  @Field({ nullable: true })
+  constructionType?: string
 
   @Field(type => Float, { nullable: true })
   constructionCost?: number
@@ -47,6 +53,12 @@ export class BuildingComplexPatch {
 
   @Field({ nullable: true })
   notice?: string
+
+  @Field({ nullable: true })
+  planXScale: number
+
+  @Field({ nullable: true })
+  planYScale: number
 
   @Field(type => [BuildingPatch], { nullable: true })
   buildings?: BuildingPatch[]

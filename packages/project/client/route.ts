@@ -12,6 +12,10 @@ export default function route(page: string) {
       import('./pages/project/project-update')
       return page
 
+    case 'project-plan-management':
+      import('./pages/project/project-plan-management')
+      return page
+
     case 'checklist-list':
       import('./pages/checklist/checklist-list-page')
       return page

@@ -196,7 +196,7 @@ export class ProjectSettingList extends ScopedElementsMixin(PageView) {
 
           return html`
             <div project-container>
-              <img project-img src=${project.buildingComplex.mainPhoto || ''} />
+              <img project-img src=${project.buildingComplex?.mainPhoto || ''} />
 
               <span project-info>
                 <div name>${project.name}</div>
@@ -219,8 +219,8 @@ export class ProjectSettingList extends ScopedElementsMixin(PageView) {
                 </div>
                 <div>
                   <md-outlined-button href="project-update/${project.id}">프로젝트 정보 수정</md-outlined-button>
-                  <md-outlined-button href="supervisory-management/${project.id}">시공감리 관리</md-outlined-button>
-                  <md-outlined-button href="task-management/${project.id}">공정표 관리</md-outlined-button>
+                  <md-outlined-button href="project-plan-management/${project.id}">도면 관리</md-outlined-button>
+                  <md-outlined-button href="project-task-management/${project.id}">공정표 관리</md-outlined-button>
                 </div>
               </span>
             </div>

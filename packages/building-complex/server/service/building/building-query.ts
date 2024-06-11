@@ -4,6 +4,7 @@ import { Domain, getQueryBuilderFromListParams, getRepository, ListParam } from 
 import { User } from '@things-factory/auth-base'
 import { Building } from './building'
 import { BuildingList } from './building-type'
+import { BuildingLevel } from '../building-level/building-level'
 
 @Resolver(Building)
 export class BuildingQuery {
@@ -33,15 +34,20 @@ export class BuildingQuery {
   }
 
   @FieldResolver(type => String)
-  async thumbnail(@Root() building: Building): Promise<string | undefined> {
+  async buildingBIM(@Root() building: Building): Promise<string | undefined> {
     const attachment: Attachment = await getRepository(Attachment).findOne({
       where: {
-        refType: Building.name,
         refBy: building.id
-      }
+      },
+      order: { createdAt: 'ASC' }
     })
 
     return attachment?.fullpath
+  }
+
+  @FieldResolver(type => [BuildingLevel])
+  async buildingLevels(@Root() building: Building): Promise<BuildingLevel[]> {
+    return await getRepository(BuildingLevel).findBy({ building: { id: building.id } })
   }
 
   @FieldResolver(type => User)

@@ -37,6 +37,14 @@ export class BuildingComplex {
   @Field({ nullable: true })
   area?: number
 
+  @Column({ type: 'float', nullable: true, default: 0, transformer: roundTransformer, comment: '위도' })
+  @Field({ nullable: true })
+  latitude?: number
+
+  @Column({ type: 'float', nullable: true, default: 0, transformer: roundTransformer, comment: '경도' })
+  @Field({ nullable: true })
+  longitude?: number
+
   @Column({ nullable: true, comment: '발주처' })
   @Field({ nullable: true })
   clientCompany?: string
@@ -80,6 +88,14 @@ export class BuildingComplex {
   @Column({ nullable: true, comment: '공지사항' })
   @Field({ nullable: true })
   notice?: string
+
+  @Column({ nullable: true, comment: '도면 X 축척' })
+  @Field({ nullable: true })
+  planXScale?: number
+
+  @Column({ nullable: true, comment: '도면 Y 축척' })
+  @Field({ nullable: true })
+  planYScale?: number
 
   // 동 정보 (하위 테이블 참조)
   @OneToMany(() => Building, building => building.buildingComplex)

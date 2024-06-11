@@ -17,8 +17,8 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
   static styles = [
     css`
       :host {
-        display: flex;
-        flex-direction: column;
+        display: grid;
+        grid-template-rows: 75px auto;
         color: #4e5055;
 
         width: 100%;
@@ -150,7 +150,7 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
             padding: 15px;
             background-color: #fff;
 
-            md-outlined-text-field {
+            md-outlined-text-field[type='text'] {
               width: 60%;
             }
 
@@ -253,8 +253,12 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
           <md-elevated-button green @click=${this._saveProject}>
             <md-icon slot="icon">save</md-icon>정보 저장
           </md-elevated-button>
-          <md-elevated-button> <md-icon slot="icon">description</md-icon>검측현황 관리 </md-elevated-button>
-          <md-elevated-button> <md-icon slot="icon">event_note</md-icon>공정표 관리 </md-elevated-button>
+          <md-elevated-button href=${`project-plan-management/${this.project.id}`}>
+            <md-icon slot="icon">description</md-icon>도면 관리
+          </md-elevated-button>
+          <md-elevated-button href=${`project-task-update/${this.project.id}`}>
+            <md-icon slot="icon">event_note</md-icon>공정표 관리
+          </md-elevated-button>
         </div>
       </div>
       <div body>
@@ -285,6 +289,32 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
             </span>
           </div>
           <div row>
+            <span>위도</span>
+            <span>
+              <md-outlined-text-field
+                type="text"
+                name="latitude"
+                numeric
+                building-complex
+                .value=${this.project?.buildingComplex?.latitude?.toString() || ''}
+                @input=${this._onInputChange}
+              ></md-outlined-text-field>
+            </span>
+          </div>
+          <div row>
+            <span>경도</span>
+            <span>
+              <md-outlined-text-field
+                type="text"
+                name="longitude"
+                numeric
+                building-complex
+                .value=${this.project?.buildingComplex?.longitude?.toString() || ''}
+                @input=${this._onInputChange}
+              ></md-outlined-text-field>
+            </span>
+          </div>
+          <div row>
             <span>면적</span>
             <span align-end
               ><md-outlined-text-field
@@ -307,6 +337,7 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
                 project
                 .value=${this.project.startDate || ''}
                 @input=${this._onInputChange}
+                max="9999-12-31"
               ></md-outlined-text-field>
               ~
               <md-outlined-text-field
@@ -315,6 +346,7 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
                 project
                 .value=${this.project.endDate || ''}
                 @input=${this._onInputChange}
+                max="9999-12-31"
               ></md-outlined-text-field
             ></span>
           </div>
@@ -382,8 +414,7 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
             <span>대표사진 업로드</span>
             <span>
               <ox-input-image
-                id="mainPhoto"
-                .value=${this.project?.buildingComplex?.mainPhoto}
+                value=${this.project?.buildingComplex?.mainPhoto || ''}
                 @change=${this.onCreateAttachment.bind(this)}
               ></ox-input-image>
             </span>
@@ -576,7 +607,13 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
             <div>
               <span></span>
               <span>
-                <md-outlined-text-field type="textarea"></md-outlined-text-field>
+                <md-outlined-text-field
+                  type="textarea"
+                  name="notice"
+                  building-complex
+                  .value=${this.project?.buildingComplex?.notice || ''}
+                  @input=${this._onInputChange}
+                ></md-outlined-text-field>
               </span>
             </div>
           </div>
@@ -612,6 +649,8 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
             buildingComplex {
               id
               address
+              latitude
+              longitude
               area
               clientCompany
               constructionCompany
@@ -621,6 +660,7 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
               constructionType
               constructionCost
               etc
+              notice
               householdCount
               buildingCount
               buildings {
@@ -638,12 +678,16 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
     })
 
     this.project = response.data?.project
-
-    console.log('project : ', this.project)
+    console.log('init project : ', this.project)
   }
 
   private async _saveProject() {
     console.log('this.project :', this.project)
+
+    // 이미지 첨부가 없으면 제거
+    if (typeof this.project.buildingComplex.mainPhoto === 'string') {
+      delete this.project.buildingComplex.mainPhoto
+    }
 
     const response = await client.mutate({
       mutation: gql`
