@@ -148,6 +148,22 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
               }
             }
           }
+
+          div[floor-plan] {
+            overflow-y: auto;
+            margin-top: 10px;
+
+            & > span {
+              width: 150px;
+              display: inline-block;
+              text-align: center;
+              margin: 0px 10px 15px 0px;
+
+              & > div {
+                margin-top: 7px;
+              }
+            }
+          }
         }
 
         & > div[plan-scale-container] {
@@ -216,7 +232,11 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
             ${this.project.buildingComplex.buildings?.map(building => {
               return html`
                 <span building>
-                  <ox-input-file value=${''} @change=${this.onCreateAttachment.bind(this)}></ox-input-file>
+                  <ox-input-file
+                    value=${''}
+                    label="도면 업로드"
+                    @change=${this.onCreateAttachment.bind(this)}
+                  ></ox-input-file>
                   <div>${building.name}</div>
                 </span>
               `
@@ -245,16 +265,18 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
           </div>
 
           <div floor-plan>
-            <div>
-              ${this.project.buildingComplex.buildings?.map(building => {
-                return html`
-                  <span building>
-                    <ox-input-file value=${''} @change=${this.onCreateAttachment.bind(this)}></ox-input-file>
-                    <div>${building.name}</div>
-                  </span>
-                `
-              })}
-            </div>
+            ${this.project.buildingComplex.buildings?.map(building => {
+              return html`
+                <span plan>
+                  <ox-input-file
+                    value=${''}
+                    label="도면 업로드"
+                    @change=${this.onCreateAttachment.bind(this)}
+                  ></ox-input-file>
+                  <div>${building.name}</div>
+                </span>
+              `
+            })}
           </div>
         </div>
 
