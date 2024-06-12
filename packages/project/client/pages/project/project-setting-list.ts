@@ -242,6 +242,7 @@ export class ProjectSettingList extends ScopedElementsMixin(PageView) {
             items {
               id
               name
+              mainPhoto
               startDate
               endDate
               totalProgress
@@ -249,7 +250,6 @@ export class ProjectSettingList extends ScopedElementsMixin(PageView) {
                 address
                 area
                 clientCompany
-                mainPhoto
               }
             }
             total

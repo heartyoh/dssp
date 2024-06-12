@@ -11,12 +11,19 @@ export enum ProjectStatus {
   'PROCEEDING' = '10',
   'COMPLICATED' = '20'
 }
+export enum InspectionType {
+  REUQEST = 'REUQEST',
+  REQUIRE = 'REQUIRE',
+  PASS = 'PASS',
+  FAIL = 'FAIL'
+}
 
 export interface Project {
   id?: string
   name: string
   startDate?: string
   endDate?: string
+  mainPhoto?: string
   totalProgress?: number
   weeklyProgress?: number
   kpi?: number
@@ -35,7 +42,7 @@ export interface BuildingComplex {
   clientCompany?: string
   designCompany?: string
   supervisoryCompany?: string
-  mainPhoto?: string
+  bim?: string
   constructionType?: string
   constructionCost?: number
   etc?: string
@@ -50,7 +57,25 @@ export interface Building {
   id?: string
   name: string | undefined
   floorCount: number | undefined
+  buildingLevels?: BuildingLevel[]
 }
+
+export interface BuildingLevel {
+  id?: string
+  floor?: number
+  planImage?: string
+  buildingInspections?: BuildingInspection[]
+}
+
+export interface BuildingInspection {
+  id?: string
+  indexX?: number
+  indexY?: number
+  type?: InspectionType
+  detail?: string
+  // buildingInspectionAttachments?: BuildingInspectionAttachment[]
+}
+
 @customElement('project-list')
 export class ProjectListPage extends ScopedElementsMixin(PageView) {
   static styles = [
@@ -212,7 +237,7 @@ export class ProjectListPage extends ScopedElementsMixin(PageView) {
           return html`
             <div project-container>
               <a href=${`project-detail/${project.id}`}>
-                <img project-img src=${project.buildingComplex.mainPhoto || ''} />
+                <img project-img src=${project.mainPhoto || ''} />
 
                 <span project-info>
                   <div name>${project.name}</div>
@@ -282,6 +307,7 @@ export class ProjectListPage extends ScopedElementsMixin(PageView) {
               name
               startDate
               endDate
+              mainPhoto
               totalProgress
               weeklyProgress
               kpi
@@ -292,7 +318,6 @@ export class ProjectListPage extends ScopedElementsMixin(PageView) {
                 address
                 area
                 clientCompany
-                mainPhoto
               }
             }
             total

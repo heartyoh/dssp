@@ -17,9 +17,10 @@ import { BuildingLevel } from '../building-level/building-level'
 import { BuildingInspectionAttachment } from '../building-inspection-attachment/building-inspection-attachment'
 
 export enum InspectionType {
-  COMPLETED = 'COMPLETED',
-  WARNING = 'WARNING',
-  QUESTION = 'QUESTION'
+  REUQEST = 'REUQEST',
+  REQUIRE = 'REQUIRE',
+  PASS = 'PASS',
+  FAIL = 'FAIL'
 }
 
 registerEnumType(InspectionType, {
@@ -45,7 +46,7 @@ export class BuildingInspection {
   @Field({ nullable: true })
   indexY?: number
 
-  @Column({ nullable: true, comment: '상태(completed: 완료, warning: 경고, question: 문의)' })
+  @Column({ nullable: true, comment: '상태(REUQEST: 요청, REQUIRE: 필요, PASS: 합격, FAIL: 불합격)' })
   @Field({ nullable: true })
   type?: InspectionType
 

@@ -53,7 +53,7 @@ export class ProjectMutation {
 
     // 2-1. 프로젝트 메인 이미지 첨부파일 나머지 삭제 후 저장
     if (project.mainPhoto) {
-      await deleteAttachmentsByRef(null, { refBys: [project.id] }, context)
+      await deleteAttachmentsByRef(null, { refBys: ['temp', project.id] }, context)
       await createAttachment(
         null,
         {
@@ -69,7 +69,7 @@ export class ProjectMutation {
 
     // 2-2. 단지 BIM 이미지 첨부파일 나머지 삭제 후 저장
     if (buildingComplex.bim) {
-      await deleteAttachmentsByRef(null, { refBys: [buildingComplex.id] }, context)
+      await deleteAttachmentsByRef(null, { refBys: ['temp', buildingComplex.id] }, context)
       await createAttachment(
         null,
         {

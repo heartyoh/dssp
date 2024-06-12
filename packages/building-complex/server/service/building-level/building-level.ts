@@ -28,7 +28,7 @@ export class BuildingLevel {
 
   @Column({ nullable: false, comment: '층 번호 (예: 1, -1 등)' })
   @Field({ nullable: false })
-  number: number
+  floor: number
 
   // @Column({ nullable: true, comment: '층 도면 이미지 링크' })
   // 층 도면 이미지 링크
@@ -52,10 +52,6 @@ export class BuildingLevel {
   @Field({ nullable: true })
   createdAt?: Date
 
-  @UpdateDateColumn()
-  @Field({ nullable: true })
-  updatedAt?: Date
-
   @DeleteDateColumn()
   @Field({ nullable: true })
   deletedAt?: Date
@@ -66,11 +62,4 @@ export class BuildingLevel {
 
   @RelationId((buildingLevel: BuildingLevel) => buildingLevel.creator)
   creatorId?: string
-
-  @ManyToOne(type => User, { nullable: true })
-  @Field(type => User, { nullable: true })
-  updater?: User
-
-  @RelationId((buildingLevel: BuildingLevel) => buildingLevel.updater)
-  updaterId?: string
 }

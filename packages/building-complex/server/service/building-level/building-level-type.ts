@@ -13,7 +13,7 @@ export class BuildingLevelPatch {
   id?: string
 
   @Field({ nullable: false })
-  number?: number
+  floor?: number
 
   @Field(type => GraphQLUpload, { nullable: true })
   planImage?: FileUpload

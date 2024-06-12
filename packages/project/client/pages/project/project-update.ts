@@ -431,6 +431,7 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
               <ox-input-file
                 bim
                 value=${this.project?.buildingComplex?.bim || ''}
+                multiple=${false}
                 label=" "
                 description="BIM 업로드"
                 @change=${this.onCreateAttachment.bind(this)}
@@ -781,7 +782,6 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
   async onCreateAttachment(e: CustomEvent) {
     const file = e.detail
     const target = e.target as HTMLInputElement
-    const refBy = target.hasAttribute('mainPhoto') ? this.project.id : this.project.buildingComplex.id
 
     const response = await client.mutate({
       mutation: gql`
@@ -793,7 +793,7 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
         }
       `,
       variables: {
-        attachment: { file, refBy }
+        attachment: { file, refBy: 'temp' }
       },
       context: {
         hasUpload: true

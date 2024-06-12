@@ -465,6 +465,7 @@ type Building {
 type BuildingComplex {
   address: String
   area: Float
+  bim: String
   buildingCount: Float
   buildings: [Building!]
   clientCompany: String
@@ -481,7 +482,6 @@ type BuildingComplex {
   id: ID!
   latitude: Float
   longitude: Float
-  mainPhoto: String
   notice: String
   planXScale: Float
   planYScale: Float
@@ -493,6 +493,7 @@ type BuildingComplex {
 input BuildingComplexPatch {
   address: String
   area: Float
+  bim: Upload
   buildingCount: Float
   buildings: [BuildingPatch!]
   clientCompany: String
@@ -505,7 +506,6 @@ input BuildingComplexPatch {
   id: String
   latitude: Float
   longitude: Float
-  mainPhoto: Upload
   notice: String
   planXScale: Float
   planYScale: Float
@@ -523,7 +523,6 @@ type BuildingInspection {
   id: ID!
   indexX: Float
   indexY: Float
-  thumbnail: String!
   type: String
   updatedAt: DateTimeISO
   updater: User
@@ -540,19 +539,6 @@ type BuildingInspectionAttachment {
   updater: User
 }
 
-type BuildingInspectionList {
-  items: [BuildingInspection!]!
-  total: Int!
-}
-
-input BuildingInspectionPatch {
-  active: Boolean
-  cuFlag: String
-  description: String
-  id: ID
-  name: String
-}
-
 """층 정보"""
 type BuildingLevel {
   building: Building!
@@ -560,11 +546,9 @@ type BuildingLevel {
   createdAt: DateTimeISO
   creator: User
   deletedAt: DateTimeISO
+  floor: Float!
   id: ID!
-  number: Float!
   planImage: String
-  updatedAt: DateTimeISO
-  updater: User
 }
 
 type BuildingLevelList {
@@ -1794,9 +1778,6 @@ type Mutation {
   """To create new BoardTemplate"""
   createBoardTemplate(boardTemplate: NewBoardTemplate!): BoardTemplate!
 
-  """To create new BuildingInspection"""
-  createBuildingInspection(buildingInspection: NewBuildingInspection!): BuildingInspection!
-
   """To create new CheckItem"""
   createCheckItem(checkItem: NewCheckItem!): CheckItem!
 
@@ -1959,12 +1940,6 @@ type Mutation {
 
   """To delete multiple BuildingComplexes"""
   deleteBuildingComplexes(ids: [String!]!): Boolean!
-
-  """To delete BuildingInspection"""
-  deleteBuildingInspection(id: String!): Boolean!
-
-  """To delete multiple BuildingInspections"""
-  deleteBuildingInspections(ids: [String!]!): Boolean!
 
   """To delete multiple Buildings"""
   deleteBuildings(ids: [String!]!): Boolean!
@@ -2239,9 +2214,6 @@ type Mutation {
   """To import multiple BuildingComplexes"""
   importBuildingComplexes(buildingComplexes: [BuildingComplexPatch!]!): Boolean!
 
-  """To import multiple BuildingInspections"""
-  importBuildingInspections(buildingInspections: [BuildingInspectionPatch!]!): Boolean!
-
   """To import multiple Buildings"""
   importBuildings(buildings: [BuildingPatch!]!): Boolean!
 
@@ -2414,9 +2386,6 @@ type Mutation {
   """To modify BuildingComplex information"""
   updateBuildingComplex(id: String!, patch: BuildingComplexPatch!): BuildingComplex!
 
-  """To modify BuildingInspection information"""
-  updateBuildingInspection(id: String!, patch: BuildingInspectionPatch!): BuildingInspection!
-
   """To modify CheckItem information"""
   updateCheckItem(id: String!, patch: CheckItemPatch!): CheckItem!
 
@@ -2492,9 +2461,6 @@ type Mutation {
 
   """To modify multiple BuildingComplexes' information"""
   updateMultipleBuildingComplex(patches: [BuildingComplexPatch!]!): [BuildingComplex!]!
-
-  """To modify multiple BuildingInspections' information"""
-  updateMultipleBuildingInspection(patches: [BuildingInspectionPatch!]!): [BuildingInspection!]!
 
   """To modify multiple CheckItems' information"""
   updateMultipleCheckItem(patches: [CheckItemPatch!]!): [CheckItem!]!
@@ -2720,13 +2686,6 @@ input NewBoardTemplate {
   name: String!
   thumbnail: String
   visibility: String!
-}
-
-input NewBuildingInspection {
-  active: Boolean
-  description: String
-  name: String!
-  params: String
 }
 
 input NewCheckItem {
@@ -3685,6 +3644,7 @@ type Project {
   id: ID!
   inspPassRate: Float
   kpi: Float
+  mainPhoto: String
   name: String!
   robotProgressRate: Float
   startDate: String
@@ -3708,6 +3668,7 @@ input ProjectPatch {
   id: String!
   inspPassRate: Float
   kpi: Float
+  mainPhoto: Upload
   name: String!
   robotProgressRate: Float
   startDate: String
@@ -3806,12 +3767,6 @@ type Query {
 
   """To fetch a BuildingComplex"""
   buildingBuildingComplex(id: String!): BuildingComplex
-
-  """To fetch a BuildingInspection"""
-  buildingInspection(id: String!): BuildingInspection
-
-  """To fetch multiple BuildingInspections"""
-  buildingInspections(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): BuildingInspectionList!
 
   """To fetch a BuildingLevel"""
   buildingLevel(id: String!): BuildingLevel
