@@ -61,6 +61,14 @@ export class ProjectSettingList extends ScopedElementsMixin(PageView) {
 
           --md-elevated-button-container-color: #24be7b;
           --md-elevated-button-label-text-color: #ffffff;
+          --md-elevated-button-hover-label-text-color: #fff;
+          --md-elevated-button-pressed-label-text-color: #fff;
+          --md-elevated-button-focus-label-text-color: #fff;
+          --md-elevated-button-icon-color: #fff;
+          --md-elevated-button-hover-icon-color: #fff;
+          --md-elevated-button-pressed-icon-color: #fff;
+          --md-elevated-button-focus-icon-color: #fff;
+
           --md-elevated-button-container-shape: 7px;
         }
       }

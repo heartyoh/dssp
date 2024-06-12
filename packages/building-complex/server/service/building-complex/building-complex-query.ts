@@ -26,7 +26,7 @@ export class BuildingComplexQuery {
       order: { createdAt: 'ASC' }
     })
 
-    return attachment?.fullpath
+    return attachment.name
   }
 
   @FieldResolver(type => [Building])

@@ -40,7 +40,6 @@ export class Building {
   planImage?: string
 
   // 단지 정보 (상위 테이블 참조)
-  // @JoinColumn()
   @Field(() => BuildingComplex, { nullable: true })
   @ManyToOne(() => BuildingComplex, buildingComplex => buildingComplex.buildings)
   buildingComplex?: BuildingComplex

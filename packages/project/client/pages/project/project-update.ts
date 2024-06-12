@@ -167,6 +167,13 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
             hr {
               border: 1px #cccccc dashed;
               width: 100%;
+              margin-bottom: 2px;
+            }
+            div[warn] {
+              font-size: 12px;
+              color: red;
+              margin-left: 5px;
+              margin-bottom: 5px;
             }
 
             div[row] {
@@ -419,7 +426,7 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
             <span>대표사진 업로드</span>
             <span>
               <ox-input-image
-                mainPhoto
+                name="mainPhoto"
                 value=${this.project?.mainPhoto || ''}
                 @change=${this.onCreateAttachment.bind(this)}
               ></ox-input-image>
@@ -429,11 +436,11 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
             <span>단지 BIM</span>
             <span>
               <ox-input-file
-                bim
-                value=${this.project?.buildingComplex?.bim || ''}
-                multiple=${false}
+                name="bim"
+                accept=".ifc"
                 label=" "
-                description="BIM 업로드"
+                description="IFC 업로드"
+                .value=${{ name: this.project?.buildingComplex?.bim || '' }}
                 @change=${this.onCreateAttachment.bind(this)}
               ></ox-input-file>
             </span>
@@ -495,6 +502,7 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
               </span>
             </div>
             <hr />
+            <div warn>* 동/층의 정보를 수정하면 기존의 동/층 정보는 모두 제거됩니다.</div>
             <div separate-container>
               ${this.project?.buildingComplex?.buildings?.map(
                 (building, idx) => html`
@@ -780,10 +788,10 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
 
   // 이미지 업로드
   async onCreateAttachment(e: CustomEvent) {
-    const file = e.detail
     const target = e.target as HTMLInputElement
+    const file = target.name === 'mainPhoto' ? e.detail : e.detail[0]
 
-    const response = await client.mutate({
+    await client.mutate({
       mutation: gql`
         mutation ($attachment: NewAttachment!) {
           createAttachment(attachment: $attachment) {
@@ -800,7 +808,7 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
       }
     })
 
-    if (target.hasAttribute('mainPhoto')) {
+    if (target.name === 'mainPhoto') {
       this.project.mainPhoto = file
     } else {
       this.project.buildingComplex.bim = file
