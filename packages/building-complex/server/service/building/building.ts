@@ -17,7 +17,10 @@ import { BuildingComplex } from '../building-complex/building-complex'
 import { BuildingLevel } from '../building-level/building-level'
 
 @Entity()
-@Index('ix_building_0', (building: Building) => [building.buildingComplex], { where: '"deleted_at" IS NULL' })
+@Index('ix_building_0', (building: Building) => [building.buildingComplex, building.name], {
+  where: '"deleted_at" IS NULL',
+  unique: true
+})
 @ObjectType({ description: '동 정보' })
 export class Building {
   @PrimaryGeneratedColumn('uuid')

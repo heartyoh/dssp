@@ -5,7 +5,7 @@ import { createAttachment, deleteAttachmentsByRef } from '@things-factory/attach
 
 import { Project } from './project'
 import { NewProject, ProjectPatch } from './project-type'
-import { BuildingComplex, Building, BuildingComplexPatch, BuildingPatch } from '@dssp/building-complex'
+import { BuildingComplex, Building, BuildingLevel } from '@dssp/building-complex'
 
 @Resolver(Project)
 export class ProjectMutation {
@@ -36,10 +36,12 @@ export class ProjectMutation {
   @Directive('@transaction')
   @Mutation(returns => Project, { description: '프로젝트 업데이트' })
   async updateProject(@Arg('project') project: ProjectPatch, @Ctx() context: ResolverContext): Promise<Project> {
-    const { user, tx, domain } = context.state
+    const { user, tx } = context.state
     const projectRepo = tx.getRepository(Project)
     const buildingComplexRepo = tx.getRepository(BuildingComplex)
     const buildingRepo = tx.getRepository(Building)
+    const buildingLevelRepo = tx.getRepository(BuildingLevel)
+
     const buildingComplex = project.buildingComplex
     const buildings = project.buildingComplex?.buildings || []
 
@@ -47,7 +49,7 @@ export class ProjectMutation {
     const projectResult = await projectRepo.save({ ...project, updater: user })
 
     // 2. 단지 정보 수정
-    const buildingComplexResult = await buildingComplexRepo.save({ ...buildingComplex, updater: user })
+    await buildingComplexRepo.save({ ...buildingComplex, updater: user })
 
     // 2-1. 프로젝트 메인 이미지 첨부파일 나머지 삭제 후 저장
     if (project.mainPhoto) {
@@ -66,45 +68,51 @@ export class ProjectMutation {
     }
 
     // 2-2. 단지 BIM 이미지 첨부파일 나머지 삭제 후 저장
-    if (project.buildingComplex.bim) {
-      await deleteAttachmentsByRef(null, { refBys: [project.buildingComplex.id] }, context)
+    if (buildingComplex.bim) {
+      await deleteAttachmentsByRef(null, { refBys: [buildingComplex.id] }, context)
       await createAttachment(
         null,
         {
           attachment: {
-            file: project.buildingComplex.bim,
+            file: buildingComplex.bim,
             refType: BuildingComplex.name,
-            refBy: project.buildingComplex.id
+            refBy: buildingComplex.id
           }
         },
         context
       )
     }
 
-    // 3. 단지 내 동 정보들 수정
-    buildings.forEach(async (building: Building) => {
-      const buildingsResult = await buildingRepo.save({
-        buildingComplex: { id: buildingComplex.id },
-        ...building,
-        updater: user
+    // 3. 동의 층 정보가 바뀌었으면 층 초기화 후 다시 생성
+    const originBuilding = await buildingRepo.findBy({ buildingComplex: { id: buildingComplex.id } }) // 이전 동 정보 가져오기
+    const afterBuilding = buildings.reduce((acc, building) => ({ ...acc, [building.name]: building.floorCount }), {}) // 비교용으로 수정된 동 정보 데이터 파싱
+    const isBuidlingChanged = originBuilding.some(building => afterBuilding[building.name] !== building.floorCount) // 층 개수가 달라진 동이 있는지 확인
+
+    // 동의 층 개수가 달라지면 모든 층의 데이터 제거 후 생성
+    if (isBuidlingChanged || originBuilding.length !== buildings.length) {
+      // 3-1. 기존 동/층 첨부파일 및 데이터 제거
+      const buildingIds = originBuilding.map((building: Building) => building.id)
+      const buildingLevels = await buildingLevelRepo.findBy({ building: { id: In(buildingIds) } })
+      const buildingLevelIds = buildingLevels.map((buildingLevel: BuildingLevel) => buildingLevel.id)
+
+      await buildingLevelRepo.softDelete({ building: { id: In(buildingIds) } })
+      await buildingRepo.softDelete({ id: In(buildingIds) })
+      await deleteAttachmentsByRef(null, { refBys: [...buildingIds, ...buildingLevelIds] }, context)
+
+      buildings.forEach(async (building: Building) => {
+        // 3-2. 단지 내 동 정보들 생성
+        const newBuilding = await buildingRepo.save({
+          buildingComplex: buildingComplex,
+          name: building.name,
+          floorCount: building.floorCount,
+          creator: user
+        })
+
+        // 3-3. 동별로 for문 돌면서 층 데이터 개수대로 생성
+        for (let i = 1; i <= building.floorCount; i++) {
+          await buildingLevelRepo.save({ building: newBuilding, floor: i, creator: user })
+        }
       })
-    })
-
-    // 4. 현재 업데이트 된 동을 제외한 사용되지 않을 동들을 조회하여 제거
-    // 4-1. 업데이트 된 동 아이디 추출
-    const updatedBuildingIds = buildings.map(building => building.id)
-
-    // 4-2. 기존 동 중에 사용되지 않은 동들 아이디 추출
-    const excludedBuildingIds = await buildingRepo
-      .createQueryBuilder('b')
-      .where('b.building_complex_id = :buildingComplexId', { buildingComplexId: buildingComplex.id })
-      .andWhere('b.id NOT IN (:...updatedBuildingIds)', { updatedBuildingIds })
-      .getMany()
-
-    // 4-3. 사용 안된 동들 삭제
-    if (excludedBuildingIds.length > 0) {
-      const ids = excludedBuildingIds.map(building => building.id)
-      await buildingRepo.softDelete({ id: In(ids) })
     }
 
     return projectResult

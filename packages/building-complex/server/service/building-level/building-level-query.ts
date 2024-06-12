@@ -45,11 +45,6 @@ export class BuildingLevelQuery {
   }
 
   @FieldResolver(type => User)
-  async updater(@Root() buildingLevel: BuildingLevel): Promise<User> {
-    return await getRepository(User).findOneBy({ id: buildingLevel.updaterId })
-  }
-
-  @FieldResolver(type => User)
   async creator(@Root() buildingLevel: BuildingLevel): Promise<User> {
     return await getRepository(User).findOneBy({ id: buildingLevel.creatorId })
   }
