@@ -233,7 +233,7 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
         <div building-container>
           <h3>동별 도면(BIM)</h3>
           <div>
-            ${this.project.buildingComplex?.buildings?.map(building => {
+            ${this.project.buildingComplex?.buildings?.map((building, idx) => {
               return html`
                 <span building-level>
                   <ox-input-file
@@ -242,6 +242,7 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
                     .value=${building?.bim || {}}
                     label=" "
                     description="동 도면 업로드"
+                    idx=${idx}
                     @change=${this.onCreateAttachment.bind(this)}
                   ></ox-input-file>
                   <div>${building.name}</div>
@@ -424,11 +425,11 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
   async onCreateAttachment(e: CustomEvent) {
     const target = e.target as HTMLInputElement
     const file = e.detail[0] || null
+    const idx = Number(target.getAttribute('idx')) || 0
 
     if (target.name === 'building-bim') {
-      this.project.buildingComplex!.buildings![this.selectedBuildingIdx].bim = file
+      this.project.buildingComplex!.buildings![idx].bim = file
     } else {
-      const idx = Number(target.getAttribute('idx')) || 0
       this.project.buildingComplex!.buildings![this.selectedBuildingIdx].buildingLevels![idx] = file
     }
   }
