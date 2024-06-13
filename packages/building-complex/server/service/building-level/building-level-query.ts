@@ -8,8 +8,8 @@ import { BuildingInspection } from '../building-inspection/building-inspection'
 
 @Resolver(BuildingLevel)
 export class BuildingLevelQuery {
-  @FieldResolver(type => String)
-  async planImage(@Root() buildingLevel: BuildingLevel): Promise<string | undefined> {
+  @FieldResolver(type => Attachment)
+  async planImage(@Root() buildingLevel: BuildingLevel): Promise<Attachment | undefined> {
     const attachment: Attachment = await getRepository(Attachment).findOne({
       where: {
         refType: BuildingLevel.name,
@@ -17,7 +17,7 @@ export class BuildingLevelQuery {
       }
     })
 
-    return attachment?.fullpath
+    return attachment
   }
 
   @FieldResolver(type => [BuildingInspection])

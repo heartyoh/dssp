@@ -14,6 +14,7 @@ import { ObjectType, Field, ID } from 'type-graphql'
 import { Domain, roundTransformer } from '@things-factory/shell'
 import { User } from '@things-factory/auth-base'
 import { Building } from '../building/building'
+import { Attachment } from '@things-factory/attachment-base'
 
 @Entity()
 @ObjectType({ description: '단지 정보' })
@@ -62,8 +63,8 @@ export class BuildingComplex {
   designCompany?: string
 
   // BIM 모델
-  @Field(type => String, { nullable: true })
-  bim?: string
+  @Field(type => Attachment, { nullable: true })
+  bim?: Attachment
 
   @Column({ nullable: true, comment: '건설 구분 (아파트, 공원)' })
   @Field({ nullable: true })

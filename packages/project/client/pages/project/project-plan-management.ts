@@ -86,7 +86,7 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
 
       div[body] {
         display: grid;
-        grid-template-rows: 230px 400px 60px;
+        grid-template-rows: 240px 400px 60px;
         margin: 0px 25px 25px 25px;
         gap: 8px;
 
@@ -110,8 +110,12 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
           display: flex;
           gap: 16px;
           overflow-x: auto;
+          overflow-y: hidden;
 
-          span[building] {
+          ox-input-file {
+            height: 120px;
+          }
+          span[building-level] {
             width: 125px;
             text-align: center;
 
@@ -176,7 +180,7 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
             margin-left: 10px;
 
             md-outlined-text-field {
-              width: 55px;
+              width: 100px;
               --md-outlined-text-container-height: 30px;
             }
           }
@@ -206,7 +210,7 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
   }
   @state() projectId: string = ''
   @state() project: Project = { ...this.defaultProject }
-  @state() selectedBuilding?: Building | undefined
+  @state() selectedBuildingIdx: number = 0
 
   render() {
     return html`
@@ -229,12 +233,15 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
         <div building-container>
           <h3>동별 도면(BIM)</h3>
           <div>
-            ${this.project.buildingComplex.buildings?.map(building => {
+            ${this.project.buildingComplex?.buildings?.map(building => {
               return html`
-                <span building>
+                <span building-level>
                   <ox-input-file
-                    value=${''}
-                    label="도면 업로드"
+                    name="building-bim"
+                    accept=".ifc"
+                    .value=${building?.bim || {}}
+                    label=" "
+                    description="동 도면 업로드"
                     @change=${this.onCreateAttachment.bind(this)}
                   ></ox-input-file>
                   <div>${building.name}</div>
@@ -246,17 +253,17 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
 
         <div floor-container>
           <div floor-title>
-            <h3>${this.selectedBuilding?.name} 층별 도면(PDF)</h3>
+            <h3>${this.project.buildingComplex?.buildings?.[this.selectedBuildingIdx]?.name} 층별 도면(PDF)</h3>
             <span building-button>
-              ${this.project.buildingComplex.buildings?.map(building => {
-                return this.selectedBuilding?.id === building.id
+              ${this.project.buildingComplex.buildings?.map((building, idx) => {
+                return this.project.buildingComplex?.buildings?.[this.selectedBuildingIdx]?.id === building.id
                   ? html`
-                      <md-filled-button @click=${() => this._onClickBuildingChange(building)}>
+                      <md-filled-button @click=${() => this._onClickBuildingChange(idx)}>
                         ${building.name}
                       </md-filled-button>
                     `
                   : html`
-                      <md-outlined-button @click=${() => this._onClickBuildingChange(building)}>
+                      <md-outlined-button @click=${() => this._onClickBuildingChange(idx)}>
                         ${building.name}
                       </md-outlined-button>
                     `
@@ -265,18 +272,24 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
           </div>
 
           <div floor-plan>
-            ${this.project.buildingComplex.buildings?.map(building => {
-              return html`
-                <span plan>
-                  <ox-input-file
-                    value=${''}
-                    label="도면 업로드"
-                    @change=${this.onCreateAttachment.bind(this)}
-                  ></ox-input-file>
-                  <div>${building.name}</div>
-                </span>
-              `
-            })}
+            ${this.project.buildingComplex?.buildings?.[this.selectedBuildingIdx]?.buildingLevels?.map(
+              (buildingLevels, idx) => {
+                return html`
+                  <span plan>
+                    <ox-input-file
+                      name="building-level-plan"
+                      accept=".pdf"
+                      .value=${buildingLevels?.planImage || {}}
+                      label=" "
+                      description="층 도면 업로드"
+                      idx=${idx}
+                      @change=${this.onCreateAttachment.bind(this)}
+                    ></ox-input-file>
+                    <div>${buildingLevels.floor}층</div>
+                  </span>
+                `
+              }
+            )}
           </div>
         </div>
 
@@ -290,6 +303,7 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
               numeric
               .value=${this.project.buildingComplex.planXScale?.toString() || ''}
               @input=${this._onInputChange}
+              suffix-text="mm"
             >
             </md-outlined-text-field>
             <span>X</span>
@@ -300,6 +314,7 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
               numeric
               .value=${this.project.buildingComplex.planYScale?.toString() || ''}
               @input=${this._onInputChange}
+              suffix-text="mm"
             >
             </md-outlined-text-field>
           </div>
@@ -326,13 +341,23 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
             name
             buildingComplex {
               id
-              latitude
-              longitude
-              buildingCount
+              planXScale
+              planYScale
               buildings {
                 id
                 name
-                floorCount
+                bim {
+                  id
+                  name
+                }
+                buildingLevels {
+                  id
+                  floor
+                  planImage {
+                    id
+                    name
+                  }
+                }
               }
             }
           }
@@ -344,19 +369,33 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
     })
 
     this.project = response.data?.project
-    this.selectedBuilding = this.project.buildingComplex?.buildings?.[0]
+    this.selectedBuildingIdx = 0
 
     console.log('init project : ', this.project)
   }
 
   private async _saveProject() {
+    // 동과 층을 돌면서 도면 정보가 없으면 제거
+    for (let buildingKey in this.project.buildingComplex.buildings) {
+      const building = this.project.buildingComplex.buildings[buildingKey]
+      if (building.bim?.id) {
+        delete this.project.buildingComplex.buildings[buildingKey].bim
+      }
+
+      for (let levelKey in building.buildingLevels) {
+        const buildingLevel = this.project.buildingComplex.buildings[levelKey].buildingLevels
+        if (buildingLevel.planImage?.id) {
+          delete this.project.buildingComplex.buildings[levelKey].buildingLevels[levelKey].planImage
+        }
+      }
+    }
+
     console.log('this.project :', this.project)
-    delete this.project.mainPhoto
 
     const response = await client.mutate({
       mutation: gql`
-        mutation UpdateProject($project: ProjectPatch!) {
-          updateProject(project: $project) {
+        mutation UpdateProjectPlan($project: ProjectPatch!) {
+          updateProjectPlan(project: $project) {
             id
           }
         }
@@ -383,29 +422,18 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
 
   // 이미지 업로드
   async onCreateAttachment(e: CustomEvent) {
-    const file = e.detail
+    const target = e.target as HTMLInputElement
+    const file = e.detail[0] || null
 
-    const response = await client.mutate({
-      mutation: gql`
-        mutation ($attachment: NewAttachment!) {
-          createAttachment(attachment: $attachment) {
-            id
-            path
-          }
-        }
-      `,
-      variables: {
-        attachment: { file, refBy: this.project.buildingComplex.id }
-      },
-      context: {
-        hasUpload: true
-      }
-    })
-
-    this.project.mainPhoto = file
+    if (target.name === 'building-bim') {
+      this.project.buildingComplex!.buildings![this.selectedBuildingIdx].bim = file
+    } else {
+      const idx = Number(target.getAttribute('idx')) || 0
+      this.project.buildingComplex!.buildings![this.selectedBuildingIdx].buildingLevels![idx] = file
+    }
   }
 
-  _onClickBuildingChange(building: Building) {
-    this.selectedBuilding = { ...building }
+  _onClickBuildingChange(idx: number) {
+    this.selectedBuildingIdx = idx
   }
 }

@@ -447,7 +447,7 @@ input BoardTemplatePatch {
 
 """동 정보"""
 type Building {
-  bim: String
+  bim: Attachment
   buildingComplex: BuildingComplex
   buildingLevels: [BuildingLevel!]!
   createdAt: DateTimeISO
@@ -464,7 +464,7 @@ type Building {
 type BuildingComplex {
   address: String
   area: Float
-  bim: String
+  bim: Attachment
   buildingCount: Float
   buildings: [Building!]
   clientCompany: String
@@ -538,6 +538,14 @@ type BuildingInspectionAttachment {
   updater: User
 }
 
+input BuildingInspectionPatch {
+  detail: String
+  id: ID
+  indexX: Float
+  indexY: Float
+  type: String
+}
+
 """층 정보"""
 type BuildingLevel {
   building: Building!
@@ -547,11 +555,19 @@ type BuildingLevel {
   deletedAt: DateTimeISO
   floor: Float!
   id: ID!
-  planImage: String
+  planImage: Attachment
+}
+
+input BuildingLevelPatch {
+  buildingInspections: [BuildingInspectionPatch!]
+  floor: Float!
+  id: ID
+  planImage: Upload
 }
 
 input BuildingPatch {
   bim: Upload
+  buildingLevels: [BuildingLevelPatch!]
   floorCount: Float
   id: ID
   name: String
@@ -2561,6 +2577,9 @@ type Mutation {
 
   """프로젝트 업데이트"""
   updateProject(project: ProjectPatch!): Project!
+
+  """프로젝트 도면 업데이트"""
+  updateProjectPlan(project: ProjectPatch!): Project!
 
   """To modify Resource information"""
   updateResource(id: String!, patch: ResourcePatch!): Resource!

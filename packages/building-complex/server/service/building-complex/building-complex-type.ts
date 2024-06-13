@@ -55,10 +55,10 @@ export class BuildingComplexPatch {
   notice?: string
 
   @Field({ nullable: true })
-  planXScale: number
+  planXScale?: number
 
   @Field({ nullable: true })
-  planYScale: number
+  planYScale?: number
 
   @Field(type => [BuildingPatch], { nullable: true })
   buildings?: BuildingPatch[]

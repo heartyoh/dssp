@@ -440,7 +440,7 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
                 accept=".ifc"
                 label=" "
                 description="IFC 업로드"
-                .value=${{ name: this.project?.buildingComplex?.bim || '' }}
+                .value=${this.project?.buildingComplex?.bim || ''}
                 @change=${this.onCreateAttachment.bind(this)}
               ></ox-input-file>
             </span>
@@ -684,7 +684,10 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
               constructionCompany
               supervisoryCompany
               designCompany
-              bim
+              bim {
+                id
+                name
+              }
               constructionType
               constructionCost
               etc
@@ -710,13 +713,13 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
   }
 
   private async _saveProject() {
-    // 이미지 첨부가 없으면 제거
+    // 기존 첨부된 파일이면 undefined 로변경
     if (typeof this.project.mainPhoto === 'string') {
       delete this.project.mainPhoto
     }
 
-    // BIM 첨부가 없으면 제거
-    if (typeof this.project.buildingComplex.bim === 'string') {
+    // 기존 첨부된 파일이면 undefined 로변경
+    if (this.project.buildingComplex.bim?.id) {
       delete this.project.buildingComplex.bim
     }
 
@@ -789,32 +792,12 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
   // 이미지 업로드
   async onCreateAttachment(e: CustomEvent) {
     const target = e.target as HTMLInputElement
-    const file = target.name === 'mainPhoto' ? e.detail : e.detail[0]
+    const file = (target.name === 'mainPhoto' ? e.detail : e.detail[0]) || null
 
     if (target.name === 'mainPhoto') {
-      this.project.mainPhoto = file || null
+      this.project.mainPhoto = file
     } else {
-      this.project.buildingComplex.bim = file || null
+      this.project.buildingComplex.bim = file
     }
-
-    // 지워지는 케이스(null)은 그냥 return
-    if (!file) return
-
-    await client.mutate({
-      mutation: gql`
-        mutation ($attachment: NewAttachment!) {
-          createAttachment(attachment: $attachment) {
-            id
-            path
-          }
-        }
-      `,
-      variables: {
-        attachment: { file, refBy: 'temp' }
-      },
-      context: {
-        hasUpload: true
-      }
-    })
   }
 }

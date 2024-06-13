@@ -1,10 +1,7 @@
 import type { FileUpload } from 'graphql-upload/GraphQLUpload.js'
 import GraphQLUpload from 'graphql-upload/GraphQLUpload.js'
-import { ObjectType, Field, InputType, Int, ID, registerEnumType } from 'type-graphql'
-
-import { ObjectRef, ScalarObject } from '@things-factory/shell'
-
-import { Building } from './building'
+import { Field, InputType, ID } from 'type-graphql'
+import { BuildingLevelPatch } from '../building-level/building-level-type'
 
 @InputType()
 export class BuildingPatch {
@@ -19,4 +16,7 @@ export class BuildingPatch {
 
   @Field(type => GraphQLUpload, { nullable: true })
   bim?: FileUpload
+
+  @Field(type => [BuildingLevelPatch], { nullable: true })
+  buildingLevels?: BuildingLevelPatch[]
 }

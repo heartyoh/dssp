@@ -15,6 +15,7 @@ import { ObjectType, Field, ID } from 'type-graphql'
 import { User } from '@things-factory/auth-base'
 import { Building } from '../building/building'
 import { BuildingInspection } from '../building-inspection/building-inspection'
+import { Attachment } from '@things-factory/attachment-base'
 
 @Entity()
 @Index('ix_building_level_0', (buildingLevel: BuildingLevel) => [buildingLevel.building], {
@@ -32,8 +33,8 @@ export class BuildingLevel {
 
   // @Column({ nullable: true, comment: '층 도면 이미지 링크' })
   // 층 도면 이미지 링크
-  @Field({ nullable: true })
-  planImage: string
+  @Field(type => Attachment, { nullable: true })
+  planImage: Attachment
 
   // 동 정보 (상위 테이블 참조)
   @Field(() => Building)

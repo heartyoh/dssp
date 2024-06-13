@@ -53,7 +53,7 @@ export class ProjectMutation {
 
     // 2-1. 프로젝트 메인 이미지 첨부파일 나머지 삭제 후 저장
     if (project.mainPhoto !== undefined) {
-      await deleteAttachmentsByRef(null, { refBys: ['temp', project.id] }, context)
+      await deleteAttachmentsByRef(null, { refBys: [project.id] }, context)
 
       if (project.mainPhoto) {
         await createAttachment(
@@ -72,7 +72,7 @@ export class ProjectMutation {
 
     // 2-2. 단지 BIM 이미지 첨부파일 나머지 삭제 후 저장
     if (buildingComplex.bim !== undefined) {
-      await deleteAttachmentsByRef(null, { refBys: ['temp', buildingComplex.id] }, context)
+      await deleteAttachmentsByRef(null, { refBys: [buildingComplex.id] }, context)
 
       if (buildingComplex.bim) {
         await createAttachment(
@@ -120,6 +120,66 @@ export class ProjectMutation {
         }
       })
     }
+
+    return projectResult
+  }
+
+  @Directive('@transaction')
+  @Mutation(returns => Project, { description: '프로젝트 도면 업데이트' })
+  async updateProjectPlan(@Arg('project') project: ProjectPatch, @Ctx() context: ResolverContext): Promise<Project> {
+    const { user, tx } = context.state
+    const projectRepo = tx.getRepository(Project)
+    const buildingComplexRepo = tx.getRepository(BuildingComplex)
+    const buildingComplex = project.buildingComplex
+    const buildings: Building[] = project.buildingComplex?.buildings || []
+
+    // 1. 프로젝트 수정 시간 업데이트
+    const projectResult = await projectRepo.save({ ...project, updater: user })
+
+    // 2. 단지 축척 정보 수정
+    await buildingComplexRepo.save({ ...buildingComplex, updater: user })
+
+    buildings.forEach(async building => {
+      building.buildingLevels.forEach(async buildingLevel => {
+        // 3. 층별 도면 이미지 저장
+        if (buildingLevel?.planImage !== undefined) {
+          await deleteAttachmentsByRef(null, { refBys: [buildingLevel.id] }, context)
+
+          if (buildingLevel.planImage) {
+            await createAttachment(
+              null,
+              {
+                attachment: {
+                  file: buildingLevel.planImage,
+                  refType: BuildingLevel.name,
+                  refBy: buildingLevel.id
+                }
+              },
+              context
+            )
+          }
+        }
+      })
+
+      // 4. 동별 도면 이미지 저장
+      if (building?.bim !== undefined) {
+        await deleteAttachmentsByRef(null, { refBys: [building.id] }, context)
+
+        if (building?.bim) {
+          await createAttachment(
+            null,
+            {
+              attachment: {
+                file: building.bim,
+                refType: Building.name,
+                refBy: building.id
+              }
+            },
+            context
+          )
+        }
+      }
+    })
 
     return projectResult
   }

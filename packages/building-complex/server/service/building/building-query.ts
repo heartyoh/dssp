@@ -7,13 +7,13 @@ import { BuildingLevel } from '../building-level/building-level'
 
 @Resolver(Building)
 export class BuildingQuery {
-  @FieldResolver(type => String)
-  async bim(@Root() building: Building): Promise<string | undefined> {
+  @FieldResolver(type => Attachment)
+  async bim(@Root() building: Building): Promise<Attachment | undefined> {
     const attachment: Attachment = await getRepository(Attachment).findOne({
       where: { refBy: building.id }
     })
 
-    return attachment?.name
+    return attachment
   }
 
   @FieldResolver(type => [BuildingLevel])

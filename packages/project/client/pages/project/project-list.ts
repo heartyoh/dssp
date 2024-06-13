@@ -6,6 +6,7 @@ import { customElement, state } from 'lit/decorators.js'
 import { ScopedElementsMixin } from '@open-wc/scoped-elements'
 import { client } from '@operato/graphql'
 import gql from 'graphql-tag'
+import { Attachment } from '@things-factory/attachment-base'
 
 export enum ProjectStatus {
   'PROCEEDING' = '10',
@@ -42,7 +43,7 @@ export interface BuildingComplex {
   clientCompany?: string
   designCompany?: string
   supervisoryCompany?: string
-  bim?: string
+  bim?: Attachment
   constructionType?: string
   constructionCost?: number
   etc?: string
@@ -57,14 +58,14 @@ export interface Building {
   id?: string
   name: string | undefined
   floorCount: number | undefined
-  bim?: string
+  bim?: Attachment
   buildingLevels?: BuildingLevel[]
 }
 
 export interface BuildingLevel {
   id?: string
   floor?: number
-  planImage?: string
+  planImage?: Attachment
   buildingInspections?: BuildingInspection[]
 }
 

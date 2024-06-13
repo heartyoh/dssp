@@ -15,6 +15,7 @@ import { ObjectType, Field, ID } from 'type-graphql'
 import { User } from '@things-factory/auth-base'
 import { BuildingComplex } from '../building-complex/building-complex'
 import { BuildingLevel } from '../building-level/building-level'
+import { Attachment } from '@things-factory/attachment-base'
 
 @Entity()
 @Index('ix_building_0', (building: Building) => [building.buildingComplex, building.name], {
@@ -36,8 +37,8 @@ export class Building {
   floorCount?: number
 
   // 동 도면 이미지 BIM
-  @Field({ nullable: true })
-  bim?: string
+  @Field(type => Attachment, { nullable: true })
+  bim?: Attachment
 
   // 단지 정보 (상위 테이블 참조)
   @Field(() => BuildingComplex, { nullable: true })
