@@ -447,7 +447,7 @@ input BoardTemplatePatch {
 
 """동 정보"""
 type Building {
-  buildingBIM: String!
+  bim: String
   buildingComplex: BuildingComplex
   buildingLevels: [BuildingLevel!]!
   createdAt: DateTimeISO
@@ -456,7 +456,6 @@ type Building {
   floorCount: Float
   id: ID!
   name: String
-  planImage: String
   updatedAt: DateTimeISO
   updater: User
 }
@@ -551,21 +550,11 @@ type BuildingLevel {
   planImage: String
 }
 
-type BuildingLevelList {
-  items: [BuildingLevel!]!
-  total: Int!
-}
-
-type BuildingList {
-  items: [Building!]!
-  total: Int!
-}
-
 input BuildingPatch {
+  bim: Upload
   floorCount: Float
   id: ID
   name: String
-  planImage: String
 }
 
 input ChatCompletionInput {
@@ -3762,20 +3751,8 @@ type Query {
   """To fetch Boards created by me"""
   boardsCreatedByMe(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): BoardList!
 
-  """To fetch a Building"""
-  building(id: String!): Building
-
   """To fetch a BuildingComplex"""
   buildingBuildingComplex(id: String!): BuildingComplex
-
-  """To fetch a BuildingLevel"""
-  buildingLevel(id: String!): BuildingLevel
-
-  """To fetch multiple BuildingLevels"""
-  buildingLevels(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): BuildingLevelList!
-
-  """To fetch multiple Buildings"""
-  buildings(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): BuildingList!
   chatCompletion(input: ChatCompletionInput!): ChatCompletionOutput!
 
   """To check if system would provide default password to create new user"""

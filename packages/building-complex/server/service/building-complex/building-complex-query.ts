@@ -22,11 +22,10 @@ export class BuildingComplexQuery {
       where: {
         domain: { id: buildingComplex.domainId },
         refBy: buildingComplex.id
-      },
-      order: { createdAt: 'ASC' }
+      }
     })
 
-    return attachment.name
+    return attachment?.name
   }
 
   @FieldResolver(type => [Building])

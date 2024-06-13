@@ -17,15 +17,6 @@ export class BuildingPatch {
   @Field({ nullable: true })
   floorCount?: number
 
-  @Field({ nullable: true })
-  planImage?: string
-}
-
-@ObjectType()
-export class BuildingList {
-  @Field(type => [Building])
-  items: Building[]
-
-  @Field(type => Int)
-  total: number
+  @Field(type => GraphQLUpload, { nullable: true })
+  bim?: FileUpload
 }

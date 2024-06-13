@@ -4,34 +4,10 @@ import { Domain, getQueryBuilderFromListParams, getRepository, ListParam } from 
 import { User } from '@things-factory/auth-base'
 import { BuildingLevel } from './building-level'
 import { BuildingLevelList } from './building-level-type'
+import { BuildingInspection } from '../building-inspection/building-inspection'
 
 @Resolver(BuildingLevel)
 export class BuildingLevelQuery {
-  @Query(returns => BuildingLevel!, { nullable: true, description: 'To fetch a BuildingLevel' })
-  async buildingLevel(@Arg('id') id: string, @Ctx() context: ResolverContext): Promise<BuildingLevel> {
-    const { domain } = context.state
-
-    return await getRepository(BuildingLevel).findOne({
-      where: { id }
-    })
-  }
-
-  @Query(returns => BuildingLevelList, { description: 'To fetch multiple BuildingLevels' })
-  async buildingLevels(@Args() params: ListParam, @Ctx() context: ResolverContext): Promise<BuildingLevelList> {
-    const { domain } = context.state
-
-    const queryBuilder = getQueryBuilderFromListParams({
-      domain,
-      params,
-      repository: await getRepository(BuildingLevel),
-      searchables: ['name', 'description']
-    })
-
-    const [items, total] = await queryBuilder.getManyAndCount()
-
-    return { items, total }
-  }
-
   @FieldResolver(type => String)
   async planImage(@Root() buildingLevel: BuildingLevel): Promise<string | undefined> {
     const attachment: Attachment = await getRepository(Attachment).findOne({
@@ -42,6 +18,11 @@ export class BuildingLevelQuery {
     })
 
     return attachment?.fullpath
+  }
+
+  @FieldResolver(type => [BuildingInspection])
+  async buildingInspections(@Root() buildingLevel: BuildingLevel): Promise<BuildingInspection[]> {
+    return await getRepository(BuildingInspection).findBy({ buildingLevel: { id: buildingLevel.id } })
   }
 
   @FieldResolver(type => User)

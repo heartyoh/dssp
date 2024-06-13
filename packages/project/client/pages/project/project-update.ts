@@ -710,8 +710,6 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
   }
 
   private async _saveProject() {
-    console.log('this.project :', this.project)
-
     // 이미지 첨부가 없으면 제거
     if (typeof this.project.mainPhoto === 'string') {
       delete this.project.mainPhoto
@@ -721,6 +719,8 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
     if (typeof this.project.buildingComplex.bim === 'string') {
       delete this.project.buildingComplex.bim
     }
+
+    console.log('this.project :', this.project)
 
     const response = await client.mutate({
       mutation: gql`
@@ -791,6 +791,15 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
     const target = e.target as HTMLInputElement
     const file = target.name === 'mainPhoto' ? e.detail : e.detail[0]
 
+    if (target.name === 'mainPhoto') {
+      this.project.mainPhoto = file || null
+    } else {
+      this.project.buildingComplex.bim = file || null
+    }
+
+    // 지워지는 케이스(null)은 그냥 return
+    if (!file) return
+
     await client.mutate({
       mutation: gql`
         mutation ($attachment: NewAttachment!) {
@@ -807,11 +816,5 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
         hasUpload: true
       }
     })
-
-    if (target.name === 'mainPhoto') {
-      this.project.mainPhoto = file
-    } else {
-      this.project.buildingComplex.bim = file
-    }
   }
 }

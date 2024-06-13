@@ -52,35 +52,41 @@ export class ProjectMutation {
     await buildingComplexRepo.save({ ...buildingComplex, updater: user })
 
     // 2-1. 프로젝트 메인 이미지 첨부파일 나머지 삭제 후 저장
-    if (project.mainPhoto) {
+    if (project.mainPhoto !== undefined) {
       await deleteAttachmentsByRef(null, { refBys: ['temp', project.id] }, context)
-      await createAttachment(
-        null,
-        {
-          attachment: {
-            file: project.mainPhoto,
-            refType: Project.name,
-            refBy: project.id
-          }
-        },
-        context
-      )
+
+      if (project.mainPhoto) {
+        await createAttachment(
+          null,
+          {
+            attachment: {
+              file: project.mainPhoto,
+              refType: Project.name,
+              refBy: project.id
+            }
+          },
+          context
+        )
+      }
     }
 
     // 2-2. 단지 BIM 이미지 첨부파일 나머지 삭제 후 저장
-    if (buildingComplex.bim) {
+    if (buildingComplex.bim !== undefined) {
       await deleteAttachmentsByRef(null, { refBys: ['temp', buildingComplex.id] }, context)
-      await createAttachment(
-        null,
-        {
-          attachment: {
-            file: buildingComplex.bim,
-            refType: BuildingComplex.name,
-            refBy: buildingComplex.id
-          }
-        },
-        context
-      )
+
+      if (buildingComplex.bim) {
+        await createAttachment(
+          null,
+          {
+            attachment: {
+              file: buildingComplex.bim,
+              refType: BuildingComplex.name,
+              refBy: buildingComplex.id
+            }
+          },
+          context
+        )
+      }
     }
 
     // 3. 동의 층 정보가 바뀌었으면 층 초기화 후 다시 생성

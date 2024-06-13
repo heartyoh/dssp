@@ -57,6 +57,7 @@ export interface Building {
   id?: string
   name: string | undefined
   floorCount: number | undefined
+  bim?: string
   buildingLevels?: BuildingLevel[]
 }
 

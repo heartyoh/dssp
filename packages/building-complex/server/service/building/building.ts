@@ -35,9 +35,9 @@ export class Building {
   @Field({ nullable: true })
   floorCount?: number
 
-  @Column({ nullable: true, comment: '동 도면 이미지 BIM' })
+  // 동 도면 이미지 BIM
   @Field({ nullable: true })
-  planImage?: string
+  bim?: string
 
   // 단지 정보 (상위 테이블 참조)
   @Field(() => BuildingComplex, { nullable: true })
