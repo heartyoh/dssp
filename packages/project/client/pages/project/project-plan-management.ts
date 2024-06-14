@@ -115,7 +115,7 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
           ox-input-file {
             height: 120px;
           }
-          span[building-level] {
+          span[building] {
             width: 125px;
             text-align: center;
 
@@ -235,11 +235,11 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
           <div>
             ${this.project.buildingComplex?.buildings?.map((building, idx) => {
               return html`
-                <span building-level>
+                <span building>
                   <ox-input-file
                     name="building-bim"
                     accept=".ifc"
-                    .value=${building?.bim || {}}
+                    .value=${building?.bim || undefined}
                     label=" "
                     description="동 도면 업로드"
                     idx=${idx}
@@ -274,19 +274,19 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
 
           <div floor-plan>
             ${this.project.buildingComplex?.buildings?.[this.selectedBuildingIdx]?.buildingLevels?.map(
-              (buildingLevels, idx) => {
+              (buildingLevel, idx) => {
                 return html`
                   <span plan>
                     <ox-input-file
-                      name="building-level-plan"
+                      name="building-plan"
                       accept=".pdf"
-                      .value=${buildingLevels?.planImage || {}}
+                      .value=${buildingLevel?.planImage || undefined}
                       label=" "
                       description="층 도면 업로드"
                       idx=${idx}
                       @change=${this.onCreateAttachment.bind(this)}
                     ></ox-input-file>
-                    <div>${buildingLevels.floor}층</div>
+                    <div>${buildingLevel.floor}층</div>
                   </span>
                 `
               }
@@ -384,9 +384,9 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
       }
 
       for (let levelKey in building.buildingLevels) {
-        const buildingLevel = this.project.buildingComplex.buildings[levelKey].buildingLevels
+        const buildingLevel = this.project.buildingComplex.buildings[buildingKey].buildingLevels[levelKey]
         if (buildingLevel.planImage?.id) {
-          delete this.project.buildingComplex.buildings[levelKey].buildingLevels[levelKey].planImage
+          delete this.project.buildingComplex.buildings[buildingKey].buildingLevels[levelKey].planImage
         }
       }
     }
@@ -430,7 +430,7 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
     if (target.name === 'building-bim') {
       this.project.buildingComplex!.buildings![idx].bim = file
     } else {
-      this.project.buildingComplex!.buildings![this.selectedBuildingIdx].buildingLevels![idx] = file
+      this.project.buildingComplex!.buildings![this.selectedBuildingIdx].buildingLevels![idx].planImage = file
     }
   }
 
