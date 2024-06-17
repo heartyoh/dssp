@@ -238,7 +238,6 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
                 <span building>
                   <ox-input-file
                     name="building-bim"
-                    accept=".ifc"
                     .value=${building?.bim || undefined}
                     label=" "
                     description="동 도면 업로드"
@@ -279,7 +278,6 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
                   <span plan>
                     <ox-input-file
                       name="building-plan"
-                      accept=".pdf"
                       .value=${buildingLevel?.planImage || undefined}
                       label=" "
                       description="층 도면 업로드"
@@ -376,7 +374,7 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
   }
 
   private async _saveProject() {
-    // 동과 층을 돌면서 도면 정보가 없으면 제거
+    // 동과 층을 돌면서 ID가 있으면(수정 안됨) 도면 정보 제거
     for (let buildingKey in this.project.buildingComplex.buildings) {
       const building = this.project.buildingComplex.buildings[buildingKey]
       if (building.bim?.id) {

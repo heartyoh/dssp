@@ -437,7 +437,6 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
             <span>
               <ox-input-file
                 name="bim"
-                accept=".ifc"
                 label=" "
                 description="IFC 업로드"
                 .value=${this.project?.buildingComplex?.bim || ''}

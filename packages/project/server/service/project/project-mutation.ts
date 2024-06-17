@@ -139,13 +139,17 @@ export class ProjectMutation {
     // 2. 단지 축척 정보 수정
     await buildingComplexRepo.save({ ...buildingComplex, updater: user })
 
-    buildings.forEach(async building => {
-      building.buildingLevels.forEach(async buildingLevel => {
+    for (let buildingKey in buildings) {
+      const building = buildings[buildingKey]
+
+      for (let buildingLevelKey in building.buildingLevels) {
+        const buildingLevel = building.buildingLevels[buildingLevelKey]
+
         // 3. 층별 도면 이미지 저장
         if (buildingLevel?.planImage !== undefined) {
           await deleteAttachmentsByRef(null, { refBys: [buildingLevel.id] }, context)
 
-          if (buildingLevel.planImage) {
+          if (buildingLevel?.planImage) {
             await createAttachment(
               null,
               {
@@ -159,7 +163,7 @@ export class ProjectMutation {
             )
           }
         }
-      })
+      }
 
       // 4. 동별 도면 이미지 저장
       if (building?.bim !== undefined) {
@@ -179,7 +183,7 @@ export class ProjectMutation {
           )
         }
       }
-    })
+    }
 
     return projectResult
   }
