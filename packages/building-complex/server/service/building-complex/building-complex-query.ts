@@ -17,7 +17,7 @@ export class BuildingComplexQuery {
   }
 
   @FieldResolver(type => Attachment)
-  async bim(@Root() buildingComplex: BuildingComplex): Promise<Attachment | undefined> {
+  async drawing(@Root() buildingComplex: BuildingComplex): Promise<Attachment | undefined> {
     const attachment: Attachment = await getRepository(Attachment).findOne({
       where: {
         domain: { id: buildingComplex.domainId },

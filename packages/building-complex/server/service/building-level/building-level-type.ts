@@ -16,7 +16,16 @@ export class BuildingLevelPatch {
   floor?: number
 
   @Field(type => GraphQLUpload, { nullable: true })
-  planImage?: FileUpload
+  mainDrawing: FileUpload
+
+  @Field(type => GraphQLUpload, { nullable: true })
+  structuralDrawing: FileUpload
+
+  @Field(type => GraphQLUpload, { nullable: true })
+  crossSectionDrawing: FileUpload
+
+  @Field(type => GraphQLUpload, { nullable: true })
+  rebarDistributionDrawing: FileUpload
 
   @Field(() => [BuildingInspectionPatch], { nullable: true })
   buildingInspections?: BuildingInspectionPatch[]

@@ -237,8 +237,8 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
               return html`
                 <span building>
                   <ox-input-file
-                    name="building-bim"
-                    .value=${building?.bim || undefined}
+                    name="building-drawing"
+                    .value=${building?.drawing || undefined}
                     label=" "
                     description="동 도면 업로드"
                     idx=${idx}
@@ -278,7 +278,7 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
                   <span plan>
                     <ox-input-file
                       name="building-plan"
-                      .value=${buildingLevel?.planImage || undefined}
+                      .value=${buildingLevel?.mainDrawing || undefined}
                       label=" "
                       description="층 도면 업로드"
                       idx=${idx}
@@ -345,14 +345,14 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
               buildings {
                 id
                 name
-                bim {
+                drawing {
                   id
                   name
                 }
                 buildingLevels {
                   id
                   floor
-                  planImage {
+                  mainDrawing {
                     id
                     name
                   }
@@ -377,14 +377,14 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
     // 동과 층을 돌면서 ID가 있으면(수정 안됨) 도면 정보 제거
     for (let buildingKey in this.project.buildingComplex.buildings) {
       const building = this.project.buildingComplex.buildings[buildingKey]
-      if (building.bim?.id) {
-        delete this.project.buildingComplex.buildings[buildingKey].bim
+      if (building.drawing?.id) {
+        delete this.project.buildingComplex.buildings[buildingKey].drawing
       }
 
       for (let levelKey in building.buildingLevels) {
         const buildingLevel = this.project.buildingComplex.buildings[buildingKey].buildingLevels[levelKey]
-        if (buildingLevel.planImage?.id) {
-          delete this.project.buildingComplex.buildings[buildingKey].buildingLevels[levelKey].planImage
+        if (buildingLevel.mainDrawing?.id) {
+          delete this.project.buildingComplex.buildings[buildingKey].buildingLevels[levelKey].mainDrawing
         }
       }
     }
@@ -425,10 +425,10 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
     const file = e.detail[0] || null
     const idx = Number(target.getAttribute('idx')) || 0
 
-    if (target.name === 'building-bim') {
-      this.project.buildingComplex!.buildings![idx].bim = file
+    if (target.name === 'building-drawing') {
+      this.project.buildingComplex!.buildings![idx].drawing = file
     } else {
-      this.project.buildingComplex!.buildings![this.selectedBuildingIdx].buildingLevels![idx].planImage = file
+      this.project.buildingComplex!.buildings![this.selectedBuildingIdx].buildingLevels![idx].mainDrawing = file
     }
   }
 

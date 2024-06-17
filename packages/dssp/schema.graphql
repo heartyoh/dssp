@@ -447,12 +447,12 @@ input BoardTemplatePatch {
 
 """동 정보"""
 type Building {
-  bim: Attachment
   buildingComplex: BuildingComplex
   buildingLevels: [BuildingLevel!]!
   createdAt: DateTimeISO
   creator: User
   deletedAt: DateTimeISO
+  drawing: Attachment
   floorCount: Float
   id: ID!
   name: String
@@ -464,7 +464,6 @@ type Building {
 type BuildingComplex {
   address: String
   area: Float
-  bim: Attachment
   buildingCount: Float
   buildings: [Building!]
   clientCompany: String
@@ -476,6 +475,7 @@ type BuildingComplex {
   deletedAt: DateTimeISO
   designCompany: String
   domain: Domain
+  drawing: Attachment
   etc: String
   householdCount: Float
   id: ID!
@@ -492,7 +492,6 @@ type BuildingComplex {
 input BuildingComplexPatch {
   address: String
   area: Float
-  bim: Upload
   buildingCount: Float
   buildings: [BuildingPatch!]
   clientCompany: String
@@ -500,6 +499,7 @@ input BuildingComplexPatch {
   constructionCost: Float
   constructionType: String
   designCompany: String
+  drawing: Upload
   etc: String
   householdCount: Float
   id: String
@@ -552,22 +552,28 @@ type BuildingLevel {
   buildingInspections: [BuildingInspection!]
   createdAt: DateTimeISO
   creator: User
+  crossSectionDrawing: Attachment
   deletedAt: DateTimeISO
   floor: Float!
   id: ID!
-  planImage: Attachment
+  mainDrawing: Attachment
+  rebarDistributionDrawing: Attachment
+  structuralDrawing: Attachment
 }
 
 input BuildingLevelPatch {
   buildingInspections: [BuildingInspectionPatch!]
+  crossSectionDrawing: Upload
   floor: Float!
   id: ID
-  planImage: Upload
+  mainDrawing: Upload
+  rebarDistributionDrawing: Upload
+  structuralDrawing: Upload
 }
 
 input BuildingPatch {
-  bim: Upload
   buildingLevels: [BuildingLevelPatch!]
+  drawing: Upload
   floorCount: Float
   id: ID
   name: String

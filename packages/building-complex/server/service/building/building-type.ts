@@ -15,7 +15,7 @@ export class BuildingPatch {
   floorCount?: number
 
   @Field(type => GraphQLUpload, { nullable: true })
-  bim?: FileUpload
+  drawing?: FileUpload
 
   @Field(type => [BuildingLevelPatch], { nullable: true })
   buildingLevels?: BuildingLevelPatch[]

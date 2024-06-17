@@ -9,7 +9,7 @@ import { BuildingInspection } from '../building-inspection/building-inspection'
 @Resolver(BuildingLevel)
 export class BuildingLevelQuery {
   @FieldResolver(type => Attachment)
-  async planImage(@Root() buildingLevel: BuildingLevel): Promise<Attachment | undefined> {
+  async mainDrawing(@Root() buildingLevel: BuildingLevel): Promise<Attachment | undefined> {
     const attachment: Attachment = await getRepository(Attachment).findOne({
       where: {
         refType: BuildingLevel.name,

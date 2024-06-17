@@ -43,7 +43,7 @@ export interface BuildingComplex {
   clientCompany?: string
   designCompany?: string
   supervisoryCompany?: string
-  bim?: Attachment
+  drawing?: Attachment
   constructionType?: string
   constructionCost?: number
   etc?: string
@@ -58,14 +58,14 @@ export interface Building {
   id?: string
   name: string | undefined
   floorCount: number | undefined
-  bim?: Attachment
+  drawing?: Attachment
   buildingLevels?: BuildingLevel[]
 }
 
 export interface BuildingLevel {
   id?: string
   floor?: number
-  planImage?: Attachment
+  mainDrawing?: Attachment
   buildingInspections?: BuildingInspection[]
 }
 

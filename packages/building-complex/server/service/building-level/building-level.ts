@@ -31,10 +31,21 @@ export class BuildingLevel {
   @Field({ nullable: false })
   floor: number
 
-  // @Column({ nullable: true, comment: '층 도면 이미지 링크' })
-  // 층 도면 이미지 링크
+  // 층 메인 도면 링크
   @Field(type => Attachment, { nullable: true })
-  planImage: Attachment
+  mainDrawing: Attachment
+
+  // 층 구조도 링크
+  @Field(type => Attachment, { nullable: true })
+  structuralDrawing: Attachment
+
+  // 층 단면도 링크
+  @Field(type => Attachment, { nullable: true })
+  crossSectionDrawing: Attachment
+
+  // 층 철근배분도 링크
+  @Field(type => Attachment, { nullable: true })
+  rebarDistributionDrawing: Attachment
 
   // 동 정보 (상위 테이블 참조)
   @Field(() => Building)

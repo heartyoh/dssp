@@ -64,7 +64,7 @@ export class BuildingComplex {
 
   // BIM 모델
   @Field(type => Attachment, { nullable: true })
-  bim?: Attachment
+  drawing?: Attachment
 
   @Column({ nullable: true, comment: '건설 구분 (아파트, 공원)' })
   @Field({ nullable: true })

@@ -71,15 +71,15 @@ export class ProjectMutation {
     }
 
     // 2-2. 단지 BIM 이미지 첨부파일 나머지 삭제 후 저장
-    if (buildingComplex.bim !== undefined) {
+    if (buildingComplex.drawing !== undefined) {
       await deleteAttachmentsByRef(null, { refBys: [buildingComplex.id] }, context)
 
-      if (buildingComplex.bim) {
+      if (buildingComplex.drawing) {
         await createAttachment(
           null,
           {
             attachment: {
-              file: buildingComplex.bim,
+              file: buildingComplex.drawing,
               refType: BuildingComplex.name,
               refBy: buildingComplex.id
             }
@@ -146,15 +146,15 @@ export class ProjectMutation {
         const buildingLevel = building.buildingLevels[buildingLevelKey]
 
         // 3. 층별 도면 이미지 저장
-        if (buildingLevel?.planImage !== undefined) {
+        if (buildingLevel?.mainDrawing !== undefined) {
           await deleteAttachmentsByRef(null, { refBys: [buildingLevel.id] }, context)
 
-          if (buildingLevel?.planImage) {
+          if (buildingLevel?.mainDrawing) {
             await createAttachment(
               null,
               {
                 attachment: {
-                  file: buildingLevel.planImage,
+                  file: buildingLevel.mainDrawing,
                   refType: BuildingLevel.name,
                   refBy: buildingLevel.id
                 }
@@ -166,15 +166,15 @@ export class ProjectMutation {
       }
 
       // 4. 동별 도면 이미지 저장
-      if (building?.bim !== undefined) {
+      if (building?.drawing !== undefined) {
         await deleteAttachmentsByRef(null, { refBys: [building.id] }, context)
 
-        if (building?.bim) {
+        if (building?.drawing) {
           await createAttachment(
             null,
             {
               attachment: {
-                file: building.bim,
+                file: building.drawing,
                 refType: Building.name,
                 refBy: building.id
               }

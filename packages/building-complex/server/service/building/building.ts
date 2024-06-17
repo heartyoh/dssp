@@ -38,7 +38,7 @@ export class Building {
 
   // 동 도면 이미지 BIM
   @Field(type => Attachment, { nullable: true })
-  bim?: Attachment
+  drawing?: Attachment
 
   // 단지 정보 (상위 테이블 참조)
   @Field(() => BuildingComplex, { nullable: true })

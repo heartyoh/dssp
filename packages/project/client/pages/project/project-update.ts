@@ -436,10 +436,10 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
             <span>단지 BIM</span>
             <span>
               <ox-input-file
-                name="bim"
+                name="drawing"
                 label=" "
                 description="IFC 업로드"
-                .value=${this.project?.buildingComplex?.bim || ''}
+                .value=${this.project?.buildingComplex?.drawing || ''}
                 @change=${this.onCreateAttachment.bind(this)}
               ></ox-input-file>
             </span>
@@ -683,7 +683,7 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
               constructionCompany
               supervisoryCompany
               designCompany
-              bim {
+              drawing {
                 id
                 name
               }
@@ -718,8 +718,8 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
     }
 
     // 기존 첨부된 파일이면 undefined 로변경
-    if (this.project.buildingComplex.bim?.id) {
-      delete this.project.buildingComplex.bim
+    if (this.project.buildingComplex.drawing?.id) {
+      delete this.project.buildingComplex.drawing
     }
 
     console.log('this.project :', this.project)
@@ -796,7 +796,7 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
     if (target.name === 'mainPhoto') {
       this.project.mainPhoto = file
     } else {
-      this.project.buildingComplex.bim = file
+      this.project.buildingComplex.drawing = file
     }
   }
 }

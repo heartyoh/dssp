@@ -8,7 +8,7 @@ import { BuildingLevel } from '../building-level/building-level'
 @Resolver(Building)
 export class BuildingQuery {
   @FieldResolver(type => Attachment)
-  async bim(@Root() building: Building): Promise<Attachment | undefined> {
+  async drawing(@Root() building: Building): Promise<Attachment | undefined> {
     const attachment: Attachment = await getRepository(Attachment).findOne({
       where: { refBy: building.id }
     })
