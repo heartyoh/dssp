@@ -427,7 +427,7 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
             <span>
               <ox-input-image
                 name="mainPhoto"
-                value=${this.project?.mainPhoto || ''}
+                value=${this.project?.mainPhoto?.fullpath || ''}
                 @change=${this.onCreateAttachment.bind(this)}
               ></ox-input-image>
             </span>
@@ -666,7 +666,9 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
             name
             startDate
             endDate
-            mainPhoto
+            mainPhoto {
+              fullpath
+            }
             totalProgress
             weeklyProgress
             kpi
@@ -712,15 +714,9 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
   }
 
   private async _saveProject() {
-    // 기존 첨부된 파일이면 undefined 로변경
-    if (typeof this.project.mainPhoto === 'string') {
-      delete this.project.mainPhoto
-    }
-
-    // 기존 첨부된 파일이면 undefined 로변경
-    if (this.project.buildingComplex.drawing?.id) {
-      delete this.project.buildingComplex.drawing
-    }
+    // 첨부 파일 필드 제거 (첨부 파일은 {filename}Upload 로 전송)
+    delete this.project.mainPhoto
+    delete this.project.buildingComplex.drawing
 
     console.log('this.project :', this.project)
 
@@ -794,9 +790,9 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
     const file = (target.name === 'mainPhoto' ? e.detail : e.detail[0]) || null
 
     if (target.name === 'mainPhoto') {
-      this.project.mainPhoto = file
+      this.project.mainPhotoUpload = file
     } else {
-      this.project.buildingComplex.drawing = file
+      this.project.buildingComplex.drawingUpload = file
     }
   }
 }

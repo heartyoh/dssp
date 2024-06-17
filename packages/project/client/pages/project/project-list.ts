@@ -7,6 +7,7 @@ import { ScopedElementsMixin } from '@open-wc/scoped-elements'
 import { client } from '@operato/graphql'
 import gql from 'graphql-tag'
 import { Attachment } from '@things-factory/attachment-base'
+import type { FileUpload } from 'graphql-upload/GraphQLUpload.js'
 
 export enum ProjectStatus {
   'PROCEEDING' = '10',
@@ -24,7 +25,8 @@ export interface Project {
   name: string
   startDate?: string
   endDate?: string
-  mainPhoto?: string
+  mainPhoto?: Attachment
+  mainPhotoUpload?: FileUpload
   totalProgress?: number
   weeklyProgress?: number
   kpi?: number
@@ -44,6 +46,7 @@ export interface BuildingComplex {
   designCompany?: string
   supervisoryCompany?: string
   drawing?: Attachment
+  drawingUpload?: FileUpload
   constructionType?: string
   constructionCost?: number
   etc?: string
@@ -59,6 +62,7 @@ export interface Building {
   name: string | undefined
   floorCount: number | undefined
   drawing?: Attachment
+  drawingUpload?: FileUpload
   buildingLevels?: BuildingLevel[]
 }
 
@@ -66,6 +70,7 @@ export interface BuildingLevel {
   id?: string
   floor?: number
   mainDrawing?: Attachment
+  mainDrawingUpload?: FileUpload
   buildingInspections?: BuildingInspection[]
 }
 

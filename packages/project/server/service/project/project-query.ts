@@ -40,8 +40,8 @@ export class ProjectQuery {
     return { items, total }
   }
 
-  @FieldResolver(type => String)
-  async mainPhoto(@Root() project: Project): Promise<string | undefined> {
+  @FieldResolver(type => Attachment)
+  async mainPhoto(@Root() project: Project): Promise<string | Attachment> {
     const attachment: Attachment = await getRepository(Attachment).findOne({
       where: {
         domain: { id: project.domainId },
@@ -50,7 +50,7 @@ export class ProjectQuery {
       order: { createdAt: 'ASC' }
     })
 
-    return attachment?.fullpath
+    return attachment
   }
 
   @FieldResolver(type => BuildingComplex)

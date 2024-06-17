@@ -499,7 +499,7 @@ input BuildingComplexPatch {
   constructionCost: Float
   constructionType: String
   designCompany: String
-  drawing: Upload
+  drawingUpload: Upload
   etc: String
   householdCount: Float
   id: String
@@ -563,17 +563,17 @@ type BuildingLevel {
 
 input BuildingLevelPatch {
   buildingInspections: [BuildingInspectionPatch!]
-  crossSectionDrawing: Upload
+  crossSectionDrawingUpload: Upload
   floor: Float!
   id: ID
-  mainDrawing: Upload
-  rebarDistributionDrawing: Upload
-  structuralDrawing: Upload
+  mainDrawingUpload: Upload
+  rebarDistributionDrawingUpload: Upload
+  structuralDrawingUpload: Upload
 }
 
 input BuildingPatch {
   buildingLevels: [BuildingLevelPatch!]
-  drawing: Upload
+  drawingUpload: Upload
   floorCount: Float
   id: ID
   name: String
@@ -3658,7 +3658,7 @@ type Project {
   id: ID!
   inspPassRate: Float
   kpi: Float
-  mainPhoto: String
+  mainPhoto: Attachment
   name: String!
   robotProgressRate: Float
   startDate: String
@@ -3682,7 +3682,7 @@ input ProjectPatch {
   id: String!
   inspPassRate: Float
   kpi: Float
-  mainPhoto: Upload
+  mainPhotoUpload: Upload
   name: String!
   robotProgressRate: Float
   startDate: String

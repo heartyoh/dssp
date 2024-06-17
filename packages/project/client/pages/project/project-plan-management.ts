@@ -374,18 +374,13 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
   }
 
   private async _saveProject() {
-    // 동과 층을 돌면서 ID가 있으면(수정 안됨) 도면 정보 제거
+    // 첨부 파일 필드 제거 (첨부 파일은 {filename}Upload 로 전송)
     for (let buildingKey in this.project.buildingComplex.buildings) {
       const building = this.project.buildingComplex.buildings[buildingKey]
-      if (building.drawing?.id) {
-        delete this.project.buildingComplex.buildings[buildingKey].drawing
-      }
+      delete this.project.buildingComplex.buildings[buildingKey].drawing
 
       for (let levelKey in building.buildingLevels) {
-        const buildingLevel = this.project.buildingComplex.buildings[buildingKey].buildingLevels[levelKey]
-        if (buildingLevel.mainDrawing?.id) {
-          delete this.project.buildingComplex.buildings[buildingKey].buildingLevels[levelKey].mainDrawing
-        }
+        delete this.project.buildingComplex.buildings[buildingKey].buildingLevels[levelKey].mainDrawing
       }
     }
 
@@ -426,9 +421,9 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
     const idx = Number(target.getAttribute('idx')) || 0
 
     if (target.name === 'building-drawing') {
-      this.project.buildingComplex!.buildings![idx].drawing = file
+      this.project.buildingComplex!.buildings![idx].drawingUpload = file
     } else {
-      this.project.buildingComplex!.buildings![this.selectedBuildingIdx].buildingLevels![idx].mainDrawing = file
+      this.project.buildingComplex!.buildings![this.selectedBuildingIdx].buildingLevels![idx].mainDrawingUpload = file
     }
   }
 

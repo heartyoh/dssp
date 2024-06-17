@@ -25,7 +25,7 @@ export class ProjectPatch {
   endDate?: string
 
   @Field(type => GraphQLUpload, { nullable: true })
-  mainPhoto?: FileUpload
+  mainPhotoUpload?: FileUpload
 
   @Field(type => Float, { nullable: true })
   totalProgress?: number

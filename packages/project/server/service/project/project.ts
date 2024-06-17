@@ -18,6 +18,7 @@ import { Domain, roundTransformer } from '@things-factory/shell'
 import { User } from '@things-factory/auth-base'
 import { Task } from '../task/task'
 import { BuildingComplex } from '@dssp/building-complex'
+import { Attachment } from '@things-factory/attachment-base'
 
 export enum ProjectStatus {
   'PROCEEDING' = '10',
@@ -61,8 +62,8 @@ export class Project {
   endDate?: string
 
   // 대표 사진
-  @Field(type => String, { nullable: true })
-  mainPhoto?: string
+  @Field(type => Attachment, { nullable: true })
+  mainPhoto?: Attachment
 
   @Column({ type: 'float', nullable: true, default: 0, transformer: roundTransformer, comment: '전체 진행현황' })
   @Field({ nullable: true })

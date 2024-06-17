@@ -51,16 +51,16 @@ export class ProjectMutation {
     // 2. 단지 정보 수정
     await buildingComplexRepo.save({ ...buildingComplex, updater: user })
 
-    // 2-1. 프로젝트 메인 이미지 첨부파일 나머지 삭제 후 저장
-    if (project.mainPhoto !== undefined) {
+    // 2-1. 프로젝트 메인 이미지 첨부파일 나머지 삭제 후 저장 (null로 오면 삭제만)
+    if (project.mainPhotoUpload !== undefined) {
       await deleteAttachmentsByRef(null, { refBys: [project.id] }, context)
 
-      if (project.mainPhoto) {
+      if (project.mainPhotoUpload) {
         await createAttachment(
           null,
           {
             attachment: {
-              file: project.mainPhoto,
+              file: project.mainPhotoUpload,
               refType: Project.name,
               refBy: project.id
             }
@@ -70,16 +70,16 @@ export class ProjectMutation {
       }
     }
 
-    // 2-2. 단지 BIM 이미지 첨부파일 나머지 삭제 후 저장
-    if (buildingComplex.drawing !== undefined) {
+    // 2-2. 단지 BIM 이미지 첨부파일 나머지 삭제 후 저장 (null로 오면 삭제만)
+    if (buildingComplex.drawingUpload !== undefined) {
       await deleteAttachmentsByRef(null, { refBys: [buildingComplex.id] }, context)
 
-      if (buildingComplex.drawing) {
+      if (buildingComplex.drawingUpload) {
         await createAttachment(
           null,
           {
             attachment: {
-              file: buildingComplex.drawing,
+              file: buildingComplex.drawingUpload,
               refType: BuildingComplex.name,
               refBy: buildingComplex.id
             }
@@ -145,16 +145,16 @@ export class ProjectMutation {
       for (let buildingLevelKey in building.buildingLevels) {
         const buildingLevel = building.buildingLevels[buildingLevelKey]
 
-        // 3. 층별 도면 이미지 저장
-        if (buildingLevel?.mainDrawing !== undefined) {
+        // 3. 층별 도면 이미지 저장 (null로 오면 삭제만)
+        if (buildingLevel?.mainDrawingUpload !== undefined) {
           await deleteAttachmentsByRef(null, { refBys: [buildingLevel.id] }, context)
 
-          if (buildingLevel?.mainDrawing) {
+          if (buildingLevel?.mainDrawingUpload) {
             await createAttachment(
               null,
               {
                 attachment: {
-                  file: buildingLevel.mainDrawing,
+                  file: buildingLevel.mainDrawingUpload,
                   refType: BuildingLevel.name,
                   refBy: buildingLevel.id
                 }
@@ -165,16 +165,16 @@ export class ProjectMutation {
         }
       }
 
-      // 4. 동별 도면 이미지 저장
-      if (building?.drawing !== undefined) {
+      // 4. 동별 도면 이미지 저장 (null로 오면 삭제만)
+      if (building?.drawingUpload !== undefined) {
         await deleteAttachmentsByRef(null, { refBys: [building.id] }, context)
 
-        if (building?.drawing) {
+        if (building?.drawingUpload) {
           await createAttachment(
             null,
             {
               attachment: {
-                file: building.drawing,
+                file: building.drawingUpload,
                 refType: Building.name,
                 refBy: building.id
               }
