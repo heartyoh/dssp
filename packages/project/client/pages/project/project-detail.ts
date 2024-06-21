@@ -170,6 +170,10 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
               span[progress] {
                 max-width: 150px;
                 text-align: center;
+                display: flex;
+                justify-self: center;
+                flex-direction: column;
+                width: 100%;
 
                 & > div {
                   font-weight: bold;
@@ -281,6 +285,7 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
 
             thead th {
               padding: 5px;
+              font-size: 15px;
             }
 
             tbody td {
@@ -290,6 +295,7 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
               white-space: nowrap;
               text-overflow: ellipsis;
               overflow: hidden;
+              font-size: 15px;
             }
           }
         }

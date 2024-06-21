@@ -83,28 +83,42 @@ function _getIndexByLatAndLong(latitude: number, longitude: number) {
 
 function _getTodayAndHour() {
   const now = new Date()
-  const today = now.toISOString().slice(0, 10).replace(/-/g, '')
+  const todayDate = now.toISOString().slice(0, 10).replace(/-/g, '')
   const yesterday = new Date(now)
   yesterday.setDate(yesterday.getDate() - 1)
-  const formattedYesterday = yesterday.toISOString().slice(0, 10).replace(/-/g, '')
+  const yesterdayDate = yesterday.toISOString().slice(0, 10).replace(/-/g, '')
 
-  let base_time
+  // 1일 총 8번 데이터가 업데이트 된다. (0200, 0500, 0800, 1100, 1400, 1700, 2000, 2300)
   let base_date
+  let base_time
 
-  console.log(now.getMinutes())
-
-  if (now.getMinutes() < 45) {
-    if (now.getHours() === 0) {
-      base_time = '2330'
-      base_date = formattedYesterday
-    } else {
-      const hour = now.getHours() + 1
-      base_time = hour.toString().padStart(2, '0') + '30'
-      base_date = today
-    }
+  if (now.getHours() < 2 || (now.getHours() === 2 && now.getMinutes() <= 10)) {
+    base_date = yesterdayDate
+    base_time = '2300'
+  } else if (now.getHours() < 5 || (now.getHours() === 5 && now.getMinutes() <= 10)) {
+    base_date = todayDate
+    base_time = '0200'
+  } else if (now.getHours() < 8 || (now.getHours() === 8 && now.getMinutes() <= 10)) {
+    base_date = todayDate
+    base_time = '0500'
+  } else if (now.getHours() <= 11 || now.getMinutes() <= 10) {
+    base_date = todayDate
+    base_time = '0800'
+  } else if (now.getHours() < 14 || (now.getHours() === 14 && now.getMinutes() <= 10)) {
+    base_date = todayDate
+    base_time = '1100'
+  } else if (now.getHours() < 17 || (now.getHours() === 17 && now.getMinutes() <= 10)) {
+    base_date = todayDate
+    base_time = '1400'
+  } else if (now.getHours() < 20 || (now.getHours() === 20 && now.getMinutes() <= 10)) {
+    base_date = todayDate
+    base_time = '1700'
+  } else if (now.getHours() < 23 || (now.getHours() === 23 && now.getMinutes() <= 10)) {
+    base_date = todayDate
+    base_time = '2000'
   } else {
-    base_time = now.getHours().toString().padStart(2, '0') + '30'
-    base_date = today
+    base_date = todayDate
+    base_time = '2300'
   }
 
   return { base_time, base_date }
