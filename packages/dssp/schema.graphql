@@ -448,7 +448,7 @@ input BoardTemplatePatch {
 """동 정보"""
 type Building {
   buildingComplex: BuildingComplex
-  buildingLevels: [BuildingLevel!]!
+  buildingLevels: [BuildingLevel!]
   createdAt: DateTimeISO
   creator: User
   deletedAt: DateTimeISO
@@ -1294,6 +1294,13 @@ enum InheritedValueType {
   Include
   None
   Only
+}
+
+type InspectionSummary {
+  fail: Int!
+  pass: Int!
+  request: Int!
+  require: Int!
 }
 
 type Invitation {
@@ -3915,6 +3922,9 @@ type Query {
   hasPrivilege(category: String!, privilege: String!): Boolean!
   i18nCompletion(input: i18nCompletionInput!): i18nCompletionOutput!
   imageCompletion(input: ImageCompletionInput!): ImageCompletionOutput!
+
+  """프로젝트의 검측상태 별 카운트"""
+  inspectionSummary(projectId: String!): InspectionSummary!
 
   """To fetch integration Analyses"""
   integrationAnalysis: Object!

@@ -14,7 +14,7 @@ export enum ProjectStatus {
   'COMPLICATED' = '20'
 }
 export enum InspectionType {
-  REUQEST = 'REUQEST',
+  REQUEST = 'REQUEST',
   REQUIRE = 'REQUIRE',
   PASS = 'PASS',
   FAIL = 'FAIL'
@@ -244,7 +244,7 @@ export class ProjectListPage extends ScopedElementsMixin(PageView) {
           return html`
             <div project-container>
               <a href=${`project-detail/${project.id}`}>
-                <img project-img src=${project.mainPhoto || ''} />
+                <img project-img src=${project.mainPhoto?.fullpath || ''} />
 
                 <span project-info>
                   <div name>${project.name}</div>
@@ -314,7 +314,9 @@ export class ProjectListPage extends ScopedElementsMixin(PageView) {
               name
               startDate
               endDate
-              mainPhoto
+              mainPhoto {
+                fullpath
+              }
               totalProgress
               weeklyProgress
               kpi

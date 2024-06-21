@@ -204,7 +204,7 @@ export class ProjectSettingList extends ScopedElementsMixin(PageView) {
 
           return html`
             <div project-container>
-              <img project-img src=${project.mainPhoto || ''} />
+              <img project-img src=${project.mainPhoto?.fullpath || ''} />
 
               <span project-info>
                 <div name>${project.name}</div>
@@ -250,7 +250,9 @@ export class ProjectSettingList extends ScopedElementsMixin(PageView) {
             items {
               id
               name
-              mainPhoto
+              mainPhoto {
+                fullpath
+              }
               startDate
               endDate
               totalProgress

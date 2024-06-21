@@ -4,6 +4,10 @@ export default function route(page: string) {
       import('./pages/project/project-list')
       return page
 
+    case 'project-detail':
+      import('./pages/project/project-detail')
+      return page
+
     case 'project-setting-list':
       import('./pages/project/project-setting-list')
       return page

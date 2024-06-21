@@ -50,8 +50,8 @@ export class Building {
 
   // 층 정보 (하위 테이블 참조)
   @OneToMany(() => BuildingLevel, buildingLevel => buildingLevel.building)
-  @Field(() => [BuildingLevel])
-  buildingLevels: BuildingLevel[]
+  @Field(() => [BuildingLevel], { nullable: true })
+  buildingLevels?: BuildingLevel[]
 
   @CreateDateColumn()
   @Field({ nullable: true })

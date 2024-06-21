@@ -57,3 +57,18 @@ export class ProjectList {
   @Field(type => Int)
   total: number
 }
+
+@ObjectType()
+export class InspectionSummary {
+  @Field(type => Int)
+  request: number
+
+  @Field(type => Int)
+  require: number
+
+  @Field(type => Int)
+  pass: number
+
+  @Field(type => Int)
+  fail: number
+}

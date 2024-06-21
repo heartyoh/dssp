@@ -2,8 +2,9 @@ import { Resolver, Query, FieldResolver, Root, Arg, Ctx } from 'type-graphql'
 import { Domain, getRepository } from '@things-factory/shell'
 import { User } from '@things-factory/auth-base'
 import { Project } from './project'
-import { ProjectList } from './project-type'
-import { BuildingComplex } from '@dssp/building-complex'
+import { InspectionSummary, ProjectList } from './project-type'
+import { BuildingComplex, InspectionType } from '@dssp/building-complex'
+// import {  } from '@dssp/building-complex/dist-server/service/building-inspection'
 import { Attachment } from '@things-factory/attachment-base'
 
 @Resolver(Project)
@@ -38,6 +39,36 @@ export class ProjectQuery {
     const [items, total] = await queryBuilder.getManyAndCount()
 
     return { items, total }
+  }
+
+  @Query(returns => InspectionSummary, { description: '프로젝트의 검측상태 별 카운트' })
+  async inspectionSummary(
+    @Arg('projectId') projectId: string,
+    @Ctx() context: ResolverContext
+  ): Promise<InspectionSummary> {
+    const { domain } = context.state
+
+    const queryBuilder = getRepository(Project)
+      .createQueryBuilder('p')
+      .select(`COUNT(CASE WHEN bi.type="${InspectionType.REQUEST}" THEN 1 ELSE NULL END) AS request`)
+      .addSelect(`COUNT(CASE WHEN bi.type="${InspectionType.REQUIRE}" THEN 1 ELSE NULL END) AS require`)
+      .addSelect(`COUNT(CASE WHEN bi.type="${InspectionType.PASS}" THEN 1 ELSE NULL END) AS pass`)
+      .addSelect(`COUNT(CASE WHEN bi.type="${InspectionType.FAIL}" THEN 1 ELSE NULL END) AS fail`)
+      .innerJoin('p.buildingComplex', 'bc')
+      .innerJoin('bc.buildings', 'b')
+      .innerJoin('b.buildingLevels', 'bl')
+      .innerJoin('bl.buildingInspections', 'bi')
+      .where('p.domain = :domain', { domain: domain.id })
+      .andWhere('p.id = :projectId', { projectId })
+      .groupBy('p.id')
+
+    const result = (await queryBuilder.getRawOne()) || {}
+    return {
+      request: result.request || 0,
+      require: result.require || 0,
+      pass: result.pass || 0,
+      fail: result.fail || 0
+    }
   }
 
   @FieldResolver(type => Attachment)

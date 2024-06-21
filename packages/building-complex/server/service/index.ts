@@ -9,7 +9,11 @@ export * from './building-complex/building-complex-type'
 
 /* IMPORT ENTITIES AND RESOLVERS */
 import { entities as BuildingInspectionAttachmentEntities } from './building-inspection-attachment'
-import { entities as BuildingInspectionEntities, resolvers as BuildingInspectionResolvers } from './building-inspection'
+import {
+  entities as BuildingInspectionEntities,
+  resolvers as BuildingInspectionResolvers,
+  types as BuildingInspectionTypes
+} from './building-inspection'
 import { entities as BuildingLevelEntities, resolvers as BuildingLevelResolvers } from './building-level'
 import { entities as BuildingEntities, resolvers as BuildingResolvers, types as BuildingTypes } from './building'
 import { entities as ComplexEntities, resolvers as ComplexResolvers, types as ComplexTypes } from './building-complex'
@@ -33,6 +37,4 @@ export const schema = {
   ]
 }
 
-export const types = {
-  typeClasses: [...BuildingTypes, ...ComplexTypes]
-}
+export const types = [...BuildingTypes, ...ComplexTypes, ...BuildingInspectionTypes]

@@ -772,7 +772,7 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
 
     // 숫자 타입은 다른 문자 입력 제거
     if (target.hasAttribute('numeric')) {
-      inputVal = Number(inputVal.replace(/\D/g, ''))
+      inputVal = Number(inputVal.replace(/[^\d.]/g, ''))
     }
 
     if (target.hasAttribute('project')) {
