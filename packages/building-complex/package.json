@@ -27,9 +27,9 @@
     "migration:create": "node ../../node_modules/typeorm/cli.js migration:create -d ./server/migrations"
   },
   "dependencies": {
-    "@things-factory/shell": "^7.0.1-alpha",
-    "@things-factory/auth-base": "^7.0.1-alpha",
-    "@operato/graphql": "^2.0.0-alpha",
-    "@operato/shell": "^2.0.0-alpha"
+    "@things-factory/shell": "^7.0.1-rc",
+    "@things-factory/auth-base": "^7.0.1-rc",
+    "@operato/graphql": "^7.0.0-rc",
+    "@operato/shell": "^7.0.0-rc"
   }
 }

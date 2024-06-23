@@ -2352,7 +2352,7 @@ type Mutation {
   """
   To run new scenario instance and will return the result after the scenario stop.
   """
-  runScenario(instanceName: String, scenarioName: String!, variables: Object): ScenarioInstance!
+  runScenario(instanceName: String, scenarioName: String!, variables: Object): ScenarioInstanceRunResult!
   sendInvitation(email: EmailAddress!, reference: String!, type: String!): Invitation!
   singleUpload(file: Upload!): Attachment!
 
@@ -3130,6 +3130,7 @@ input NewScenario {
   privilege: PrivilegeInput
   schedule: String
   timezone: String
+  ttl: Float
   type: String
 }
 
@@ -4260,6 +4261,7 @@ type Scenario {
   state: String
   steps: [Step!]
   timezone: String
+  ttl: Float
   type: String
   updatedAt: DateTimeISO
   updater: User
@@ -4290,6 +4292,17 @@ type ScenarioInstanceProgress {
   rounds: Int!
   step: Int!
   steps: Int!
+}
+
+type ScenarioInstanceRunResult {
+  data: Object
+  instanceName: String
+  message: String
+  result: Object
+  scenarioName: String
+  state: String
+  timestamp: DateTimeISO
+  variables: Object
 }
 
 type ScenarioInstanceState {
@@ -4328,6 +4341,7 @@ input ScenarioPatch {
   schedule: String
   steps: [StepPatch!]
   timezone: String
+  ttl: Float
   type: String
 }
 
