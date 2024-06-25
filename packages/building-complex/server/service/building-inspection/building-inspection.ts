@@ -18,7 +18,6 @@ import { BuildingInspectionAttachment } from '../building-inspection-attachment/
 
 export enum InspectionType {
   REQUEST = 'REQUEST',
-  REQUIRE = 'REQUIRE',
   PASS = 'PASS',
   FAIL = 'FAIL'
 }
@@ -46,7 +45,7 @@ export class BuildingInspection {
   @Field({ nullable: true })
   indexY?: number
 
-  @Column({ nullable: true, comment: '상태(REQUEST: 요청, REQUIRE: 필요, PASS: 합격, FAIL: 불합격)' })
+  @Column({ nullable: true, comment: '상태(REQUEST: 요청, PASS: 합격, FAIL: 불합격)' })
   @Field({ nullable: true })
   type?: InspectionType
 

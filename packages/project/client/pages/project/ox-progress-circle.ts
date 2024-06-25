@@ -12,7 +12,7 @@ WEB Component for code-mirror code editor.
 Example:
   <ox-progress-circle
     .value=${70}
-    title="전체"
+    titleText="전체"
     suffix="%"
     fontSize="29px"
     fontColor="#4E5055"
@@ -72,7 +72,7 @@ export class OxProgressCircle extends LitElement {
 
   @property({ type: Number }) value: number = 0
   @property({ type: String }) suffix: string = ''
-  @property({ type: String }) title: string = ''
+  @property({ type: String }) titleText: string = ''
   @property({ type: String }) fontSize: string = '10px'
   @property({ type: String }) fontColor: string = ''
   @property({ type: String }) borderStyle: string = ''
@@ -124,7 +124,7 @@ export class OxProgressCircle extends LitElement {
     return html`
       <div circle>
         <div inner-circle>
-          ${this.title ? html`<span progress-title>${this.title}</span>` : ''}
+          ${this.titleText ? html`<span progress-title>${this.titleText}</span>` : ''}
           <span>${this.value}${this.suffix}</span>
         </div>
       </div>

@@ -1,5 +1,3 @@
-import '@operato/data-grist'
-
 import { PageView } from '@operato/shell'
 import { css, html } from 'lit'
 import { customElement, state } from 'lit/decorators.js'

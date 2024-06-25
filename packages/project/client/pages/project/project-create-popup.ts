@@ -1,6 +1,3 @@
-import '@material/mwc-icon'
-import '@operato/data-grist'
-
 import { css, html, LitElement } from 'lit'
 import { customElement, property, state } from 'lit/decorators.js'
 import { client } from '@operato/graphql'

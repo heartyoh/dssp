@@ -1300,7 +1300,6 @@ type InspectionSummary {
   fail: Int!
   pass: Int!
   request: Int!
-  require: Int!
 }
 
 type Invitation {
@@ -3783,6 +3782,9 @@ type Query {
 
   """To fetch Boards created by me"""
   boardsCreatedByMe(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): BoardList!
+
+  """To fetch a building"""
+  building(id: String!): Building
 
   """To fetch a BuildingComplex"""
   buildingBuildingComplex(id: String!): BuildingComplex

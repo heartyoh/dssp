@@ -1,4 +1,3 @@
-import '@operato/data-grist'
 import { PageView } from '@operato/shell'
 import { PageLifecycle } from '@operato/shell/dist/src/app/pages/page-view'
 import { css, html } from 'lit'

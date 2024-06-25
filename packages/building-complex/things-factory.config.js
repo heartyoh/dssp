@@ -3,22 +3,13 @@ import bootstrap from './dist-client/bootstrap'
 
 export default {
   route,
-  routes: [{
-      tagname: 'building-complex-main',
-      page: 'building-complex-main'
-    },
-    {
-      tagname: 'building-complex-list-page',
-      page: 'building-complex-list'
-    },
-    {
-      tagname: 'building-list-page',
-      page: 'building-list'
-    },
-    {
-      tagname: 'build-level-list-page',
-      page: 'build-level-list'
+  routes: [
+    'building-complex-detail', // 동별 시공검측 상세 정보 
+  ].map(page => {
+    return {
+      page,
+      tagname: page
     }
-  ],
+  }),
   bootstrap
 }

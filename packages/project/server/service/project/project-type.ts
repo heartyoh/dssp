@@ -64,9 +64,6 @@ export class InspectionSummary {
   request: number
 
   @Field(type => Int)
-  require: number
-
-  @Field(type => Int)
   pass: number
 
   @Field(type => Int)

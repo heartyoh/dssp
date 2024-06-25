@@ -51,7 +51,6 @@ export class ProjectQuery {
     const queryBuilder = getRepository(Project)
       .createQueryBuilder('p')
       .select(`COUNT(CASE WHEN bi.type="${InspectionType.REQUEST}" THEN 1 ELSE NULL END) AS request`)
-      .addSelect(`COUNT(CASE WHEN bi.type="${InspectionType.REQUIRE}" THEN 1 ELSE NULL END) AS require`)
       .addSelect(`COUNT(CASE WHEN bi.type="${InspectionType.PASS}" THEN 1 ELSE NULL END) AS pass`)
       .addSelect(`COUNT(CASE WHEN bi.type="${InspectionType.FAIL}" THEN 1 ELSE NULL END) AS fail`)
       .innerJoin('p.buildingComplex', 'bc')
@@ -65,7 +64,6 @@ export class ProjectQuery {
     const result = (await queryBuilder.getRawOne()) || {}
     return {
       request: result.request || 0,
-      require: result.require || 0,
       pass: result.pass || 0,
       fail: result.fail || 0
     }

@@ -1,4 +1,3 @@
-import '@operato/data-grist'
 import { PageView } from '@operato/shell'
 import { PageLifecycle } from '@operato/shell/dist/src/app/pages/page-view'
 import { css, html } from 'lit'
@@ -168,7 +167,7 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
               gap: 15px;
 
               span[progress] {
-                max-width: 150px;
+                max-width: 170px;
                 text-align: center;
                 display: flex;
                 justify-self: center;
@@ -253,7 +252,9 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
           }
 
           div[right-bottom] {
-            [table-container] {
+            flex: 2;
+
+            div[table-container] {
               width: 100%;
               height: 200px;
               overflow-y: auto;
@@ -345,8 +346,8 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
           <md-elevated-button href=${`project-update/${this.project.id}`}>
             <md-icon slot="icon">assignment</md-icon>프로젝트 정보 수정
           </md-elevated-button>
-          <md-elevated-button href=${`inspection-management/${this.project.id}`}>
-            <md-icon slot="icon">quick_reference_all</md-icon>검측현황 관리
+          <md-elevated-button href=${`project-plan-management/${this.project.id}`}>
+            <md-icon slot="icon">description</md-icon>도면 관리
           </md-elevated-button>
           <md-elevated-button href=${`project-task-update/${this.project.id}`}>
             <md-icon slot="icon">event_note</md-icon>공정표 관리
@@ -416,7 +417,9 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
               <div subject bold>개별 단지 상세정보 바로가기</div>
               <div building-container>
                 ${this.project.buildingComplex?.buildings?.map(building => {
-                  return html`<md-outlined-button @click=${() => this._onClickBuilding()}>
+                  return html`<md-outlined-button
+                    href=${`building-complex-detail/${this.project.id}?buildingId=${building.id}`}
+                  >
                     ${building.name}
                   </md-outlined-button>`
                 })}
@@ -432,7 +435,7 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
               <span progress>
                 <ox-progress-circle
                   .value=${70}
-                  title="전체"
+                  titleText="전체"
                   suffix="%"
                   fontSize="27px"
                   fontColor="#4E5055"
@@ -447,7 +450,7 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
               <span progress>
                 <ox-progress-circle
                   .value=${30.4}
-                  title="주간"
+                  titleText="주간"
                   fontSize="27px"
                   fontColor="#4E5055"
                   borderStyle="none"
@@ -619,6 +622,4 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
 
     console.log('init project : ', this.project)
   }
-
-  private _onClickBuilding() {}
 }

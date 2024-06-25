@@ -7,6 +7,13 @@ import { BuildingLevel } from '../building-level/building-level'
 
 @Resolver(Building)
 export class BuildingQuery {
+  @Query(returns => Building!, { nullable: true, description: 'To fetch a building' })
+  async building(@Arg('id') id: string, @Ctx() context: ResolverContext): Promise<Building> {
+    return await getRepository(Building).findOne({
+      where: { id }
+    })
+  }
+
   @FieldResolver(type => Attachment)
   async drawing(@Root() building: Building): Promise<Attachment | undefined> {
     const attachment: Attachment = await getRepository(Attachment).findOne({
