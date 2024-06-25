@@ -1,10 +1,12 @@
-import { Resolver, Query, FieldResolver, Root, Args, Arg, Ctx, Directive } from 'type-graphql'
+import { Resolver, FieldResolver, Root } from 'type-graphql'
 import { Attachment } from '@things-factory/attachment-base'
-import { Domain, getQueryBuilderFromListParams, getRepository, ListParam } from '@things-factory/shell'
+import { getRepository } from '@things-factory/shell'
 import { User } from '@things-factory/auth-base'
 import { BuildingLevel } from './building-level'
-import { BuildingLevelList } from './building-level-type'
 import { BuildingInspection } from '../building-inspection/building-inspection'
+// import { InspectionSummary } from '@dssp/project'
+import { InspectionType } from '../building-inspection/building-inspection'
+import { FloorInspectionSummary } from './building-level-type'
 
 @Resolver(BuildingLevel)
 export class BuildingLevelQuery {
@@ -23,6 +25,25 @@ export class BuildingLevelQuery {
   @FieldResolver(type => [BuildingInspection])
   async buildingInspections(@Root() buildingLevel: BuildingLevel): Promise<BuildingInspection[]> {
     return await getRepository(BuildingInspection).findBy({ buildingLevel: { id: buildingLevel.id } })
+  }
+
+  // 층 별로 검수 개수 써머리
+  @FieldResolver(type => FloorInspectionSummary)
+  async floorInspectionSummary(@Root() buildingLevel: BuildingLevel): Promise<FloorInspectionSummary> {
+    const floorInspectionSummary = await getRepository(BuildingInspection)
+      .createQueryBuilder('bi')
+      .select(`COUNT(CASE WHEN bi.type="${InspectionType.REQUEST}" THEN 1 ELSE NULL END) AS request`)
+      .addSelect(`COUNT(CASE WHEN bi.type="${InspectionType.PASS}" THEN 1 ELSE NULL END) AS pass`)
+      .addSelect(`COUNT(CASE WHEN bi.type="${InspectionType.FAIL}" THEN 1 ELSE NULL END) AS fail`)
+      .where('bi.building_level_id = :buildingLevelId', { buildingLevelId: buildingLevel.id })
+      .groupBy('bi.building_level_id')
+      .getRawOne()
+
+    return {
+      request: floorInspectionSummary?.request || 0,
+      pass: floorInspectionSummary?.pass || 0,
+      fail: floorInspectionSummary?.fail || 0
+    }
   }
 
   @FieldResolver(type => User)

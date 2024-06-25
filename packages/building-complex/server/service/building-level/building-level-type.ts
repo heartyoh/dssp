@@ -1,9 +1,6 @@
 import type { FileUpload } from 'graphql-upload/GraphQLUpload.js'
 import GraphQLUpload from 'graphql-upload/GraphQLUpload.js'
-import { ObjectType, Field, InputType, Int, ID, registerEnumType } from 'type-graphql'
-
-import { ObjectRef, ScalarObject } from '@things-factory/shell'
-
+import { ObjectType, Field, InputType, Int, ID } from 'type-graphql'
 import { BuildingLevel } from './building-level'
 import { BuildingInspectionPatch } from '../building-inspection/building-inspection-type'
 
@@ -38,4 +35,16 @@ export class BuildingLevelList {
 
   @Field(type => Int)
   total: number
+}
+
+@ObjectType()
+export class FloorInspectionSummary {
+  @Field(type => Int)
+  request: number
+
+  @Field(type => Int)
+  pass: number
+
+  @Field(type => Int)
+  fail: number
 }

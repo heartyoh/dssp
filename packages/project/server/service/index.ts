@@ -10,7 +10,7 @@ import { entities as ResourceEntities, resolvers as ResourceResolvers } from './
 import { entities as CheckItemEntities, resolvers as CheckItemResolvers } from './check-item'
 import { entities as ChecklistEntities, resolvers as ChecklistResolvers } from './checklist'
 import { entities as TaskEntities, resolvers as TaskResolvers } from './task'
-import { entities as ProjectEntities, resolvers as ProjectResolvers } from './project'
+import { entities as ProjectEntities, resolvers as ProjectResolvers, types as ProjectTypes } from './project'
 
 export const entities = [
   /* ENTITIES */
@@ -31,3 +31,5 @@ export const schema = {
     ...ProjectResolvers
   ]
 }
+
+export const types = [...ProjectTypes]

@@ -16,7 +16,6 @@ import _getWeather from '../lib/waether'
 
 export interface InspectionSummary {
   request: number
-  require: number
   pass: number
   fail: number
 }

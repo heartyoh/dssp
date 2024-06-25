@@ -555,6 +555,7 @@ type BuildingLevel {
   crossSectionDrawing: Attachment
   deletedAt: DateTimeISO
   floor: Float!
+  floorInspectionSummary: FloorInspectionSummary!
   id: ID!
   mainDrawing: Attachment
   rebarDistributionDrawing: Attachment
@@ -1219,6 +1220,12 @@ input Filter {
   operator: String!
   relation: Boolean
   value: Any
+}
+
+type FloorInspectionSummary {
+  fail: Int!
+  pass: Int!
+  request: Int!
 }
 
 """Entity for Font"""

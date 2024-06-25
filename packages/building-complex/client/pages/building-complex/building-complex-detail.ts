@@ -137,7 +137,7 @@ export class BuildingComplexDetail extends ScopedElementsMixin(PageView) {
           position: relative;
           margin-top: -9%;
 
-          div[img] {
+          div[drawing] {
             padding-right: 10%;
 
             & > div {
@@ -145,7 +145,7 @@ export class BuildingComplexDetail extends ScopedElementsMixin(PageView) {
               padding: 8px;
             }
 
-            img {
+            [floor-drawing] {
               width: 100%;
               aspect-ratio: 7;
               clip-path: polygon(18% 0%, 82% 0%, 100% 100%, 0% 100%);
@@ -205,7 +205,7 @@ export class BuildingComplexDetail extends ScopedElementsMixin(PageView) {
           &:hover {
             z-index: 1;
 
-            div[img] {
+            div[drawing] {
               & > div {
                 display: flex;
                 background-color: #ff6a5d;
@@ -224,7 +224,7 @@ export class BuildingComplexDetail extends ScopedElementsMixin(PageView) {
                   5px calc(100% - 5px)
                 );
 
-                img {
+                [floor-drawing] {
                   opacity: 1;
                   width: calc(100% - 20px);
                 }
@@ -295,12 +295,12 @@ export class BuildingComplexDetail extends ScopedElementsMixin(PageView) {
         </div>
 
         <div right>
-          ${this.building.buildingLevels.map(buildingLevel => {
+          ${this.building?.buildingLevels?.map(buildingLevel => {
             return html`
               <div row>
-                <div img>
+                <div drawing>
                   <div>
-                    <img src=${this.project.mainPhoto?.fullpath || ''} />
+                    <img floor-drawing src=${this.project.mainPhoto?.fullpath || ''} />
                   </div>
                 </div>
                 <div status>
@@ -383,9 +383,15 @@ export class BuildingComplexDetail extends ScopedElementsMixin(PageView) {
             buildingLevels {
               id
               floor
+              floorInspectionSummary {
+                request
+                pass
+                fail
+              }
               mainDrawing {
                 id
                 name
+                fullpath
               }
             }
           }
@@ -399,6 +405,7 @@ export class BuildingComplexDetail extends ScopedElementsMixin(PageView) {
     if (response.errors) return
 
     this.building = response.data?.building
+    console.log('this.building :', this.building)
   }
 
   private _onClickBuilding(building) {
