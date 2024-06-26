@@ -164,6 +164,11 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
 
               & > div {
                 margin-top: 7px;
+
+                &[no-data] {
+                  color: #f16154;
+                  font-weight: bold;
+                }
               }
             }
           }
@@ -283,7 +288,7 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
                       idx=${idx}
                       @change=${this.onCreateAttachment.bind(this)}
                     ></ox-input-file>
-                    <div>${buildingLevel.floor}층</div>
+                    <div ?no-data=${!buildingLevel?.mainDrawing}>${buildingLevel.floor}층</div>
                   </span>
                 `
               }

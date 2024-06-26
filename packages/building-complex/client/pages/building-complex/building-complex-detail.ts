@@ -305,7 +305,7 @@ export class BuildingComplexDetail extends ScopedElementsMixin(PageView) {
                 </div>
                 <div status>
                   <div content>
-                    <span><md-icon request slot="icon">radio_button_checked</md-icon>100</span>
+                    <span><md-icon request slot="icon">exclamation</md-icon>100</span>
                     <span><md-icon pass slot="icon">check</md-icon>50</span>
                     <span><md-icon fail slot="icon">close</md-icon>5</span>
                   </div>
