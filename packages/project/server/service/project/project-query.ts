@@ -4,7 +4,6 @@ import { User } from '@things-factory/auth-base'
 import { Project } from './project'
 import { InspectionSummary, ProjectList } from './project-type'
 import { BuildingComplex, InspectionType } from '@dssp/building-complex'
-// import {  } from '@dssp/building-complex/dist-server/service/building-inspection'
 import { Attachment } from '@things-factory/attachment-base'
 
 @Resolver(Project)

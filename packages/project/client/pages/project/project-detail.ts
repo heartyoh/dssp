@@ -255,7 +255,7 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
 
             div[table-container] {
               width: 100%;
-              height: 200px;
+              height: 15rem;
               overflow-y: auto;
               overflow-x: hidden;
               position: relative;
@@ -326,7 +326,6 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
   @state() project: Project = { ...this.defaultProject }
   @state() inspectionSummary: InspectionSummary = {
     request: 0,
-    require: 0,
     pass: 0,
     fail: 0
   }
@@ -490,10 +489,6 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
                 <div bold>${this.inspectionSummary.request}</div>
               </span>
               <span>
-                <div>검측필요</div>
-                <div bold>${this.inspectionSummary.require}</div>
-              </span>
-              <span>
                 <div>합격</div>
                 <div bold pass>${this.inspectionSummary.pass}</div>
               </span>
@@ -597,7 +592,6 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
 
           inspectionSummary(projectId: $projectId) {
             request
-            require
             pass
             fail
           }
