@@ -5,7 +5,7 @@ export default {
   route,
   routes: [
     'building-complex-detail', // 동별 시공검측 상세 정보
-    'building-inspection', // 검측 상세
+    'building-complex-inspection', // 층 검측 상세
   ].map(page => {
     return {
       page,

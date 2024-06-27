@@ -4,7 +4,7 @@ import { css, html } from 'lit'
 import { customElement, state } from 'lit/decorators.js'
 import { ScopedElementsMixin } from '@open-wc/scoped-elements'
 import { client } from '@operato/graphql'
-// import { Project, Building } from '@dssp/project/dist-client'
+// import { Project, Building } from '@dssp/project'
 import gql from 'graphql-tag'
 import '@material/web/button/elevated-button.js'
 import '@material/web/textfield/outlined-text-field.js'
@@ -124,114 +124,114 @@ export class BuildingComplexDetail extends ScopedElementsMixin(PageView) {
             }
           }
         }
-      }
 
-      div[right] {
-        height: auto;
-        overflow-x: hidden;
-        overflow-y: auto;
-        flex-direction: column-reverse;
+        div[right] {
+          height: auto;
+          overflow-x: hidden;
+          overflow-y: auto;
+          flex-direction: column-reverse;
 
-        div[row] {
-          width: 100%;
-          position: relative;
-          margin-top: -9%;
-
-          div[drawing] {
-            padding-right: 10%;
-
-            & > div {
-              display: flex;
-              padding: 8px;
-            }
-
-            [floor-drawing] {
-              width: 100%;
-              aspect-ratio: 7;
-              clip-path: polygon(18% 0%, 82% 0%, 100% 100%, 0% 100%);
-              -webkit-clip-path: polygon(18% 0%, 82% 0%, 100% 100%, 0% 100%);
-              opacity: 0.5;
-            }
-          }
-
-          div[status] {
-            display: flex;
-            position: absolute;
-            right: 0px;
-            bottom: 0px;
-            align-items: center;
-            z-index: 2;
-
-            div[content] {
-              display: flex;
-              background-color: #4e5055;
-              color: #fff;
-              padding: 5px 7px;
-              border-radius: 7px;
-              gap: 10px;
-              font-size: 14px;
-
-              span {
-                display: flex;
-                align-items: center;
-                width: 48px;
-
-                md-icon {
-                  width: 20px;
-                  height: 20px;
-                  margin-right: 4px;
-                  border-radius: 5px;
-                  font-size: 21px;
-                  font-weight: 700;
-                }
-                md-icon[request] {
-                  background-color: #f7f7f7;
-                  color: #4e5055;
-                }
-                md-icon[pass] {
-                  background-color: #4bbb4a;
-                }
-                md-icon[fail] {
-                  background-color: #ff4444;
-                }
-              }
-            }
-            span[name] {
-              color: #4e5055;
-              margin-left: 6px;
-            }
-          }
-
-          &:hover {
-            z-index: 1;
+          div[row] {
+            width: 100%;
+            position: relative;
+            margin-top: -9%;
 
             div[drawing] {
+              padding-right: 10%;
+
               & > div {
                 display: flex;
-                background-color: #ff6a5d;
-                justify-content: center;
-                padding: 10px;
-                clip-path: polygon(
-                  calc(18% + 10px) 5px,
-                  calc(82% - 10px) 5px,
-                  calc(100% - 5px) calc(100% - 5px),
-                  5px calc(100% - 5px)
-                );
-                -webkit-clip-path: polygon(
-                  calc(18% + 10px) 5px,
-                  calc(82% - 10px) 5px,
-                  calc(100% - 5px) calc(100% - 5px),
-                  5px calc(100% - 5px)
-                );
+                padding: 8px;
+              }
 
-                [floor-drawing] {
-                  opacity: 1;
-                  width: calc(100% - 20px);
-                }
+              [floor-drawing] {
+                width: 100%;
+                aspect-ratio: 7;
+                clip-path: polygon(18% 0%, 82% 0%, 100% 100%, 0% 100%);
+                -webkit-clip-path: polygon(18% 0%, 82% 0%, 100% 100%, 0% 100%);
+                opacity: 0.5;
               }
             }
-            span[name] {
-              font-weight: bold;
+
+            div[status] {
+              display: flex;
+              position: absolute;
+              right: 0px;
+              bottom: 0px;
+              align-items: center;
+              z-index: 2;
+
+              div[content] {
+                display: flex;
+                background-color: #4e5055;
+                color: #fff;
+                padding: 5px 7px;
+                border-radius: 7px;
+                gap: 10px;
+                font-size: 14px;
+
+                span {
+                  display: flex;
+                  align-items: center;
+                  width: 48px;
+
+                  md-icon {
+                    width: 20px;
+                    height: 20px;
+                    margin-right: 4px;
+                    border-radius: 5px;
+                    font-size: 21px;
+                    font-weight: 700;
+                  }
+                  md-icon[request] {
+                    background-color: #f7f7f7;
+                    color: #4e5055;
+                  }
+                  md-icon[pass] {
+                    background-color: #4bbb4a;
+                  }
+                  md-icon[fail] {
+                    background-color: #ff4444;
+                  }
+                }
+              }
+              span[name] {
+                color: #4e5055;
+                margin-left: 6px;
+              }
+            }
+
+            &:hover {
+              z-index: 1;
+
+              div[drawing] {
+                & > div {
+                  display: flex;
+                  background-color: #ff6a5d;
+                  justify-content: center;
+                  padding: 10px;
+                  clip-path: polygon(
+                    calc(18% + 10px) 5px,
+                    calc(82% - 10px) 5px,
+                    calc(100% - 5px) calc(100% - 5px),
+                    5px calc(100% - 5px)
+                  );
+                  -webkit-clip-path: polygon(
+                    calc(18% + 10px) 5px,
+                    calc(82% - 10px) 5px,
+                    calc(100% - 5px) calc(100% - 5px),
+                    5px calc(100% - 5px)
+                  );
+
+                  [floor-drawing] {
+                    opacity: 1;
+                    width: calc(100% - 20px);
+                  }
+                }
+              }
+              span[name] {
+                font-weight: bold;
+              }
             }
           }
         }
@@ -251,7 +251,6 @@ export class BuildingComplexDetail extends ScopedElementsMixin(PageView) {
       buildings: []
     }
   }
-  @state() projectId: string = ''
   @state() project: any = { ...this.defaultProject }
   @state() selectedBuilding: any = {}
   @state() building: any = {}
@@ -298,19 +297,23 @@ export class BuildingComplexDetail extends ScopedElementsMixin(PageView) {
           ${this.building?.buildingLevels?.map(buildingLevel => {
             return html`
               <div row>
-                <div drawing>
-                  <div>
-                    <img floor-drawing src=${this.project.mainPhoto?.fullpath || ''} />
+                <a
+                  href=${`/building-complex-inspection/${this.project.id}?buildingId=${this.selectedBuilding.id}&levelId=${buildingLevel.id}`}
+                >
+                  <div drawing>
+                    <div>
+                      <img floor-drawing src=${this.project.mainPhoto?.fullpath || ''} />
+                    </div>
                   </div>
-                </div>
-                <div status>
-                  <div content>
-                    <span><md-icon request slot="icon">exclamation</md-icon>100</span>
-                    <span><md-icon pass slot="icon">check</md-icon>50</span>
-                    <span><md-icon fail slot="icon">close</md-icon>5</span>
+                  <div status>
+                    <div content>
+                      <span><md-icon request slot="icon">exclamation</md-icon>100</span>
+                      <span><md-icon pass slot="icon">check</md-icon>50</span>
+                      <span><md-icon fail slot="icon">close</md-icon>5</span>
+                    </div>
+                    <span name>${buildingLevel.floor}층</span>
                   </div>
-                  <span name>${buildingLevel.floor}층</span>
-                </div>
+                </a>
               </div>
             `
           })}
@@ -323,8 +326,6 @@ export class BuildingComplexDetail extends ScopedElementsMixin(PageView) {
 
   async pageUpdated(changes: any, lifecycle: PageLifecycle) {
     if (this.active) {
-      console.log('lifecycle.resourceId :', lifecycle.resourceId)
-      console.log('lifecycle.params :', lifecycle.params)
       const params: any = lifecycle.params
       await this.initProject(lifecycle.resourceId, params.buildingId)
     }

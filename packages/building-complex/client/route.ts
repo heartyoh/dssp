@@ -4,8 +4,8 @@ export default function route(page: string) {
       import('./pages/building-complex/building-complex-detail')
       return page
 
-    case 'building-inspection':
-      import('./pages/building-inspection/building-inspection')
+    case 'building-complex-inspection':
+      import('./pages/building-complex/building-complex-inspection')
       return page
   }
 }
