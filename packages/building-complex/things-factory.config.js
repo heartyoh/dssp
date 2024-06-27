@@ -4,7 +4,8 @@ import bootstrap from './dist-client/bootstrap'
 export default {
   route,
   routes: [
-    'building-complex-detail', // 동별 시공검측 상세 정보 
+    'building-complex-detail', // 동별 시공검측 상세 정보
+    'building-inspection', // 검측 상세
   ].map(page => {
     return {
       page,

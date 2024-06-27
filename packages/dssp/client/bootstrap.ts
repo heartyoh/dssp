@@ -111,6 +111,17 @@ export default async function bootstrap() {
   })
 
   store.dispatch({
+    type: ADD_MORENDA,
+    morenda: {
+      icon: html` <mwc-icon>settings</mwc-icon> `,
+      name: html` <ox-i18n msgid="인력관리"></ox-i18n> `,
+      action: () => {
+        navigate('human_resource')
+      }
+    }
+  })
+
+  store.dispatch({
     type: ADD_SETTING,
     setting: {
       seq: 21,

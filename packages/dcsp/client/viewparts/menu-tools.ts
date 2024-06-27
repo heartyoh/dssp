@@ -5,7 +5,7 @@ import { connect } from 'pwa-helpers'
 
 import { store } from '@operato/shell'
 
-import { ICONS_PROGRESS, ICONS_FINISHED, ICONS_STATUS, ICONS_OPERATING, ICONS_SETTING } from '../icons/menu-icons'
+import { ICONS_PROGRESS, ICONS_COMPLETED, ICONS_STATUS, ICONS_OPERATING, ICONS_SETTING } from '../icons/menu-icons'
 
 @customElement('menu-tools')
 export class MenuTools extends connect(store)(LitElement) {
@@ -125,8 +125,8 @@ export class MenuTools extends connect(store)(LitElement) {
       },
       {
         name: '완료',
-        path: 'project-finished-list',
-        icons: ICONS_FINISHED
+        path: 'project-completed-list',
+        icons: ICONS_COMPLETED
       },
       {
         name: 'status',
@@ -134,8 +134,8 @@ export class MenuTools extends connect(store)(LitElement) {
         icons: ICONS_STATUS
       },
       {
-        name: 'operating',
-        path: 'dssp-operating',
+        name: '공정표',
+        path: 'project-schedule-list',
         icons: ICONS_OPERATING
       },
       {

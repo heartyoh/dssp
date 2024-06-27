@@ -17,7 +17,7 @@ const ICON_PROGRESS = `
 </svg>
 `
 
-const ICON_FINISHED = `
+const ICON_COMPLETED = `
 <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 40 40">
   <defs>
     <style>
@@ -99,7 +99,7 @@ function icons(template) {
 }
 
 export const ICONS_PROGRESS = icons(ICON_PROGRESS)
-export const ICONS_FINISHED = icons(ICON_FINISHED)
+export const ICONS_COMPLETED = icons(ICON_COMPLETED)
 export const ICONS_STATUS = icons(ICON_STATUS)
 export const ICONS_OPERATING = icons(ICON_OPERATING)
 export const ICONS_SETTING = icons(ICON_SETTING)
