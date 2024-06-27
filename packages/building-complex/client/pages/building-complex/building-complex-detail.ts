@@ -4,7 +4,7 @@ import { css, html } from 'lit'
 import { customElement, state } from 'lit/decorators.js'
 import { ScopedElementsMixin } from '@open-wc/scoped-elements'
 import { client } from '@operato/graphql'
-import { Project, Building } from '@dssp/project'
+// import { Project, Building } from '@dssp/project/dist-client'
 import gql from 'graphql-tag'
 import '@material/web/button/elevated-button.js'
 import '@material/web/textfield/outlined-text-field.js'
@@ -252,9 +252,9 @@ export class BuildingComplexDetail extends ScopedElementsMixin(PageView) {
     }
   }
   @state() projectId: string = ''
-  @state() project: Project = { ...this.defaultProject }
-  @state() selectedBuilding: Building = {}
-  @state() building: Building = {}
+  @state() project: any = { ...this.defaultProject }
+  @state() selectedBuilding: any = {}
+  @state() building: any = {}
 
   render() {
     return html`

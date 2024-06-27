@@ -43,7 +43,6 @@
   },
   "resolutions": {
     "@azure/storage-blob": "12.18.0",
-    "passport": "^0.7.0",
-    "webpack-dev-middleware": "^7.1.0"
+    "passport": "^0.7.0"
   }
 }
