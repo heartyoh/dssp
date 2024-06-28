@@ -1,6 +1,6 @@
 {
   "name": "@dssp/dcsp",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "main": "dist-server/index.js",
   "browser": "dist-client/index.js",
   "things-factory": true,
@@ -41,8 +41,8 @@
     "docker:push": "docker image push hatiolab/dcsp:latest && docker image push hatiolab/dcsp:$npm_package_version"
   },
   "dependencies": {
-    "@dssp/building-complex": "^0.0.0",
-    "@dssp/project": "^0.0.0",
+    "@dssp/building-complex": "^0.0.1",
+    "@dssp/project": "^0.0.1",
     "@operato/scene-auth": "^7.0.0-rc",
     "@operato/scene-chartjs": "^7.0.0-rc",
     "@operato/scene-clock": "^7.0.0-rc",
