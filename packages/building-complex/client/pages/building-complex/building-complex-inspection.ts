@@ -254,11 +254,11 @@ export class BuildingComplexInspection extends ScopedElementsMixin(PageView) {
   @state() project: any = { ...this.defaultProject }
   @state() selectedBuilding: any = {}
   @state() selectedLevel: any = {}
-  @state() buildings: any = {}
+  @state() building: any = {}
   @state() mode: 'view' | 'edit' = 'view'
 
-  @query('#md-filled-select[building]') selectBuilding
-  @query('#md-filled-select[level]') selectLevel
+  @query('md-filled-select[building]') htmlSelectBuilding
+  @query('md-filled-select[level]') htmlSelectLevel
 
   render() {
     return html`
@@ -278,19 +278,21 @@ export class BuildingComplexInspection extends ScopedElementsMixin(PageView) {
         <div left>
           <div select>
             <div>
-              <md-filled-select building>
+              <md-filled-select building @change=${this._onSelectBuilding}>
                 ${this.project?.buildingComplex?.buildings?.map(building => {
                   const selected = building.id === this.selectedBuilding.id
-                  return html` <md-select-option ?selected=${selected} value=${building.id}>
+                  console.log('building')
+                  return html` <md-select-option ?selected=${selected} .value=${building.id}>
                     <div slot="headline">${building.name}</div>
                   </md-select-option>`
                 })}
               </md-filled-select>
 
-              <md-filled-select level>
-                ${this.selectedBuilding?.buildingLevels?.map(level => {
+              <md-filled-select level @change=${this._onSelectBuildingLevel}>
+                ${this.building?.buildingLevels?.map(level => {
+                  console.log('buildingLevels')
                   const selected = level.id === this.selectedLevel.id
-                  return html`<md-select-option ?selected=${selected} value=${level.id}>
+                  return html`<md-select-option ?selected=${selected} .value=${level.id}>
                     <div slot="headline">${level.floor}</div>
                   </md-select-option>`
                 })}
@@ -392,10 +394,6 @@ export class BuildingComplexInspection extends ScopedElementsMixin(PageView) {
               buildings {
                 id
                 name
-                buildingLevels {
-                  id
-                  floor
-                }
               }
             }
           }
@@ -409,24 +407,26 @@ export class BuildingComplexInspection extends ScopedElementsMixin(PageView) {
     if (response.errors) return
 
     this.project = response.data?.project
-    console.log('this.selectedBuilding : ', this.project)
 
     // buildingId 파라미터가 있으면 선택된 빌딩, 없으면 첫번째 빌딩 선택
     this.selectedBuilding = buildingId
       ? this.project?.buildingComplex?.buildings?.filter(v => v.id === buildingId)[0]
       : this.project?.buildingComplex?.buildings?.[0]
 
+    // 선택된 동의 층 리스트 가져오기
+    this.building = await this._getBuilding(this.selectedBuilding.id)
+
     // levelId 파라미터가 있으면 선택된 층, 없으면 첫번째 층 선택
     this.selectedLevel = levelId
-      ? this.selectedBuilding?.buildingLevels?.filter(v => v.id === levelId)[0]
-      : this.selectedBuilding?.buildingLevels?.[0]
+      ? this.building?.buildingLevels?.filter(v => v.id === levelId)[0]
+      : this.building?.buildingLevels?.[0]
 
-    // this.selectBuilding.select(this.selectedBuilding.id)
-    // this.selectLevel.selectIndex(2)
+    // 동, 층이 랜더링 된 후에 select를 위해 이 시점에서 랜더링
+    this.building = await { ...this.building }
 
-    console.log('this.selectedBuilding : ', this.selectedBuilding)
-    console.log('this.selectedLevel : ', this.selectedLevel)
-    // await this._getBuilding(this.selectedBuilding.id)
+    // 기본 값 셋팅 select
+    await this.htmlSelectBuilding.select(this.selectedBuilding.id)
+    await this.htmlSelectLevel.select(this.selectedLevel.id)
   }
 
   async _getBuilding(buildingId: string = '') {
@@ -435,6 +435,7 @@ export class BuildingComplexInspection extends ScopedElementsMixin(PageView) {
         query Building($id: String!) {
           building(id: $id) {
             id
+            name
             buildingLevels {
               id
               floor
@@ -459,12 +460,18 @@ export class BuildingComplexInspection extends ScopedElementsMixin(PageView) {
 
     if (response.errors) return
 
-    // this.buildings = response.data?.buildings
-    console.log('response.data?.buildings :', response.data?.buildings)
+    return response.data?.building || {}
   }
 
-  private _onClickBuilding(building) {
-    this.selectedBuilding = { ...building }
-    this._getBuilding(this.selectedBuilding.id)
+  private async _onSelectBuilding(e) {
+    const buildingId = e.target.value
+    this.building = await this._getBuilding(buildingId)
+    this.selectedBuilding = { ...this.building }
+    this.selectedLevel = { ...this.building?.buildingLevels?.[0] }
+  }
+
+  private _onSelectBuildingLevel(e) {
+    const buildingLevelId = e.target.value
+    this.selectedLevel = { ...(this.building?.buildingLevels?.find(v => v.id == buildingLevelId) || {}) }
   }
 }
