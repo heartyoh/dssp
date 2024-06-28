@@ -298,7 +298,7 @@ export class BuildingComplexDetail extends ScopedElementsMixin(PageView) {
             return html`
               <div row>
                 <a
-                  href=${`/building-complex-inspection/${this.project.id}?buildingId=${this.selectedBuilding.id}&levelId=${buildingLevel.id}`}
+                  href=${`building-complex-inspection/${this.project.id}?buildingId=${this.selectedBuilding.id}&levelId=${buildingLevel.id}`}
                 >
                   <div drawing>
                     <div>

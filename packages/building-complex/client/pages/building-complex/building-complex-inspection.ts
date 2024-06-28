@@ -1,7 +1,7 @@
 import { PageView } from '@operato/shell'
 import { PageLifecycle } from '@operato/shell/dist/src/app/pages/page-view'
 import { css, html } from 'lit'
-import { customElement, state } from 'lit/decorators.js'
+import { customElement, state, query } from 'lit/decorators.js'
 import { ScopedElementsMixin } from '@open-wc/scoped-elements'
 import { client } from '@operato/graphql'
 import gql from 'graphql-tag'
@@ -49,7 +49,7 @@ export class BuildingComplexInspection extends ScopedElementsMixin(PageView) {
         --md-filled-select-text-field-input-text-weight: bold;
         --md-filled-select-text-field-input-text-line-height: 6px;
       }
-      md-filled-select[floor] {
+      md-filled-select[level] {
         min-width: 110px;
         margin-left: 20px;
       }
@@ -257,10 +257,13 @@ export class BuildingComplexInspection extends ScopedElementsMixin(PageView) {
   @state() buildings: any = {}
   @state() mode: 'view' | 'edit' = 'view'
 
+  @query('#md-filled-select[building]') selectBuilding
+  @query('#md-filled-select[level]') selectLevel
+
   render() {
     return html`
       <div header>
-        <h2>${this.project.name} ${this.selectedBuilding.name} ${this.selectedLevel.floor}</h2>
+        <h2>${this.project.name} ${this.selectedBuilding?.name} ${this.selectedLevel?.floor}</h2>
         <div button-container>
           <md-elevated-button href=${`project-update/${this.project.id}`}>
             <md-icon slot="icon">assignment</md-icon>프로젝트 정보 수정
@@ -275,7 +278,7 @@ export class BuildingComplexInspection extends ScopedElementsMixin(PageView) {
         <div left>
           <div select>
             <div>
-              <md-filled-select>
+              <md-filled-select building>
                 ${this.project?.buildingComplex?.buildings?.map(building => {
                   const selected = building.id === this.selectedBuilding.id
                   return html` <md-select-option ?selected=${selected} value=${building.id}>
@@ -284,8 +287,8 @@ export class BuildingComplexInspection extends ScopedElementsMixin(PageView) {
                 })}
               </md-filled-select>
 
-              <md-filled-select floor>
-                ${this.project?.buildingComplex?.buildings?.buildingLevels?.map(level => {
+              <md-filled-select level>
+                ${this.selectedBuilding?.buildingLevels?.map(level => {
                   const selected = level.id === this.selectedLevel.id
                   return html`<md-select-option ?selected=${selected} value=${level.id}>
                     <div slot="headline">${level.floor}</div>
@@ -406,14 +409,24 @@ export class BuildingComplexInspection extends ScopedElementsMixin(PageView) {
     if (response.errors) return
 
     this.project = response.data?.project
-    console.log('init project : ', this.project)
+    console.log('this.selectedBuilding : ', this.project)
 
     // buildingId 파라미터가 있으면 선택된 빌딩, 없으면 첫번째 빌딩 선택
     this.selectedBuilding = buildingId
-      ? this.project?.buildingComplex?.buildings.filter(v => v.id === buildingId)[0]
-      : this.project?.buildingComplex?.buildings[0]
+      ? this.project?.buildingComplex?.buildings?.filter(v => v.id === buildingId)[0]
+      : this.project?.buildingComplex?.buildings?.[0]
 
-    await this._getBuilding(this.selectedBuilding.id)
+    // levelId 파라미터가 있으면 선택된 층, 없으면 첫번째 층 선택
+    this.selectedLevel = levelId
+      ? this.selectedBuilding?.buildingLevels?.filter(v => v.id === levelId)[0]
+      : this.selectedBuilding?.buildingLevels?.[0]
+
+    // this.selectBuilding.select(this.selectedBuilding.id)
+    // this.selectLevel.selectIndex(2)
+
+    console.log('this.selectedBuilding : ', this.selectedBuilding)
+    console.log('this.selectedLevel : ', this.selectedLevel)
+    // await this._getBuilding(this.selectedBuilding.id)
   }
 
   async _getBuilding(buildingId: string = '') {
