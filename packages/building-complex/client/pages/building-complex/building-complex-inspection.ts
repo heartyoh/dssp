@@ -263,7 +263,7 @@ export class BuildingComplexInspection extends ScopedElementsMixin(PageView) {
   render() {
     return html`
       <div header>
-        <h2>${this.project.name} ${this.selectedBuilding?.name} ${this.selectedLevel?.floor}</h2>
+        <h2>${this.project.name} ${this.selectedBuilding?.name} ${this.selectedLevel?.floor}층</h2>
         <div button-container>
           <md-elevated-button href=${`project-update/${this.project.id}`}>
             <md-icon slot="icon">assignment</md-icon>프로젝트 정보 수정
