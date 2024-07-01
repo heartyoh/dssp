@@ -342,24 +342,24 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
           <div row>
             <span>착공일정 ~ 준공일정</span>
             <span
-              ><md-outlined-text-field
+              ><input
                 type="date"
                 name="startDate"
                 project
                 .value=${this.project.startDate || ''}
                 @input=${this._onInputChange}
                 max="9999-12-31"
-              ></md-outlined-text-field>
+              />
               ~
-              <md-outlined-text-field
+              <input
                 type="date"
                 name="endDate"
                 project
                 .value=${this.project.endDate || ''}
                 @input=${this._onInputChange}
                 max="9999-12-31"
-              ></md-outlined-text-field
-            ></span>
+              />
+            </span>
           </div>
           <div row>
             <span>발주처</span>

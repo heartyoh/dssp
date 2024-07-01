@@ -75,7 +75,7 @@ export class ProjectSettingList extends ScopedElementsMixin(PageView) {
         div[project-container] {
           display: flex;
           flex-direction: row;
-          height: 140px;
+          min-height: 140px;
           margin: 17px 23px;
           background-color: #ffffff;
           border: 1px solid #cccccc80;
@@ -106,6 +106,7 @@ export class ProjectSettingList extends ScopedElementsMixin(PageView) {
           span[project-state] {
             flex: 0.55;
             padding: 10px 20px;
+            min-width: 350px;
 
             & > div {
               margin-bottom: 13px;
@@ -137,8 +138,9 @@ export class ProjectSettingList extends ScopedElementsMixin(PageView) {
               }
             }
 
-            div[filled] span {
+            div[filled] div {
               margin-right: 18px;
+              display: inline-block;
             }
 
             strong[filled] {
@@ -219,9 +221,9 @@ export class ProjectSettingList extends ScopedElementsMixin(PageView) {
                   <span>${project.totalProgress || 0}%</span>
                 </div>
                 <div filled>
-                  <span>프로젝트 정보 ${projectFilledState}</span>
-                  <span>시공감리 자료 ${supervisoryFilledState}</span>
-                  <span>공정표 ${taskFilledState}</span>
+                  <div>프로젝트 정보 ${projectFilledState}</div>
+                  <div>시공감리 자료 ${supervisoryFilledState}</div>
+                  <div>공정표 ${taskFilledState}</div>
                 </div>
                 <div>
                   <md-outlined-button href="project-update/${project.id}">프로젝트 정보 수정</md-outlined-button>

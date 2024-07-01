@@ -13,8 +13,8 @@ import '@material/web/textfield/outlined-text-field.js'
 import '@material/web/button/filled-button.js'
 import '@material/web/button/outlined-button.js'
 
-@customElement('project-plan-management')
-export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
+@customElement('project-schedule')
+export class ProjectSchedule extends ScopedElementsMixin(PageView) {
   static styles = [
     css`
       :host {
@@ -30,19 +30,8 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
         --grid-record-emphasized-color: yellow;
       }
 
-      md-outlined-text-field {
-        width: 100%;
-
-        --md-outlined-text-field-container-shape: 5px;
-        --md-sys-color-primary: #586878;
-        --md-outlined-text-field-input-text-size: 14px;
-        --md-outlined-field-bottom-space: 4px;
-        --md-outlined-field-top-space: 4px;
-      }
-
-      ox-input-image {
-        width: 100px;
-        height: 100px;
+      *[bold] {
+        font-weight: bold;
       }
 
       div[header] {
@@ -75,118 +64,67 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
             --md-elevated-button-hover-icon-color: #fff;
             --md-elevated-button-pressed-icon-color: #fff;
             --md-elevated-button-focus-icon-color: #fff;
-
-            &[green] {
-              --md-elevated-button-container-color: #42b382;
-            }
           }
         }
       }
 
       div[body] {
-        display: grid;
-        grid-template-rows: 240px 400px 60px;
+        display: flex;
+        flex-direction: column;
         margin: 0px 25px 25px 25px;
-        gap: 8px;
+        gap: 15px;
+
+        h3 {
+          color: #2e79be;
+          font-size: 18px;
+          margin: 0px;
+        }
 
         & > div {
-          display: grid;
-          grid-template-rows: 25px auto;
-          padding: 15px;
-          background-color: #ffffff;
-          border: 1px solid #cccccc80;
+          display: flex;
           border-radius: 5px;
-          gap: 14px;
+        }
 
-          h3 {
-            color: #2e79be;
-            font-size: 18px;
-            margin: 0px;
+        div[chart-container] {
+          flex: 1;
+          flex-direction: column;
+          border: 1px solid #cccccc80;
+
+          div[chart] {
+            flex: 0.7;
+            background: #03a9f44d;
+          }
+
+          div[table] {
+            flex: 0.3;
+            background: #8fd170b8;
           }
         }
 
-        & > div[building-container] > div {
-          display: flex;
-          gap: 16px;
-          overflow-x: auto;
-          overflow-y: hidden;
+        div[select-container] {
+          gap: 15px;
 
-          ox-input-file {
-            height: 120px;
-          }
-          span[building] {
-            width: 125px;
-            text-align: center;
-
-            div {
-              color: #586878;
-              margin-top: 7px;
-            }
-          }
-        }
-
-        & > div[floor-container] {
-          div[floor-title] {
-            display: flex;
-            justify-content: space-between;
-            height: fit-content;
-
-            span[building-button] {
-              display: flex;
-              max-width: 500px;
-              gap: 10px;
-              overflow-x: auto;
-              overflow-y: hidden;
-
-              md-filled-button {
-                --md-filled-button-container-color: #0595e5;
-                --md-filled-button-container-height: 30px;
-                --md-filled-button-trailing-space: 15px;
-                --md-filled-button-leading-space: 15px;
-              }
-              md-outlined-button {
-                --md-outlined-button-container-height: 30px;
-                --md-outlined-button-trailing-space: 15px;
-                --md-outlined-button-leading-space: 15px;
-              }
-            }
-          }
-
-          div[floor-plan] {
-            overflow-y: auto;
-            margin-top: 10px;
-
-            & > span {
-              width: 150px;
-              display: inline-block;
-              text-align: center;
-              margin: 0px 10px 15px 0px;
-
-              & > div {
-                margin-top: 7px;
-
-                &[no-data] {
-                  color: #f16154;
-                  font-weight: bold;
-                }
-              }
-            }
-          }
-        }
-
-        & > div[plan-scale-container] {
-          display: flex;
-
-          & > div {
+          div[date] {
             display: flex;
             align-items: center;
+            justify-content: space-between;
+            background-color: #2ea4df1a;
+            border: 1px solid #2ea4df33;
+            border-radius: 5px;
             gap: 12px;
-            margin-left: 10px;
+            padding: 12px 36px 12px 15px;
 
-            md-outlined-text-field {
-              width: 100px;
-              --md-outlined-text-container-height: 30px;
+            span[name] {
+              font-size: 16px;
+              font-weight: bold;
             }
+          }
+
+          div[button] {
+            flex: 1;
+            border-radius: 5px;
+            border: 1px solid #cccccc80;
+            background-color: #fff;
           }
         }
       }
@@ -195,7 +133,7 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
 
   get context() {
     return {
-      title: '도면 관리'
+      title: '공정표'
     }
   }
 
@@ -219,13 +157,13 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
   render() {
     return html`
       <div header>
-        <h2>도면 관리</h2>
+        <h2>${this.project.name}</h2>
         <div button-container>
-          <md-elevated-button green @click=${this._saveProject}>
-            <md-icon slot="icon">save</md-icon>정보 저장
-          </md-elevated-button>
           <md-elevated-button href=${`project-update/${this.project.id}`}>
             <md-icon slot="icon">assignment</md-icon>프로젝트 정보 수정
+          </md-elevated-button>
+          <md-elevated-button href=${`project-plan-management/${this.project.id}`}>
+            <md-icon slot="icon">description</md-icon>도면 관리
           </md-elevated-button>
           <md-elevated-button href=${`project-task-update/${this.project.id}`}>
             <md-icon slot="icon">event_note</md-icon>공정표 관리
@@ -234,93 +172,24 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
       </div>
 
       <div body>
-        <div building-container>
-          <h3>동별 도면(BIM)</h3>
-          <div>
-            ${this.project.buildingComplex?.buildings?.map((building, idx) => {
-              return html`
-                <span building>
-                  <ox-input-file
-                    name="building-drawing"
-                    .value=${building?.drawing || undefined}
-                    label=" "
-                    description="동 도면 업로드"
-                    idx=${idx}
-                    @change=${this.onCreateAttachment.bind(this)}
-                  ></ox-input-file>
-                  <div>${building.name}</div>
-                </span>
-              `
-            })}
+        <div chart-container>
+          <div chart>
+            <table></table>
+          </div>
+          <div table>
+            <table></table>
           </div>
         </div>
-
-        <div floor-container>
-          <div floor-title>
-            <h3>${this.project.buildingComplex?.buildings?.[this.selectedBuildingIdx]?.name} 층별 도면(PDF)</h3>
-            <span building-button>
-              ${this.project.buildingComplex.buildings?.map((building, idx) => {
-                return this.project.buildingComplex?.buildings?.[this.selectedBuildingIdx]?.id === building.id
-                  ? html`
-                      <md-filled-button @click=${() => this._onClickBuildingChange(idx)}>
-                        ${building.name}
-                      </md-filled-button>
-                    `
-                  : html`
-                      <md-outlined-button @click=${() => this._onClickBuildingChange(idx)}>
-                        ${building.name}
-                      </md-outlined-button>
-                    `
-              })}
-            </span>
+        <div select-container>
+          <div date>
+            <span name>기간선택</span>
+            <div>
+              <input type="date" name="startDate" project .value=${this.project.startDate || ''} max="9999-12-31" />
+              ~
+              <input type="date" name="startDate" project .value=${this.project.endDate || ''} max="9999-12-31" />
+            </div>
           </div>
-
-          <div floor-plan>
-            ${this.project.buildingComplex?.buildings?.[this.selectedBuildingIdx]?.buildingLevels?.map(
-              (buildingLevel, idx) => {
-                return html`
-                  <span plan>
-                    <ox-input-file
-                      name="building-plan"
-                      .value=${buildingLevel?.mainDrawing || undefined}
-                      label=" "
-                      description="층 도면 업로드"
-                      idx=${idx}
-                      @change=${this.onCreateAttachment.bind(this)}
-                    ></ox-input-file>
-                    <div ?no-data=${!buildingLevel?.mainDrawing}>${buildingLevel.floor}층</div>
-                  </span>
-                `
-              }
-            )}
-          </div>
-        </div>
-
-        <div plan-scale-container>
-          <h3>도면 축척 설정</h3>
-          <div>
-            <span>가로</span>
-            <md-outlined-text-field
-              type="text"
-              name="planXScale"
-              numeric
-              .value=${this.project.buildingComplex.planXScale?.toString() || ''}
-              @input=${this._onInputChange}
-              suffix-text="mm"
-            >
-            </md-outlined-text-field>
-            <span>X</span>
-            <span>세로</span>
-            <md-outlined-text-field
-              type="text"
-              name="planYScale"
-              numeric
-              .value=${this.project.buildingComplex.planYScale?.toString() || ''}
-              @input=${this._onInputChange}
-              suffix-text="mm"
-            >
-            </md-outlined-text-field>
-          </div>
+          <div button></div>
         </div>
       </div>
     `
@@ -375,63 +244,5 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
     this.selectedBuildingIdx = 0
 
     console.log('init project : ', this.project)
-  }
-
-  private async _saveProject() {
-    // 첨부 파일 필드 제거 (첨부 파일은 {filename}Upload 로 전송)
-    for (let buildingKey in this.project.buildingComplex.buildings) {
-      const building = this.project.buildingComplex.buildings[buildingKey]
-      delete this.project.buildingComplex.buildings[buildingKey].drawing
-
-      for (let levelKey in building.buildingLevels) {
-        delete this.project.buildingComplex.buildings[buildingKey].buildingLevels[levelKey].mainDrawing
-      }
-    }
-
-    console.log('this.project :', this.project)
-
-    const response = await client.mutate({
-      mutation: gql`
-        mutation UpdateProjectPlan($project: ProjectPatch!) {
-          updateProjectPlan(project: $project) {
-            id
-          }
-        }
-      `,
-      variables: {
-        project: this.project
-      },
-      context: {
-        hasUpload: true
-      }
-    })
-
-    if (!response.errors) {
-      notify({ message: '저장에 성공하였습니다.' })
-    }
-  }
-
-  // Input 요소의 값이 변경될 때 호출되는 콜백 함수
-  private _onInputChange(event: InputEvent, idx: number) {
-    const target = event.target as HTMLInputElement
-    let inputVal: any = target.value
-    this.project.buildingComplex![target.name] = Number(inputVal.replace(/\D/g, ''))
-  }
-
-  // 이미지 업로드
-  async onCreateAttachment(e: CustomEvent) {
-    const target = e.target as HTMLInputElement
-    const file = e.detail[0] || null
-    const idx = Number(target.getAttribute('idx')) || 0
-
-    if (target.name === 'building-drawing') {
-      this.project.buildingComplex!.buildings![idx].drawingUpload = file
-    } else {
-      this.project.buildingComplex!.buildings![this.selectedBuildingIdx].buildingLevels![idx].mainDrawingUpload = file
-    }
-  }
-
-  _onClickBuildingChange(idx: number) {
-    this.selectedBuildingIdx = idx
   }
 }
