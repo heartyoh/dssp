@@ -4,6 +4,7 @@ import { createAttachment, deleteAttachmentsByRef, ATTACHMENT_PATH } from '@thin
 import { Project } from './project'
 import { NewProject, ProjectPatch } from './project-type'
 import { BuildingComplex, Building, BuildingLevel } from '@dssp/building-complex'
+import { pdfToImage } from '@things-factory/board-service/dist-server/controllers/headless-pdf-to-image'
 
 const puppeteer = require('puppeteer')
 const { Readable } = require('stream')
@@ -168,95 +169,4 @@ export async function createAttachmentAfterDelete(context: ResolverContext, file
   }
 
   return result
-}
-
-async function pdfToImage({ pdfPath, fileName, extension = 'png' }) {
-  const browser = await puppeteer.launch({
-    headless: true,
-    args: ['--disable-web-security', '--disable-features=IsolateOrigins', '--disable-site-isolation-trials']
-  })
-
-  try {
-    const port = process.env.PORT ? `:${process.env.PORT}` : ''
-    const url = `http://localhost${port}${pdfPath}`
-
-    const page = await browser.newPage()
-    const html = await ejs.render(previewCreatorPage(), { data: { url } })
-
-    // 페이지 로딩시 까지 기다리고 스크린샷
-    await page.setContent(html, { waitUntil: 'networkidle0' })
-    await page.waitForNetworkIdle()
-    await page.$('#page')
-    const screenshot = await page.screenshot({
-      type: extension,
-      omitBackground: true
-    })
-
-    const stream = new Readable()
-    stream.push(screenshot)
-    stream.push(null)
-
-    await browser.close()
-
-    return {
-      filename: `${fileName}.${extension}`,
-      mimetype: `image/${extension}`,
-      encoding: '7bit',
-      createReadStream: () => stream
-    }
-  } catch (e) {
-    await browser.close()
-    console.log('Error creating thumbnail', e)
-    throw new Error('Error creating thumbnail')
-  }
-}
-
-function previewCreatorPage() {
-  return `<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <style>
-      body {
-        width: 100vw;
-        height: 100vh;
-        margin: 0;
-      }
-      #page {
-        display: flex;
-        width: 100%;
-        height: 100%;
-      }
-    </style>
-
-    <title>Document</title>
-  </head>
-
-  <body>
-    <canvas id="page"></canvas>
-    <script src="https://unpkg.com/pdfjs-dist@2.0.489/build/pdf.min.js"></script>
-    <script>
-      ;(async () => {
-        const pdf = await pdfjsLib.getDocument('<%= data.url %>')
-        const page = await pdf.getPage(1)
-        const viewport = page.getViewport(2)
-        const canvas = document.getElementById('page')
-        const context = canvas.getContext('2d')
-
-        canvas.height = viewport.height
-        canvas.width = viewport.width
-
-        const renderContext = {
-          canvasContext: context,
-          viewport: viewport
-        }
-
-        page.render(renderContext)
-      })()
-    </script>
-  </body>
-</html>
-  `
 }

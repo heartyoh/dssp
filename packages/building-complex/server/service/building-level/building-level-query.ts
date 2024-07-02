@@ -22,6 +22,18 @@ export class BuildingLevelQuery {
     return attachment
   }
 
+  @FieldResolver(type => String)
+  async mainDrawingThumbnail(@Root() buildingLevel: BuildingLevel): Promise<string | undefined> {
+    const attachment: Attachment = await getRepository(Attachment).findOne({
+      where: {
+        refType: BuildingLevel.name + '_thumbnail',
+        refBy: buildingLevel.id
+      }
+    })
+
+    return attachment?.fullpath
+  }
+
   @FieldResolver(type => [BuildingInspection])
   async buildingInspections(@Root() buildingLevel: BuildingLevel): Promise<BuildingInspection[]> {
     return await getRepository(BuildingInspection).findBy({ buildingLevel: { id: buildingLevel.id } })

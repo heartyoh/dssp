@@ -307,7 +307,7 @@ export class BuildingComplexInspection extends ScopedElementsMixin(PageView) {
           </div>
 
           <div drawing>
-            <img src="" />
+            <img src=${this.selectedLevel?.mainDrawingThumbnail || ''} />
           </div>
         </div>
 
@@ -449,6 +449,7 @@ export class BuildingComplexInspection extends ScopedElementsMixin(PageView) {
                 name
                 fullpath
               }
+              mainDrawingThumbnail
             }
           }
         }

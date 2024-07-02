@@ -302,7 +302,7 @@ export class BuildingComplexDetail extends ScopedElementsMixin(PageView) {
                 >
                   <div drawing>
                     <div>
-                      <img floor-drawing src=${this.project.mainPhoto?.fullpath || ''} />
+                      <img floor-drawing src=${buildingLevel?.mainDrawingThumbnail || ''} />
                     </div>
                   </div>
                   <div status>
@@ -394,6 +394,7 @@ export class BuildingComplexDetail extends ScopedElementsMixin(PageView) {
                 name
                 fullpath
               }
+              mainDrawingThumbnail
             }
           }
         }

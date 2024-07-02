@@ -35,6 +35,10 @@ export class BuildingLevel {
   @Field(type => Attachment, { nullable: true })
   mainDrawing: Attachment
 
+  // 층 메인 도면 썸내일
+  @Field({ nullable: true })
+  mainDrawingThumbnail: string
+
   // 층 구조도 링크
   @Field(type => Attachment, { nullable: true })
   structuralDrawing: Attachment

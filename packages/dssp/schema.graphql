@@ -558,6 +558,7 @@ type BuildingLevel {
   floorInspectionSummary: FloorInspectionSummary!
   id: ID!
   mainDrawing: Attachment
+  mainDrawingThumbnail: String
   rebarDistributionDrawing: Attachment
   structuralDrawing: Attachment
 }

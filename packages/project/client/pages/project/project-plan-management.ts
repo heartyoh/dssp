@@ -360,6 +360,7 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
                     id
                     name
                   }
+                  mainDrawingThumbnail
                 }
               }
             }
