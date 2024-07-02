@@ -1,3 +1,4 @@
+import '@material/web/icon/icon.js'
 import '@operato/data-grist'
 
 import { CommonButtonStyles, CommonGristStyles, ScrollbarStyles } from '@operato/styles'
@@ -105,7 +106,7 @@ export class {{pascalCase name}}ListPage extends connect(store)(localize(i18next
 
           <div id="sorters">
             Sort
-            <mwc-icon
+            <md-icon
               @click=${e => {
                 const target = e.currentTarget
                 this.sortersControl.open({
@@ -113,7 +114,7 @@ export class {{pascalCase name}}ListPage extends connect(store)(localize(i18next
                   top: target.offsetTop + target.offsetHeight
                 })
               }}
-              >expand_more</mwc-icon
+              >expand_more</md-icon
             >
             <ox-popup id="sorter-control">
               <ox-sorters-control> </ox-sorters-control>
@@ -121,9 +122,9 @@ export class {{pascalCase name}}ListPage extends connect(store)(localize(i18next
           </div>
 
           <div id="modes">
-            <mwc-icon @click=${() => (this.mode = 'GRID')} ?active=${mode == 'GRID'}>grid_on</mwc-icon>
-            <mwc-icon @click=${() => (this.mode = 'LIST')} ?active=${mode == 'LIST'}>format_list_bulleted</mwc-icon>
-            <mwc-icon @click=${() => (this.mode = 'CARD')} ?active=${mode == 'CARD'}>apps</mwc-icon>
+            <md-icon @click=${() => (this.mode = 'GRID')} ?active=${mode == 'GRID'}>grid_on</md-icon>
+            <md-icon @click=${() => (this.mode = 'LIST')} ?active=${mode == 'LIST'}>format_list_bulleted</md-icon>
+            <md-icon @click=${() => (this.mode = 'CARD')} ?active=${mode == 'CARD'}>apps</md-icon>
           </div>
         </div>
       </ox-grist>
