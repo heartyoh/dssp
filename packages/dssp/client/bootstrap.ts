@@ -1,3 +1,6 @@
+import '@things-factory/notification/dist-client' /* for notification-setting-let */
+import '@things-factory/setting-ui/dist-client' /* for theme-mode-setting-let */
+
 import '@material/web/icon/icon.js'
 import '@operato/i18n/ox-i18n.js'
 import '@things-factory/notification'
@@ -216,4 +219,20 @@ export default async function bootstrap() {
       }
     })
   }
+
+  store.dispatch({
+    type: ADD_SETTING,
+    setting: {
+      seq: 10,
+      template: html` <theme-mode-setting-let></theme-mode-setting-let> `
+    }
+  })
+
+  store.dispatch({
+    type: ADD_SETTING,
+    setting: {
+      seq: 20,
+      template: html` <notification-setting-let></notification-setting-let> `
+    }
+  })
 }

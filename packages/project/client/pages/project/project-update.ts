@@ -42,6 +42,7 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
       md-outlined-text-field[type='textarea'] {
         width: 100%;
         height: 130px;
+        resize: none;
       }
 
       ox-input-image {
