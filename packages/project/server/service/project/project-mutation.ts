@@ -53,20 +53,11 @@ export class ProjectMutation {
     // 2. 단지 정보 수정
     await buildingComplexRepo.save({ ...buildingComplex, updater: user })
 
-    // 2-1. 프로젝트 메인 이미지 첨부파일 나머지 삭제 후 저장 (null로 오면 삭제만)
-    if (project.mainPhotoUpload !== undefined) {
-      await createAttachmentAfterDelete(context, project.mainPhotoUpload, project.id, Project.name)
-    }
+    // 2-1. 프로젝트 메인 이미지 첨부파일 나머지 삭제 후 저장
+    await createAttachmentAfterDelete(context, project?.mainPhotoUpload, project.id, Project.name)
 
-    // 2-2. 단지 BIM 이미지 첨부파일 나머지 삭제 후 저장 (null로 오면 삭제만)
-    if (buildingComplex.drawingUpload !== undefined) {
-      await createAttachmentAfterDelete(
-        context,
-        buildingComplex.drawingUpload,
-        buildingComplex.id,
-        BuildingComplex.name
-      )
-    }
+    // 2-2. 단지 BIM 이미지 첨부파일 나머지 삭제 후 저장
+    await createAttachmentAfterDelete(context, buildingComplex?.drawingUpload, buildingComplex.id, BuildingComplex.name)
 
     // 3. 동의 층 정보가 바뀌었으면 층 초기화 후 다시 생성
     const originBuilding = await buildingRepo.findBy({ buildingComplex: { id: buildingComplex.id } }) // 이전 동 정보 가져오기
@@ -124,32 +115,27 @@ export class ProjectMutation {
       for (let buildingLevelKey in building.buildingLevels) {
         const buildingLevel = building.buildingLevels[buildingLevelKey]
 
-        // 3. 층별 도면 이미지 저장 (null로 오면 삭제만)
-        if (buildingLevel?.mainDrawingUpload !== undefined) {
-          // 메인 도면 업로드있을 경우 삭제후 재 생성
-          const mainDrawingAttatchment = await createAttachmentAfterDelete(
-            context,
-            buildingLevel.mainDrawingUpload,
-            buildingLevel.id,
-            BuildingLevel.name
-          )
+        // 3. 층별 도면 이미지 저장
+        const mainDrawingAttatchment = await createAttachmentAfterDelete(
+          context,
+          buildingLevel?.mainDrawingUpload,
+          buildingLevel.id,
+          BuildingLevel.name
+        )
 
-          // PDF 파일대로 썸네일 생성
-          if (buildingLevel.mainDrawingUpload) {
-            const mainDrawingUpload = await buildingLevel.mainDrawingUpload
-            const pdfPath = `/${ATTACHMENT_PATH}/${mainDrawingAttatchment.path}`
-            const filename = mainDrawingUpload.filename.replace('.pdf', '')
-            const pngFile = await pdfToImage(pdfPath, filename)
+        // 첨부된 PDF가 있으면 PDF 파일대로 썸네일 생성
+        if (mainDrawingAttatchment) {
+          const mainDrawingUpload = await buildingLevel.mainDrawingUpload
+          const pdfPath = `/${ATTACHMENT_PATH}/${mainDrawingAttatchment.path}`
+          const fileName = mainDrawingUpload.filename.replace('.pdf', '')
+          const pngFile = await pdfToImage({ pdfPath, fileName })
 
-            await createAttachmentAfterDelete(context, pngFile, buildingLevel.id, BuildingLevel.name + '_thumbnail')
-          }
+          await createAttachmentAfterDelete(context, pngFile, buildingLevel.id, BuildingLevel.name + '_thumbnail')
         }
       }
 
-      // 4. 동별 도면 이미지 저장 (null로 오면 삭제만)
-      if (building?.drawingUpload !== undefined) {
-        await createAttachmentAfterDelete(context, building.drawingUpload, building.id, Building.name)
-      }
+      // 4. 동별 도면 이미지 저장
+      await createAttachmentAfterDelete(context, building?.drawingUpload, building.id, Building.name)
     }
 
     return projectResult
@@ -167,7 +153,24 @@ export class ProjectMutation {
   }
 }
 
-async function pdfToImage(pdfPath, pdfName) {
+export async function createAttachmentAfterDelete(context: ResolverContext, file: any, refBy: any, refType: any) {
+  let result = null
+
+  // undefined = 기존 파일 그대로
+  if (file === undefined) return result
+
+  // 기존 첨부 파일이 있으면 삭제
+  await deleteAttachmentsByRef(null, { refBys: [refBy], refType }, context)
+
+  // 파일이 있으면 생성 (null로 들어올 경우 delete까지만)
+  if (file) {
+    result = await createAttachment(null, { attachment: { file, refType, refBy } }, context)
+  }
+
+  return result
+}
+
+async function pdfToImage({ pdfPath, fileName, extension = 'png' }) {
   const browser = await puppeteer.launch({
     headless: true,
     args: ['--disable-web-security', '--disable-features=IsolateOrigins', '--disable-site-isolation-trials']
@@ -180,13 +183,12 @@ async function pdfToImage(pdfPath, pdfName) {
     const page = await browser.newPage()
     const html = await ejs.render(previewCreatorPage(), { data: { url } })
 
+    // 페이지 로딩시 까지 기다리고 스크린샷
     await page.setContent(html, { waitUntil: 'networkidle0' })
     await page.waitForNetworkIdle()
-
-    // 페이지 로딩시 까지 기다리고 스크린샷
-    const pdfPage = await page.$('#page')
+    await page.$('#page')
     const screenshot = await page.screenshot({
-      type: 'png',
+      type: extension,
       omitBackground: true
     })
 
@@ -197,8 +199,8 @@ async function pdfToImage(pdfPath, pdfName) {
     await browser.close()
 
     return {
-      filename: `${pdfName}.png`,
-      mimetype: 'image/png',
+      filename: `${fileName}.${extension}`,
+      mimetype: `image/${extension}`,
       encoding: '7bit',
       createReadStream: () => stream
     }
@@ -239,9 +241,7 @@ function previewCreatorPage() {
       ;(async () => {
         const pdf = await pdfjsLib.getDocument('<%= data.url %>')
         const page = await pdf.getPage(1)
-
-        const viewport = page.getViewport(1)
-
+        const viewport = page.getViewport(2)
         const canvas = document.getElementById('page')
         const context = canvas.getContext('2d')
 
@@ -259,18 +259,4 @@ function previewCreatorPage() {
   </body>
 </html>
   `
-}
-
-export async function createAttachmentAfterDelete(context: ResolverContext, file: any, refBy: any, refType: any) {
-  let result = null
-
-  // 기존 첨부 파일이 있으면 삭제
-  await deleteAttachmentsByRef(null, { refBys: [refBy], refType }, context)
-
-  // 파일이 있으면 생성 (null로 들어올 경우 delete까지만)
-  if (file) {
-    result = await createAttachment(null, { attachment: { file, refType, refBy } }, context)
-  }
-
-  return result
 }

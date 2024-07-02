@@ -1938,7 +1938,7 @@ type Mutation {
   """To delete multiple ApprovalLines"""
   deleteApprovalLines(ids: [String!]!): Boolean!
   deleteAttachment(id: String!): Boolean!
-  deleteAttachmentsByRef(refBys: [String!]!): Boolean!
+  deleteAttachmentsByRef(refBys: [String!]!, refType: String): Boolean!
 
   """To delete AttributeSet"""
   deleteAttributeSet(id: String!): Boolean!

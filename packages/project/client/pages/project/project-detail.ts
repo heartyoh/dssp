@@ -4,7 +4,6 @@ import { css, html } from 'lit'
 import { customElement, state } from 'lit/decorators.js'
 import { ScopedElementsMixin } from '@open-wc/scoped-elements'
 import { client } from '@operato/graphql'
-import { notify } from '@operato/layout'
 
 import gql from 'graphql-tag'
 import { Project } from './project-list'
@@ -13,6 +12,7 @@ import '@material/web/textfield/outlined-text-field.js'
 import '@material/web/button/outlined-button.js'
 import './ox-progress-circle'
 import _getWeather from '../lib/waether'
+// import '@operato/chart/ox-progress-circle'
 
 export interface InspectionSummary {
   request: number

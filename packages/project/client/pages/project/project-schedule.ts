@@ -186,7 +186,7 @@ export class ProjectSchedule extends ScopedElementsMixin(PageView) {
             <div>
               <input type="date" name="startDate" project .value=${this.project.startDate || ''} max="9999-12-31" />
               ~
-              <input type="date" name="startDate" project .value=${this.project.endDate || ''} max="9999-12-31" />
+              <input type="date" name="endDate" project .value=${this.project.endDate || ''} max="9999-12-31" />
             </div>
           </div>
           <div button></div>
