@@ -114,14 +114,6 @@ export default async function bootstrap() {
     }
   })
 
-  store.dispatch({
-    type: ADD_SETTING,
-    setting: {
-      seq: 21,
-      template: html` <lite-menu-setting-let></lite-menu-setting-let> `
-    }
-  })
-
   /* set auth management menus into more-panel */
   setAuthManagementMenus()
 
