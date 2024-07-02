@@ -1,3 +1,7 @@
+import '@material/web/icon/icon.js'
+import '@material/web/button/elevated-button.js'
+import '@material/web/textfield/outlined-text-field.js'
+
 import { PageView } from '@operato/shell'
 import { PageLifecycle } from '@operato/shell/dist/src/app/pages/page-view'
 import { css, html } from 'lit'
@@ -8,8 +12,6 @@ import { notify } from '@operato/layout'
 
 import gql from 'graphql-tag'
 import { Project } from './project-list'
-import '@material/web/button/elevated-button.js'
-import '@material/web/textfield/outlined-text-field.js'
 
 @customElement('project-update')
 export class ProjectUpdate extends ScopedElementsMixin(PageView) {

@@ -1,3 +1,4 @@
+import '@material/web/icon/icon.js'
 import '@things-factory/component-ui'
 import '@things-factory/auth-ui/dist-client/components/ownership-transfer-popup'
 import '@things-factory/auth-ui/dist-client/components/user-role-editor'
@@ -98,10 +99,10 @@ class SVUserManagement extends PageView {
           return html`
             ${!user.activated
               ? html`
-                  <mwc-icon>do_disturb</mwc-icon>
+                  <md-icon>do_disturb</md-icon>
                   ${user.name}
                 `
-              : html` ${user.owner ? html` <mwc-icon>supervisor_account</mwc-icon> ` : ''} ${user.name} `}
+              : html` ${user.owner ? html` <md-icon>supervisor_account</md-icon> ` : ''} ${user.name} `}
           `
         }}
         .contentRenderer=${user =>

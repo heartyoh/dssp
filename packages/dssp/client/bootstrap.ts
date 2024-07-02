@@ -1,3 +1,4 @@
+import '@material/web/icon/icon.js'
 import '@operato/i18n/ox-i18n.js'
 import '@things-factory/notification'
 import './viewparts/user-circle'
@@ -102,7 +103,7 @@ export default async function bootstrap() {
   store.dispatch({
     type: ADD_MORENDA,
     morenda: {
-      icon: html` <mwc-icon>settings</mwc-icon> `,
+      icon: html` <md-icon>settings</md-icon> `,
       name: html` <ox-i18n msgid="label.setting"></ox-i18n> `,
       action: () => {
         navigate('setting')
@@ -113,7 +114,7 @@ export default async function bootstrap() {
   store.dispatch({
     type: ADD_MORENDA,
     morenda: {
-      icon: html` <mwc-icon>settings</mwc-icon> `,
+      icon: html` <md-icon>settings</md-icon> `,
       name: html` <ox-i18n msgid="인력관리"></ox-i18n> `,
       action: () => {
         navigate('human_resource')
@@ -143,7 +144,7 @@ export default async function bootstrap() {
     store.dispatch({
       type: ADD_MORENDA,
       morenda: {
-        icon: html` <mwc-icon>vpn_key</mwc-icon> `,
+        icon: html` <md-icon>vpn_key</md-icon> `,
         name: html` <ox-i18n msgid="text.oauth2-clients"></ox-i18n> `,
         action: () => {
           navigate('oauth2-clients')
@@ -163,7 +164,7 @@ export default async function bootstrap() {
     store.dispatch({
       type: ADD_MORENDA,
       morenda: {
-        icon: html` <mwc-icon>font_download</mwc-icon> `,
+        icon: html` <md-icon>font_download</md-icon> `,
         name: html` <ox-i18n msgid="menu.fonts"></ox-i18n> `,
         action: () => {
           navigate('font-list')
@@ -174,7 +175,7 @@ export default async function bootstrap() {
     store.dispatch({
       type: ADD_MORENDA,
       morenda: {
-        icon: html` <mwc-icon>dvr</mwc-icon> `,
+        icon: html` <md-icon>dvr</md-icon> `,
         name: html` <ox-i18n msgid="menu.board-list"></ox-i18n> `,
         action: () => {
           navigate('board-list')
@@ -194,7 +195,7 @@ export default async function bootstrap() {
     store.dispatch({
       type: ADD_MORENDA,
       morenda: {
-        icon: html` <mwc-icon>attachment</mwc-icon> `,
+        icon: html` <md-icon>attachment</md-icon> `,
         name: html` <ox-i18n msgid="menu.attachments"></ox-i18n> `,
         action: () => {
           navigate('attachment-list')
@@ -207,7 +208,7 @@ export default async function bootstrap() {
     store.dispatch({
       type: ADD_MORENDA,
       morenda: {
-        icon: html` <mwc-icon>dashboard</mwc-icon> `,
+        icon: html` <md-icon>dashboard</md-icon> `,
         name: html` <ox-i18n msgid="menu.board-template"></ox-i18n> `,
         action: () => {
           navigate('board-template-list')

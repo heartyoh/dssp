@@ -1,3 +1,8 @@
+import '@material/web/icon/icon.js'
+import '@material/web/button/elevated-button.js'
+import '@material/web/textfield/outlined-text-field.js'
+import '@material/web/button/outlined-button.js'
+
 import { PageView } from '@operato/shell'
 import { PageLifecycle } from '@operato/shell/dist/src/app/pages/page-view'
 import { css, html } from 'lit'
@@ -6,9 +11,6 @@ import { ScopedElementsMixin } from '@open-wc/scoped-elements'
 import { client } from '@operato/graphql'
 // import { Project, Building } from '@dssp/project'
 import gql from 'graphql-tag'
-import '@material/web/button/elevated-button.js'
-import '@material/web/textfield/outlined-text-field.js'
-import '@material/web/button/outlined-button.js'
 
 @customElement('building-complex-detail')
 export class BuildingComplexDetail extends ScopedElementsMixin(PageView) {

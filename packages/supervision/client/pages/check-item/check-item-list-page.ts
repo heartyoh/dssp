@@ -1,3 +1,4 @@
+import '@material/web/icon/icon.js'
 import '@operato/data-grist'
 
 import { CommonButtonStyles, CommonGristStyles, ScrollbarStyles } from '@operato/styles'
@@ -5,12 +6,7 @@ import { PageView, store } from '@operato/shell'
 import { css, html } from 'lit'
 import { customElement, property, query, state } from 'lit/decorators.js'
 import { ScopedElementsMixin } from '@open-wc/scoped-elements'
-import {
-  ColumnConfig,
-  DataGrist,
-  FetchOption,
-  SortersControl
-} from '@operato/data-grist'
+import { ColumnConfig, DataGrist, FetchOption, SortersControl } from '@operato/data-grist'
 import { client } from '@operato/graphql'
 import { i18next, localize } from '@operato/i18n'
 import { notify, openPopup } from '@operato/layout'
@@ -24,7 +20,6 @@ import { CheckItemImporter } from './check-item-importer'
 
 @customElement('check-item-list-page')
 export class CheckItemListPage extends connect(store)(localize(i18next)(ScopedElementsMixin(PageView))) {
-
   static styles = [
     ScrollbarStyles,
     CommonGristStyles,
@@ -93,11 +88,7 @@ export class CheckItemListPage extends connect(store)(localize(i18next)(ScopedEl
     const mode = this.mode || (isMobileDevice() ? 'CARD' : 'GRID')
 
     return html`
-      <ox-grist
-        .mode=${mode}
-        .config=${this.gristConfig}
-        .fetchHandler=${this.fetchHandler.bind(this)}
-      >
+      <ox-grist .mode=${mode} .config=${this.gristConfig} .fetchHandler=${this.fetchHandler.bind(this)}>
         <div slot="headroom">
           <div id="filters">
             <ox-filters-form autofocus></ox-filters-form>
@@ -105,7 +96,7 @@ export class CheckItemListPage extends connect(store)(localize(i18next)(ScopedEl
 
           <div id="sorters">
             Sort
-            <mwc-icon
+            <md-icon
               @click=${e => {
                 const target = e.currentTarget
                 this.sortersControl.open({
@@ -113,7 +104,7 @@ export class CheckItemListPage extends connect(store)(localize(i18next)(ScopedEl
                   top: target.offsetTop + target.offsetHeight
                 })
               }}
-              >expand_more</mwc-icon
+              >expand_more</md-icon
             >
             <ox-popup id="sorter-control">
               <ox-sorters-control> </ox-sorters-control>
@@ -121,9 +112,9 @@ export class CheckItemListPage extends connect(store)(localize(i18next)(ScopedEl
           </div>
 
           <div id="modes">
-            <mwc-icon @click=${() => (this.mode = 'GRID')} ?active=${mode == 'GRID'}>grid_on</mwc-icon>
-            <mwc-icon @click=${() => (this.mode = 'LIST')} ?active=${mode == 'LIST'}>format_list_bulleted</mwc-icon>
-            <mwc-icon @click=${() => (this.mode = 'CARD')} ?active=${mode == 'CARD'}>apps</mwc-icon>
+            <md-icon @click=${() => (this.mode = 'GRID')} ?active=${mode == 'GRID'}>grid_on</md-icon>
+            <md-icon @click=${() => (this.mode = 'LIST')} ?active=${mode == 'LIST'}>format_list_bulleted</md-icon>
+            <md-icon @click=${() => (this.mode = 'CARD')} ?active=${mode == 'CARD'}>apps</md-icon>
           </div>
         </div>
       </ox-grist>
@@ -312,12 +303,7 @@ export class CheckItemListPage extends connect(store)(localize(i18next)(ScopedEl
 
   private async exportHandler() {
     const exportTargets = this.grist.selected.length ? this.grist.selected : this.grist.dirtyData.records
-    const targetFieldSet = new Set([
-      'id',
-      'name',
-      'description',
-      'active'
-    ])
+    const targetFieldSet = new Set(['id', 'name', 'description', 'active'])
 
     return exportTargets.map(checkItem => {
       let tempObj = {}
@@ -346,10 +332,9 @@ export class CheckItemListPage extends connect(store)(localize(i18next)(ScopedEl
         title: i18next.t('title.import check-item')
       }
     )
-    
+
     popup.onclosed = () => {
       this.grist.fetch()
     }
   }
 }
-

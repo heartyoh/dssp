@@ -1,3 +1,4 @@
+import '@material/web/button/elevated-button.js'
 import '@operato/data-grist'
 
 import gql from 'graphql-tag'
@@ -28,7 +29,7 @@ export class ChecklistImporter extends LitElement {
         padding: var(--padding-default);
       }
 
-      mwc-button {
+      md-elevated-button {
         margin-left: var(--margin-default);
       }
     `
@@ -65,15 +66,13 @@ export class ChecklistImporter extends LitElement {
       <ox-grist
         .mode=${isMobileDevice() ? 'LIST' : 'GRID'}
         .config=${this.columns}
-        .data=${
-          { 
-            records: this.checklists 
-          }
-        }
+        .data=${{
+          records: this.checklists
+        }}
       ></ox-grist>
 
       <div class="button-container">
-        <mwc-button raised @click="${this.save.bind(this)}">${i18next.t('button.save')}</mwc-button>
+        <md-elevated-button raised @click="${this.save.bind(this)}">${i18next.t('button.save')}</md-elevated-button>
       </div>
     `
   }
@@ -93,4 +92,3 @@ export class ChecklistImporter extends LitElement {
     this.dispatchEvent(new CustomEvent('imported'))
   }
 }
-

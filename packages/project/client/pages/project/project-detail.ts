@@ -1,3 +1,8 @@
+import '@material/web/icon/icon.js'
+import '@material/web/button/elevated-button.js'
+import '@material/web/textfield/outlined-text-field.js'
+import '@material/web/button/outlined-button.js'
+
 import { PageView } from '@operato/shell'
 import { PageLifecycle } from '@operato/shell/dist/src/app/pages/page-view'
 import { css, html } from 'lit'
@@ -7,9 +12,6 @@ import { client } from '@operato/graphql'
 
 import gql from 'graphql-tag'
 import { Project } from './project-list'
-import '@material/web/button/elevated-button.js'
-import '@material/web/textfield/outlined-text-field.js'
-import '@material/web/button/outlined-button.js'
 import './ox-progress-circle'
 import _getWeather from '../lib/waether'
 // import '@operato/chart/ox-progress-circle'
