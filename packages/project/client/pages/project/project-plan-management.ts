@@ -11,9 +11,11 @@ import { customElement, state } from 'lit/decorators.js'
 import { ScopedElementsMixin } from '@open-wc/scoped-elements'
 import { client } from '@operato/graphql'
 import { notify } from '@operato/layout'
+import { openPopup } from '@operato/layout'
 
 import gql from 'graphql-tag'
-import { Building, Project } from './project-list'
+import { Building, BuildingLevel, Project } from './project-list'
+import './popup/popup-plan-upload'
 
 @customElement('project-plan-management')
 export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
@@ -248,7 +250,7 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
                     label=" "
                     description="동 도면 업로드"
                     idx=${idx}
-                    @change=${this.onCreateAttachment.bind(this)}
+                    @change=${this._onCreateAttachment.bind(this)}
                   ></ox-input-file>
                   <div>${building.name}</div>
                 </span>
@@ -284,13 +286,14 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
                   <span plan>
                     <ox-input-file
                       name="building-plan"
-                      .value=${buildingLevel?.mainDrawing || undefined}
+                      .value=${buildingLevel.mainDrawing || undefined}
                       label=" "
                       description="층 도면 업로드"
                       idx=${idx}
-                      @change=${this.onCreateAttachment.bind(this)}
+                      @change=${this._onCreateAttachment.bind(this)}
+                      @click=${this._onClickImage.bind(this)}
                     ></ox-input-file>
-                    <div ?no-data=${!buildingLevel?.mainDrawing}>${buildingLevel.floor}층</div>
+                    <div ?no-data=${!buildingLevel.mainDrawing}>${buildingLevel.floor}층</div>
                   </span>
                 `
               }
@@ -363,6 +366,14 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
                     name
                   }
                   mainDrawingThumbnail
+                  elevationDrawing {
+                    id
+                    name
+                  }
+                  rebarDistributionDrawing {
+                    id
+                    name
+                  }
                 }
               }
             }
@@ -375,7 +386,6 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
     })
 
     this.project = response.data?.project
-    this.selectedBuildingIdx = 0
 
     console.log('init project : ', this.project)
   }
@@ -388,10 +398,13 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
 
       for (let levelKey in building.buildingLevels) {
         delete this.project.buildingComplex.buildings[buildingKey].buildingLevels[levelKey].mainDrawing
+        delete this.project.buildingComplex.buildings[buildingKey].buildingLevels[levelKey].mainDrawingThumbnail
+        delete this.project.buildingComplex.buildings[buildingKey].buildingLevels[levelKey].elevationDrawing
+        delete this.project.buildingComplex.buildings[buildingKey].buildingLevels[levelKey].rebarDistributionDrawing
       }
     }
 
-    console.log('this.project :', this.project)
+    console.log('upload project :', this.project)
 
     const response = await client.mutate({
       mutation: gql`
@@ -411,6 +424,9 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
 
     if (!response.errors) {
       notify({ message: '저장에 성공하였습니다.' })
+
+      // 데이터 다시 조회
+      this.initProject(this.project.id)
     }
   }
 
@@ -422,7 +438,7 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
   }
 
   // 이미지 업로드
-  async onCreateAttachment(e: CustomEvent) {
+  async _onCreateAttachment(e: CustomEvent) {
     const target = e.target as HTMLInputElement
     const file = e.detail[0] || null
     const idx = Number(target.getAttribute('idx')) || 0
@@ -431,10 +447,44 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
       this.project.buildingComplex!.buildings![idx].drawingUpload = file
     } else {
       this.project.buildingComplex!.buildings![this.selectedBuildingIdx].buildingLevels![idx].mainDrawingUpload = file
+      this.project.buildingComplex!.buildings![this.selectedBuildingIdx].buildingLevels![idx].mainDrawing = file
     }
+
+    // re rendering
+    this.project = { ...this.project }
   }
 
   _onClickBuildingChange(idx: number) {
     this.selectedBuildingIdx = idx
+  }
+
+  _onClickImage(e) {
+    const target = e.target as HTMLInputElement
+    const idx = Number(target.getAttribute('idx')) || 0
+    const buildingLevel = this.project.buildingComplex!.buildings![this.selectedBuildingIdx].buildingLevels![idx]
+
+    // 메인 이미지가 업로드 되어있으면 팝업 오픈
+    if (buildingLevel.mainDrawing) {
+      const title = buildingLevel.floor?.toString() + '층' || ''
+      this._openPopup(title, buildingLevel)
+    }
+  }
+
+  private _openPopup(title: string, buildingLevel: BuildingLevel) {
+    openPopup(
+      html`<popup-plan-upload
+        .buildingLevel=${buildingLevel}
+        @file_change=${this._onChangeAdditionalDrawing}
+      ></popup-plan-upload>`,
+      {
+        backdrop: true,
+        size: 'small',
+        title: `${title} 도면 관리`
+      }
+    )
+  }
+
+  private _onChangeAdditionalDrawing(e) {
+    console.log('e : ', e)
   }
 }

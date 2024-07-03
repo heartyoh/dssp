@@ -16,10 +16,7 @@ export class BuildingLevelPatch {
   mainDrawingUpload: FileUpload
 
   @Field(type => GraphQLUpload, { nullable: true })
-  structuralDrawingUpload: FileUpload
-
-  @Field(type => GraphQLUpload, { nullable: true })
-  crossSectionDrawingUpload: FileUpload
+  elevationDrawingUpload: FileUpload
 
   @Field(type => GraphQLUpload, { nullable: true })
   rebarDistributionDrawingUpload: FileUpload

@@ -552,25 +552,25 @@ type BuildingLevel {
   buildingInspections: [BuildingInspection!]
   createdAt: DateTimeISO
   creator: User
-  crossSectionDrawing: Attachment
   deletedAt: DateTimeISO
+  elevationDrawing: Attachment
   floor: Float!
   floorInspectionSummary: FloorInspectionSummary!
   id: ID!
   mainDrawing: Attachment
   mainDrawingThumbnail: String
   rebarDistributionDrawing: Attachment
-  structuralDrawing: Attachment
+  updatedAt: DateTimeISO
+  updater: User
 }
 
 input BuildingLevelPatch {
   buildingInspections: [BuildingInspectionPatch!]
-  crossSectionDrawingUpload: Upload
+  elevationDrawingUpload: Upload
   floor: Float!
   id: ID
   mainDrawingUpload: Upload
   rebarDistributionDrawingUpload: Upload
-  structuralDrawingUpload: Upload
 }
 
 input BuildingPatch {

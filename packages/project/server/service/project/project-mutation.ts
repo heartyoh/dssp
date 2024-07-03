@@ -133,6 +133,20 @@ export class ProjectMutation {
 
           await createAttachmentAfterDelete(context, pngFile, buildingLevel.id, BuildingLevel.name + '_thumbnail')
         }
+
+        // 3-1. 입면도, 철근배분도 파일 저장
+        await createAttachmentAfterDelete(
+          context,
+          buildingLevel.elevationDrawingUpload,
+          buildingLevel.id,
+          BuildingLevel.name + '_elevationDrawing'
+        )
+        await createAttachmentAfterDelete(
+          context,
+          buildingLevel.rebarDistributionDrawingUpload,
+          buildingLevel.id,
+          BuildingLevel.name + '_rebarDistributionDrawing'
+        )
       }
 
       // 4. 동별 도면 이미지 저장

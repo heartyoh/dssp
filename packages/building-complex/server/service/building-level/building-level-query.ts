@@ -34,6 +34,30 @@ export class BuildingLevelQuery {
     return attachment?.fullpath
   }
 
+  @FieldResolver(type => Attachment)
+  async elevationDrawing(@Root() buildingLevel: BuildingLevel): Promise<Attachment | undefined> {
+    const attachment: Attachment = await getRepository(Attachment).findOne({
+      where: {
+        refType: BuildingLevel.name + '_elevationDrawing',
+        refBy: buildingLevel.id
+      }
+    })
+
+    return attachment
+  }
+
+  @FieldResolver(type => Attachment)
+  async rebarDistributionDrawing(@Root() buildingLevel: BuildingLevel): Promise<Attachment | undefined> {
+    const attachment: Attachment = await getRepository(Attachment).findOne({
+      where: {
+        refType: BuildingLevel.name + '_rebarDistributionDrawing',
+        refBy: buildingLevel.id
+      }
+    })
+
+    return attachment
+  }
+
   @FieldResolver(type => [BuildingInspection])
   async buildingInspections(@Root() buildingLevel: BuildingLevel): Promise<BuildingInspection[]> {
     return await getRepository(BuildingInspection).findBy({ buildingLevel: { id: buildingLevel.id } })

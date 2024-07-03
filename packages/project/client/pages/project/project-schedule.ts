@@ -243,7 +243,6 @@ export class ProjectSchedule extends ScopedElementsMixin(PageView) {
     })
 
     this.project = response.data?.project
-    this.selectedBuildingIdx = 0
 
     console.log('init project : ', this.project)
   }

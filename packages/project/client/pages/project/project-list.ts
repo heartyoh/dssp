@@ -71,6 +71,10 @@ export interface BuildingLevel {
   mainDrawing?: Attachment
   mainDrawingThumbnail?: string
   mainDrawingUpload?: FileUpload
+  elevationDrawing?: Attachment
+  elevationDrawingUpload?: FileUpload
+  rebarDistributionDrawing?: Attachment
+  rebarDistributionDrawingUpload?: FileUpload
   buildingInspections?: BuildingInspection[]
 }
 

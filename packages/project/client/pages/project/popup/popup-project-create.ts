@@ -1,16 +1,13 @@
-import '@material/web/icon/icon.js'
-import '@material/web/textfield/outlined-text-field.js'
-import '@material/web/button/elevated-button.js'
-
 import { css, html, LitElement } from 'lit'
 import { customElement, property, state } from 'lit/decorators.js'
 import { client } from '@operato/graphql'
-import { i18next, localize } from '@operato/i18n'
 import { notify } from '@operato/layout'
 import gql from 'graphql-tag'
+import '@material/web/textfield/outlined-text-field.js'
+import '@material/web/button/elevated-button.js'
 
-@customElement('project-create-popup')
-export class ProjectCreatePopup extends localize(i18next)(LitElement) {
+@customElement('popup-project-create')
+export class PopupProjectCreate extends LitElement {
   static styles = [
     css`
       :host {

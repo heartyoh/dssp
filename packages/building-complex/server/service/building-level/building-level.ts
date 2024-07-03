@@ -31,21 +31,17 @@ export class BuildingLevel {
   @Field({ nullable: false })
   floor: number
 
-  // 층 메인 도면 링크
+  // 층 메인 도면(평면도) 링크
   @Field(type => Attachment, { nullable: true })
   mainDrawing: Attachment
 
-  // 층 메인 도면 썸내일
+  // 층 메인 도면(평면도) 썸내일
   @Field({ nullable: true })
   mainDrawingThumbnail: string
 
-  // 층 구조도 링크
+  // 층 입면도 링크
   @Field(type => Attachment, { nullable: true })
-  structuralDrawing: Attachment
-
-  // 층 단면도 링크
-  @Field(type => Attachment, { nullable: true })
-  crossSectionDrawing: Attachment
+  elevationDrawing: Attachment
 
   // 층 철근배분도 링크
   @Field(type => Attachment, { nullable: true })
@@ -68,6 +64,10 @@ export class BuildingLevel {
   @Field({ nullable: true })
   createdAt?: Date
 
+  @UpdateDateColumn()
+  @Field({ nullable: true })
+  updatedAt?: Date
+
   @DeleteDateColumn()
   @Field({ nullable: true })
   deletedAt?: Date
@@ -78,4 +78,11 @@ export class BuildingLevel {
 
   @RelationId((buildingLevel: BuildingLevel) => buildingLevel.creator)
   creatorId?: string
+
+  @ManyToOne(type => User, { nullable: true })
+  @Field(type => User, { nullable: true })
+  updater?: User
+
+  @RelationId((buildingLevel: BuildingLevel) => buildingLevel.updater)
+  updaterId?: string
 }

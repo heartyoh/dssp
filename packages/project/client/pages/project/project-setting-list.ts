@@ -12,7 +12,7 @@ import { client } from '@operato/graphql'
 import { openPopup } from '@operato/layout'
 
 import gql from 'graphql-tag'
-import './project-create-popup'
+import './popup/popup-project-create'
 import { Project } from './project-list'
 
 @customElement('project-setting-list')
@@ -82,9 +82,11 @@ export class ProjectSettingList extends ScopedElementsMixin(PageView) {
           background-color: #ffffff;
           border: 1px solid #cccccc80;
           border-radius: 5px;
+          align-items: center;
 
           img[project-img] {
             width: 285px;
+            aspect-ratio: 2;
             background-color: #cccccc80;
           }
 
@@ -278,7 +280,7 @@ export class ProjectSettingList extends ScopedElementsMixin(PageView) {
   }
 
   private _openCreateProjectPopup() {
-    openPopup(html`<project-create-popup .refreshFn=${this.getProjectList.bind(this)}></project-create-popup>`, {
+    openPopup(html`<popup-project-create .refreshFn=${this.getProjectList.bind(this)}></popup-project-create>`, {
       backdrop: true,
       size: 'small',
       title: '신규 프로젝트 생성'
