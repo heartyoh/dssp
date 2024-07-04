@@ -11,6 +11,16 @@ import { ScopedElementsMixin } from '@open-wc/scoped-elements'
 import { client } from '@operato/graphql'
 import gql from 'graphql-tag'
 
+export enum InspectionStatus {
+  REQUEST = 'REQUEST',
+  PASS = 'PASS',
+  FAIL = 'FAIL'
+}
+enum Mode {
+  VIEW = 'view',
+  EDIT = 'edit'
+}
+
 @customElement('building-complex-inspection')
 export class BuildingComplexInspection extends ScopedElementsMixin(PageView) {
   static styles = [
@@ -168,11 +178,55 @@ export class BuildingComplexInspection extends ScopedElementsMixin(PageView) {
             border: 1px solid #cccccc;
             border-radius: 5px;
             flex: 1;
+            position: relative;
           }
 
           img {
             width: 100%;
             height: 100%;
+          }
+
+          div[grid] {
+            display: flex;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            border: 1px #ccc solid;
+            justify-content: space-between;
+
+            & > div[row] {
+              display: flex;
+              flex-direction: column;
+              justify-content: space-between;
+              flex: 1;
+
+              & > div[column] {
+                flex: 1;
+                border: dashed 1px #2ea4df99;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+              }
+            }
+
+            div[row='1'] div[column] {
+              border-left: none !important;
+            }
+            div[row='10'] div[column] {
+              border-right: none !important;
+            }
+            div[column='1'] {
+              border-top: none !important;
+            }
+            div[column='10'] {
+              border-bottom: none !important;
+            }
+
+            div[cell][active] {
+              background-color: #2ea4df99;
+            }
           }
         }
 
@@ -225,6 +279,8 @@ export class BuildingComplexInspection extends ScopedElementsMixin(PageView) {
 
               div[status] {
                 display: flex;
+                align-items: center;
+                margin-bottom: 7px;
               }
               div[date] {
                 font-size: 12px;
@@ -234,6 +290,10 @@ export class BuildingComplexInspection extends ScopedElementsMixin(PageView) {
               div[manager] {
                 font-size: 14px;
               }
+            }
+
+            div[edit] {
+              flex: 1;
             }
           }
         }
@@ -256,8 +316,8 @@ export class BuildingComplexInspection extends ScopedElementsMixin(PageView) {
   @state() project: any = { ...this.defaultProject }
   @state() selectedBuilding: any = {}
   @state() selectedLevel: any = {}
-  @state() building: any = {}
-  @state() mode: 'view' | 'edit' = 'view'
+  @state() selectedInspection: any = {}
+  @state() mode: Mode = Mode.VIEW
 
   @query('md-filled-select[building]') htmlSelectBuilding
   @query('md-filled-select[level]') htmlSelectLevel
@@ -282,7 +342,7 @@ export class BuildingComplexInspection extends ScopedElementsMixin(PageView) {
             <div>
               <md-filled-select building @change=${this._onSelectBuilding}>
                 ${this.project?.buildingComplex?.buildings?.map(building => {
-                  const selected = building.id === this.selectedBuilding.id
+                  const selected = building.id === this.selectedBuilding?.id
                   console.log('building')
                   return html` <md-select-option ?selected=${selected} .value=${building.id}>
                     <div slot="headline">${building.name}</div>
@@ -291,7 +351,7 @@ export class BuildingComplexInspection extends ScopedElementsMixin(PageView) {
               </md-filled-select>
 
               <md-filled-select level @change=${this._onSelectBuildingLevel}>
-                ${this.building?.buildingLevels?.map(level => {
+                ${this.selectedBuilding?.buildingLevels?.map(level => {
                   console.log('buildingLevels')
                   const selected = level.id === this.selectedLevel.id
                   return html`<md-select-option ?selected=${selected} .value=${level.id}>
@@ -310,6 +370,20 @@ export class BuildingComplexInspection extends ScopedElementsMixin(PageView) {
 
           <div drawing>
             <img src=${this.selectedLevel?.mainDrawingThumbnail || ''} />
+
+            <div grid>
+              ${[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(
+                v =>
+                  html` <div row=${v}>
+                    ${[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(
+                      vv =>
+                        html`<div column=${vv} cell=${`${vv},${v}`} buildingInspection="" @click=${this._onClickGrid}>
+                          ${vv}, ${v}
+                        </div>`
+                    )}
+                  </div>`
+              )}
+            </div>
           </div>
         </div>
 
@@ -325,14 +399,24 @@ export class BuildingComplexInspection extends ScopedElementsMixin(PageView) {
 
           <div bottom>
             <div name bold>시공검측 세부사항</div>
-            ${this.mode === 'view'
-              ? html` <div view>
+            ${this.mode === Mode.VIEW
+              ? html`
+                  <div view>
                     <div>
-                      <div status><md-icon fail slot="icon">close</md-icon> <span bold>재검측</span></div>
-                      <div date>검측일 : 2022.11.11</div>
+                      <div status>
+                        ${!this.selectedInspection.status
+                          ? ''
+                          : this.selectedInspection.status == InspectionStatus.REQUEST
+                            ? html`<md-icon request slot="icon">exclamation</md-icon>`
+                            : this.selectedInspection.status == InspectionStatus.PASS
+                              ? html`<md-icon pass slot="icon">check</md-icon>`
+                              : html`<md-icon fail slot="icon">close</md-icon>`}
+                        <span bold> ${InspectionStatus[this.selectedInspection.status]}</span>
+                      </div>
+                      <div date>검측일 : ${this.selectedInspection.createdAt}</div>
                     </div>
                     <hr />
-                    <div desc>띠 철근 확인 요망 <img /></div>
+                    <div desc>${this.selectedInspection.detail} <img /></div>
                     <hr />
                     <div manager>
                       담당자 : 김단국 <br />
@@ -341,14 +425,19 @@ export class BuildingComplexInspection extends ScopedElementsMixin(PageView) {
                     <hr />
                   </div>
 
-                  <md-outlined-button>검측 정보 및 상태 수정</md-outlined-button>`
+                  <md-outlined-button @click=${() => this._onClickChangeViewMode(Mode.EDIT)}>
+                    검측 정보 및 상태 수정
+                  </md-outlined-button>
+                `
               : html`
                   <div edit>
                     <select>
-                      검측분류 선택
+                      <option .value=${InspectionStatus.REQUEST}>검측 요청</option>
+                      <option .value=${InspectionStatus.PASS}>합격</option>
+                      <option .value=${InspectionStatus.FAIL}>불합격</option>
                     </select>
 
-                    <textarea>검측내용 입력</textarea>
+                    <textarea .value=${this.selectedInspection.detail || ''}></textarea>
 
                     <div>
                       <button type="button">사진파일 업로드</button>
@@ -362,12 +451,11 @@ export class BuildingComplexInspection extends ScopedElementsMixin(PageView) {
                     <label>
                       <input type="checkbox" name="apply-to-all" checked />
                       전층 동일 적용
-                      <span><md-icon request slot="icon">exclamation</md-icon>100</span>
-                      <span><md-icon pass slot="icon">check</md-icon>50</span>
-                      <span><md-icon fail slot="icon">close</md-icon>5</span>
                     </label>
-                    <button type="submit">검측정보 저장</button>
                   </div>
+                  <md-filled-button @click=${() => this._onClickChangeViewMode(Mode.VIEW)}>
+                    검측정보 저장
+                  </md-filled-button>
                 `}
           </div>
         </div>
@@ -416,15 +504,15 @@ export class BuildingComplexInspection extends ScopedElementsMixin(PageView) {
       : this.project?.buildingComplex?.buildings?.[0]
 
     // 선택된 동의 층 리스트 가져오기
-    this.building = await this._getBuilding(this.selectedBuilding.id)
+    this.selectedBuilding = await this._getBuilding(this.selectedBuilding.id)
 
     // levelId 파라미터가 있으면 선택된 층, 없으면 첫번째 층 선택
     this.selectedLevel = levelId
-      ? this.building?.buildingLevels?.filter(v => v.id === levelId)[0]
-      : this.building?.buildingLevels?.[0]
+      ? this.selectedBuilding?.buildingLevels?.filter(v => v.id === levelId)[0]
+      : this.selectedBuilding?.buildingLevels?.[0]
 
     // 동, 층이 랜더링 된 후에 select를 위해 이 시점에서 랜더링
-    this.building = await { ...this.building }
+    this.selectedBuilding = await { ...this.selectedBuilding }
 
     // 기본 값 셋팅 select
     await this.htmlSelectBuilding.select(this.selectedBuilding.id)
@@ -466,15 +554,61 @@ export class BuildingComplexInspection extends ScopedElementsMixin(PageView) {
     return response.data?.building || {}
   }
 
+  async _getBuildingInspection(buildingInspectionId: string = '') {
+    const response = await client.query({
+      query: gql`
+        query BuildingInspection($id: String!) {
+          buildingInspection(id: $id) {
+            id
+            indexX
+            indexY
+            status
+            detail
+            createdAt
+            attachments
+          }
+        }
+      `,
+      variables: {
+        id: buildingInspectionId
+      }
+    })
+
+    if (response.errors) return
+
+    return response.data?.buildingInspection || {}
+  }
+
   private async _onSelectBuilding(e) {
     const buildingId = e.target.value
-    this.building = await this._getBuilding(buildingId)
-    this.selectedBuilding = { ...this.building }
-    this.selectedLevel = { ...this.building?.buildingLevels?.[0] }
+    // this.building = await this._getBuilding(buildingId)
+    this.selectedBuilding = await this._getBuilding(buildingId)
+    this.selectedLevel = { ...this.selectedBuilding?.buildingLevels?.[0] }
   }
 
   private _onSelectBuildingLevel(e) {
     const buildingLevelId = e.target.value
-    this.selectedLevel = { ...(this.building?.buildingLevels?.find(v => v.id == buildingLevelId) || {}) }
+    this.selectedLevel = {
+      ...(this.selectedBuilding?.buildingLevels?.find(v => v.id == buildingLevelId) || {})
+    }
+  }
+
+  private async _onClickGrid(e) {
+    const target = e.target
+    const buildingInspectionId = e.target.getAttribute('buildingInspectionId')
+    const cell = e.target.getAttribute('cell')
+
+    // active 속성 모두 제거후 클릭한 셀만 active로 변경
+    this.shadowRoot?.querySelectorAll('div[cell][active]').forEach(e => e.removeAttribute('active'))
+    target.setAttribute('active', true)
+
+    this.selectedInspection = buildingInspectionId ? await this._getBuildingInspection(buildingInspectionId) : {}
+
+    console.log('buildingInspectionId : ', buildingInspectionId)
+    console.log('cell : ', cell)
+  }
+
+  private _onClickChangeViewMode(mode: Mode = Mode.VIEW) {
+    this.mode = mode
   }
 }

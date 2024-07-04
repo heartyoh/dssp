@@ -13,7 +13,7 @@ export enum ProjectStatus {
   'PROCEEDING' = '10',
   'COMPLICATED' = '20'
 }
-export enum InspectionType {
+export enum InspectionStatus {
   REQUEST = 'REQUEST',
   PASS = 'PASS',
   FAIL = 'FAIL'
@@ -82,8 +82,9 @@ export interface BuildingInspection {
   id?: string
   indexX?: number
   indexY?: number
-  type?: InspectionType
+  status?: InspectionStatus
   detail?: string
+  attatchments?: Attachment[]
   // buildingInspectionAttachments?: BuildingInspectionAttachment[]
 }
 

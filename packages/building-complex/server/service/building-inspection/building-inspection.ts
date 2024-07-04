@@ -15,15 +15,16 @@ import { ObjectType, Field, ID, registerEnumType } from 'type-graphql'
 import { User } from '@things-factory/auth-base'
 import { BuildingLevel } from '../building-level/building-level'
 import { BuildingInspectionAttachment } from '../building-inspection-attachment/building-inspection-attachment'
+import { Attachment } from '@things-factory/attachment-base'
 
-export enum InspectionType {
+export enum InspectionStatus {
   REQUEST = 'REQUEST',
   PASS = 'PASS',
   FAIL = 'FAIL'
 }
 
-registerEnumType(InspectionType, {
-  name: 'InspectionType',
+registerEnumType(InspectionStatus, {
+  name: 'InspectionStatus',
   description: '검측 상태'
 })
 
@@ -47,7 +48,7 @@ export class BuildingInspection {
 
   @Column({ nullable: true, comment: '상태(REQUEST: 요청, PASS: 합격, FAIL: 불합격)' })
   @Field({ nullable: true })
-  type?: InspectionType
+  status?: InspectionStatus
 
   @Column({ nullable: true, comment: '세부 사항' })
   @Field({ nullable: true })
@@ -68,6 +69,9 @@ export class BuildingInspection {
   )
   @Field(() => [BuildingInspectionAttachment], { nullable: true })
   buildingInspectionAttachments?: BuildingInspectionAttachment[]
+
+  @Field(type => [Attachment], { nullable: true })
+  attachments: Attachment[]
 
   @CreateDateColumn()
   @Field({ nullable: true })

@@ -5,7 +5,7 @@ import { User } from '@things-factory/auth-base'
 import { BuildingLevel } from './building-level'
 import { BuildingInspection } from '../building-inspection/building-inspection'
 // import { InspectionSummary } from '@dssp/project'
-import { InspectionType } from '../building-inspection/building-inspection'
+import { InspectionStatus } from '../building-inspection/building-inspection'
 import { FloorInspectionSummary } from './building-level-type'
 
 @Resolver(BuildingLevel)
@@ -68,9 +68,9 @@ export class BuildingLevelQuery {
   async floorInspectionSummary(@Root() buildingLevel: BuildingLevel): Promise<FloorInspectionSummary> {
     const floorInspectionSummary = await getRepository(BuildingInspection)
       .createQueryBuilder('bi')
-      .select(`COUNT(CASE WHEN bi.type="${InspectionType.REQUEST}" THEN 1 ELSE NULL END) AS request`)
-      .addSelect(`COUNT(CASE WHEN bi.type="${InspectionType.PASS}" THEN 1 ELSE NULL END) AS pass`)
-      .addSelect(`COUNT(CASE WHEN bi.type="${InspectionType.FAIL}" THEN 1 ELSE NULL END) AS fail`)
+      .select(`COUNT(CASE WHEN bi.status="${InspectionStatus.REQUEST}" THEN 1 ELSE NULL END) AS request`)
+      .addSelect(`COUNT(CASE WHEN bi.status="${InspectionStatus.PASS}" THEN 1 ELSE NULL END) AS pass`)
+      .addSelect(`COUNT(CASE WHEN bi.status="${InspectionStatus.FAIL}" THEN 1 ELSE NULL END) AS fail`)
       .where('bi.building_level_id = :buildingLevelId', { buildingLevelId: buildingLevel.id })
       .groupBy('bi.building_level_id')
       .getRawOne()

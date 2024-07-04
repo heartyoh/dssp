@@ -513,6 +513,8 @@ input BuildingComplexPatch {
 
 """시공 검측 (층별 도면의 검측 리스트)"""
 type BuildingInspection {
+  attachments: [Attachment!]
+  attatchments: [Attachment!]!
   buildingInspectionAttachments: [BuildingInspectionAttachment!]
   buildingLevel: BuildingLevel
   createdAt: DateTimeISO
@@ -522,7 +524,7 @@ type BuildingInspection {
   id: ID!
   indexX: Float
   indexY: Float
-  type: String
+  status: String
   updatedAt: DateTimeISO
   updater: User
 }
@@ -543,7 +545,7 @@ input BuildingInspectionPatch {
   id: ID
   indexX: Float
   indexY: Float
-  type: String
+  status: String
 }
 
 """층 정보"""
@@ -3796,6 +3798,9 @@ type Query {
 
   """To fetch a BuildingComplex"""
   buildingBuildingComplex(id: String!): BuildingComplex
+
+  """To fetch a BuildingInspection"""
+  buildingBuildingInspection(id: String!): BuildingInspection
   chatCompletion(input: ChatCompletionInput!): ChatCompletionOutput!
 
   """To check if system would provide default password to create new user"""

@@ -4,7 +4,7 @@ import { ObjectType, Field, InputType, Int, ID, registerEnumType } from 'type-gr
 
 import { ObjectRef, ScalarObject } from '@things-factory/shell'
 
-import { BuildingInspection, InspectionType } from './building-inspection'
+import { BuildingInspection, InspectionStatus } from './building-inspection'
 // import { BuildingInspectionAttachmentPatch } from '../building-inspection-attachment/building-inspection-attachment'
 
 @InputType()
@@ -19,7 +19,7 @@ export class BuildingInspectionPatch {
   indexY?: number
 
   @Field({ nullable: true })
-  type?: InspectionType
+  status?: InspectionStatus
 
   @Field({ nullable: true })
   detail?: string

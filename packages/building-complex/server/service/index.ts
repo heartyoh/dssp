@@ -12,7 +12,7 @@ import { entities as BuildingInspectionAttachmentEntities } from './building-ins
 import {
   entities as BuildingInspectionEntities,
   resolvers as BuildingInspectionResolvers,
-  types as BuildingInspectionTypes
+  types as BuildingInspectionStatuses
 } from './building-inspection'
 import { entities as BuildingLevelEntities, resolvers as BuildingLevelResolvers } from './building-level'
 import { entities as BuildingEntities, resolvers as BuildingResolvers, types as BuildingTypes } from './building'
@@ -37,4 +37,4 @@ export const schema = {
   ]
 }
 
-export const types = [...BuildingTypes, ...ComplexTypes, ...BuildingInspectionTypes]
+export const types = [...BuildingTypes, ...ComplexTypes, ...BuildingInspectionStatuses]
