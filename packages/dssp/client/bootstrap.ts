@@ -12,7 +12,14 @@ import { html } from 'lit-html'
 import { registerDefaultGroups } from '@operato/board'
 import { navigate, store } from '@operato/shell'
 
-import { appendViewpart, toggleOverlay, TOOL_POSITION, VIEWPART_POSITION } from '@operato/layout'
+import {
+  appendViewpart,
+  updateViewpart,
+  toggleOverlay,
+  TOOL_POSITION,
+  VIEWPART_LEVEL,
+  VIEWPART_POSITION
+} from '@operato/layout'
 import { APPEND_APP_TOOL } from '@things-factory/apptool-base/client'
 import { setupAppToolPart } from '@things-factory/apptool-ui/dist-client'
 import { hasPrivilege } from '@things-factory/auth-base/dist-client'
@@ -41,18 +48,32 @@ export default async function bootstrap() {
     mdibar: false
   })
 
-  // await setupContextUIPart({
-  //   titlebar: 'header',
-  //   contextToolbar: 'page-footer'
-  // })
+  /* append top-menu to layout */
+  var state = store.getState() as any
+  var width = state.layout?.width || 'WIDE'
 
   appendViewpart({
-    name: 'dcsp-topmenu',
+    name: 'dssp-topmenu',
     viewpart: {
       show: true,
       template: html` <menu-tools></menu-tools> `
     },
-    position: VIEWPART_POSITION.NAVBAR
+    position: width == 'WIDE' ? VIEWPART_POSITION.NAVBAR : VIEWPART_POSITION.FOOTERBAR
+  })
+
+  store.subscribe(async () => {
+    var state = store.getState() as any
+
+    if (state.layout.width == width) {
+      return
+    }
+
+    width = state.layout.width
+
+    updateViewpart('dssp-topmenu', {
+      position: width == 'WIDE' ? VIEWPART_POSITION.NAVBAR : VIEWPART_POSITION.FOOTERBAR,
+      level: VIEWPART_LEVEL.TOPMOST
+    })
   })
 
   /* setting app-tools */
