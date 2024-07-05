@@ -62,6 +62,7 @@
     "@operato/scene-tab": "^7.0.0",
     "@operato/scene-table": "^7.0.0",
     "@operato/scene-timer": "^7.0.0",
+    "@operato/gantt": "^7.0.0",
     "@operato/chart": "^7.0.0",
     "@things-factory/api": "^7.0.0",
     "@things-factory/apptool-base": "^7.0.0",
