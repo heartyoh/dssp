@@ -49,6 +49,10 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
         height: 100px;
       }
 
+      *[bold] {
+        font-weight: bold;
+      }
+
       div[header] {
         display: flex;
         margin: 0px 20px;
@@ -161,12 +165,29 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
             margin-top: 10px;
 
             & > span {
-              width: 150px;
               display: inline-block;
               text-align: center;
               margin: 0px 10px 15px 0px;
+              cursor: pointer;
 
-              & > div {
+              & > [name='building-plan'] {
+                width: 150px;
+                height: 100px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                border: 1px solid #333;
+                box-shadow: 2px 2px 2px #0000001a;
+                align-items: center;
+                border-radius: 7px;
+                font-size: 13px;
+
+                md-icon {
+                  margin-bottom: 6px;
+                }
+              }
+
+              & > div[floor-name] {
                 margin-top: 7px;
 
                 &[no-data] {
@@ -282,20 +303,28 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
           <div floor-plan>
             ${this.project.buildingComplex?.buildings?.[this.selectedBuildingIdx]?.buildingLevels?.map(
               (buildingLevel, idx) => {
-                return html`
-                  <span plan>
-                    <ox-input-file
-                      name="building-plan"
-                      .value=${buildingLevel.mainDrawing || undefined}
-                      label=" "
-                      description="층 도면 업로드"
-                      idx=${idx}
-                      @change=${this._onCreateAttachment.bind(this)}
-                      @click=${this._onClickImage.bind(this)}
-                    ></ox-input-file>
-                    <div ?no-data=${!buildingLevel.mainDrawing}>${buildingLevel.floor}층</div>
-                  </span>
-                `
+                return buildingLevel.mainDrawingThumbnail
+                  ? html`
+                      <span plan>
+                        <img
+                          name="building-plan"
+                          .src=${buildingLevel.mainDrawingThumbnail}
+                          idx=${idx}
+                          @click=${this._onClickImage}
+                        />
+                        <div floor-name>${buildingLevel.floor}층</div>
+                      </span>
+                    `
+                  : html`
+                      <span plan>
+                        <a name="building-plan" idx=${idx} @click=${this._onClickImage}>
+                          <md-icon slot="icon">image</md-icon>
+                          <div bold>도면 파일</div>
+                          <div>업로드</div>
+                        </a>
+                        <div floor-name no-data>${buildingLevel.floor}층</div>
+                      </span>
+                    `
               }
             )}
           </div>
@@ -464,10 +493,8 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
     const buildingLevel = this.project.buildingComplex!.buildings![this.selectedBuildingIdx].buildingLevels![idx]
 
     // 메인 이미지가 업로드 되어있으면 팝업 오픈
-    if (buildingLevel.mainDrawing) {
-      const title = buildingLevel.floor?.toString() + '층' || ''
-      this._openPopup(title, buildingLevel)
-    }
+    const title = buildingLevel.floor?.toString() + '층' || ''
+    this._openPopup(title, buildingLevel)
   }
 
   private _openPopup(title: string, buildingLevel: BuildingLevel) {
@@ -478,7 +505,7 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
       ></popup-plan-upload>`,
       {
         backdrop: true,
-        size: 'small',
+        size: 'medium',
         title: `${title} 도면 관리`
       }
     )

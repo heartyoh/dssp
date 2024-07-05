@@ -132,11 +132,11 @@ export class BuildingComplexDetail extends ScopedElementsMixin(PageView) {
           overflow-x: hidden;
           overflow-y: auto;
           flex-direction: column-reverse;
+          position: relative;
 
           div[row] {
             width: 100%;
-            position: relative;
-            margin-top: -9%;
+            position: absolute;
 
             div[drawing] {
               padding-right: 10%;
@@ -144,13 +144,13 @@ export class BuildingComplexDetail extends ScopedElementsMixin(PageView) {
               & > div {
                 display: flex;
                 padding: 8px;
+                justify-content: center;
               }
 
               [floor-drawing] {
-                width: 100%;
-                aspect-ratio: 7;
-                clip-path: polygon(18% 0%, 82% 0%, 100% 100%, 0% 100%);
-                -webkit-clip-path: polygon(18% 0%, 82% 0%, 100% 100%, 0% 100%);
+                width: 90%;
+                aspect-ratio: 4 / 1;
+                transform: perspective(320px) rotateX(52deg);
                 opacity: 0.5;
               }
             }
@@ -162,6 +162,7 @@ export class BuildingComplexDetail extends ScopedElementsMixin(PageView) {
               bottom: 0px;
               align-items: center;
               z-index: 2;
+              right: 3%;
 
               div[content] {
                 display: flex;
@@ -207,28 +208,10 @@ export class BuildingComplexDetail extends ScopedElementsMixin(PageView) {
               z-index: 1;
 
               div[drawing] {
-                & > div {
-                  display: flex;
-                  background-color: #ff6a5d;
-                  justify-content: center;
-                  padding: 10px;
-                  clip-path: polygon(
-                    calc(18% + 10px) 5px,
-                    calc(82% - 10px) 5px,
-                    calc(100% - 5px) calc(100% - 5px),
-                    5px calc(100% - 5px)
-                  );
-                  -webkit-clip-path: polygon(
-                    calc(18% + 10px) 5px,
-                    calc(82% - 10px) 5px,
-                    calc(100% - 5px) calc(100% - 5px),
-                    5px calc(100% - 5px)
-                  );
-
-                  [floor-drawing] {
-                    opacity: 1;
-                    width: calc(100% - 20px);
-                  }
+                & > div [floor-drawing] {
+                  opacity: 1;
+                  width: calc(90% - 20px);
+                  border: 7px solid #ff6a5d;
                 }
               }
               span[name] {
@@ -296,9 +279,11 @@ export class BuildingComplexDetail extends ScopedElementsMixin(PageView) {
         </div>
 
         <div right>
-          ${this.building?.buildingLevels?.map(buildingLevel => {
+          ${this.building?.buildingLevels?.map((buildingLevel, idx) => {
+            const bottom = idx * 50
+
             return html`
-              <div row>
+              <div row .style="bottom:${bottom}px">
                 <a
                   href=${`building-complex-inspection/${this.project.id}?buildingId=${this.selectedBuilding.id}&levelId=${buildingLevel.id}`}
                 >

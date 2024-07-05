@@ -129,7 +129,7 @@ export class MenuTools extends connect(store)(LitElement) {
         icons: ICONS_COMPLETED
       },
       {
-        name: 'status',
+        name: '검측현황',
         path: 'dssp-status',
         icons: ICONS_STATUS
       },

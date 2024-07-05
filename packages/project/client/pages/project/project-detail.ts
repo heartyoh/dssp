@@ -607,8 +607,8 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
 
     if (response.errors) return
 
-    this.project = response.data?.project
-    this.inspectionSummary = response.data?.inspectionSummary
+    this.project = response.data?.project || {}
+    this.inspectionSummary = response.data?.inspectionSummary || {}
 
     const { latitude, longitude } = this.project?.buildingComplex
     if (latitude && longitude) {

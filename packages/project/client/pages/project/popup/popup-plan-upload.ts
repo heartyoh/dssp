@@ -24,14 +24,15 @@ export class PopupPlanUpload extends LitElement {
           display: flex;
           align-items: center;
           justify-content: center;
-          gap: 20px;
+          gap: 25px;
           background-color: #f7f7f7;
           padding: 35px 27px 27px 27px;
 
           ox-input-file {
             min-height: 50px;
-            height: 50px;
-            width: 100px;
+            height: 70px;
+            width: 120px;
+            line-height: 100%;
           }
         }
 
@@ -39,7 +40,7 @@ export class PopupPlanUpload extends LitElement {
           display: flex;
           align-items: center;
           justify-content: center;
-          margin-top: 10px;
+          margin-top: 20px;
         }
       }
     `
@@ -69,8 +70,8 @@ export class PopupPlanUpload extends LitElement {
             name="mainDrawing"
             .value=${mainDrawing || undefined}
             icon=${mainDrawingIcon}
-            label=" "
-            description=" "
+            label="업로드"
+            description="평면 파일"
             @change=${this._onChangeAttachment.bind(this)}
             style=${mainDrawingStyle}
           ></ox-input-file>
@@ -79,8 +80,8 @@ export class PopupPlanUpload extends LitElement {
             name="elevationDrawing"
             .value=${elevationDrawing || undefined}
             icon=${elevationDrawingIcon}
-            label=" "
-            description=" "
+            label="업로드"
+            description="입면 파일"
             @change=${this._onChangeAttachment.bind(this)}
             style=${elevationDrawingStyle}
           ></ox-input-file>
@@ -89,8 +90,8 @@ export class PopupPlanUpload extends LitElement {
             name="rebarDistributionDrawing"
             .value=${rebarDistributionDrawing || undefined}
             icon=${rebarDistributionDrawingIcon}
-            label=" "
-            description=" "
+            label="업로드"
+            description="철근배근도 파일"
             @change=${this._onChangeAttachment.bind(this)}
             style=${rebarDistributionDrawingStyle}
           ></ox-input-file>
