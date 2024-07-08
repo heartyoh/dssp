@@ -69,11 +69,14 @@ export interface BuildingLevel {
   id?: string
   floor?: number
   mainDrawing?: Attachment
+  mainDrawingImage?: string
   mainDrawingThumbnail?: string
   mainDrawingUpload?: FileUpload
   elevationDrawing?: Attachment
+  elevationDrawingImage?: string
   elevationDrawingUpload?: FileUpload
   rebarDistributionDrawing?: Attachment
+  rebarDistributionDrawingImage?: string
   rebarDistributionDrawingUpload?: FileUpload
   buildingInspections?: BuildingInspection[]
 }

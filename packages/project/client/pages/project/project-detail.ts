@@ -12,9 +12,8 @@ import { client } from '@operato/graphql'
 
 import gql from 'graphql-tag'
 import { Project } from './project-list'
-import './ox-progress-circle'
 import _getWeather from '../lib/waether'
-// import '@operato/chart/ox-progress-circle'
+import '@operato/chart/ox-progress-circle.js'
 
 export interface InspectionSummary {
   request: number
