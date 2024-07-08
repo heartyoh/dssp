@@ -115,7 +115,7 @@ export class ProjectMutation {
         // 3. 층별 도면 이미지 저장
         const mainDrawingAttatchment = await createAttachmentAfterDelete(
           context,
-          buildingLevel?.mainDrawingUpload,
+          buildingLevel.mainDrawingUpload,
           buildingLevel.id,
           BuildingLevel.name
         )
@@ -136,7 +136,7 @@ export class ProjectMutation {
           )
         }
 
-        // 3-1. 입면도, 철근배분도 파일 저장
+        // 3-1. 입면도 파일 저장
         const elevationDrawingAttatchment = await createAttachmentAfterDelete(
           context,
           buildingLevel.elevationDrawingUpload,
@@ -156,22 +156,23 @@ export class ProjectMutation {
           )
         }
 
+        // 3-2. 철근배분도 파일 저장
         const rebarDistributionDrawingAttatchment = await createAttachmentAfterDelete(
           context,
           buildingLevel.rebarDistributionDrawingUpload,
           buildingLevel.id,
           BuildingLevel.name + '_rebarDistributionDrawing'
         )
-        if (elevationDrawingAttatchment) {
-          const elevationDrawingUpload = await buildingLevel.elevationDrawingUpload
-          const pdfPath = `/${ATTACHMENT_PATH}/${elevationDrawingAttatchment.path}`
-          const fileName = elevationDrawingUpload.filename.replace('.pdf', '')
+        if (rebarDistributionDrawingAttatchment) {
+          const rebarDistributionDrawingUpload = await buildingLevel.rebarDistributionDrawingUpload
+          const pdfPath = `/${ATTACHMENT_PATH}/${rebarDistributionDrawingAttatchment.path}`
+          const fileName = rebarDistributionDrawingUpload.filename.replace('.pdf', '')
           const pngThumbnailFile = await pdfToImage({ pdfPath, fileName, defaultViewport: { width: 300, height: 200 } })
           await createAttachmentAfterDelete(
             context,
             pngThumbnailFile,
             buildingLevel.id,
-            BuildingLevel.name + '_elevationDrawing_thumbnail'
+            BuildingLevel.name + '_rebarDistributionDrawing_thumbnail'
           )
         }
       }

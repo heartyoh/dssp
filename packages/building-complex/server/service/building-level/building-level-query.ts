@@ -50,7 +50,7 @@ export class BuildingLevelQuery {
   async elevationDrawing(@Root() buildingLevel: BuildingLevel): Promise<Attachment | undefined> {
     const attachment: Attachment = await getRepository(Attachment).findOne({
       where: {
-        refType: BuildingLevel.name,
+        refType: BuildingLevel.name + '_elevationDrawing',
         refBy: buildingLevel.id
       }
     })
@@ -74,7 +74,7 @@ export class BuildingLevelQuery {
   async rebarDistributionDrawing(@Root() buildingLevel: BuildingLevel): Promise<Attachment | undefined> {
     const attachment: Attachment = await getRepository(Attachment).findOne({
       where: {
-        refType: BuildingLevel.name + '_rebarDistributionDrawing_thumbnail',
+        refType: BuildingLevel.name + '_rebarDistributionDrawing',
         refBy: buildingLevel.id
       }
     })

@@ -47,6 +47,7 @@ export class PopupPlanUpload extends LitElement {
   ]
 
   @property({ type: Object }) private buildingLevel: BuildingLevel = {}
+  @property({ type: Number }) private selectedIdx: number | undefined
 
   render() {
     const noUploadStyle = '--file-uploader-icon-size: 0; --file-uploader-label-padding; 0;'
@@ -118,6 +119,7 @@ export class PopupPlanUpload extends LitElement {
 
     this.buildingLevel = { ...this.buildingLevel }
 
-    target.dispatchEvent(new CustomEvent('file_change', { bubbles: false, detail: this.buildingLevel }))
+    const detail = { buildingLevel: this.buildingLevel, selectedIdx: this.selectedIdx }
+    this.dispatchEvent(new CustomEvent('file_change', { bubbles: false, detail: detail }))
   }
 }

@@ -488,14 +488,16 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
     const title = buildingLevel.floor?.toString() + '층' || ''
 
     // 팝업 오픈
-    this._openPopup(title, buildingLevel)
+    this._openPopup(title, buildingLevel, idx)
   }
 
-  private _openPopup(title: string, buildingLevel: BuildingLevel) {
+  private _openPopup(title: string, buildingLevel: BuildingLevel, selectedIdx: number) {
+    console.log('this: ', this)
     openPopup(
       html`<popup-plan-upload
         .buildingLevel=${buildingLevel}
-        @file_change=${this._onChangeAdditionalDrawing}
+        .selectedIdx=${selectedIdx}
+        @file_change=${this._onChangeAdditionalDrawing.bind(this)}
       ></popup-plan-upload>`,
       {
         backdrop: true,
@@ -506,6 +508,9 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
   }
 
   private _onChangeAdditionalDrawing(e) {
-    console.log('e : ', e)
+    const idx = e.detail?.selectedIdx || null
+    const buildingLevel: BuildingLevel = e.detail?.buildingLevel || {}
+
+    this.project.buildingComplex!.buildings![this.selectedBuildingIdx]!.buildingLevels![idx] = { ...buildingLevel }
   }
 }
