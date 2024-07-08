@@ -16,6 +16,7 @@ import { User } from '@things-factory/auth-base'
 import { BuildingComplex } from '../building-complex/building-complex'
 import { BuildingLevel } from '../building-level/building-level'
 import { Attachment } from '@things-factory/attachment-base'
+import { FileUpload } from 'graphql-upload/GraphQLUpload.js'
 
 @Entity()
 @Index('ix_building_0', (building: Building) => [building.buildingComplex, building.name], {
@@ -78,4 +79,6 @@ export class Building {
 
   @RelationId((building: Building) => building.updater)
   updaterId?: string
+
+  drawingUpload: FileUpload
 }

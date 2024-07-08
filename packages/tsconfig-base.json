@@ -8,7 +8,7 @@
     "useDefineForClassFields": false,
     "importHelpers": true,
     "inlineSources": true,
-    "declaration": false,
+    "declaration": true,
     "incremental": true,
     "noImplicitAny": false,
     "emitDecoratorMetadata": true,
