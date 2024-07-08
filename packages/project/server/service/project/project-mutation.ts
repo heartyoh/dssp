@@ -6,10 +6,6 @@ import { NewProject, ProjectPatch } from './project-type'
 import { BuildingComplex, Building, BuildingLevel } from '@dssp/building-complex'
 import { pdfToImage } from '@things-factory/board-service/dist-server/controllers/headless-pdf-to-image'
 
-const puppeteer = require('puppeteer')
-const { Readable } = require('stream')
-const ejs = require('ejs')
-
 @Resolver(Project)
 export class ProjectMutation {
   @Directive('@transaction')
@@ -102,7 +98,7 @@ export class ProjectMutation {
     const projectRepo = tx.getRepository(Project)
     const buildingComplexRepo = tx.getRepository(BuildingComplex)
     const buildingComplex = project.buildingComplex
-    const buildings: Building[] = project.buildingComplex?.buildings || []
+    const buildings = project.buildingComplex?.buildings || []
 
     // 1. 프로젝트 수정 시간 업데이트
     const projectResult = await projectRepo.save({ ...project, updater: user })
@@ -123,30 +119,61 @@ export class ProjectMutation {
           buildingLevel.id,
           BuildingLevel.name
         )
-
         // 첨부된 PDF가 있으면 PDF 파일대로 썸네일 생성
         if (mainDrawingAttatchment) {
           const mainDrawingUpload = await buildingLevel.mainDrawingUpload
           const pdfPath = `/${ATTACHMENT_PATH}/${mainDrawingAttatchment.path}`
           const fileName = mainDrawingUpload.filename.replace('.pdf', '')
           const pngFile = await pdfToImage({ pdfPath, fileName })
+          await createAttachmentAfterDelete(context, pngFile, buildingLevel.id, BuildingLevel.name + '_mainDrawing')
 
-          await createAttachmentAfterDelete(context, pngFile, buildingLevel.id, BuildingLevel.name + '_thumbnail')
+          const pngThumbnailFile = await pdfToImage({ pdfPath, fileName, defaultViewport: { width: 300, height: 200 } })
+          await createAttachmentAfterDelete(
+            context,
+            pngThumbnailFile,
+            buildingLevel.id,
+            BuildingLevel.name + '_mainDrawing_thumbnail'
+          )
         }
 
         // 3-1. 입면도, 철근배분도 파일 저장
-        await createAttachmentAfterDelete(
+        const elevationDrawingAttatchment = await createAttachmentAfterDelete(
           context,
           buildingLevel.elevationDrawingUpload,
           buildingLevel.id,
           BuildingLevel.name + '_elevationDrawing'
         )
-        await createAttachmentAfterDelete(
+        if (elevationDrawingAttatchment) {
+          const elevationDrawingUpload = await buildingLevel.elevationDrawingUpload
+          const pdfPath = `/${ATTACHMENT_PATH}/${elevationDrawingAttatchment.path}`
+          const fileName = elevationDrawingUpload.filename.replace('.pdf', '')
+          const pngThumbnailFile = await pdfToImage({ pdfPath, fileName, defaultViewport: { width: 300, height: 200 } })
+          await createAttachmentAfterDelete(
+            context,
+            pngThumbnailFile,
+            buildingLevel.id,
+            BuildingLevel.name + '_elevationDrawing_thumbnail'
+          )
+        }
+
+        const rebarDistributionDrawingAttatchment = await createAttachmentAfterDelete(
           context,
           buildingLevel.rebarDistributionDrawingUpload,
           buildingLevel.id,
           BuildingLevel.name + '_rebarDistributionDrawing'
         )
+        if (elevationDrawingAttatchment) {
+          const elevationDrawingUpload = await buildingLevel.elevationDrawingUpload
+          const pdfPath = `/${ATTACHMENT_PATH}/${elevationDrawingAttatchment.path}`
+          const fileName = elevationDrawingUpload.filename.replace('.pdf', '')
+          const pngThumbnailFile = await pdfToImage({ pdfPath, fileName, defaultViewport: { width: 300, height: 200 } })
+          await createAttachmentAfterDelete(
+            context,
+            pngThumbnailFile,
+            buildingLevel.id,
+            BuildingLevel.name + '_elevationDrawing_thumbnail'
+          )
+        }
       }
 
       // 4. 동별 도면 이미지 저장

@@ -16,6 +16,7 @@ import { User } from '@things-factory/auth-base'
 import { Building } from '../building/building'
 import { BuildingInspection } from '../building-inspection/building-inspection'
 import { Attachment } from '@things-factory/attachment-base'
+import { FileUpload } from 'graphql-upload/GraphQLUpload.js'
 
 @Entity()
 @Index('ix_building_level_0', (buildingLevel: BuildingLevel) => [buildingLevel.building], {
@@ -35,6 +36,10 @@ export class BuildingLevel {
   @Field(type => Attachment, { nullable: true })
   mainDrawing: Attachment
 
+  // 층 메인 도면(평면도) 이미지
+  @Field({ nullable: true })
+  mainDrawingImage: string
+
   // 층 메인 도면(평면도) 썸내일
   @Field({ nullable: true })
   mainDrawingThumbnail: string
@@ -43,9 +48,17 @@ export class BuildingLevel {
   @Field(type => Attachment, { nullable: true })
   elevationDrawing: Attachment
 
+  // 층 입면도 썸내일
+  @Field({ nullable: true })
+  elevationThumbnail: string
+
   // 층 철근배분도 링크
   @Field(type => Attachment, { nullable: true })
   rebarDistributionDrawing: Attachment
+
+  // 층 철근배분도 썸내일
+  @Field({ nullable: true })
+  rebarDistributionThumbnail: string
 
   // 동 정보 (상위 테이블 참조)
   @Field(() => Building)
@@ -85,4 +98,9 @@ export class BuildingLevel {
 
   @RelationId((buildingLevel: BuildingLevel) => buildingLevel.updater)
   updaterId?: string
+
+  // 업로드 타입
+  mainDrawingUpload: FileUpload
+  elevationDrawingUpload: FileUpload
+  rebarDistributionDrawingUpload: FileUpload
 }

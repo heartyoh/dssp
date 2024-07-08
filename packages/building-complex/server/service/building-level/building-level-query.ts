@@ -23,10 +23,22 @@ export class BuildingLevelQuery {
   }
 
   @FieldResolver(type => String)
+  async mainDrawingImage(@Root() buildingLevel: BuildingLevel): Promise<string | undefined> {
+    const attachment: Attachment = await getRepository(Attachment).findOne({
+      where: {
+        refType: BuildingLevel.name + '_mainDrawing',
+        refBy: buildingLevel.id
+      }
+    })
+
+    return attachment?.fullpath
+  }
+
+  @FieldResolver(type => String)
   async mainDrawingThumbnail(@Root() buildingLevel: BuildingLevel): Promise<string | undefined> {
     const attachment: Attachment = await getRepository(Attachment).findOne({
       where: {
-        refType: BuildingLevel.name + '_thumbnail',
+        refType: BuildingLevel.name + '_mainDrawing_thumbnail',
         refBy: buildingLevel.id
       }
     })
@@ -38,7 +50,7 @@ export class BuildingLevelQuery {
   async elevationDrawing(@Root() buildingLevel: BuildingLevel): Promise<Attachment | undefined> {
     const attachment: Attachment = await getRepository(Attachment).findOne({
       where: {
-        refType: BuildingLevel.name + '_elevationDrawing',
+        refType: BuildingLevel.name,
         refBy: buildingLevel.id
       }
     })
@@ -46,16 +58,40 @@ export class BuildingLevelQuery {
     return attachment
   }
 
+  @FieldResolver(type => String)
+  async elevationDrawingThumbnail(@Root() buildingLevel: BuildingLevel): Promise<string | undefined> {
+    const attachment: Attachment = await getRepository(Attachment).findOne({
+      where: {
+        refType: BuildingLevel.name + '_elevationDrawing_thumbnail',
+        refBy: buildingLevel.id
+      }
+    })
+
+    return attachment.fullpath
+  }
+
   @FieldResolver(type => Attachment)
   async rebarDistributionDrawing(@Root() buildingLevel: BuildingLevel): Promise<Attachment | undefined> {
     const attachment: Attachment = await getRepository(Attachment).findOne({
       where: {
-        refType: BuildingLevel.name + '_rebarDistributionDrawing',
+        refType: BuildingLevel.name + '_rebarDistributionDrawing_thumbnail',
         refBy: buildingLevel.id
       }
     })
 
     return attachment
+  }
+
+  @FieldResolver(type => String)
+  async rebarDistributionDrawingThumbnail(@Root() buildingLevel: BuildingLevel): Promise<string | undefined> {
+    const attachment: Attachment = await getRepository(Attachment).findOne({
+      where: {
+        refType: BuildingLevel.name + '_rebarDistributionDrawing_thumbnail',
+        refBy: buildingLevel.id
+      }
+    })
+
+    return attachment.fullpath
   }
 
   @FieldResolver(type => [BuildingInspection])

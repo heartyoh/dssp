@@ -394,7 +394,6 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
                     id
                     name
                   }
-                  mainDrawingThumbnail
                   elevationDrawing {
                     id
                     name
@@ -403,6 +402,9 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
                     id
                     name
                   }
+                  mainDrawingThumbnail
+                  elevationDrawingThumbnail
+                  rebarDistributionDrawingThumbnail
                 }
               }
             }
@@ -427,6 +429,7 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
 
       for (let levelKey in building.buildingLevels) {
         delete this.project.buildingComplex.buildings[buildingKey].buildingLevels[levelKey].mainDrawing
+        delete this.project.buildingComplex.buildings[buildingKey].buildingLevels[levelKey].mainDrawingImage
         delete this.project.buildingComplex.buildings[buildingKey].buildingLevels[levelKey].mainDrawingThumbnail
         delete this.project.buildingComplex.buildings[buildingKey].buildingLevels[levelKey].elevationDrawing
         delete this.project.buildingComplex.buildings[buildingKey].buildingLevels[levelKey].rebarDistributionDrawing
@@ -455,7 +458,7 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
       notify({ message: '저장에 성공하였습니다.' })
 
       // 데이터 다시 조회
-      this.initProject(this.project.id)
+      // this.initProject(this.project.id)
     }
   }
 
@@ -472,12 +475,7 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
     const file = e.detail[0] || null
     const idx = Number(target.getAttribute('idx')) || 0
 
-    if (target.name === 'building-drawing') {
-      this.project.buildingComplex!.buildings![idx].drawingUpload = file
-    } else {
-      this.project.buildingComplex!.buildings![this.selectedBuildingIdx].buildingLevels![idx].mainDrawingUpload = file
-      this.project.buildingComplex!.buildings![this.selectedBuildingIdx].buildingLevels![idx].mainDrawing = file
-    }
+    this.project.buildingComplex!.buildings![idx].drawingUpload = file
 
     // re rendering
     this.project = { ...this.project }
@@ -491,9 +489,9 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
     const target = e.target as HTMLInputElement
     const idx = Number(target.getAttribute('idx')) || 0
     const buildingLevel = this.project.buildingComplex!.buildings![this.selectedBuildingIdx].buildingLevels![idx]
-
-    // 메인 이미지가 업로드 되어있으면 팝업 오픈
     const title = buildingLevel.floor?.toString() + '층' || ''
+
+    // 팝업 오픈
     this._openPopup(title, buildingLevel)
   }
 

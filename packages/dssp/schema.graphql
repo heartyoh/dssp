@@ -556,12 +556,17 @@ type BuildingLevel {
   creator: User
   deletedAt: DateTimeISO
   elevationDrawing: Attachment
+  elevationDrawingThumbnail: String!
+  elevationThumbnail: String
   floor: Float!
   floorInspectionSummary: FloorInspectionSummary!
   id: ID!
   mainDrawing: Attachment
+  mainDrawingImage: String
   mainDrawingThumbnail: String
   rebarDistributionDrawing: Attachment
+  rebarDistributionDrawingThumbnail: String!
+  rebarDistributionThumbnail: String
   updatedAt: DateTimeISO
   updater: User
 }

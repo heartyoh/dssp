@@ -369,7 +369,7 @@ export class BuildingComplexInspection extends ScopedElementsMixin(PageView) {
           </div>
 
           <div drawing>
-            <img src=${this.selectedLevel?.mainDrawingThumbnail || ''} />
+            <img src=${this.selectedLevel?.mainDrawingImage || ''} />
 
             <div grid>
               ${[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(
@@ -431,6 +431,7 @@ export class BuildingComplexInspection extends ScopedElementsMixin(PageView) {
                 `
               : html`
                   <div edit>
+                    ${console.log(Object.values(InspectionStatus))}
                     <select>
                       <option .value=${InspectionStatus.REQUEST}>검측 요청</option>
                       <option .value=${InspectionStatus.PASS}>합격</option>
@@ -539,7 +540,7 @@ export class BuildingComplexInspection extends ScopedElementsMixin(PageView) {
                 name
                 fullpath
               }
-              mainDrawingThumbnail
+              mainDrawingImage
             }
           }
         }
