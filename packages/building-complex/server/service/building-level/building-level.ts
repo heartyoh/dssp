@@ -50,7 +50,7 @@ export class BuildingLevel {
 
   // 층 입면도 썸내일
   @Field({ nullable: true })
-  elevationThumbnail: string
+  elevationDrawingThumbnail: string
 
   // 층 철근배분도 링크
   @Field(type => Attachment, { nullable: true })
@@ -58,7 +58,7 @@ export class BuildingLevel {
 
   // 층 철근배분도 썸내일
   @Field({ nullable: true })
-  rebarDistributionThumbnail: string
+  rebarDistributionDrawingThumbnail: string
 
   // 동 정보 (상위 테이블 참조)
   @Field(() => Building)

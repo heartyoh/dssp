@@ -73,10 +73,10 @@ export interface BuildingLevel {
   mainDrawingThumbnail?: string
   mainDrawingUpload?: FileUpload
   elevationDrawing?: Attachment
-  elevationDrawingImage?: string
+  elevationDrawingThumbnail?: string
   elevationDrawingUpload?: FileUpload
   rebarDistributionDrawing?: Attachment
-  rebarDistributionDrawingImage?: string
+  rebarDistributionDrawingThumbnail?: string
   rebarDistributionDrawingUpload?: FileUpload
   buildingInspections?: BuildingInspection[]
 }
@@ -264,14 +264,12 @@ export class ProjectListPage extends ScopedElementsMixin(PageView) {
 
                 <span project-state>
                   <div progress>
-                    <md-linear-progress buffer="100" max="100" value=${project.totalProgress || 0}>
-                    </md-linear-progress>
+                    <md-linear-progress buffer="100" max="100" value=${project.totalProgress || 0}> </md-linear-progress>
                     <span>전체</span>
                     <span>${project.totalProgress || 0}%</span>
                   </div>
                   <div progress>
-                    <md-linear-progress buffer="100" max="100" value=${project.weeklyProgress || 0}>
-                    </md-linear-progress>
+                    <md-linear-progress buffer="100" max="100" value=${project.weeklyProgress || 0}> </md-linear-progress>
                     <span>주간</span>
                     <span>${project.weeklyProgress || 0}%</span>
                   </div>
@@ -286,14 +284,12 @@ export class ProjectListPage extends ScopedElementsMixin(PageView) {
                     <span>${project.inspPassRate || 0}%</span>
                   </div>
                   <div progress>
-                    <md-linear-progress buffer="100" max="100" value=${project.robotProgressRate || 0}>
-                    </md-linear-progress>
+                    <md-linear-progress buffer="100" max="100" value=${project.robotProgressRate || 0}> </md-linear-progress>
                     <span>Robot Progress</span>
                     <span>${project.robotProgressRate || 0}%</span>
                   </div>
                   <div progress>
-                    <md-linear-progress buffer="100" max="100" value=${project.structuralSafetyRate || 0}>
-                    </md-linear-progress>
+                    <md-linear-progress buffer="100" max="100" value=${project.structuralSafetyRate || 0}> </md-linear-progress>
                     <span>Structural safety</span>
                     <span>${project.structuralSafetyRate || 0}%</span>
                   </div>

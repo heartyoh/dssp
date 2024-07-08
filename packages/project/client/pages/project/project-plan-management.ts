@@ -287,46 +287,40 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
               ${this.project.buildingComplex.buildings?.map((building, idx) => {
                 return this.project.buildingComplex?.buildings?.[this.selectedBuildingIdx]?.id === building.id
                   ? html`
-                      <md-filled-button @click=${() => this._onClickBuildingChange(idx)}>
-                        ${building.name}
-                      </md-filled-button>
+                      <md-filled-button @click=${() => this._onClickBuildingChange(idx)}> ${building.name} </md-filled-button>
                     `
                   : html`
-                      <md-outlined-button @click=${() => this._onClickBuildingChange(idx)}>
-                        ${building.name}
-                      </md-outlined-button>
+                      <md-outlined-button @click=${() => this._onClickBuildingChange(idx)}> ${building.name} </md-outlined-button>
                     `
               })}
             </span>
           </div>
 
           <div floor-plan>
-            ${this.project.buildingComplex?.buildings?.[this.selectedBuildingIdx]?.buildingLevels?.map(
-              (buildingLevel, idx) => {
-                return buildingLevel.mainDrawingThumbnail
-                  ? html`
-                      <span plan>
-                        <img
-                          name="building-plan"
-                          .src=${buildingLevel.mainDrawingThumbnail}
-                          idx=${idx}
-                          @click=${this._onClickImage}
-                        />
-                        <div floor-name>${buildingLevel.floor}층</div>
-                      </span>
-                    `
-                  : html`
-                      <span plan>
-                        <a name="building-plan" idx=${idx} @click=${this._onClickImage}>
-                          <md-icon slot="icon">image</md-icon>
-                          <div bold>도면 파일</div>
-                          <div>업로드</div>
-                        </a>
-                        <div floor-name no-data>${buildingLevel.floor}층</div>
-                      </span>
-                    `
-              }
-            )}
+            ${this.project.buildingComplex?.buildings?.[this.selectedBuildingIdx]?.buildingLevels?.map((buildingLevel, idx) => {
+              return buildingLevel.mainDrawingThumbnail
+                ? html`
+                    <span plan>
+                      <img
+                        name="building-plan"
+                        .src=${buildingLevel.mainDrawingThumbnail}
+                        idx=${idx}
+                        @click=${this._onClickImage}
+                      />
+                      <div floor-name>${buildingLevel.floor}층</div>
+                    </span>
+                  `
+                : html`
+                    <span plan>
+                      <a name="building-plan" idx=${idx} @click=${this._onClickImage}>
+                        <md-icon slot="icon">image</md-icon>
+                        <div bold>도면 파일</div>
+                        <div>업로드</div>
+                      </a>
+                      <div floor-name no-data>${buildingLevel.floor}층</div>
+                    </span>
+                  `
+            })}
           </div>
         </div>
 
@@ -432,7 +426,9 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
         delete this.project.buildingComplex.buildings[buildingKey].buildingLevels[levelKey].mainDrawingImage
         delete this.project.buildingComplex.buildings[buildingKey].buildingLevels[levelKey].mainDrawingThumbnail
         delete this.project.buildingComplex.buildings[buildingKey].buildingLevels[levelKey].elevationDrawing
+        delete this.project.buildingComplex.buildings[buildingKey].buildingLevels[levelKey].elevationDrawingThumbnail
         delete this.project.buildingComplex.buildings[buildingKey].buildingLevels[levelKey].rebarDistributionDrawing
+        delete this.project.buildingComplex.buildings[buildingKey].buildingLevels[levelKey].rebarDistributionDrawingThumbnail
       }
     }
 

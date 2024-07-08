@@ -67,7 +67,7 @@ export class BuildingLevelQuery {
       }
     })
 
-    return attachment.fullpath
+    return attachment?.fullpath
   }
 
   @FieldResolver(type => Attachment)
@@ -91,7 +91,7 @@ export class BuildingLevelQuery {
       }
     })
 
-    return attachment.fullpath
+    return attachment?.fullpath
   }
 
   @FieldResolver(type => [BuildingInspection])
