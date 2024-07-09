@@ -29,8 +29,7 @@ export class PopupPlanUpload extends LitElement {
           padding: 35px 27px 27px 27px;
 
           ox-input-file {
-            min-height: 50px;
-            height: 70px;
+            height: 100px;
             width: 120px;
             line-height: 100%;
           }
@@ -52,17 +51,31 @@ export class PopupPlanUpload extends LitElement {
   render() {
     const noUploadStyle = '--file-uploader-icon-size: 0; --file-uploader-label-padding; 0;'
 
-    const mainDrawing = this.buildingLevel.mainDrawing
+    // 메인 도면 스타일
+    const { mainDrawing, mainDrawingThumbnail } = this.buildingLevel
     const mainDrawingIcon = mainDrawing ? '' : 'upload'
     const mainDrawingStyle = mainDrawing ? noUploadStyle : ''
+    const mainDrawingLabel = mainDrawingThumbnail ? ' ' : '업로드'
+    const mainDrawingDesc = mainDrawingThumbnail ? ' ' : '평면 파일'
+    const mainDrawingThumbnailStyle = mainDrawingThumbnail ? this._getThumbnailStyle(mainDrawingThumbnail) : ''
 
-    const elevationDrawing = this.buildingLevel.elevationDrawing
+    // 입면 도면 스타일
+    const { elevationDrawing, elevationDrawingThumbnail } = this.buildingLevel
     const elevationDrawingIcon = elevationDrawing ? '' : 'upload'
+    const elevationDrawingLabel = elevationDrawingThumbnail ? ' ' : '업로드'
+    const elevationDrawingDesc = elevationDrawingThumbnail ? ' ' : '입면 파일'
     const elevationDrawingStyle = elevationDrawing ? noUploadStyle : ''
+    const elevationDrawingThumbnailStyle = elevationDrawingThumbnail ? this._getThumbnailStyle(elevationDrawingThumbnail) : ''
 
-    const rebarDistributionDrawing = this.buildingLevel.rebarDistributionDrawing
+    // 철근배근도 도면 스타일
+    const { rebarDistributionDrawing, rebarDistributionDrawingThumbnail } = this.buildingLevel
     const rebarDistributionDrawingIcon = rebarDistributionDrawing ? '' : 'upload'
     const rebarDistributionDrawingStyle = rebarDistributionDrawing ? noUploadStyle : ''
+    const rebarDistributionDrawingLabel = rebarDistributionDrawingThumbnail ? ' ' : '업로드'
+    const rebarDistributionDrawingDesc = rebarDistributionDrawingThumbnail ? ' ' : '철근배근도 파일'
+    const rebarDistributionDrawingThumbnailStyle = rebarDistributionDrawingThumbnail
+      ? this._getThumbnailStyle(rebarDistributionDrawingThumbnail)
+      : ''
 
     return html`
       <div body>
@@ -71,30 +84,30 @@ export class PopupPlanUpload extends LitElement {
             name="mainDrawing"
             .value=${mainDrawing || undefined}
             icon=${mainDrawingIcon}
-            label="업로드"
-            description="평면 파일"
+            label=${mainDrawingLabel}
+            description=${mainDrawingDesc}
             @change=${this._onChangeAttachment.bind(this)}
-            style=${mainDrawingStyle}
+            style="${mainDrawingStyle + mainDrawingThumbnailStyle}"
           ></ox-input-file>
 
           <ox-input-file
             name="elevationDrawing"
             .value=${elevationDrawing || undefined}
             icon=${elevationDrawingIcon}
-            label="업로드"
-            description="입면 파일"
+            label=${elevationDrawingLabel}
+            description=${elevationDrawingDesc}
             @change=${this._onChangeAttachment.bind(this)}
-            style=${elevationDrawingStyle}
+            style="${elevationDrawingStyle + elevationDrawingThumbnailStyle}"
           ></ox-input-file>
 
           <ox-input-file
             name="rebarDistributionDrawing"
             .value=${rebarDistributionDrawing || undefined}
             icon=${rebarDistributionDrawingIcon}
-            label="업로드"
-            description="철근배근도 파일"
+            label=${rebarDistributionDrawingLabel}
+            description=${rebarDistributionDrawingDesc}
             @change=${this._onChangeAttachment.bind(this)}
-            style=${rebarDistributionDrawingStyle}
+            style="${rebarDistributionDrawingStyle + rebarDistributionDrawingThumbnailStyle}"
           ></ox-input-file>
         </div>
 
@@ -121,5 +134,9 @@ export class PopupPlanUpload extends LitElement {
 
     const detail = { buildingLevel: this.buildingLevel, selectedIdx: this.selectedIdx }
     this.dispatchEvent(new CustomEvent('file_change', { bubbles: false, detail: detail }))
+  }
+
+  private _getThumbnailStyle(path) {
+    return `background: url(${path}); background-size: cover; background-repeat: round; justify-content: flex-end;`
   }
 }

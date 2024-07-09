@@ -454,7 +454,7 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
       notify({ message: '저장에 성공하였습니다.' })
 
       // 데이터 다시 조회
-      // this.initProject(this.project.id)
+      this.initProject(this.project.id)
     }
   }
 
@@ -492,7 +492,6 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
   }
 
   private _openPopup(title: string, buildingLevel: BuildingLevel, selectedIdx: number) {
-    console.log('this: ', this)
     openPopup(
       html`<popup-plan-upload
         .buildingLevel=${buildingLevel}
