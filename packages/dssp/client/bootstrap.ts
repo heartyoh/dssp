@@ -12,14 +12,7 @@ import { html } from 'lit-html'
 import { registerDefaultGroups } from '@operato/board'
 import { navigate, store } from '@operato/shell'
 
-import {
-  appendViewpart,
-  updateViewpart,
-  toggleOverlay,
-  TOOL_POSITION,
-  VIEWPART_LEVEL,
-  VIEWPART_POSITION
-} from '@operato/layout'
+import { appendViewpart, updateViewpart, toggleOverlay, TOOL_POSITION, VIEWPART_LEVEL, VIEWPART_POSITION } from '@operato/layout'
 import { APPEND_APP_TOOL } from '@things-factory/apptool-base/client'
 import { setupAppToolPart } from '@things-factory/apptool-ui/dist-client'
 import { hasPrivilege } from '@things-factory/auth-base/dist-client'
@@ -138,10 +131,32 @@ export default async function bootstrap() {
   store.dispatch({
     type: ADD_MORENDA,
     morenda: {
-      icon: html` <md-icon>settings</md-icon> `,
-      name: html` <ox-i18n msgid="인력관리"></ox-i18n> `,
+      icon: html` <md-icon>engineering</md-icon> `,
+      name: html` <ox-i18n msgid="담당자 정보 관리"></ox-i18n> `,
       action: () => {
-        navigate('human_resource')
+        navigate('manager-management')
+      }
+    }
+  })
+
+  store.dispatch({
+    type: ADD_MORENDA,
+    morenda: {
+      icon: html` <md-icon>group</md-icon> `,
+      name: html` <ox-i18n msgid="인력 관리"></ox-i18n> `,
+      action: () => {
+        navigate('human-resource-management')
+      }
+    }
+  })
+
+  store.dispatch({
+    type: ADD_MORENDA,
+    morenda: {
+      icon: html` <md-icon>construction</md-icon> `,
+      name: html` <ox-i18n msgid="공종 관리"></ox-i18n> `,
+      action: () => {
+        navigate('construction-type-management')
       }
     }
   })

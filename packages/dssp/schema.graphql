@@ -1406,6 +1406,29 @@ type LoginHistoryList {
   total: Int!
 }
 
+"""담당자 관리"""
+type Manager {
+  domain: Domain
+  id: ID!
+  phone: String
+  position: String
+  user: User
+}
+
+type ManagerOutput {
+  id: ID
+  name: String
+  phone: String
+  position: String
+}
+
+input ManagerPatch {
+  id: ID
+  name: String
+  phone: String
+  position: String
+}
+
 """Entity for Menu"""
 type Menu {
   buttons: [MenuButton!]!
@@ -1901,9 +1924,6 @@ type Mutation {
   """프로젝트 생성"""
   createProject(project: NewProject!): Project!
 
-  """To create new Resource"""
-  createResource(resource: NewResource!): Resource!
-
   """To create new user"""
   createRole(role: NewRole!): User!
 
@@ -2151,12 +2171,6 @@ type Mutation {
   """To delete Project"""
   deleteProject(id: String!): Boolean!
 
-  """To delete Resource"""
-  deleteResource(id: String!): Boolean!
-
-  """To delete multiple Resources"""
-  deleteResources(ids: [String!]!): Boolean!
-
   """To delete role"""
   deleteRole(id: String!): Boolean!
 
@@ -2294,9 +2308,6 @@ type Mutation {
 
   """To import multiple Oauth2Clients"""
   importOauth2Clients(oauth2Clients: [Oauth2ClientPatch!]!): Boolean!
-
-  """To import multiple Resources"""
-  importResources(resources: [ResourcePatch!]!): Boolean!
 
   """To import multiple scenarios"""
   importScenarios(scenarios: [ScenarioPatch!]!): Boolean!
@@ -2522,6 +2533,9 @@ type Mutation {
   """To modify multiple Entitys' information"""
   updateMultipleEntityColumn(patches: [EntityColumnPatch!]!): [EntityColumn!]!
 
+  """To modify multiple Managers' information"""
+  updateMultipleManager(patches: [ManagerPatch!]!): [Manager!]!
+
   """To modify multiple Menus' information"""
   updateMultipleMenu(patches: [MenuPatch!]!): [Menu!]!
 
@@ -2542,9 +2556,6 @@ type Mutation {
 
   """To modify multiple PrinterDevices' information"""
   updateMultiplePrinterDevice(patches: [PrinterDevicePatch!]!): [PrinterDevice!]!
-
-  """To modify multiple Resources' information"""
-  updateMultipleResource(patches: [ResourcePatch!]!): [Resource!]!
 
   """To modify multiple scenarios' information"""
   updateMultipleScenario(patches: [ScenarioPatch!]!): [Scenario!]!
@@ -2605,9 +2616,6 @@ type Mutation {
 
   """프로젝트 도면 업데이트"""
   updateProjectPlan(project: ProjectPatch!): Project!
-
-  """To modify Resource information"""
-  updateResource(id: String!, patch: ResourcePatch!): Resource!
 
   """To modify role information"""
   updateRole(id: String!, patch: RolePatch!): Role!
@@ -3119,13 +3127,6 @@ input NewPrivilege {
 
 input NewProject {
   name: String!
-}
-
-input NewResource {
-  active: Boolean
-  description: String
-  name: String!
-  params: String
 }
 
 input NewRole {
@@ -3959,6 +3960,9 @@ type Query {
   """To fetch multiple LoginHistories"""
   loginHistories(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): LoginHistoryList!
 
+  """담당자 리스트"""
+  managers: [ManagerOutput!]!
+
   """To fetch a Menu"""
   menu(id: String!): Menu!
 
@@ -4096,12 +4100,6 @@ type Query {
   """프로젝트 리스트"""
   projects(projectName: String!): ProjectList!
 
-  """To fetch a Resource"""
-  resource(id: String!): Resource
-
-  """To fetch multiple Resources"""
-  resources(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): ResourceList!
-
   """To fetch role"""
   role(name: String!): Role!
 
@@ -4196,31 +4194,6 @@ type RecipientItem {
   recipient: OrgMemberTarget
   type: OrgMemberTargetType
   value: String
-}
-
-"""리소스 관리 (작업자)"""
-type Resource {
-  createdAt: DateTimeISO
-  creator: User
-  deletedAt: DateTimeISO
-  id: ID!
-  name: String
-  thumbnail: String!
-  updatedAt: DateTimeISO
-  updater: User
-}
-
-type ResourceList {
-  items: [Resource!]!
-  total: Int!
-}
-
-input ResourcePatch {
-  active: Boolean
-  cuFlag: String
-  description: String
-  id: ID
-  name: String
 }
 
 type Role {

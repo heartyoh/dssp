@@ -44,6 +44,9 @@ export class BuildingLevel {
   @Field({ nullable: true })
   mainDrawingThumbnail: string
 
+  // 층 메인 도면(평면도) 업로드 타입
+  mainDrawingUpload: FileUpload
+
   // 층 입면도 링크
   @Field(type => Attachment, { nullable: true })
   elevationDrawing: Attachment
@@ -52,6 +55,9 @@ export class BuildingLevel {
   @Field({ nullable: true })
   elevationDrawingThumbnail: string
 
+  // 층 입면도 업로드 타입
+  elevationDrawingUpload: FileUpload
+
   // 층 철근배분도 링크
   @Field(type => Attachment, { nullable: true })
   rebarDistributionDrawing: Attachment
@@ -59,6 +65,9 @@ export class BuildingLevel {
   // 층 철근배분도 썸내일
   @Field({ nullable: true })
   rebarDistributionDrawingThumbnail: string
+
+  // 층 철근배분도 업로드 타입
+  rebarDistributionDrawingUpload: FileUpload
 
   // 동 정보 (상위 테이블 참조)
   @Field(() => Building)
@@ -98,9 +107,4 @@ export class BuildingLevel {
 
   @RelationId((buildingLevel: BuildingLevel) => buildingLevel.updater)
   updaterId?: string
-
-  // 업로드 타입
-  mainDrawingUpload: FileUpload
-  elevationDrawingUpload: FileUpload
-  rebarDistributionDrawingUpload: FileUpload
 }

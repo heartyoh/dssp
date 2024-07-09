@@ -28,12 +28,16 @@ export default function route(page: string) {
       import('./pages/project/project-plan-management')
       return page
 
-    case 'checklist-list':
-      import('./pages/checklist/checklist-list-page')
+    case 'manager-management':
+      import('./pages/resource/manager-management')
       return page
 
-    case 'resource-list':
-      import('./pages/resource/resource-list-page')
+    case 'worker-type-management':
+      import('./pages/resource/worker-type-management')
+
+      return page
+    case 'construction-type-management':
+      import('./pages/resource/construction-type-management')
       return page
   }
 }
