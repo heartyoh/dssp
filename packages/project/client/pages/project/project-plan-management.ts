@@ -482,7 +482,7 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
   }
 
   _onClickImage(e) {
-    const target = e.target as HTMLInputElement
+    const target = e.currentTarget as HTMLInputElement
     const idx = Number(target.getAttribute('idx')) || 0
     const buildingLevel = this.project.buildingComplex!.buildings![this.selectedBuildingIdx].buildingLevels![idx]
     const title = buildingLevel.floor?.toString() + '층' || ''

@@ -117,7 +117,7 @@ export class ProjectMutation {
           context,
           buildingLevel.mainDrawingUpload,
           buildingLevel.id,
-          BuildingLevel.name
+          BuildingLevel.name + '_mainDrawing'
         )
         // 첨부된 PDF가 있으면 PDF 파일대로 썸네일 생성
         if (mainDrawingAttatchment) {
@@ -125,7 +125,7 @@ export class ProjectMutation {
           const pdfPath = `/${ATTACHMENT_PATH}/${mainDrawingAttatchment.path}`
           const fileName = mainDrawingUpload.filename.replace('.pdf', '')
           const pngFile = await pdfToImage({ pdfPath, fileName })
-          await createAttachmentAfterDelete(context, pngFile, buildingLevel.id, BuildingLevel.name + '_mainDrawing')
+          await createAttachmentAfterDelete(context, pngFile, buildingLevel.id, BuildingLevel.name + '_mainDrawing_image')
 
           const pngThumbnailFile = await pdfToImage({ pdfPath, fileName, defaultViewport: { width: 300, height: 200 } })
           await createAttachmentAfterDelete(

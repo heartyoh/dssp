@@ -1,9 +1,5 @@
-import '@material/web/icon/icon.js'
-import '@material/web/textfield/outlined-text-field.js'
-import '@material/web/button/elevated-button.js'
-
 import { css, html, LitElement } from 'lit'
-import { customElement, property, state } from 'lit/decorators.js'
+import { customElement, property } from 'lit/decorators.js'
 import { BuildingLevel } from '../project-list'
 
 @customElement('popup-plan-upload')

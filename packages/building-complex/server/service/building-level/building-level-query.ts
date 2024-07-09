@@ -14,7 +14,7 @@ export class BuildingLevelQuery {
   async mainDrawing(@Root() buildingLevel: BuildingLevel): Promise<Attachment | undefined> {
     const attachment: Attachment = await getRepository(Attachment).findOne({
       where: {
-        refType: BuildingLevel.name,
+        refType: BuildingLevel.name + '_mainDrawing',
         refBy: buildingLevel.id
       }
     })
@@ -26,7 +26,7 @@ export class BuildingLevelQuery {
   async mainDrawingImage(@Root() buildingLevel: BuildingLevel): Promise<string | undefined> {
     const attachment: Attachment = await getRepository(Attachment).findOne({
       where: {
-        refType: BuildingLevel.name + '_mainDrawing',
+        refType: BuildingLevel.name + '_mainDrawing_image',
         refBy: buildingLevel.id
       }
     })
