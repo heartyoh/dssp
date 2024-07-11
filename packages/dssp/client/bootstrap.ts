@@ -145,7 +145,7 @@ export default async function bootstrap() {
       icon: html` <md-icon>group</md-icon> `,
       name: html` <ox-i18n msgid="인력 관리"></ox-i18n> `,
       action: () => {
-        navigate('human-resource-management')
+        navigate('worker-type-management')
       }
     }
   })

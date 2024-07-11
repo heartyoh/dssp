@@ -1408,7 +1408,6 @@ type LoginHistoryList {
 
 """담당자 관리"""
 type Manager {
-  domain: Domain
   id: ID!
   phone: String
   position: String
@@ -1420,6 +1419,7 @@ type ManagerOutput {
   name: String
   phone: String
   position: String
+  updatedAt: String
   userId: ID!
 }
 
@@ -2230,6 +2230,9 @@ type Mutation {
   """To delete some users"""
   deleteUsers(emails: [String!]!): Boolean!
 
+  """To delete multiple WorkerTypes"""
+  deleteWorkerTypes(ids: [String!]!): Boolean!
+
   """To detach a contact from Employee"""
   detachContact(id: String!): Employee!
 
@@ -2582,6 +2585,9 @@ type Mutation {
 
   """To modify multiple users information"""
   updateMultipleUser(patches: [UserPatch!]!): [User!]!
+
+  """To modify multiple WorkerTypes' information"""
+  updateMultipleWorkerType(patches: [WorkerTypePatch!]!): [WorkerType!]!
 
   """To modify ApprovalLine information for current user"""
   updateMyApprovalLine(id: String!, patch: ApprovalLinePatch!): ApprovalLine!
@@ -3157,12 +3163,34 @@ input NewSetting {
 }
 
 input NewStateRegister {
+  """Description of the state register"""
   description: String
+
+  """Group name for the state register"""
+  group: String
+
+  """Name of the state register"""
   name: String!
+
+  """Number of decimal places if the state is a number type"""
+  place: String
+
+  """
+  Reference to an external entity or data, used as a flexible foreign key
+  """
   refBy: String
+
+  """Current state value"""
   state: Object
+
+  """Time to live for the state value in seconds"""
   ttl: Int
+
+  """Type of the state"""
   type: String
+
+  """Unit of the state value"""
+  unit: String
 }
 
 input NewTask {
@@ -4190,6 +4218,12 @@ type Query {
   """To fetch multiple users"""
   users(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): UserList!
   vendors: [Domain!]!
+
+  """To fetch a WorkerType"""
+  workerType(id: String!): WorkerType
+
+  """To fetch multiple WorkerTypes"""
+  workerTypes(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): WorkerTypeList!
 }
 
 type RecipientItem {
@@ -4383,36 +4417,113 @@ input Sorting {
 
 """Entity for StateRegister"""
 type StateRegister {
+  """Creation time of the state register"""
   createdAt: DateTimeISO
+
+  """User who created the state register"""
   creator: User
+
+  """ID of the user who created the state register"""
+  creatorId: String
+
+  """Description of the state register"""
   description: String
+
+  """Associated domain for the state register"""
   domain: Domain!
+
+  """ID of the associated domain"""
+  domainId: String!
+
+  """Group name for the state register"""
+  group: String
   id: ID!
+
+  """Name of the state register"""
   name: String
+
+  """Number of decimal places if the state is a number type"""
+  place: String
+
+  """
+  Reference to an external entity or data, used as a flexible foreign key
+  """
   refBy: String
+
+  """Current state value"""
   state: Object
+
+  """Time to live for the state value in seconds"""
   ttl: Int
+
+  """Type of the state"""
   type: String
+
+  """Unit of the state value"""
+  unit: String
+
+  """Last update time of the state register"""
   updatedAt: DateTimeISO
+
+  """User who last updated the state register"""
   updater: User
+
+  """ID of the user who last updated the state register"""
+  updaterId: String
+
+  """User who wrote the state"""
   writer: User
+
+  """ID of the user who wrote the state"""
+  writerId: String
+
+  """Time when the state was recorded"""
   wroteAt: DateTimeISO
 }
 
 type StateRegisterList {
+  """List of state registers"""
   items: [StateRegister!]!
+
+  """Total number of state registers"""
   total: Int!
 }
 
 input StateRegisterPatch {
+  """Flag indicating create/update operations"""
   cuFlag: String
+
+  """Description of the state register"""
   description: String
+
+  """Group name for the state register"""
+  group: String
+
+  """ID of the state register"""
   id: ID
+
+  """Name of the state register"""
   name: String
+
+  """Number of decimal places if the state is a number type"""
+  place: String
+
+  """
+  Reference to an external entity or data, used as a flexible foreign key
+  """
   refBy: String
+
+  """Current state value"""
   state: Object
+
+  """Time to live for the state value in seconds"""
   ttl: Int
+
+  """Type of the state"""
   type: String
+
+  """Unit of the state value"""
+  unit: String
 }
 
 type Step {
@@ -4662,6 +4773,30 @@ type UsersAuthProviders {
   ssoId: String
   updatedAt: DateTimeISO
   user: User
+}
+
+"""작업자 타입"""
+type WorkerType {
+  createdAt: DateTimeISO
+  creator: User
+  description: String
+  domain: Domain
+  id: ID!
+  name: String!
+  updatedAt: DateTimeISO
+  updater: User
+}
+
+type WorkerTypeList {
+  items: [WorkerType!]!
+  total: Int!
+}
+
+input WorkerTypePatch {
+  cuFlag: String!
+  description: String
+  id: ID
+  name: String
 }
 
 input i18nCompletionInput {

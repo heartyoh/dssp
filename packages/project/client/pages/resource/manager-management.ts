@@ -24,31 +24,6 @@ export class ManagerManagement extends PageView {
         --grid-record-emphasized-background-color: red;
         --grid-record-emphasized-color: yellow;
       }
-
-      div.summary {
-        display: grid;
-        grid-template-columns: 0.7fr 1fr 0.7fr 1fr 0.7fr 1fr 0.7fr 1fr;
-        border: solid #d3dbe5;
-        border-width: 2px 0;
-        margin: 15px 40px;
-        align-content: center;
-
-        span.title {
-          background-color: #e9edf6;
-          text-align: center;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          height: 35px;
-          font-weight: bold;
-        }
-        span.value {
-          padding-left: 10px;
-          display: flex;
-          align-items: center;
-          height: 35px;
-        }
-      }
     `
   ]
 
@@ -71,9 +46,9 @@ export class ManagerManagement extends PageView {
   render() {
     return html`
       <ox-grist .mode=${'GRID'} .config=${this.gristConfig} .fetchHandler=${this.fetchHandler.bind(this)}>
-        <div slot="headroom" class="header">
-          <div class="actions">
-            <button class="textbtn" @click=${this._updateManagers.bind(this)}>저장</button>
+        <div slot="headroom">
+          <div>
+            <button @click=${this._updateManagers.bind(this)}>저장</button>
           </div>
         </div>
       </ox-grist>
