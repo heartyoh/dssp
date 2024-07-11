@@ -17,6 +17,7 @@ export class ManagerQuery {
       .addSelect('m.position', 'position')
       .addSelect('u.id', 'userId')
       .addSelect('u.name', 'name')
+      .addSelect('u.updated_at', 'updatedAt')
       .innerJoin('users_domains', 'ud', 'u.id = ud.users_id')
       .leftJoin('managers', 'm', 'u.id = m.user_id')
       .where('ud.domains_id = :domain', { domain: domain.id })

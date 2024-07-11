@@ -1,10 +1,10 @@
-import { Entity, Index, Column, RelationId, ManyToOne, OneToOne, PrimaryGeneratedColumn, JoinColumn } from 'typeorm'
+import { Entity, Index, Column, RelationId, OneToOne, PrimaryGeneratedColumn, JoinColumn } from 'typeorm'
 import { ObjectType, Field, ID } from 'type-graphql'
 import { Domain } from '@things-factory/shell'
 import { User } from '@things-factory/auth-base'
 
 @Entity()
-@Index('ix_manager_0', (manager: Manager) => [manager.userId])
+@Index('ix_manager_0', (manager: Manager) => [manager.user])
 @ObjectType({ description: '담당자 관리' })
 export class Manager {
   @PrimaryGeneratedColumn('uuid')

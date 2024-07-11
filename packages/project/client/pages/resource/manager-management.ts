@@ -91,7 +91,6 @@ export class ManagerManagement extends PageView {
           record: {
             editable: true
           },
-          filter: 'search',
           width: 150
         },
         {
@@ -101,7 +100,6 @@ export class ManagerManagement extends PageView {
           record: {
             editable: true
           },
-          filter: 'search',
           width: 150
         },
         {
@@ -111,14 +109,34 @@ export class ManagerManagement extends PageView {
           record: {
             editable: true
           },
-          filter: 'search',
           width: 150
+        },
+        {
+          type: 'datetime',
+          name: 'updatedAt',
+          header: '수정 시간',
+          record: {
+            renderer: value => {
+              const date = new Date(value + ' UTC')
+
+              return new Intl.DateTimeFormat('ko-KR', {
+                timeZone: 'Asia/Seoul',
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+              }).format(date)
+            }
+          },
+          width: 200
         }
       ],
       rows: {
         appendable: false
       },
-      sorters: [{ name: 'createdAt' }],
+      sorters: [{ name: 'name' }],
       pagination: { infinite: true }
     }
   }
@@ -133,6 +151,7 @@ export class ManagerManagement extends PageView {
             position
             userId
             name
+            updatedAt
           }
         }
       `

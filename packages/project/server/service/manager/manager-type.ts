@@ -34,4 +34,7 @@ export class ManagerOutput {
 
   @Field({ nullable: true })
   name?: string
+
+  @Field({ nullable: true })
+  updatedAt?: string
 }

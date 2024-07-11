@@ -11,7 +11,7 @@ export class ManagerMutation {
     @Arg('patches', type => [ManagerPatch]) patches: ManagerPatch[],
     @Ctx() context: ResolverContext
   ): Promise<Manager[]> {
-    const { tx } = context.state
+    const { tx, user } = context.state
 
     let results = []
     const managerRepo = tx.getRepository(Manager)
@@ -20,16 +20,17 @@ export class ManagerMutation {
     for (let i = 0; i < patches.length; i++) {
       const updateRecord = patches[i]
       const manager = updateRecord.id ? await managerRepo.findOneBy({ id: updateRecord.id }) : {}
-      const user = await userRepo.findOneBy({ id: updateRecord.userId })
+      const managerUser = await userRepo.findOneBy({ id: updateRecord.userId })
 
       await userRepo.save({
-        ...user,
-        name: updateRecord.name
+        ...managerUser,
+        name: updateRecord.name,
+        updater: user
       })
 
       const result = await managerRepo.save({
         ...manager,
-        user: user,
+        user: managerUser,
         ...updateRecord
       })
 
