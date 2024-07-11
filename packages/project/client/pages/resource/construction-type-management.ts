@@ -1,14 +1,13 @@
 import '@operato/data-grist'
+import '@operato/context/ox-context-page-toolbar.js'
 
-import { CommonButtonStyles, CommonGristStyles, ScrollbarStyles } from '@operato/styles'
+import { CommonGristStyles, ScrollbarStyles } from '@operato/styles'
 import { PageView } from '@operato/shell'
 import { css, html } from 'lit'
-import { customElement, property, state, query } from 'lit/decorators.js'
-import { ScopedElementsMixin } from '@open-wc/scoped-elements'
-import { DataGrist, FetchOption } from '@operato/data-grist'
+import { customElement, property, query } from 'lit/decorators.js'
+import { DataGrist } from '@operato/data-grist'
 import { client } from '@operato/graphql'
-import { i18next, localize } from '@operato/i18n'
-import { notify, openPopup } from '@operato/layout'
+import { notify } from '@operato/layout'
 import gql from 'graphql-tag'
 
 @customElement('construction-type-management')
@@ -26,31 +25,6 @@ export class ConstructionTypeManagement extends PageView {
         --grid-record-emphasized-background-color: red;
         --grid-record-emphasized-color: yellow;
       }
-
-      div.summary {
-        display: grid;
-        grid-template-columns: 0.7fr 1fr 0.7fr 1fr 0.7fr 1fr 0.7fr 1fr;
-        border: solid #d3dbe5;
-        border-width: 2px 0;
-        margin: 15px 40px;
-        align-content: center;
-
-        span.title {
-          background-color: #e9edf6;
-          text-align: center;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          height: 35px;
-          font-weight: bold;
-        }
-        span.value {
-          padding-left: 10px;
-          display: flex;
-          align-items: center;
-          height: 35px;
-        }
-      }
     `
   ]
 
@@ -59,12 +33,17 @@ export class ConstructionTypeManagement extends PageView {
 
   get context() {
     return {
-      title: '담당자 관리',
+      title: '공종 관리',
       actions: [
         {
           title: '저장',
-          action: this._updateTaxInvoice.bind(this),
-          ...CommonButtonStyles.save
+          action: this._updateConstructionTypes.bind(this),
+          icon: 'save'
+        },
+        {
+          title: '삭제',
+          action: this._deleteConstructionTypes.bind(this),
+          icon: 'delete'
         }
       ]
     }
@@ -73,12 +52,14 @@ export class ConstructionTypeManagement extends PageView {
   render() {
     return html`
       <ox-grist .mode=${'GRID'} .config=${this.gristConfig} .fetchHandler=${this.fetchHandler.bind(this)}>
-        <div slot="headroom">
-          <div id="filters">
-            <ox-filters-form autofocus></ox-filters-form>
-          </div>
+        <div slot="headroom" class="header">
+          <ox-context-page-toolbar class="actions" .context=${this.context}></ox-context-page-toolbar>
         </div>
       </ox-grist>
+      <div>
+        <button @click=${this._updateConstructionTypes.bind(this)}>저장</button>
+        <button @click=${this._deleteConstructionTypes.bind(this)}>삭제</button>
+      </div>
     `
   }
 
@@ -86,6 +67,7 @@ export class ConstructionTypeManagement extends PageView {
     this.gristConfig = {
       columns: [
         { type: 'gutter', gutterName: 'sequence' },
+        { type: 'gutter', gutterName: 'row-selector', multiple: true },
         {
           type: 'string',
           name: 'name',
@@ -93,99 +75,61 @@ export class ConstructionTypeManagement extends PageView {
           record: {
             editable: true
           },
-          filter: 'search',
           width: 150
         },
         {
           type: 'string',
-          name: 'phone',
-          header: '휴대폰 번호',
+          name: 'description',
+          header: '설명',
           record: {
             editable: true
           },
-          filter: 'search',
-          width: 150
+          width: 200
         },
         {
-          type: 'string',
-          name: 'position',
-          header: '직위',
-          record: {
-            editable: true
-          },
-          filter: 'search',
-          width: 150
+          type: 'datetime',
+          name: 'createdAt',
+          header: '생성 시간',
+          width: 200
+        },
+        {
+          type: 'datetime',
+          name: 'updatedAt',
+          header: '수정 시간',
+          width: 200
         }
       ],
-      // rows: {
-      //   appendable: false
-      // },
-      sorters: [
-        {
-          name: 'createdAt'
-        }
-      ]
+      pagination: { infinite: true }
     }
   }
 
-  async pageUpdated(changes: any, lifecycle: any) {
-    if (this.active) {
-      // do something here when this page just became as active
-    }
-  }
-
-  async fetchHandler({ page = 1, limit = 100, sortings = [], filters = [] }: FetchOption) {
+  async fetchHandler() {
     const response = await client.query({
       query: gql`
-        query ($filters: [Filter!], $pagination: Pagination, $sortings: [Sorting!], $summaryFilters: [Filter!]) {
-          ㅡ뭄ㅎㄷㄱㄴ(filters: $filters, pagination: $pagination, sortings: $sortings) {
+        query ConstructionTypes {
+          constructionTypes {
             items {
               id
-              memo
-              category
-              issueDate
-              signatureDate
-              supplierBusinessRegistrationNumber
-              supplierBusinessName
-              supplierRepresentativeName
-              totalAmount
-              supplyAmount
-              taxAmount
-              approvalNo
-              invoiceType
-              remark0
-              purpose
-              supplierContactEmail
-              buyer1stContactEmail
-              buyer2ndContactEmail
-              updater {
-                id
-                name
-              }
+              name
+              description
+              createdAt
               updatedAt
             }
             total
           }
-          taxInvoicesSummary(filters: $summaryFilters) {
-            summary
-          }
         }
-      `,
-      variables: {
-        filters,
-        pagination: { page, limit },
-        sortings,
-        summaryFilters: filters
-      }
+      `
     })
 
+    if (response.errors) return {}
+
     return {
-      total: response.data.taxInvoices.total || 0,
-      records: response.data.taxInvoices.items || []
+      total: response.data.constructionTypes.total || 0,
+      records: response.data.constructionTypes.items || []
     }
   }
 
-  async _updateTaxInvoice() {
+  async _updateConstructionTypes() {
     let patches = this.grist.dirtyRecords
     if (patches && patches.length) {
       patches = patches.map(patch => {
@@ -201,8 +145,8 @@ export class ConstructionTypeManagement extends PageView {
 
       const response = await client.mutate({
         mutation: gql`
-          mutation ($patches: [TaxInvoicePatch!]!) {
-            updateMultipleTaxInvoice(patches: $patches) {
+          mutation UpdateMultipleConstructionType($patches: [ConstructionTypePatch!]!) {
+            updateMultipleConstructionType(patches: $patches) {
               id
             }
           }
@@ -214,9 +158,34 @@ export class ConstructionTypeManagement extends PageView {
 
       if (!response.errors) {
         this.grist.fetch()
-        notify({ message: i18next.t('text.info_x_successfully', { x: i18next.t('text.save') }) })
+        notify({ message: '저장되었습니다.' })
       } else {
-        notify({ message: i18next.t('error.fail-save'), level: 'error' })
+        notify({ message: '저장에 실패하였습니다.', level: 'error' })
+      }
+    }
+  }
+
+  async _deleteConstructionTypes() {
+    if (confirm('삭제하시겠습니까?')) {
+      const a = this.grist
+
+      const ids = this.grist.selected.map(record => record.id)
+      if (ids && ids.length > 0) {
+        const response = await client.mutate({
+          mutation: gql`
+            mutation DeleteConstructionTypes($ids: [String!]!) {
+              deleteConstructionTypes(ids: $ids)
+            }
+          `,
+          variables: {
+            ids
+          }
+        })
+
+        if (!response.errors) {
+          this.grist.fetch()
+          notify({ message: '삭제되었습니다.' })
+        }
       }
     }
   }

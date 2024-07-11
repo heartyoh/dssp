@@ -783,6 +783,31 @@ type ConnectorType {
   taskPrefixes: [String!]
 }
 
+"""공종 타입"""
+type ConstructionType {
+  createdAt: DateTimeISO
+  creator: User
+  deletedAt: DateTimeISO
+  description: String
+  domain: Domain
+  id: ID!
+  name: String
+  updatedAt: DateTimeISO
+  updater: User
+}
+
+type ConstructionTypeList {
+  items: [ConstructionType!]!
+  total: Int!
+}
+
+input ConstructionTypePatch {
+  cuFlag: String
+  description: String
+  id: ID
+  name: String
+}
+
 """Entity for Contact"""
 type Contact {
   address: String
@@ -2026,6 +2051,9 @@ type Mutation {
   """To delete multiple connections"""
   deleteConnections(names: [String!]!): Boolean!
 
+  """To delete multiple ConstructionTypes"""
+  deleteConstructionTypes(ids: [String!]!): Boolean!
+
   """To delete Contact"""
   deleteContact(id: String!): Boolean!
 
@@ -2522,6 +2550,9 @@ type Mutation {
 
   """To modify multiple connections' information"""
   updateMultipleConnection(patches: [ConnectionPatch!]!): [Connection!]!
+
+  """To modify multiple ConstructionTypes' information"""
+  updateMultipleConstructionType(patches: [ConstructionTypePatch!]!): [ConstructionType!]!
 
   """To modify multiple Contacts' information"""
   updateMultipleContact(patches: [ContactPatch!]!): [Contact!]!
@@ -3891,6 +3922,12 @@ type Query {
   """To fetch multiple connector"""
   connectors: ConnectorList!
 
+  """To fetch a ConstructionType"""
+  constructionType(id: String!): ConstructionType
+
+  """To fetch multiple ConstructionTypes"""
+  constructionTypes(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): ConstructionTypeList!
+
   """To fetch a Contact"""
   contact(id: String!): Contact
 
@@ -4779,6 +4816,7 @@ type UsersAuthProviders {
 type WorkerType {
   createdAt: DateTimeISO
   creator: User
+  deletedAt: DateTimeISO
   description: String
   domain: Domain
   id: ID!

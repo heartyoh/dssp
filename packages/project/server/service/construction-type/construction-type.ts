@@ -15,12 +15,12 @@ import { Domain } from '@things-factory/shell'
 import { User } from '@things-factory/auth-base'
 
 @Entity()
-@Index('ix_worker_type_0', (workerType: WorkerType) => [workerType.domain, workerType.name], {
+@Index('ix_construction_type_0', (constructionType: ConstructionType) => [constructionType.domain, constructionType.name], {
   unique: true,
   where: '"deleted_at" IS NULL'
 })
-@ObjectType({ description: '작업자 타입' })
-export class WorkerType {
+@ObjectType({ description: '공종 타입' })
+export class ConstructionType {
   @PrimaryGeneratedColumn('uuid')
   @Field(type => ID)
   readonly id: string
@@ -29,14 +29,14 @@ export class WorkerType {
   @Field({ nullable: true })
   domain?: Domain
 
-  @RelationId((workerType: WorkerType) => workerType.domain)
+  @RelationId((constructionType: ConstructionType) => constructionType.domain)
   domainId?: string
 
-  @Column({ nullable: false, comment: '타입 이름' })
-  @Field({ nullable: false })
-  name: string
+  @Column()
+  @Field({ nullable: true })
+  name?: string
 
-  @Column({ nullable: true, comment: '설명' })
+  @Column({ nullable: true })
   @Field({ nullable: true })
   description?: string
 
@@ -56,13 +56,13 @@ export class WorkerType {
   @Field(type => User, { nullable: true })
   creator?: User
 
-  @RelationId((workerType: WorkerType) => workerType.creator)
+  @RelationId((constructionType: ConstructionType) => constructionType.creator)
   creatorId?: string
 
   @ManyToOne(type => User, { nullable: true })
   @Field(type => User, { nullable: true })
   updater?: User
 
-  @RelationId((workerType: WorkerType) => workerType.updater)
+  @RelationId((constructionType: ConstructionType) => constructionType.updater)
   updaterId?: string
 }

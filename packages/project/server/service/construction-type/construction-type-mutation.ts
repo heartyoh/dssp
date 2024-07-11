@@ -1,28 +1,28 @@
 import { Resolver, Mutation, Arg, Ctx, Directive } from 'type-graphql'
 import { In } from 'typeorm'
-import { WorkerType } from './worker-type'
-import { WorkerTypePatch } from './worker-type-type'
+import { ConstructionType } from './construction-type'
+import { ConstructionTypePatch } from './construction-type-type'
 
-@Resolver(WorkerType)
-export class WorkerTypeMutation {
+@Resolver(ConstructionType)
+export class ConstructionTypeMutation {
   @Directive('@transaction')
-  @Mutation(returns => [WorkerType], { description: "To modify multiple WorkerTypes' information" })
-  async updateMultipleWorkerType(
-    @Arg('patches', type => [WorkerTypePatch]) patches: WorkerTypePatch[],
+  @Mutation(returns => [ConstructionType], { description: "To modify multiple ConstructionTypes' information" })
+  async updateMultipleConstructionType(
+    @Arg('patches', type => [ConstructionTypePatch]) patches: ConstructionTypePatch[],
     @Ctx() context: ResolverContext
-  ): Promise<WorkerType[]> {
+  ): Promise<ConstructionType[]> {
     const { domain, user, tx } = context.state
 
     let results = []
     const _createRecords = patches.filter((patch: any) => patch.cuFlag.toUpperCase() === '+')
     const _updateRecords = patches.filter((patch: any) => patch.cuFlag.toUpperCase() === 'M')
-    const workerTypeRepo = tx.getRepository(WorkerType)
+    const constructionTypeRepo = tx.getRepository(ConstructionType)
 
     if (_createRecords.length > 0) {
       for (let i = 0; i < _createRecords.length; i++) {
         const newRecord = _createRecords[i]
 
-        const result = await workerTypeRepo.save({
+        const result = await constructionTypeRepo.save({
           ...newRecord,
           domain,
           creator: user,
@@ -36,10 +36,10 @@ export class WorkerTypeMutation {
     if (_updateRecords.length > 0) {
       for (let i = 0; i < _updateRecords.length; i++) {
         const updateRecord = _updateRecords[i]
-        const workerType = await workerTypeRepo.findOneBy({ id: updateRecord.id })
+        const constructionType = await constructionTypeRepo.findOneBy({ id: updateRecord.id })
 
-        const result = await workerTypeRepo.save({
-          ...workerType,
+        const result = await constructionTypeRepo.save({
+          ...constructionType,
           ...updateRecord,
           updater: user
         })
@@ -52,11 +52,11 @@ export class WorkerTypeMutation {
   }
 
   @Directive('@transaction')
-  @Mutation(returns => Boolean, { description: 'To delete multiple WorkerTypes' })
-  async deleteWorkerTypes(@Arg('ids', type => [String]) ids: string[], @Ctx() context: ResolverContext): Promise<boolean> {
+  @Mutation(returns => Boolean, { description: 'To delete multiple ConstructionTypes' })
+  async deleteConstructionTypes(@Arg('ids', type => [String]) ids: string[], @Ctx() context: ResolverContext): Promise<boolean> {
     const { domain, tx } = context.state
 
-    await tx.getRepository(WorkerType).softDelete({
+    await tx.getRepository(ConstructionType).softDelete({
       domain: { id: domain.id },
       id: In(ids)
     })

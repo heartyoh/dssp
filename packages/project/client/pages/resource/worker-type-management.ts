@@ -99,7 +99,7 @@ export class WorkerTypeManagement extends PageView {
           width: 200
         }
       ],
-      pagination: [10, 20, 30, 40]
+      pagination: { infinite: true }
     }
   }
 
