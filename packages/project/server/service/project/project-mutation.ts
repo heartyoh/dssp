@@ -97,6 +97,8 @@ export class ProjectMutation {
     const { user, tx, domain } = context.state
     const projectRepo = tx.getRepository(Project)
     const buildingComplexRepo = tx.getRepository(BuildingComplex)
+    const buildingRepo = tx.getRepository(Building)
+    const buildingLevelRepo = tx.getRepository(BuildingLevel)
     const buildingComplex = project.buildingComplex
     const buildings = project.buildingComplex?.buildings || []
 
@@ -175,10 +177,16 @@ export class ProjectMutation {
             BuildingLevel.name + '_rebarDistributionDrawing_thumbnail'
           )
         }
+
+        // 3-3. 층 업데이트 시간 갱신
+        await buildingLevelRepo.save({ ...buildingLevel, updater: user })
       }
 
       // 4. 동별 도면 이미지 저장
       await createAttachmentAfterDelete(context, building?.drawingUpload, building.id, Building.name)
+
+      // 4-1. 동 업데이트 시간 갱신
+      await buildingRepo.save({ ...building, updater: user })
     }
 
     return projectResult

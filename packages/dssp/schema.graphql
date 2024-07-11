@@ -1420,6 +1420,7 @@ type ManagerOutput {
   name: String
   phone: String
   position: String
+  userId: ID!
 }
 
 input ManagerPatch {
@@ -1427,6 +1428,7 @@ input ManagerPatch {
   name: String
   phone: String
   position: String
+  userId: ID
 }
 
 """Entity for Menu"""

@@ -1,6 +1,4 @@
-import { ObjectType, Field, InputType, Int, ID } from 'type-graphql'
-import { Manager } from './manager'
-import { User } from '@things-factory/auth-base'
+import { ObjectType, Field, InputType, ID } from 'type-graphql'
 
 @InputType()
 export class ManagerPatch {
@@ -12,6 +10,9 @@ export class ManagerPatch {
 
   @Field({ nullable: true })
   position?: string
+
+  @Field(type => ID, { nullable: true })
+  userId?: string
 
   @Field({ nullable: true })
   name?: string
@@ -27,6 +28,9 @@ export class ManagerOutput {
 
   @Field({ nullable: true })
   position?: string
+
+  @Field(type => ID)
+  userId?: string
 
   @Field({ nullable: true })
   name?: string

@@ -3,12 +3,10 @@ import '@operato/data-grist'
 import { CommonButtonStyles, CommonGristStyles, ScrollbarStyles } from '@operato/styles'
 import { PageView } from '@operato/shell'
 import { css, html } from 'lit'
-import { customElement, property, state, query } from 'lit/decorators.js'
-import { ScopedElementsMixin } from '@open-wc/scoped-elements'
-import { DataGrist, FetchOption } from '@operato/data-grist'
+import { customElement, property, query } from 'lit/decorators.js'
+import { DataGrist } from '@operato/data-grist'
 import { client } from '@operato/graphql'
-import { i18next, localize } from '@operato/i18n'
-import { notify, openPopup } from '@operato/layout'
+import { notify } from '@operato/layout'
 import gql from 'graphql-tag'
 
 @customElement('manager-management')
@@ -131,13 +129,16 @@ export class ManagerManagement extends PageView {
         query Managers {
           managers {
             id
-            name
             phone
             position
+            userId
+            name
           }
         }
       `
     })
+
+    console.log('response.data.managers :', response.data.managers)
 
     if (response.errors) return {}
 
@@ -151,7 +152,9 @@ export class ManagerManagement extends PageView {
     let patches = this.grist.dirtyRecords
     if (patches && patches.length) {
       patches = patches.map(patch => {
-        let patchField: any = patch.id ? { id: patch.id } : {}
+        let patchField: any = patch.userId ? { userId: patch.userId } : {}
+        if (patch.id) patchField['id'] = patch.id
+
         const dirtyFields = patch.__dirtyfields__
         for (let key in dirtyFields) {
           patchField[key] = dirtyFields[key].after
