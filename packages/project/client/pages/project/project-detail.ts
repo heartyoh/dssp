@@ -202,7 +202,7 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
             }
             div[inspection] {
               display: grid;
-              grid-template-columns: 1.4fr 0.9fr 0.9fr 0.9fr 0.9fr;
+              grid-template-columns: 1.4fr 0.9fr 0.9fr 0.9fr;
               margin-top: 5px;
               background: #f6f6f6;
               border-radius: 7px;
@@ -323,6 +323,7 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
       buildings: []
     }
   }
+
   @state() projectId: string = ''
   @state() project: Project = { ...this.defaultProject }
   @state() inspectionSummary: InspectionSummary = {
@@ -416,9 +417,7 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
               <div subject bold>개별 단지 상세정보 바로가기</div>
               <div building-container>
                 ${this.project.buildingComplex?.buildings?.map(building => {
-                  return html`<md-outlined-button
-                    href=${`building-complex-detail/${this.project.id}?buildingId=${building.id}`}
-                  >
+                  return html`<md-outlined-button href=${`building-complex-detail/${this.project.id}?buildingId=${building.id}`}>
                     ${building.name}
                   </md-outlined-button>`
                 })}

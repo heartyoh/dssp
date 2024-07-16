@@ -9,6 +9,7 @@ import { DataGrist } from '@operato/data-grist'
 import { client } from '@operato/graphql'
 import { notify } from '@operato/layout'
 import gql from 'graphql-tag'
+import { FetchOption } from '@operato/data-grist'
 
 @customElement('worker-type-management')
 export class WorkerTypeManagement extends PageView {
@@ -24,6 +25,32 @@ export class WorkerTypeManagement extends PageView {
 
         --grid-record-emphasized-background-color: red;
         --grid-record-emphasized-color: yellow;
+      }
+
+      md-elevated-button {
+        margin: 0px 3px;
+
+        --md-elevated-button-container-height: 35px;
+        --md-elevated-button-label-text-size: 16px;
+        --md-elevated-button-container-color: #0595e5;
+
+        --md-elevated-button-label-text-color: #fff;
+        --md-elevated-button-hover-label-text-color: #fff;
+        --md-elevated-button-pressed-label-text-color: #fff;
+        --md-elevated-button-focus-label-text-color: #fff;
+        --md-elevated-button-icon-color: #fff;
+        --md-elevated-button-hover-icon-color: #fff;
+        --md-elevated-button-pressed-icon-color: #fff;
+        --md-elevated-button-focus-icon-color: #fff;
+
+        &[red] {
+          --md-elevated-button-container-color: #e15757;
+        }
+      }
+
+      div[button-container] {
+        padding: 0 5px 10px 0;
+        text-align: right;
       }
     `
   ]
@@ -51,14 +78,14 @@ export class WorkerTypeManagement extends PageView {
 
   render() {
     return html`
-      <ox-grist .mode=${'GRID'} .config=${this.gristConfig} .fetchHandler=${this.fetchHandler.bind(this)}>
-        <div slot="headroom" class="header">
-          <ox-context-page-toolbar class="actions" .context=${this.context}></ox-context-page-toolbar>
-        </div>
-      </ox-grist>
-      <div>
-        <button @click=${this._updateWorkerTypes.bind(this)}>저장</button>
-        <button @click=${this._deleteWorkerTypes.bind(this)}>삭제</button>
+      <ox-grist .mode=${'GRID'} .config=${this.gristConfig} .fetchHandler=${this.fetchHandler.bind(this)}> </ox-grist>
+      <div button-container>
+        <md-elevated-button @click=${this._updateWorkerTypes.bind(this)}>
+          <md-icon slot="icon">save</md-icon>저장</md-elevated-button
+        >
+        <md-elevated-button red @click=${this._deleteWorkerTypes.bind(this)}>
+          <md-icon slot="icon">delete</md-icon>삭제</md-elevated-button
+        >
       </div>
     `
   }
@@ -99,11 +126,16 @@ export class WorkerTypeManagement extends PageView {
           width: 200
         }
       ],
+      rows: {
+        selectable: {
+          multiple: true
+        }
+      },
       pagination: { infinite: true }
     }
   }
 
-  async fetchHandler() {
+  async fetchHandler(_: FetchOption) {
     const response = await client.query({
       query: gql`
         query WorkerTypes {

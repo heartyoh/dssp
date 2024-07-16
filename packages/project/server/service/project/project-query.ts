@@ -41,17 +41,14 @@ export class ProjectQuery {
   }
 
   @Query(returns => InspectionSummary, { description: '프로젝트의 검측상태 별 카운트' })
-  async inspectionSummary(
-    @Arg('projectId') projectId: string,
-    @Ctx() context: ResolverContext
-  ): Promise<InspectionSummary> {
+  async inspectionSummary(@Arg('projectId') projectId: string, @Ctx() context: ResolverContext): Promise<InspectionSummary> {
     const { domain } = context.state
 
     const queryBuilder = getRepository(Project)
       .createQueryBuilder('p')
-      .select(`COUNT(CASE WHEN bi.status="${InspectionStatus.REQUEST}" THEN 1 ELSE NULL END) AS request`)
-      .addSelect(`COUNT(CASE WHEN bi.status="${InspectionStatus.PASS}" THEN 1 ELSE NULL END) AS pass`)
-      .addSelect(`COUNT(CASE WHEN bi.status="${InspectionStatus.FAIL}" THEN 1 ELSE NULL END) AS fail`)
+      .select(`COUNT(CASE WHEN bi.status='${InspectionStatus.REQUEST}' THEN 1 ELSE NULL END) AS request`)
+      .addSelect(`COUNT(CASE WHEN bi.status='${InspectionStatus.PASS}' THEN 1 ELSE NULL END) AS pass`)
+      .addSelect(`COUNT(CASE WHEN bi.status='${InspectionStatus.FAIL}' THEN 1 ELSE NULL END) AS fail`)
       .innerJoin('p.buildingComplex', 'bc')
       .innerJoin('bc.buildings', 'b')
       .innerJoin('b.buildingLevels', 'bl')
