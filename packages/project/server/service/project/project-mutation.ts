@@ -72,8 +72,9 @@ export class ProjectMutation {
       await buildingRepo.softDelete({ id: In(buildingIds) })
       await deleteAttachmentsByRef(null, { refBys: [...buildingIds, ...buildingLevelIds] }, context)
 
-      buildings.forEach(async (building: Building) => {
-        // 3-2. 단지 내 동 정보들 생성
+      // 3-2. 단지 내 동 정보들 생성
+      for (let buildingKey in buildings) {
+        const building = buildings[buildingKey]
         const newBuilding = await buildingRepo.save({
           buildingComplex: buildingComplex,
           name: building.name,
@@ -85,7 +86,7 @@ export class ProjectMutation {
         for (let i = 1; i <= building.floorCount; i++) {
           await buildingLevelRepo.save({ building: newBuilding, floor: i, creator: user })
         }
-      })
+      }
     }
 
     return projectResult
