@@ -314,6 +314,7 @@ export class BuildingComplexInspection extends ScopedElementsMixin(PageView) {
     }
   }
   @state() project: any = { ...this.defaultProject }
+  @state() managers: any = []
   @state() selectedBuilding: any = {}
   @state() selectedLevel: any = {}
   @state() selectedInspection: any = {}
@@ -447,16 +448,17 @@ export class BuildingComplexInspection extends ScopedElementsMixin(PageView) {
 
                     <label for="assignee">담당자 선택</label>
                     <select id="assignee" name="assignee">
-                      <option>담당자 1</option>
+                      <option></option>
+                      ${this.managers.map(manager => {
+                        return html`<option .value=${manager.userId}>${manager.name}</option>`
+                      })}
                     </select>
                     <label>
                       <input type="checkbox" name="apply-to-all" checked />
                       전층 동일 적용
                     </label>
                   </div>
-                  <md-filled-button @click=${() => this._onClickChangeViewMode(Mode.VIEW)}>
-                    검측정보 저장
-                  </md-filled-button>
+                  <md-filled-button @click=${() => this._onClickChangeViewMode(Mode.VIEW)}> 검측정보 저장 </md-filled-button>
                 `}
           </div>
         </div>
@@ -488,6 +490,14 @@ export class BuildingComplexInspection extends ScopedElementsMixin(PageView) {
               }
             }
           }
+
+          managers {
+            id
+            phone
+            position
+            userId
+            name
+          }
         }
       `,
       variables: {
@@ -498,6 +508,7 @@ export class BuildingComplexInspection extends ScopedElementsMixin(PageView) {
     if (response.errors) return
 
     this.project = response.data?.project
+    this.managers = response.data?.managers
 
     // buildingId 파라미터가 있으면 선택된 빌딩, 없으면 첫번째 빌딩 선택
     this.selectedBuilding = buildingId
