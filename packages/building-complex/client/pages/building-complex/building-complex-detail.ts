@@ -104,12 +104,19 @@ export class BuildingComplexDetail extends ScopedElementsMixin(PageView) {
           background-color: #ffffff;
           border: 1px solid #cccccc80;
 
-          img {
-            width: 100%;
-          }
-
           div[drawing] {
             flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            [building-img] {
+              width: 70%;
+              height: auto;
+            }
+            img[building-img] {
+              opacity: 0.5;
+            }
           }
 
           div[subject] {
@@ -257,21 +264,21 @@ export class BuildingComplexDetail extends ScopedElementsMixin(PageView) {
       <div body>
         <div left>
           <h3>${this.selectedBuilding.name} BIM도면</h3>
-          <div drawing><img src=${this.project.buildingComplex?.drawing?.fullpath || ''} /></div>
+          <div drawing>
+            ${this.selectedBuilding?.drawing?.fullpath
+              ? html`<div building-img></div>`
+              : html`<img building-img src="/assets/images/img-building-default.png" />`}
+          </div>
           <div>
             <div subject bold>개별 단지 상세정보 바로가기</div>
             <div building-container>
               ${this.project.buildingComplex?.buildings?.map(building => {
                 return this.selectedBuilding.id === building.id
                   ? html`
-                      <md-filled-button @click=${() => this._onClickBuilding(building)}>
-                        ${building.name}
-                      </md-filled-button>
+                      <md-filled-button @click=${() => this._onClickBuilding(building)}> ${building.name} </md-filled-button>
                     `
                   : html`
-                      <md-outlined-button @click=${() => this._onClickBuilding(building)}>
-                        ${building.name}
-                      </md-outlined-button>
+                      <md-outlined-button @click=${() => this._onClickBuilding(building)}> ${building.name} </md-outlined-button>
                     `
               })}
             </div>
@@ -289,7 +296,7 @@ export class BuildingComplexDetail extends ScopedElementsMixin(PageView) {
                 >
                   <div drawing>
                     <div>
-                      <img floor-drawing src=${buildingLevel?.mainDrawingImage || ''} />
+                      <img floor-drawing src=${buildingLevel?.mainDrawingImage || '/assets/images/img-drawing-default.png'} />
                     </div>
                   </div>
                   <div status>

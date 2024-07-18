@@ -124,7 +124,12 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
 
               img {
                 width: 42%;
-                height: fit-content;
+                height: auto;
+                aspect-ratio: 1920 / 1080;
+              }
+              img[no-image] {
+                object-fit: contain;
+                opacity: 0.5;
               }
 
               div[row] {
@@ -138,9 +143,12 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
           }
 
           div[left-bottom] {
-            img {
+            [building-complex-img] {
               width: 100%;
               aspect-ratio: 2 / 1;
+            }
+            img {
+              opacity: 0.5;
             }
 
             div[subject] {
@@ -360,7 +368,10 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
           <div left-top>
             <h3>기본 정보</h3>
             <div content-1>
-              <img project-img src=${this.project.mainPhoto?.fullpath || ''} />
+              <img
+                ?no-image=${!this.project.mainPhoto?.fullpath}
+                src=${this.project.mainPhoto?.fullpath || '/assets/images/no-image.png'}
+              />
 
               <div>
                 <div row>
@@ -412,7 +423,9 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
 
           <div left-bottom>
             <h3>조감도(BIM도면)</h3>
-            <img src=${this.project.buildingComplex?.drawing?.fullpath || ''} />
+            ${this.project.buildingComplex?.drawing?.fullpath
+              ? html`<div building-complex-img></div>`
+              : html`<img building-complex-img src="/assets/images/img-building-complex-default.jpg" />`}
             <div>
               <div subject bold>개별 단지 상세정보 바로가기</div>
               <div building-container>

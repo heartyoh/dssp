@@ -162,6 +162,10 @@ export class ProjectListPage extends ScopedElementsMixin(PageView) {
             width: 285px;
             background-color: #cccccc80;
           }
+          img[project-img][no-image] {
+            object-fit: contain;
+            opacity: 0.5;
+          }
 
           span[project-info] {
             flex: 0.45;
@@ -252,7 +256,11 @@ export class ProjectListPage extends ScopedElementsMixin(PageView) {
           return html`
             <div project-container>
               <a href=${`project-detail/${project.id}`}>
-                <img project-img src=${project.mainPhoto?.fullpath || ''} />
+                <img
+                  ?no-image=${!project.mainPhoto?.fullpath}
+                  project-img
+                  src=${project.mainPhoto?.fullpath || '/assets/images/no-image.png'}
+                />
 
                 <span project-info>
                   <div name>${project.name}</div>

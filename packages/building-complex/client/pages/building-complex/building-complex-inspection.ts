@@ -370,7 +370,7 @@ export class BuildingComplexInspection extends ScopedElementsMixin(PageView) {
           </div>
 
           <div drawing>
-            <img src=${this.selectedLevel?.mainDrawingImage || ''} />
+            <img src=${this.selectedLevel?.mainDrawingImage || '/assets/images/img-drawing-default.png'} />
 
             <div grid>
               ${[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(

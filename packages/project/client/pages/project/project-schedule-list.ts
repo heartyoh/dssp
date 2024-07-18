@@ -79,6 +79,10 @@ export class ProjectScheduleListPage extends ScopedElementsMixin(PageView) {
             width: 285px;
             background-color: #cccccc80;
           }
+          img[project-img][no-image] {
+            object-fit: contain;
+            opacity: 0.5;
+          }
 
           span[project-info] {
             flex: 0.45;
@@ -169,7 +173,11 @@ export class ProjectScheduleListPage extends ScopedElementsMixin(PageView) {
           return html`
             <div project-container>
               <a href=${`project-schedule/${project.id}`}>
-                <img project-img src=${project.mainPhoto?.fullpath || ''} />
+                <img
+                  ?no-image=${!project.mainPhoto?.fullpath}
+                  project-img
+                  src=${project.mainPhoto?.fullpath || '/assets/images/no-image.png'}
+                />
 
                 <span project-info>
                   <div name>${project.name}</div>
@@ -181,14 +189,12 @@ export class ProjectScheduleListPage extends ScopedElementsMixin(PageView) {
 
                 <span project-state>
                   <div progress>
-                    <md-linear-progress buffer="100" max="100" value=${project.totalProgress || 0}>
-                    </md-linear-progress>
+                    <md-linear-progress buffer="100" max="100" value=${project.totalProgress || 0}> </md-linear-progress>
                     <span>전체</span>
                     <span>${project.totalProgress || 0}%</span>
                   </div>
                   <div progress>
-                    <md-linear-progress buffer="100" max="100" value=${project.weeklyProgress || 0}>
-                    </md-linear-progress>
+                    <md-linear-progress buffer="100" max="100" value=${project.weeklyProgress || 0}> </md-linear-progress>
                     <span>주간</span>
                     <span>${project.weeklyProgress || 0}%</span>
                   </div>
@@ -203,14 +209,12 @@ export class ProjectScheduleListPage extends ScopedElementsMixin(PageView) {
                     <span>${project.inspPassRate || 0}%</span>
                   </div>
                   <div progress>
-                    <md-linear-progress buffer="100" max="100" value=${project.robotProgressRate || 0}>
-                    </md-linear-progress>
+                    <md-linear-progress buffer="100" max="100" value=${project.robotProgressRate || 0}> </md-linear-progress>
                     <span>Robot Progress</span>
                     <span>${project.robotProgressRate || 0}%</span>
                   </div>
                   <div progress>
-                    <md-linear-progress buffer="100" max="100" value=${project.structuralSafetyRate || 0}>
-                    </md-linear-progress>
+                    <md-linear-progress buffer="100" max="100" value=${project.structuralSafetyRate || 0}> </md-linear-progress>
                     <span>Structural safety</span>
                     <span>${project.structuralSafetyRate || 0}%</span>
                   </div>
