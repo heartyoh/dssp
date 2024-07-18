@@ -1,6 +1,6 @@
 {
   "name": "@dssp/dssp",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "main": "dist-server/index.js",
   "browser": "dist-client/index.js",
   "things-factory": true,
@@ -41,8 +41,8 @@
     "docker:push": "docker image push hatiolab/dssp:latest && docker image push hatiolab/dssp:$npm_package_version"
   },
   "dependencies": {
-    "@dssp/building-complex": "^0.0.7",
-    "@dssp/project": "^0.0.7",
+    "@dssp/building-complex": "^0.0.8",
+    "@dssp/project": "^0.0.8",
     "@material/web": "1.5.0",
     "@operato/chart": "^7.0.0",
     "@operato/gantt": "^7.0.0",
