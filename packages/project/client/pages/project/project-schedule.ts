@@ -21,8 +21,9 @@ export class ProjectSchedule extends ScopedElementsMixin(PageView) {
   static styles = [
     css`
       :host {
-        display: grid;
-        grid-template-rows: 75px auto;
+        display: flex;
+        flex-direction: column;
+
         color: #4e5055;
 
         width: 100%;
@@ -72,10 +73,13 @@ export class ProjectSchedule extends ScopedElementsMixin(PageView) {
       }
 
       div[body] {
+        flex: 1;
+
         display: flex;
         flex-direction: column;
         margin: 0px 25px 25px 25px;
         gap: 15px;
+        overflow: hidden;
 
         h3 {
           color: #2e79be;
@@ -88,29 +92,13 @@ export class ProjectSchedule extends ScopedElementsMixin(PageView) {
           border-radius: 5px;
         }
 
-        div[chart-container] {
+        ox-gantt {
           flex: 1;
-          flex-direction: column;
-          border: 1px solid #cccccc80;
+          box-sizing: border-box;
+          overflow: hidden;
 
-          div[chart] {
-            flex: 0.7;
-            background: #03a9f44d;
-
-            ox-gantt {
-              max-width: 91vw;
-              aspect-ratio: 3 / 1;
-              box-sizing: border-box;
-
-              background-color: var(--md-sys-color-primary-container);
-              color: var(--md-sys-color-on-primary-container);
-            }
-          }
-
-          div[table] {
-            flex: 0.3;
-            background: #8fd170b8;
-          }
+          background-color: var(--md-sys-color-primary-container);
+          color: var(--md-sys-color-on-primary-container);
         }
 
         div[select-container] {
@@ -182,6 +170,7 @@ export class ProjectSchedule extends ScopedElementsMixin(PageView) {
       dependsOn: '',
       length: '5d',
       tags: ['active'],
+      resources: [{ type: '철근/형틀공', allocated: 6 }],
       children: []
     },
     {
@@ -195,6 +184,7 @@ export class ProjectSchedule extends ScopedElementsMixin(PageView) {
       dependsOn: '1',
       length: '1d',
       tags: ['milestone'],
+      resources: [{ type: '철근/형틀공', allocated: 6 }],
       children: []
     },
     {
@@ -220,7 +210,35 @@ export class ProjectSchedule extends ScopedElementsMixin(PageView) {
           dependsOn: '',
           length: '4d',
           tags: ['done'],
-          children: []
+          children: [
+            {
+              id: '3-1-1',
+              title: 'Coding-A',
+              type: 'task',
+              // section: developmentSection,
+              startDate: '2023-01-07',
+              endDate: '2023-01-10',
+              progress: 60,
+              dependsOn: '',
+              length: '4d',
+              tags: ['active'],
+              resources: [{ type: '창호공', allocated: 5 }],
+              children: []
+            },
+            {
+              id: '3-1-2',
+              title: 'Coding-B',
+              type: 'task',
+              // section: developmentSection,
+              startDate: '2023-01-11',
+              endDate: '2023-01-15',
+              dependsOn: '3-1-1',
+              length: '5d',
+              tags: ['active'],
+              resources: [{ type: '창호공', allocated: 3 }],
+              children: []
+            }
+          ]
         },
         {
           id: '3-2',
@@ -232,6 +250,7 @@ export class ProjectSchedule extends ScopedElementsMixin(PageView) {
           dependsOn: '3-1',
           length: '5d',
           tags: ['active'],
+          resources: [{ type: '창호공', allocated: 6 }],
           children: []
         }
       ]
@@ -247,6 +266,7 @@ export class ProjectSchedule extends ScopedElementsMixin(PageView) {
       dependsOn: '1',
       length: '1d',
       tags: ['done'],
+      resources: [{ type: '방수공', allocated: 5 }],
       children: []
     },
     {
@@ -259,6 +279,7 @@ export class ProjectSchedule extends ScopedElementsMixin(PageView) {
       dependsOn: '4',
       length: '1d',
       tags: ['milestone'],
+      resources: [{ type: '목공', allocated: 3 }],
       children: []
     },
     {
@@ -271,6 +292,7 @@ export class ProjectSchedule extends ScopedElementsMixin(PageView) {
       dependsOn: '5',
       length: '1d',
       tags: ['milestone'],
+      resources: [{ type: '금속공', allocated: 1 }],
       children: []
     },
     {
@@ -283,6 +305,7 @@ export class ProjectSchedule extends ScopedElementsMixin(PageView) {
       dependsOn: '6',
       length: '1d',
       tags: ['milestone'],
+      resources: [{ type: '타일공', allocated: 6 }],
       children: []
     },
     {
@@ -295,6 +318,7 @@ export class ProjectSchedule extends ScopedElementsMixin(PageView) {
       dependsOn: '7',
       length: '1d',
       tags: ['critical'],
+      resources: [{ type: '창호공', allocated: 7 }],
       children: []
     },
     {
@@ -307,6 +331,7 @@ export class ProjectSchedule extends ScopedElementsMixin(PageView) {
       dependsOn: '8',
       length: '1d',
       tags: ['active'],
+      resources: [{ type: '도배공', allocated: 8 }],
       children: []
     },
     {
@@ -319,6 +344,7 @@ export class ProjectSchedule extends ScopedElementsMixin(PageView) {
       dependsOn: '9',
       length: '1d',
       tags: ['critical'],
+      resources: [{ type: '조적공', allocated: 6 }],
       children: []
     },
     {
@@ -331,6 +357,7 @@ export class ProjectSchedule extends ScopedElementsMixin(PageView) {
       dependsOn: '9',
       length: '1d',
       tags: ['milestone'],
+      resources: [{ type: '철근/형틀공', allocated: 6 }],
       children: []
     },
     {
@@ -342,8 +369,37 @@ export class ProjectSchedule extends ScopedElementsMixin(PageView) {
       endDate: '2023-01-23',
       dependsOn: '9',
       length: '1d',
+      resources: [{ type: '방수공', allocated: 6 }],
       tags: ['milestone'],
-      children: []
+      children: [
+        {
+          id: '12-1',
+          title: 'Coding-A',
+          type: 'task',
+          // section: developmentSection,
+          startDate: '2023-01-07',
+          endDate: '2023-01-10',
+          progress: 60,
+          dependsOn: '',
+          length: '4d',
+          tags: ['done'],
+          resources: [{ type: '방수공', allocated: 6 }],
+          children: []
+        },
+        {
+          id: '12-2',
+          title: 'Coding-B',
+          type: 'task',
+          // section: developmentSection,
+          startDate: '2023-01-11',
+          endDate: '2023-01-15',
+          dependsOn: '12-1',
+          length: '5d',
+          tags: ['active'],
+          resources: [{ type: '조적공', allocated: 6 }],
+          children: []
+        }
+      ]
     },
     {
       id: '13',
@@ -367,6 +423,7 @@ export class ProjectSchedule extends ScopedElementsMixin(PageView) {
       dependsOn: '13',
       length: '1d',
       tags: ['milestone'],
+      resources: [{ type: '금속공', allocated: 1 }],
       children: []
     },
     {
@@ -390,6 +447,7 @@ export class ProjectSchedule extends ScopedElementsMixin(PageView) {
       endDate: '2023-02-05',
       dependsOn: '15',
       length: '1d',
+      resources: [{ type: '창호공', allocated: 1 }],
       tags: ['active'],
       children: []
     },
@@ -427,6 +485,7 @@ export class ProjectSchedule extends ScopedElementsMixin(PageView) {
       dependsOn: '18',
       length: '1d',
       tags: ['milestone'],
+      resources: [{ type: '창호공', allocated: 7 }],
       children: []
     }
   ]
@@ -449,27 +508,20 @@ export class ProjectSchedule extends ScopedElementsMixin(PageView) {
       </div>
 
       <div body>
-        <div chart-container>
-          <div chart>
-            <ox-gantt
-              from-date=${new Date(this.fromDate).toISOString().split('T')[0]}
-              to-date=${new Date(this.toDate).toISOString().split('T')[0]}
-              .timeScale=${this.timeScale}
-              .tasks=${this.tasks}
-              @date-range-selected=${(e: CustomEvent) => {
-                console.log('date-range-selected', e.detail)
-              }}
-              @task-clicked=${(e: CustomEvent) => {
-                console.log('task-clicked', e.detail)
-              }}
-              ?extend-grid-lines=${this.extendGridLines}
-            >
-            </ox-gantt>
-          </div>
-          <div table>
-            <table></table>
-          </div>
-        </div>
+        <ox-gantt
+          from-date=${new Date(this.fromDate).toISOString().split('T')[0]}
+          to-date=${new Date(this.toDate).toISOString().split('T')[0]}
+          .timeScale=${this.timeScale}
+          .tasks=${this.tasks}
+          @date-range-selected=${(e: CustomEvent) => {
+            console.log('date-range-selected', e.detail)
+          }}
+          @task-clicked=${(e: CustomEvent) => {
+            console.log('task-clicked', e.detail)
+          }}
+          ?extend-grid-lines=${this.extendGridLines}
+        >
+        </ox-gantt>
         <div select-container>
           <div date>
             <span name>기간선택</span>
