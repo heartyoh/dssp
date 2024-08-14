@@ -596,16 +596,19 @@ type ChatCompletionOutput {
 
 """체크 리스트 항목"""
 type CheckItem {
+  action: String
   checklist: Checklist
+  comment: String
+  constructionConfirmStatus: String
   createdAt: DateTimeISO
   creator: User
   deletedAt: DateTimeISO
+  detailType: String!
   id: ID!
-  measuresToBeTaken: String
   name: String
-  reference: String
-  result: Boolean
+  supervisoryConfirmStatus: String
   thumbnail: String!
+  type: String!
   updatedAt: DateTimeISO
   updater: User
 }
@@ -655,6 +658,58 @@ input ChecklistPatch {
   active: Boolean
   cuFlag: String
   description: String
+  id: ID
+  name: String
+}
+
+"""Entity for ChecklistTemplate"""
+type ChecklistTemplate {
+  checklistTemplateItems: ChecklistTemplateItem!
+  createdAt: DateTimeISO
+  creator: User
+  deletedAt: DateTimeISO
+  domain: Domain
+  id: ID!
+  name: String
+  updatedAt: DateTimeISO
+  updater: User
+}
+
+"""Entity for ChecklistTemplateItem"""
+type ChecklistTemplateItem {
+  checklistTemplate: ChecklistTemplate
+  createdAt: DateTimeISO
+  creator: User
+  detailType: String!
+  id: ID!
+  name: String
+  thumbnail: String!
+  type: String!
+  updatedAt: DateTimeISO
+  updater: User
+}
+
+type ChecklistTemplateItemList {
+  items: [ChecklistTemplateItem!]!
+  total: Int!
+}
+
+input ChecklistTemplateItemPatch {
+  active: Boolean
+  cuFlag: String
+  description: String
+  id: ID
+  name: String
+  thumbnail: Upload
+}
+
+type ChecklistTemplateList {
+  items: [ChecklistTemplate!]!
+  total: Int!
+}
+
+input ChecklistTemplatePatch {
+  cuFlag: String
   id: ID
   name: String
 }
@@ -1864,6 +1919,9 @@ type Mutation {
   """To create new Checklist"""
   createChecklist(checklist: NewChecklist!): Checklist!
 
+  """To create new ChecklistTemplateItem"""
+  createChecklistTemplateItem(checklistTemplateItem: NewChecklistTemplateItem!): ChecklistTemplateItem!
+
   """To create new CommonCode"""
   createCommonCode(commonCode: NewCommonCode!): CommonCode!
 
@@ -2029,6 +2087,15 @@ type Mutation {
 
   """To delete Checklist"""
   deleteChecklist(id: String!): Boolean!
+
+  """To delete ChecklistTemplateItem"""
+  deleteChecklistTemplateItem(id: String!): Boolean!
+
+  """To delete multiple ChecklistTemplateItems"""
+  deleteChecklistTemplateItems(ids: [String!]!): Boolean!
+
+  """To delete multiple ChecklistTemplates"""
+  deleteChecklistTemplates(ids: [String!]!): Boolean!
 
   """To delete multiple Checklists"""
   deleteChecklists(ids: [String!]!): Boolean!
@@ -2466,6 +2533,9 @@ type Mutation {
   """To modify Checklist information"""
   updateChecklist(id: String!, patch: ChecklistPatch!): Checklist!
 
+  """To modify ChecklistTemplateItem information"""
+  updateChecklistTemplateItem(id: String!, patch: ChecklistTemplateItemPatch!): ChecklistTemplateItem!
+
   """To modify CommonCode information"""
   updateCommonCode(name: String!, patch: CommonCodePatch!): CommonCode!
 
@@ -2541,6 +2611,12 @@ type Mutation {
 
   """To modify multiple Checklists' information"""
   updateMultipleChecklist(patches: [ChecklistPatch!]!): [Checklist!]!
+
+  """To modify multiple ChecklistTemplates' information"""
+  updateMultipleChecklistTemplate(patches: [ChecklistTemplatePatch!]!): [ChecklistTemplate!]!
+
+  """To modify multiple ChecklistTemplateItems' information"""
+  updateMultipleChecklistTemplateItem(patches: [ChecklistTemplateItemPatch!]!): [ChecklistTemplateItem!]!
 
   """To modify multiple CommonCodes' information"""
   updateMultipleCommonCode(patches: [CommonCodePatch!]!): [CommonCode!]!
@@ -2780,6 +2856,14 @@ input NewChecklist {
   description: String
   name: String!
   params: String
+}
+
+input NewChecklistTemplateItem {
+  active: Boolean
+  description: String
+  name: String!
+  params: String
+  thumbnail: Upload
 }
 
 input NewCommonCode {
@@ -3891,6 +3975,15 @@ type Query {
 
   """To fetch a Checklist"""
   checklist(id: String!): Checklist
+
+  """To fetch a ChecklistTemplateItem"""
+  checklistTemplateItem(id: String!): ChecklistTemplateItem
+
+  """To fetch multiple ChecklistTemplateItems"""
+  checklistTemplateItems(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): ChecklistTemplateItemList!
+
+  """To fetch multiple ChecklistTemplates"""
+  checklistTemplates(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): ChecklistTemplateList!
 
   """To fetch multiple Checklists"""
   checklists(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): ChecklistList!

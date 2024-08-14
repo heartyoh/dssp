@@ -10,7 +10,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn
 } from 'typeorm'
-import { ObjectType, Field, ID, registerEnumType } from 'type-graphql'
+import { ObjectType, Field, ID } from 'type-graphql'
 
 import { User } from '@things-factory/auth-base'
 import { Task } from '../task/task'

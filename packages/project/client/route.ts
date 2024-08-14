@@ -34,10 +34,14 @@ export default function route(page: string) {
 
     case 'worker-type-management':
       import('./pages/resource/worker-type-management')
-
       return page
+
     case 'construction-type-management':
       import('./pages/resource/construction-type-management')
+      return page
+
+    case 'checklist-template-list':
+      import('./pages/checklist-template/checklist-template-list')
       return page
   }
 }

@@ -16,8 +16,6 @@ import { isMobileDevice } from '@operato/utils'
 import { connect } from 'pwa-helpers/connect-mixin'
 import gql from 'graphql-tag'
 
-import { ChecklistImporter } from './checklist-importer'
-
 @customElement('checklist-list-page')
 export class ChecklistListPage extends connect(store)(localize(i18next)(ScopedElementsMixin(PageView))) {
   static styles = [
@@ -34,12 +32,6 @@ export class ChecklistListPage extends connect(store)(localize(i18next)(ScopedEl
       }
     `
   ]
-
-  static get scopedElements() {
-    return {
-      'checklist-importer': ChecklistImporter
-    }
-  }
 
   @state() private gristConfig: any
   @state() private mode: 'CARD' | 'GRID' | 'LIST' = isMobileDevice() ? 'CARD' : 'GRID'
@@ -73,14 +65,7 @@ export class ChecklistListPage extends connect(store)(localize(i18next)(ScopedEl
           action: this.deleteChecklist.bind(this),
           ...CommonButtonStyles.delete
         }
-      ],
-      exportable: {
-        name: i18next.t('title.checklist list'),
-        data: this.exportHandler.bind(this)
-      },
-      importable: {
-        handler: this.importHandler.bind(this)
-      }
+      ]
     }
   }
 
@@ -298,43 +283,6 @@ export class ChecklistListPage extends connect(store)(localize(i18next)(ScopedEl
       if (!response.errors) {
         this.grist.fetch()
       }
-    }
-  }
-
-  private async exportHandler() {
-    const exportTargets = this.grist.selected.length ? this.grist.selected : this.grist.dirtyData.records
-    const targetFieldSet = new Set(['id', 'name', 'description', 'active'])
-
-    return exportTargets.map(checklist => {
-      let tempObj = {}
-      for (const field of targetFieldSet) {
-        tempObj[field] = checklist[field]
-      }
-
-      return tempObj
-    })
-  }
-
-  private async importHandler(records) {
-    const popup = openPopup(
-      html`
-        <checklist-importer
-          .checklists=${records}
-          @imported=${() => {
-            history.back()
-            this.grist.fetch()
-          }}
-        ></checklist-importer>
-      `,
-      {
-        backdrop: true,
-        size: 'large',
-        title: i18next.t('title.import checklist')
-      }
-    )
-
-    popup.onclosed = () => {
-      this.grist.fetch()
     }
   }
 }

@@ -26,17 +26,29 @@ export class CheckItem {
   @Field({ nullable: true })
   name?: string
 
-  @Column({ nullable: true, comment: '검사 결과 (true: 적합, false: 부적합)' })
-  @Field({ nullable: true })
-  result?: boolean
+  @Column({ nullable: false, comment: '구분 (텍스트)' })
+  @Field({ nullable: false })
+  type?: string
 
-  @Column({ nullable: true, comment: '기준, 참고 사항 이미지' })
+  @Column({ nullable: false, comment: '상세 구분 (텍스트)' })
+  @Field({ nullable: false })
+  detailType?: string
+
+  @Column({ nullable: true, comment: '시공 관리자 적합 여부 (T: 적합, F: 부적합)' })
   @Field({ nullable: true })
-  reference?: string
+  constructionConfirmStatus?: string
+
+  @Column({ nullable: true, comment: '감리 관리자 적합 여부 (T: 적합, F: 부적합)' })
+  @Field({ nullable: true })
+  supervisoryConfirmStatus?: string
 
   @Column({ nullable: true, comment: '조치 사항' })
   @Field({ nullable: true })
-  measuresToBeTaken?: string
+  action?: string
+
+  @Column({ nullable: true, comment: '참고 사항' })
+  @Field({ nullable: true })
+  comment?: string
 
   // 체크리스트 정보 (상위 테이블 참조)
   @ManyToOne(type => Checklist)

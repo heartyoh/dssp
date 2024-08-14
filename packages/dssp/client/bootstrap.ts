@@ -161,6 +161,17 @@ export default async function bootstrap() {
     }
   })
 
+  store.dispatch({
+    type: ADD_MORENDA,
+    morenda: {
+      icon: html` <md-icon>fact_check</md-icon> `,
+      name: html` <ox-i18n msgid="체크리스트"></ox-i18n> `,
+      action: () => {
+        navigate('checklist-template-list')
+      }
+    }
+  })
+
   /* set auth management menus into more-panel */
   setAuthManagementMenus()
 

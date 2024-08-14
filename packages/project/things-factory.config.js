@@ -14,6 +14,15 @@ export default {
     'manager-management', // 담당자 관리
     'worker-type-management', // 인력 관리
     'construction-type-management', // 공종 관리
+    'checklist-template-list', // 체크리스트 템플릿
+    {
+      tagname: 'checklist-template-list-page',
+      page: 'checklist-template-list'
+    },
+    {
+      tagname: 'checklist-template-item-list-page',
+      page: 'checklist-template-item-list'
+    }
   ].map(page => {
     return {
       page,

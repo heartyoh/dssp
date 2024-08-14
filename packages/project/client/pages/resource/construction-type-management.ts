@@ -186,8 +186,6 @@ export class ConstructionTypeManagement extends PageView {
 
   async _deleteConstructionTypes() {
     if (confirm('삭제하시겠습니까?')) {
-      const a = this.grist
-
       const ids = this.grist.selected.map(record => record.id)
       if (ids && ids.length > 0) {
         const response = await client.mutate({
