@@ -54,29 +54,7 @@
     <link href="/node_modules/@fontsource/roboto/index.css" rel="stylesheet" />
     <link rel="stylesheet" href="/theme.css" />
 
-    <!-- Add any global styles for body, document, etc. -->
-    <style>
-      body {
-        margin: 0;
-        padding: 0;
-        overflow: hidden;
-
-        /* This is a font-stack that tries to use the system-default sans-serifs first */
-        font-family: Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
-        line-height: 1.5;
-        -webkit-font-smoothing: antialiased;
-
-        accent-color: var(--primary-color);
-      }
-    </style>
-
-    <script>
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/service-worker.js', {
-          scope: '/'
-        })
-      }
-    </script>
+    <script src="/static/index.js" defer></script>
   </head>
 
   <body class="light">
