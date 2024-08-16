@@ -1,5 +1,5 @@
 import { CreateDateColumn, UpdateDateColumn, Entity, Index, Column, RelationId, ManyToOne, PrimaryGeneratedColumn } from 'typeorm'
-import { ObjectType, Field, ID } from 'type-graphql'
+import { ObjectType, Field, ID, Int } from 'type-graphql'
 
 import { User } from '@things-factory/auth-base'
 import { ChecklistTemplate } from '../checklist-template/checklist-template'
@@ -18,13 +18,17 @@ export class ChecklistTemplateItem {
   @Field({ nullable: true })
   name?: string
 
+  @Column({ nullable: true })
+  @Field(type => Int, { nullable: true })
+  sequence?: number
+
   @Column({ nullable: false, comment: '구분 (텍스트)' })
   @Field({ nullable: false })
   type?: string
 
-  @Column({ nullable: false, comment: '상세 구분 (텍스트)' })
+  @Column({ nullable: false, comment: '구분 상세 (텍스트)' })
   @Field({ nullable: false })
-  detailType?: string
+  typeDetail?: string
 
   // 체크리스트 템플릿 정보 (상위 테이블 참조)
   @ManyToOne(type => ChecklistTemplate)

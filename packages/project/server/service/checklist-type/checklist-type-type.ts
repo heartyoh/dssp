@@ -1,8 +1,8 @@
 import { ObjectType, Field, InputType, Int, ID } from 'type-graphql'
-import { ChecklistTemplate } from './checklist-template'
+import { ChecklistType } from './checklist-type'
 
 @InputType()
-export class ChecklistTemplatePatch {
+export class ChecklistTypePatch {
   @Field(type => ID, { nullable: true })
   id?: string
 
@@ -14,9 +14,9 @@ export class ChecklistTemplatePatch {
 }
 
 @ObjectType()
-export class ChecklistTemplateList {
-  @Field(type => [ChecklistTemplate])
-  items: ChecklistTemplate[]
+export class ChecklistTypeList {
+  @Field(type => [ChecklistType])
+  items: ChecklistType[]
 
   @Field(type => Int)
   total: number

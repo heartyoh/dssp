@@ -15,14 +15,7 @@ export default {
     'worker-type-management', // 인력 관리
     'construction-type-management', // 공종 관리
     'checklist-template-list', // 체크리스트 템플릿
-    {
-      tagname: 'checklist-template-list-page',
-      page: 'checklist-template-list'
-    },
-    {
-      tagname: 'checklist-template-item-list-page',
-      page: 'checklist-template-item-list'
-    }
+    'checklist-type-management', // 체크리스트 구분 관리
   ].map(page => {
     return {
       page,

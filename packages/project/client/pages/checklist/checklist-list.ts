@@ -17,7 +17,7 @@ import { connect } from 'pwa-helpers/connect-mixin'
 import gql from 'graphql-tag'
 
 @customElement('checklist-list-page')
-export class ChecklistListPage extends connect(store)(localize(i18next)(ScopedElementsMixin(PageView))) {
+export class ChecklistListPage extends ScopedElementsMixin(PageView) {
   static styles = [
     ScrollbarStyles,
     CommonGristStyles,

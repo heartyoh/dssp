@@ -1,83 +1,10 @@
 import { Resolver, Mutation, Arg, Ctx, Directive } from 'type-graphql'
 import { In } from 'typeorm'
-
-import { createAttachment, deleteAttachmentsByRef } from '@things-factory/attachment-base'
-
 import { ChecklistTemplateItem } from './checklist-template-item'
-import { NewChecklistTemplateItem, ChecklistTemplateItemPatch } from './checklist-template-item-type'
+import { ChecklistTemplateItemPatch } from './checklist-template-item-type'
 
 @Resolver(ChecklistTemplateItem)
 export class ChecklistTemplateItemMutation {
-  @Directive('@transaction')
-  @Mutation(returns => ChecklistTemplateItem, { description: 'To create new ChecklistTemplateItem' })
-  async createChecklistTemplateItem(
-    @Arg('checklistTemplateItem') checklistTemplateItem: NewChecklistTemplateItem,
-    @Ctx() context: ResolverContext
-  ): Promise<ChecklistTemplateItem> {
-    const { domain, user, tx } = context.state
-
-    const result = await tx.getRepository(ChecklistTemplateItem).save({
-      ...checklistTemplateItem,
-      domain,
-      creator: user,
-      updater: user
-    })
-
-    if (checklistTemplateItem.thumbnail) {
-      await createAttachment(
-        null,
-        {
-          attachment: {
-            file: checklistTemplateItem.thumbnail,
-            refType: ChecklistTemplateItem.name,
-            refBy: result.id
-          }
-        },
-        context
-      )
-    }
-
-    return result
-  }
-
-  @Directive('@transaction')
-  @Mutation(returns => ChecklistTemplateItem, { description: 'To modify ChecklistTemplateItem information' })
-  async updateChecklistTemplateItem(
-    @Arg('id') id: string,
-    @Arg('patch') patch: ChecklistTemplateItemPatch,
-    @Ctx() context: ResolverContext
-  ): Promise<ChecklistTemplateItem> {
-    const { domain, user, tx } = context.state
-
-    const repository = tx.getRepository(ChecklistTemplateItem)
-    const checklistTemplateItem = await repository.findOne({
-      where: { id }
-    })
-
-    const result = await repository.save({
-      ...checklistTemplateItem,
-      ...patch,
-      updater: user
-    })
-
-    if (patch.thumbnail) {
-      await deleteAttachmentsByRef(null, { refBys: [result.id] }, context)
-      await createAttachment(
-        null,
-        {
-          attachment: {
-            file: patch.thumbnail,
-            refType: ChecklistTemplateItem.name,
-            refBy: result.id
-          }
-        },
-        context
-      )
-    }
-
-    return result
-  }
-
   @Directive('@transaction')
   @Mutation(returns => [ChecklistTemplateItem], { description: "To modify multiple ChecklistTemplateItems' information" })
   async updateMultipleChecklistTemplateItem(
@@ -102,20 +29,6 @@ export class ChecklistTemplateItemMutation {
           updater: user
         })
 
-        if (newRecord.thumbnail) {
-          await createAttachment(
-            null,
-            {
-              attachment: {
-                file: newRecord.thumbnail,
-                refType: ChecklistTemplateItem.name,
-                refBy: result.id
-              }
-            },
-            context
-          )
-        }
-
         results.push({ ...result, cuFlag: '+' })
       }
     }
@@ -131,21 +44,6 @@ export class ChecklistTemplateItemMutation {
           updater: user
         })
 
-        if (updateRecord.thumbnail) {
-          await deleteAttachmentsByRef(null, { refBys: [result.id] }, context)
-          await createAttachment(
-            null,
-            {
-              attachment: {
-                file: updateRecord.thumbnail,
-                refType: ChecklistTemplateItem.name,
-                refBy: result.id
-              }
-            },
-            context
-          )
-        }
-
         results.push({ ...result, cuFlag: 'M' })
       }
     }
@@ -159,7 +57,6 @@ export class ChecklistTemplateItemMutation {
     const { domain, tx } = context.state
 
     await tx.getRepository(ChecklistTemplateItem).delete({ id })
-    await deleteAttachmentsByRef(null, { refBys: [id] }, context)
 
     return true
   }
@@ -175,8 +72,6 @@ export class ChecklistTemplateItemMutation {
     await tx.getRepository(ChecklistTemplateItem).delete({
       id: In(ids)
     })
-
-    await deleteAttachmentsByRef(null, { refBys: ids }, context)
 
     return true
   }

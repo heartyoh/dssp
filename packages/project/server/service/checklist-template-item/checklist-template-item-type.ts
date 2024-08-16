@@ -1,28 +1,7 @@
 import type { FileUpload } from 'graphql-upload/GraphQLUpload.js'
 import GraphQLUpload from 'graphql-upload/GraphQLUpload.js'
-import { ObjectType, Field, InputType, Int, ID, registerEnumType } from 'type-graphql'
-
-import { ObjectRef, ScalarObject } from '@things-factory/shell'
-
+import { ObjectType, Field, InputType, Int, ID } from 'type-graphql'
 import { ChecklistTemplateItem } from './checklist-template-item'
-
-@InputType()
-export class NewChecklistTemplateItem {
-  @Field()
-  name: string
-
-  @Field({ nullable: true })
-  description?: string
-
-  @Field({ nullable: true })
-  active?: boolean
-
-  @Field({ nullable: true })
-  params?: string
-
-  @Field(type => GraphQLUpload, { nullable: true })
-  thumbnail?: FileUpload
-}
 
 @InputType()
 export class ChecklistTemplateItemPatch {

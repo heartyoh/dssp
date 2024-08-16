@@ -9,8 +9,6 @@ import { ChecklistTemplateItemList } from './checklist-template-item-type'
 export class ChecklistTemplateItemQuery {
   @Query(returns => ChecklistTemplateItem!, { nullable: true, description: 'To fetch a ChecklistTemplateItem' })
   async checklistTemplateItem(@Arg('id') id: string, @Ctx() context: ResolverContext): Promise<ChecklistTemplateItem> {
-    const { domain } = context.state
-
     return await getRepository(ChecklistTemplateItem).findOne({
       where: { id }
     })
@@ -18,10 +16,7 @@ export class ChecklistTemplateItemQuery {
 
   @Query(returns => ChecklistTemplateItemList, { description: 'To fetch multiple ChecklistTemplateItems' })
   async checklistTemplateItems(@Args() params: ListParam, @Ctx() context: ResolverContext): Promise<ChecklistTemplateItemList> {
-    const { domain } = context.state
-
     const queryBuilder = getQueryBuilderFromListParams({
-      domain,
       params,
       repository: await getRepository(ChecklistTemplateItem),
       searchables: ['name', 'description']

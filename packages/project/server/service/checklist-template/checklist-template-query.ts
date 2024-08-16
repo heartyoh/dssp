@@ -14,7 +14,7 @@ export class ChecklistTemplateQuery {
       domain,
       params,
       repository: await getRepository(ChecklistTemplate),
-      searchables: ['name', 'description']
+      searchables: ['name']
     })
 
     const [items, total] = await queryBuilder.getManyAndCount()
