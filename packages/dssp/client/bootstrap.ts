@@ -296,7 +296,7 @@ export default async function bootstrap() {
     store.dispatch({
       type: ADD_MORENDA,
       morenda: {
-        icon: html` <md-icon>account_tree</md-icon> `,
+        icon: html` <md-icon>contacts</md-icon> `,
         name: html` <ox-i18n msgid="title.contact list"></ox-i18n> `,
         action: () => {
           navigate('contact-list')
