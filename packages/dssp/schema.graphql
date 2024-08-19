@@ -1128,9 +1128,10 @@ type EmployeeList {
 input EmployeePatch {
   active: Boolean
   alias: String
+  contact: ObjectRefForContact
   controlNo: String
   cuFlag: String
-  department: ObjectRef
+  department: ObjectRefForDepartment
   hiredOn: String
   id: ID
   jobPosition: String
@@ -2961,8 +2962,9 @@ input NewDepartment {
 input NewEmployee {
   active: Boolean
   alias: String
+  contact: ObjectRefForContact
   controlNo: String!
-  department: ObjectRef
+  department: ObjectRefForDepartment
   extension: String
   hiredOn: String
   jobPosition: String
@@ -3556,6 +3558,34 @@ input ObjectRef {
 }
 
 input ObjectRefApprovalLineOwnerType {
+  controlNo: String
+
+  """Field description"""
+  description: String
+
+  """Field id"""
+  id: ID!
+
+  """Field name"""
+  name: String
+}
+
+input ObjectRefForContact {
+  address: String
+
+  """Field description"""
+  description: String
+  email: EmailAddress
+
+  """Field id"""
+  id: ID!
+
+  """Field name"""
+  name: String
+  phone: String
+}
+
+input ObjectRefForDepartment {
   controlNo: String
 
   """Field description"""

@@ -15,6 +15,7 @@ import { navigate, store } from '@operato/shell'
 import { appendViewpart, updateViewpart, toggleOverlay, TOOL_POSITION, VIEWPART_LEVEL, VIEWPART_POSITION } from '@operato/layout'
 import { APPEND_APP_TOOL } from '@things-factory/apptool-base/client'
 import { setupAppToolPart } from '@things-factory/apptool-ui/dist-client'
+import { setupContextUIPart } from '@things-factory/context-ui/dist-client'
 import { hasPrivilege } from '@things-factory/auth-base/dist-client'
 import { setAuthManagementMenus } from '@things-factory/auth-ui/dist-client'
 import { ADD_MORENDA } from '@things-factory/more-base/client'
@@ -39,6 +40,11 @@ export default async function bootstrap() {
     toolbar: true,
     busybar: true,
     mdibar: false
+  })
+
+  await setupContextUIPart({
+    titlebar: 'header',
+    contextToolbar: 'page-footer'
   })
 
   /* append top-menu to layout */
@@ -265,6 +271,112 @@ export default async function bootstrap() {
         name: html` <ox-i18n msgid="menu.board-template"></ox-i18n> `,
         action: () => {
           navigate('board-template-list')
+        }
+      }
+    })
+  }
+
+  if (
+    await hasPrivilege({
+      domainOwnerGranted: true,
+      superUserGranted: true
+    })
+  ) {
+    store.dispatch({
+      type: ADD_MORENDA,
+      morenda: {
+        icon: html` <md-icon>code</md-icon> `,
+        name: html` <ox-i18n msgid="title.code-management"></ox-i18n> `,
+        action: () => {
+          navigate('codes')
+        }
+      }
+    })
+
+    store.dispatch({
+      type: ADD_MORENDA,
+      morenda: {
+        icon: html` <md-icon>account_tree</md-icon> `,
+        name: html` <ox-i18n msgid="title.contact list"></ox-i18n> `,
+        action: () => {
+          navigate('contact-list')
+        }
+      }
+    })
+
+    store.dispatch({
+      type: ADD_MORENDA,
+      morenda: {
+        icon: html` <md-icon>account_tree</md-icon> `,
+        name: html` <ox-i18n msgid="title.department list"></ox-i18n> `,
+        action: () => {
+          navigate('department-list')
+        }
+      }
+    })
+
+    store.dispatch({
+      type: ADD_MORENDA,
+      morenda: {
+        icon: html` <md-icon>badge</md-icon> `,
+        name: html` <ox-i18n msgid="title.employee list"></ox-i18n> `,
+        action: () => {
+          navigate('employee-list')
+        }
+      }
+    })
+  }
+
+  if (await hasPrivilege({ privilege: 'mutation', category: 'terminology', domainOwnerGranted: true })) {
+    store.dispatch({
+      type: ADD_MORENDA,
+      morenda: {
+        icon: html` <md-icon>translate</md-icon> `,
+        name: html` <ox-i18n msgid="title.terminology"></ox-i18n> `,
+        action: () => {
+          navigate('terminology-page')
+        }
+      }
+    })
+  }
+
+  if (
+    await hasPrivilege({
+      privilege: 'mutation',
+      category: 'scenario',
+      domainOwnerGranted: true,
+      superUserGranted: true
+    })
+  ) {
+    store.dispatch({
+      type: ADD_MORENDA,
+      morenda: {
+        icon: html` <md-icon>device_hub</md-icon> `,
+        name: html` <ox-i18n msgid="text.connection"></ox-i18n> `,
+        action: () => {
+          navigate('connection')
+        }
+      }
+    })
+
+    store.dispatch({
+      type: ADD_MORENDA,
+      morenda: {
+        icon: html` <md-icon>format_list_numbered</md-icon> `,
+        name: html` <ox-i18n msgid="text.scenario"></ox-i18n> `,
+        action: () => {
+          navigate('scenario')
+        }
+      }
+    })
+
+    store.dispatch({
+      type: ADD_MORENDA,
+      morenda: {
+        icon: html` <md-icon>hub</md-icon> `,
+        name: html` <ox-i18n msgid="text.integration analysis"></ox-i18n>&nbsp;(beta)`,
+        action: () => {
+          navigate('integration-analysis')
         }
       }
     })

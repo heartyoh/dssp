@@ -31,6 +31,10 @@
     "@operato/graphql": "^7.0.0",
     "@operato/shell": "^7.0.0",
     "@things-factory/auth-base": "^7.0.0",
+    "@things-factory/contact": "^7.0.0",
+    "@things-factory/integration-headless": "^7.0.0",
+    "@things-factory/integration-ui": "^7.0.0",
+    "@things-factory/organization": "^7.0.0",
     "@things-factory/shell": "^7.0.0",
     "exceljs": "^4.4.0"
   }
