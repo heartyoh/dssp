@@ -69,6 +69,12 @@ const SEED_COMMON_CODES = [
         description: '현장관리자',
         labels: null,
         rank: 3
+      },
+      {
+        name: '시공자',
+        description: '시공자',
+        labels: null,
+        rank: 4
       }
     ]
   }
