@@ -1,13 +1,16 @@
 import { ObjectType, Field, InputType, Int, ID } from 'type-graphql'
-import { ChecklistType } from './checklist-type'
+import { ChecklistType, ChecklistTypeMainType } from './checklist-type'
 
 @InputType()
 export class ChecklistTypePatch {
   @Field(type => ID, { nullable: true })
   id?: string
 
-  @Field({ nullable: true })
-  name?: string
+  @Field({ nullable: false })
+  mainType: ChecklistTypeMainType
+
+  @Field({ nullable: false })
+  detailType: string
 
   @Field({ nullable: true })
   cuFlag?: string

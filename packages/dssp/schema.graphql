@@ -680,12 +680,12 @@ type ChecklistTemplateItem {
   checklistTemplate: ChecklistTemplate
   createdAt: DateTimeISO
   creator: User
+  detailType: String!
   id: ID!
-  name: String
+  mainType: String!
+  name: String!
   sequence: Int
   thumbnail: String!
-  type: String!
-  typeDetail: String!
   updatedAt: DateTimeISO
   updater: User
 }
@@ -696,12 +696,13 @@ type ChecklistTemplateItemList {
 }
 
 input ChecklistTemplateItemPatch {
-  active: Boolean
+  checklistTemplateId: String
   cuFlag: String
-  description: String
+  detailType: String
   id: ID
+  mainType: String
   name: String
-  thumbnail: Upload
+  sequence: Int
 }
 
 type ChecklistTemplateList {
@@ -717,38 +718,14 @@ input ChecklistTemplatePatch {
 
 """Entity for ChecklistType"""
 type ChecklistType {
-  checklistTypeDetails: ChecklistTypeDetail!
   createdAt: DateTimeISO
   creator: User
+  detailType: String!
   domain: Domain
   id: ID!
-  name: String
+  mainType: String!
   updatedAt: DateTimeISO
   updater: User
-}
-
-"""Entity for ChecklistTypeDetail"""
-type ChecklistTypeDetail {
-  checklistType: ChecklistType
-  createdAt: DateTimeISO
-  creator: User
-  id: ID!
-  name: String
-  sequence: Int
-  updatedAt: DateTimeISO
-  updater: User
-}
-
-type ChecklistTypeDetailList {
-  items: [ChecklistTypeDetail!]!
-  total: Int!
-}
-
-input ChecklistTypeDetailPatch {
-  cuFlag: String
-  id: ID
-  name: String
-  sequence: Float
 }
 
 type ChecklistTypeList {
@@ -758,8 +735,9 @@ type ChecklistTypeList {
 
 input ChecklistTypePatch {
   cuFlag: String
+  detailType: String!
   id: ID
-  name: String
+  mainType: String!
 }
 
 input CodeDecipherInput {
@@ -2143,9 +2121,6 @@ type Mutation {
   """To delete multiple ChecklistTemplates"""
   deleteChecklistTemplates(ids: [String!]!): Boolean!
 
-  """To delete multiple ChecklistTypeDetails"""
-  deleteChecklistTypeDetails(ids: [String!]!): Boolean!
-
   """To delete multiple ChecklistTypes"""
   deleteChecklistTypes(ids: [String!]!): Boolean!
 
@@ -2665,13 +2640,10 @@ type Mutation {
   updateMultipleChecklistTemplate(patches: [ChecklistTemplatePatch!]!): [ChecklistTemplate!]!
 
   """To modify multiple ChecklistTemplateItems' information"""
-  updateMultipleChecklistTemplateItem(patches: [ChecklistTemplateItemPatch!]!): [ChecklistTemplateItem!]!
+  updateMultipleChecklistTemplateItems(checklistTemplateId: String!, patches: [ChecklistTemplateItemPatch!]!): [ChecklistTemplateItem!]!
 
   """To modify multiple ChecklistTypes' information"""
   updateMultipleChecklistType(patches: [ChecklistTypePatch!]!): [ChecklistType!]!
-
-  """To modify multiple ChecklistTypeDetails' information"""
-  updateMultipleChecklistTypeDetail(checklistTypeId: String!, patches: [ChecklistTypeDetailPatch!]!): [ChecklistTypeDetail!]!
 
   """To modify multiple CommonCodes' information"""
   updateMultipleCommonCode(patches: [CommonCodePatch!]!): [CommonCode!]!
@@ -4060,9 +4032,6 @@ type Query {
 
   """To fetch multiple ChecklistTemplates"""
   checklistTemplates(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): ChecklistTemplateList!
-
-  """To fetch multiple ChecklistTypeDetails"""
-  checklistTypeDetails(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): ChecklistTypeDetailList!
 
   """To fetch multiple ChecklistTypes"""
   checklistTypes(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): ChecklistTypeList!

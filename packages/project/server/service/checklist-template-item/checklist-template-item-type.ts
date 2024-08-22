@@ -1,7 +1,6 @@
-import type { FileUpload } from 'graphql-upload/GraphQLUpload.js'
-import GraphQLUpload from 'graphql-upload/GraphQLUpload.js'
 import { ObjectType, Field, InputType, Int, ID } from 'type-graphql'
 import { ChecklistTemplateItem } from './checklist-template-item'
+import { ChecklistTypeMainType } from '../checklist-type/checklist-type'
 
 @InputType()
 export class ChecklistTemplateItemPatch {
@@ -11,14 +10,17 @@ export class ChecklistTemplateItemPatch {
   @Field({ nullable: true })
   name?: string
 
-  @Field({ nullable: true })
-  description?: string
+  @Field(type => Int, { nullable: true })
+  sequence?: number
 
   @Field({ nullable: true })
-  active?: boolean
+  mainType?: ChecklistTypeMainType
 
-  @Field(type => GraphQLUpload, { nullable: true })
-  thumbnail?: FileUpload
+  @Field({ nullable: true })
+  detailType?: string
+
+  @Field({ nullable: true })
+  checklistTemplateId?: string
 
   @Field({ nullable: true })
   cuFlag?: string

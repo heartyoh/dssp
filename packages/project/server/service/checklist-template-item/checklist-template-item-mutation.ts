@@ -2,13 +2,15 @@ import { Resolver, Mutation, Arg, Ctx, Directive } from 'type-graphql'
 import { In } from 'typeorm'
 import { ChecklistTemplateItem } from './checklist-template-item'
 import { ChecklistTemplateItemPatch } from './checklist-template-item-type'
+import { ChecklistTemplate } from '../checklist-template/checklist-template'
 
 @Resolver(ChecklistTemplateItem)
 export class ChecklistTemplateItemMutation {
   @Directive('@transaction')
   @Mutation(returns => [ChecklistTemplateItem], { description: "To modify multiple ChecklistTemplateItems' information" })
-  async updateMultipleChecklistTemplateItem(
+  async updateMultipleChecklistTemplateItems(
     @Arg('patches', type => [ChecklistTemplateItemPatch]) patches: ChecklistTemplateItemPatch[],
+    @Arg('checklistTemplateId') checklistTemplateId: string,
     @Ctx() context: ResolverContext
   ): Promise<ChecklistTemplateItem[]> {
     const { domain, user, tx } = context.state
@@ -17,13 +19,17 @@ export class ChecklistTemplateItemMutation {
     const _createRecords = patches.filter((patch: any) => patch.cuFlag.toUpperCase() === '+')
     const _updateRecords = patches.filter((patch: any) => patch.cuFlag.toUpperCase() === 'M')
     const checklistTemplateItemRepo = tx.getRepository(ChecklistTemplateItem)
+    const checklistTemplateRepo = tx.getRepository(ChecklistTemplate)
 
     if (_createRecords.length > 0) {
       for (let i = 0; i < _createRecords.length; i++) {
         const newRecord = _createRecords[i]
 
+        const checklistTemplate = await checklistTemplateRepo.findOneBy({ id: checklistTemplateId })
+
         const result = await checklistTemplateItemRepo.save({
           ...newRecord,
+          checklistTemplate,
           domain,
           creator: user,
           updater: user

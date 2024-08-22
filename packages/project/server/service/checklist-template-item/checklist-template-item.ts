@@ -3,6 +3,7 @@ import { ObjectType, Field, ID, Int } from 'type-graphql'
 
 import { User } from '@things-factory/auth-base'
 import { ChecklistTemplate } from '../checklist-template/checklist-template'
+import { ChecklistTypeMainType } from '../checklist-type/checklist-type'
 
 @Entity()
 @Index('ix_checklist_template_item_0', (checklistTemplateItem: ChecklistTemplateItem) => [checklistTemplateItem.name], {
@@ -14,21 +15,21 @@ export class ChecklistTemplateItem {
   @Field(type => ID)
   readonly id: string
 
-  @Column({ nullable: true, comment: '검사 항목' })
-  @Field({ nullable: true })
-  name?: string
+  @Column({ nullable: false, comment: '검사 항목' })
+  @Field({ nullable: false })
+  name: string
 
   @Column({ nullable: true })
   @Field(type => Int, { nullable: true })
   sequence?: number
 
-  @Column({ nullable: false, comment: '구분 (텍스트)' })
+  @Column({ nullable: false, comment: '메인 구분 (10: 기본 업무, 20: 기본 외 업무)' })
   @Field({ nullable: false })
-  type?: string
+  mainType: ChecklistTypeMainType
 
-  @Column({ nullable: false, comment: '구분 상세 (텍스트)' })
+  @Column({ nullable: false, comment: '상세 구분' })
   @Field({ nullable: false })
-  typeDetail?: string
+  detailType: string
 
   // 체크리스트 템플릿 정보 (상위 테이블 참조)
   @ManyToOne(type => ChecklistTemplate)

@@ -1,16 +1,15 @@
 import '@material/web/icon/icon.js'
 import '@operato/data-grist'
+import './checklist-template-item'
 
-import { CommonGristStyles, ScrollbarStyles } from '@operato/styles'
+import { CommonGristStyles, CommonButtonStyles, ScrollbarStyles } from '@operato/styles'
 import { PageView } from '@operato/shell'
 import { css, html } from 'lit'
 import { customElement, query, state } from 'lit/decorators.js'
 import { ScopedElementsMixin } from '@open-wc/scoped-elements'
 import { DataGrist, FetchOption } from '@operato/data-grist'
 import { client } from '@operato/graphql'
-import { i18next } from '@operato/i18n'
-import { notify } from '@operato/layout'
-import { OxPrompt } from '@operato/popup'
+import { notify, openPopup } from '@operato/layout'
 
 import gql from 'graphql-tag'
 
@@ -59,11 +58,12 @@ export class ChecklistTemplateListPage extends ScopedElementsMixin(PageView) {
   ]
 
   @state() private gristConfig: any
+  @state() private checklistDetailTypes
   @query('ox-grist') private grist!: DataGrist
 
   get context() {
     return {
-      title: i18next.t('title.checklist-template list'),
+      title: '체크리스트 템플릿 리스트',
       search: {
         handler: (search: string) => {
           this.grist.searchText = search
@@ -74,7 +74,19 @@ export class ChecklistTemplateListPage extends ScopedElementsMixin(PageView) {
         handler: () => {
           this.grist.toggleHeadroom()
         }
-      }
+      },
+      actions: [
+        {
+          title: '저장',
+          action: this._updateChecklistTemplate.bind(this),
+          ...CommonButtonStyles.submit
+        },
+        {
+          title: '삭제',
+          action: this.deleteChecklistTemplate.bind(this),
+          ...CommonButtonStyles.delete
+        }
+      ]
     }
   }
 
@@ -87,14 +99,6 @@ export class ChecklistTemplateListPage extends ScopedElementsMixin(PageView) {
           </div>
         </div>
       </ox-grist>
-      <div button-container>
-        <md-elevated-button @click=${this.updateChecklistTemplate.bind(this)}>
-          <md-icon slot="icon">save</md-icon>저장</md-elevated-button
-        >
-        <md-elevated-button red @click=${this.deleteChecklistTemplate.bind(this)}>
-          <md-icon slot="icon">delete</md-icon>삭제</md-elevated-button
-        >
-      </div>
     `
   }
 
@@ -104,6 +108,31 @@ export class ChecklistTemplateListPage extends ScopedElementsMixin(PageView) {
         { type: 'gutter', gutterName: 'sequence' },
         { type: 'gutter', gutterName: 'row-selector', multiple: true },
         {
+          type: 'gutter',
+          gutterName: 'button',
+          fixed: true,
+          icon: 'reorder',
+          handlers: {
+            click: (columns, data, column, record, rowIndex) => {
+              if (!record.id) return
+              openPopup(
+                html`
+                  <checklist-template-item
+                    .checklistTemplate=${record}
+                    .checklistDetailTypes=${this.checklistDetailTypes}
+                    @requestRefresh="${() => this.grist.fetch()}"
+                  ></checklist-template-item>
+                `,
+                {
+                  backdrop: true,
+                  size: 'large',
+                  title: '체크 리스트 아이템 템플릿'
+                }
+              )
+            }
+          }
+        },
+        {
           type: 'string',
           name: 'name',
           header: '이름',
@@ -112,17 +141,7 @@ export class ChecklistTemplateListPage extends ScopedElementsMixin(PageView) {
           },
           filter: 'search',
           sortable: true,
-          width: 150
-        },
-        {
-          type: 'resource-object',
-          name: 'creator',
-          header: '생성자',
-          record: {
-            editable: false
-          },
-          sortable: true,
-          width: 120
+          width: 200
         },
         {
           type: 'resource-object',
@@ -131,7 +150,6 @@ export class ChecklistTemplateListPage extends ScopedElementsMixin(PageView) {
           record: {
             editable: false
           },
-          sortable: true,
           width: 120
         },
         {
@@ -141,7 +159,6 @@ export class ChecklistTemplateListPage extends ScopedElementsMixin(PageView) {
           record: {
             editable: false
           },
-          sortable: true,
           width: 180
         }
       ],
@@ -156,6 +173,32 @@ export class ChecklistTemplateListPage extends ScopedElementsMixin(PageView) {
         }
       ]
     }
+
+    this.getchecklistTypes()
+  }
+
+  async getchecklistTypes() {
+    const response = await client.query({
+      query: gql`
+        query ChecklistTypes {
+          checklistTypes {
+            items {
+              id
+              mainType
+              detailType
+            }
+          }
+        }
+      `
+    })
+
+    this.checklistDetailTypes = response.data.checklistTypes?.items?.map(v => {
+      return {
+        display: v.detailType,
+        value: v.id,
+        mainType: v.mainType
+      }
+    })
   }
 
   async fetchHandler({ page = 1, limit = 100, sortings = [], filters = [] }: FetchOption) {
@@ -167,10 +210,6 @@ export class ChecklistTemplateListPage extends ScopedElementsMixin(PageView) {
               id
               name
               updater {
-                id
-                name
-              }
-              creator {
                 id
                 name
               }
@@ -210,15 +249,13 @@ export class ChecklistTemplateListPage extends ScopedElementsMixin(PageView) {
 
         if (!response.errors) {
           this.grist.fetch()
-          notify({ message: '저장되었습니다.' })
-        } else {
-          notify({ message: '저장에 실패하였습니다.', level: 'error' })
+          notify({ message: '삭제되었습니다.' })
         }
       }
     }
   }
 
-  private async updateChecklistTemplate() {
+  private async _updateChecklistTemplate() {
     let patches = this.grist.dirtyRecords
     if (patches && patches.length) {
       patches = patches.map(patch => {
@@ -247,7 +284,9 @@ export class ChecklistTemplateListPage extends ScopedElementsMixin(PageView) {
 
       if (!response.errors) {
         this.grist.fetch()
-        notify({ message: '삭제되었습니다.' })
+        notify({ message: '저장되었습니다.' })
+      } else {
+        notify({ message: '저장에 실패하였습니다.', level: 'error' })
       }
     }
   }

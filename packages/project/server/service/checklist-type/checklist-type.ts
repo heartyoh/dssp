@@ -1,21 +1,24 @@
-import {
-  CreateDateColumn,
-  UpdateDateColumn,
-  Entity,
-  Index,
-  Column,
-  RelationId,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn
-} from 'typeorm'
-import { ObjectType, Field, ID } from 'type-graphql'
+import { CreateDateColumn, UpdateDateColumn, Entity, Index, Column, RelationId, ManyToOne, PrimaryGeneratedColumn } from 'typeorm'
+import { ObjectType, Field, ID, registerEnumType } from 'type-graphql'
 import { Domain } from '@things-factory/shell'
 import { User } from '@things-factory/auth-base'
-import { ChecklistTypeDetail } from '../checklist-type-detail/checklist-type-detail'
+
+export enum ChecklistTypeMainType {
+  BASIC = '10',
+  NON_BASIC = '20'
+}
+
+registerEnumType(ChecklistTypeMainType, {
+  name: 'ChecklistTypeMainType',
+  description: '체크리스트 구분 메인 구분'
+})
 
 @Entity()
-@Index('ix_checklist_type_0', (checklistType: ChecklistType) => [checklistType.domain, checklistType.name], { unique: true })
+@Index(
+  'ix_checklist_type_0',
+  (checklistType: ChecklistType) => [checklistType.domain, checklistType.mainType, checklistType.detailType],
+  { unique: true }
+)
 @ObjectType({ description: 'Entity for ChecklistType' })
 export class ChecklistType {
   @PrimaryGeneratedColumn('uuid')
@@ -29,14 +32,13 @@ export class ChecklistType {
   @RelationId((checklistType: ChecklistType) => checklistType.domain)
   domainId?: string
 
-  @Column()
-  @Field({ nullable: true })
-  name?: string
+  @Column({ nullable: false, comment: '메인 구분 (10: 기본 업무, 20: 기본 외 업무)' })
+  @Field({ nullable: false })
+  mainType: ChecklistTypeMainType
 
-  // 체크리스트 구분 상세 정보 (하위 테이블 참조)
-  @Field(() => ChecklistTypeDetail)
-  @OneToMany(() => ChecklistTypeDetail, checklistTypeDetail => checklistTypeDetail.checklistType)
-  checklistTypeDetails?: ChecklistTypeDetail[]
+  @Column({ nullable: false, comment: '상세 구분' })
+  @Field({ nullable: false })
+  detailType: string
 
   @CreateDateColumn()
   @Field({ nullable: true })

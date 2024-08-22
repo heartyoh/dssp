@@ -1,17 +1,24 @@
 import '@material/web/icon/icon.js'
 import '@operato/data-grist'
-import './checklist-type-detail'
 
-import { CommonGristStyles, ScrollbarStyles } from '@operato/styles'
+import { CommonGristStyles, CommonButtonStyles, ScrollbarStyles } from '@operato/styles'
 import { PageView } from '@operato/shell'
 import { css, html } from 'lit'
 import { customElement, query, state } from 'lit/decorators.js'
 import { ScopedElementsMixin } from '@open-wc/scoped-elements'
 import { DataGrist, FetchOption } from '@operato/data-grist'
 import { client } from '@operato/graphql'
-import { i18next } from '@operato/i18n'
-import { notify, openPopup } from '@operato/layout'
+import { notify } from '@operato/layout'
 import gql from 'graphql-tag'
+
+export enum ChecklistTypeMainType {
+  BASIC = '10',
+  NON_BASIC = '20'
+}
+export const CHECKLIST_MAIN_TYPE_LIST = {
+  [ChecklistTypeMainType.BASIC]: '기본 업무',
+  [ChecklistTypeMainType.NON_BASIC]: '기본 외 업무'
+}
 
 @customElement('checklist-type-management')
 export class ChecklistTypeManagement extends ScopedElementsMixin(PageView) {
@@ -73,7 +80,19 @@ export class ChecklistTypeManagement extends ScopedElementsMixin(PageView) {
         handler: () => {
           this.grist.toggleHeadroom()
         }
-      }
+      },
+      actions: [
+        {
+          title: '저장',
+          action: this._updateChecklistType.bind(this),
+          ...CommonButtonStyles.submit
+        },
+        {
+          title: '삭제',
+          action: this._deleteChecklistType.bind(this),
+          ...CommonButtonStyles.delete
+        }
+      ]
     }
   }
 
@@ -86,15 +105,6 @@ export class ChecklistTypeManagement extends ScopedElementsMixin(PageView) {
           </div>
         </div>
       </ox-grist>
-
-      <div button-container>
-        <md-elevated-button @click=${this.updateChecklistType.bind(this)}>
-          <md-icon slot="icon">save</md-icon>저장</md-elevated-button
-        >
-        <md-elevated-button red @click=${this.deleteChecklistType.bind(this)}>
-          <md-icon slot="icon">delete</md-icon>삭제</md-elevated-button
-        >
-      </div>
     `
   }
 
@@ -104,48 +114,29 @@ export class ChecklistTypeManagement extends ScopedElementsMixin(PageView) {
         { type: 'gutter', gutterName: 'sequence' },
         { type: 'gutter', gutterName: 'row-selector', multiple: true },
         {
-          type: 'gutter',
-          gutterName: 'button',
-          fixed: true,
-          icon: 'reorder',
-          handlers: {
-            click: (columns, data, column, record, rowIndex) => {
-              if (!record.id) return
-              openPopup(
-                html`
-                  <checklist-type-detail
-                    .checklistType=${record}
-                    @requestRefresh="${() => this.grist.fetch()}"
-                  ></checklist-type-detail>
-                `,
-                {
-                  backdrop: true,
-                  size: 'large',
-                  title: i18next.t('체크 리스트 아이템 템플릿')
-                }
-              )
-            }
-          }
-        },
-        {
-          type: 'string',
-          name: 'name',
-          header: '이름',
+          type: 'select',
+          name: 'mainType',
+          header: '메인 구분',
           record: {
-            editable: true
+            editable: true,
+            options: [{ display: '', value: '' }].concat(
+              Object.keys(CHECKLIST_MAIN_TYPE_LIST).map(key => ({ display: CHECKLIST_MAIN_TYPE_LIST[key], value: key }))
+            )
           },
           filter: 'search',
           sortable: true,
           width: 150
         },
         {
-          type: 'resource-object',
-          name: 'creator',
-          header: '생성자',
+          type: 'string',
+          name: 'detailType',
+          header: '상세 구분',
           record: {
-            editable: false
+            editable: true
           },
-          width: 120
+          filter: 'search',
+          sortable: true,
+          width: 250
         },
         {
           type: 'resource-object',
@@ -163,6 +154,7 @@ export class ChecklistTypeManagement extends ScopedElementsMixin(PageView) {
           record: {
             editable: false
           },
+          sortable: true,
           width: 180
         }
       ],
@@ -171,11 +163,7 @@ export class ChecklistTypeManagement extends ScopedElementsMixin(PageView) {
           multiple: true
         }
       },
-      sorters: [
-        {
-          name: 'name'
-        }
-      ]
+      sorters: [{ name: 'updatedAt' }, { name: 'mainType' }, { name: 'detailType' }]
     }
   }
 
@@ -186,7 +174,8 @@ export class ChecklistTypeManagement extends ScopedElementsMixin(PageView) {
           responses: checklistTypes(filters: $filters, pagination: $pagination, sortings: $sortings) {
             items {
               id
-              name
+              mainType
+              detailType
               updater {
                 id
                 name
@@ -210,7 +199,7 @@ export class ChecklistTypeManagement extends ScopedElementsMixin(PageView) {
     }
   }
 
-  private async deleteChecklistType() {
+  private async _deleteChecklistType() {
     if (confirm('삭제하시겠습니까?')) {
       const ids = this.grist.selected.map(record => record.id)
       if (ids && ids.length > 0) {
@@ -227,15 +216,13 @@ export class ChecklistTypeManagement extends ScopedElementsMixin(PageView) {
 
         if (!response.errors) {
           this.grist.fetch()
-          notify({ message: '저장되었습니다.' })
-        } else {
-          notify({ message: '저장에 실패하였습니다.', level: 'error' })
+          notify({ message: '삭제되었습니다.' })
         }
       }
     }
   }
 
-  private async updateChecklistType() {
+  private async _updateChecklistType() {
     let patches = this.grist.dirtyRecords
     if (patches && patches.length) {
       patches = patches.map(patch => {
@@ -253,7 +240,7 @@ export class ChecklistTypeManagement extends ScopedElementsMixin(PageView) {
         mutation: gql`
           mutation ($patches: [ChecklistTypePatch!]!) {
             updateMultipleChecklistType(patches: $patches) {
-              name
+              id
             }
           }
         `,
@@ -264,7 +251,9 @@ export class ChecklistTypeManagement extends ScopedElementsMixin(PageView) {
 
       if (!response.errors) {
         this.grist.fetch()
-        notify({ message: '삭제되었습니다.' })
+        notify({ message: '저장되었습니다.' })
+      } else {
+        notify({ message: '저장에 실패하였습니다.', level: 'error' })
       }
     }
   }
