@@ -16,42 +16,22 @@ export class ChecklistTemplateItemMutation {
     const { domain, user, tx } = context.state
 
     let results = []
-    const _createRecords = patches.filter((patch: any) => patch.cuFlag.toUpperCase() === '+')
-    const _updateRecords = patches.filter((patch: any) => patch.cuFlag.toUpperCase() === 'M')
+
     const checklistTemplateItemRepo = tx.getRepository(ChecklistTemplateItem)
-    const checklistTemplateRepo = tx.getRepository(ChecklistTemplate)
+    const checklistTemplate = await tx.getRepository(ChecklistTemplate).findOneBy({ id: checklistTemplateId })
 
-    if (_createRecords.length > 0) {
-      for (let i = 0; i < _createRecords.length; i++) {
-        const newRecord = _createRecords[i]
+    await checklistTemplateItemRepo.delete({ checklistTemplate: { id: checklistTemplateId } })
 
-        const checklistTemplate = await checklistTemplateRepo.findOneBy({ id: checklistTemplateId })
+    for (let i = 0; i < patches.length; i++) {
+      const result = await checklistTemplateItemRepo.save({
+        ...patches[i],
+        sequence: i,
+        checklistTemplate,
+        creator: user,
+        updater: user
+      })
 
-        const result = await checklistTemplateItemRepo.save({
-          ...newRecord,
-          checklistTemplate,
-          domain,
-          creator: user,
-          updater: user
-        })
-
-        results.push({ ...result, cuFlag: '+' })
-      }
-    }
-
-    if (_updateRecords.length > 0) {
-      for (let i = 0; i < _updateRecords.length; i++) {
-        const updateRecord = _updateRecords[i]
-        const checklistTemplateItem = await checklistTemplateItemRepo.findOneBy({ id: updateRecord.id })
-
-        const result = await checklistTemplateItemRepo.save({
-          ...checklistTemplateItem,
-          ...updateRecord,
-          updater: user
-        })
-
-        results.push({ ...result, cuFlag: 'M' })
-      }
+      results.push({ ...result, cuFlag: '+' })
     }
 
     return results

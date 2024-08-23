@@ -33,7 +33,6 @@ class ChecklistTemplateItem extends LitElement {
   @property({ type: Object }) checklistDetailTypes: any
   @property({ type: Object }) checklistTemplate: any
   @property({ type: Object }) gristConfig: any
-  @property({ type: Object }) taskTypes: any
 
   @query('ox-grist') grist!: DataGrist
 
@@ -51,7 +50,7 @@ class ChecklistTemplateItem extends LitElement {
     this.gristConfig = {
       list: { fields: ['name', 'description', 'task'] },
       columns: [
-        { type: 'gutter', gutterName: 'row-selector', multiple: true, fixed: true },
+        { type: 'gutter', gutterName: 'row-selector', multiple: true },
         {
           type: 'gutter',
           gutterName: 'button',
@@ -131,11 +130,7 @@ class ChecklistTemplateItem extends LitElement {
       pagination: {
         infinite: true
       },
-      sorters: [
-        {
-          name: 'sequence'
-        }
-      ]
+      sorters: [{ name: 'mainType' }, { name: 'sequence' }]
     }
   }
 
@@ -160,7 +155,7 @@ class ChecklistTemplateItem extends LitElement {
           value: this.checklistTemplate.id,
           operator: 'eq'
         },
-        sortings: { name: 'sequence' }
+        sortings: [{ name: 'mainType' }, { name: 'sequence' }]
       }
     })
 
@@ -194,15 +189,14 @@ class ChecklistTemplateItem extends LitElement {
   }
 
   async _updateChecklistTemplateItems() {
-    let patches = this.grist.dirtyRecords
-    if (patches && patches.length) {
+    let patches = this.grist.dirtyData.records
+    if (patches) {
       patches = patches.map(patch => {
-        let patchField: any = patch.id ? { id: patch.id } : {}
-        const dirtyFields = patch.__dirtyfields__
-        for (let key in dirtyFields) {
-          patchField[key] = dirtyFields[key].after
+        const { __origin__: { __typename, ...patchField } = {}, __dirtyfields__ } = patch
+
+        for (let key in __dirtyfields__) {
+          patchField[key] = __dirtyfields__[key].after
         }
-        patchField.cuFlag = patch.__dirty__
 
         return patchField
       })
@@ -224,9 +218,14 @@ class ChecklistTemplateItem extends LitElement {
       if (!response.errors) {
         this.grist.fetch()
         notify({ message: '저장되었습니다.' })
+        this.requestRefresh()
       } else {
         notify({ message: '저장에 실패하였습니다.', level: 'error' })
       }
     }
+  }
+
+  requestRefresh() {
+    this.dispatchEvent(new CustomEvent('requestRefresh'))
   }
 }
