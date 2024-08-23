@@ -28,32 +28,6 @@ export class ChecklistTemplateListPage extends ScopedElementsMixin(PageView) {
         --grid-record-emphasized-background-color: red;
         --grid-record-emphasized-color: yellow;
       }
-
-      md-elevated-button {
-        margin: 0px 3px;
-
-        --md-elevated-button-container-height: 35px;
-        --md-elevated-button-label-text-size: 16px;
-        --md-elevated-button-container-color: #0595e5;
-
-        --md-elevated-button-label-text-color: #fff;
-        --md-elevated-button-hover-label-text-color: #fff;
-        --md-elevated-button-pressed-label-text-color: #fff;
-        --md-elevated-button-focus-label-text-color: #fff;
-        --md-elevated-button-icon-color: #fff;
-        --md-elevated-button-hover-icon-color: #fff;
-        --md-elevated-button-pressed-icon-color: #fff;
-        --md-elevated-button-focus-icon-color: #fff;
-
-        &[red] {
-          --md-elevated-button-container-color: #e15757;
-        }
-      }
-
-      div[button-container] {
-        padding: 0 5px 10px 0;
-        text-align: right;
-      }
     `
   ]
 
