@@ -19,7 +19,7 @@ export class ChecklistTemplateItem {
   @Field({ nullable: false })
   name: string
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, comment: '시퀀스' })
   @Field(type => Int, { nullable: true })
   sequence?: number
 

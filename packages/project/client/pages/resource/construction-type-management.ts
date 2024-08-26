@@ -7,8 +7,9 @@ import { css, html } from 'lit'
 import { customElement, property, query } from 'lit/decorators.js'
 import { DataGrist } from '@operato/data-grist'
 import { client } from '@operato/graphql'
-import { notify } from '@operato/layout'
+import { notify, openPopup } from '@operato/layout'
 import gql from 'graphql-tag'
+import './construction-detail-type-popup'
 
 @customElement('construction-type-management')
 export class ConstructionTypeManagement extends PageView {
@@ -60,6 +61,30 @@ export class ConstructionTypeManagement extends PageView {
       columns: [
         { type: 'gutter', gutterName: 'sequence' },
         { type: 'gutter', gutterName: 'row-selector', multiple: true },
+        {
+          type: 'gutter',
+          gutterName: 'button',
+          fixed: true,
+          icon: 'reorder',
+          handlers: {
+            click: (columns, data, column, record, rowIndex) => {
+              if (!record.id) return
+              openPopup(
+                html`
+                  <construction-detail-type-popup
+                    .constructionType=${record}
+                    @requestRefresh="${() => this.grist.fetch()}"
+                  ></construction-detail-type-popup>
+                `,
+                {
+                  backdrop: true,
+                  size: 'large',
+                  title: '세부 공종'
+                }
+              )
+            }
+          }
+        },
         {
           type: 'string',
           name: 'name',

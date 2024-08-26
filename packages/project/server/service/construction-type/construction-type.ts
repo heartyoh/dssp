@@ -7,12 +7,14 @@ import {
   Column,
   RelationId,
   ManyToOne,
-  PrimaryGeneratedColumn
+  PrimaryGeneratedColumn,
+  OneToMany
 } from 'typeorm'
 import { ObjectType, Field, ID } from 'type-graphql'
 
 import { Domain } from '@things-factory/shell'
 import { User } from '@things-factory/auth-base'
+import { ConstructionDetailType } from '../construction-detail-type/construction-detail-type'
 
 @Entity()
 @Index('ix_construction_type_0', (constructionType: ConstructionType) => [constructionType.domain, constructionType.name], {
@@ -39,6 +41,11 @@ export class ConstructionType {
   @Column({ nullable: true })
   @Field({ nullable: true })
   description?: string
+
+  // 상세 공종 정보 (하위 테이블 참조)
+  @Field(() => ConstructionDetailType)
+  @OneToMany(() => ConstructionDetailType, constructionDetailType => constructionDetailType.constructionType)
+  constructionDetailTypes?: ConstructionDetailType[]
 
   @CreateDateColumn()
   @Field({ nullable: true })

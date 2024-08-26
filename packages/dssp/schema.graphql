@@ -864,8 +864,33 @@ type ConnectorType {
   taskPrefixes: [String!]
 }
 
+"""세부 공종 타입"""
+type ConstructionDetailType {
+  constructionType: ConstructionType
+  createdAt: DateTimeISO
+  creator: User
+  id: ID!
+  name: String
+  sequence: Int
+  updatedAt: DateTimeISO
+  updater: User
+}
+
+type ConstructionDetailTypeList {
+  items: [ConstructionDetailType!]!
+  total: Int!
+}
+
+input ConstructionDetailTypePatch {
+  cuFlag: String
+  id: ID
+  name: String
+  sequence: Int
+}
+
 """공종 타입"""
 type ConstructionType {
+  constructionDetailTypes: ConstructionDetailType!
   createdAt: DateTimeISO
   creator: User
   deletedAt: DateTimeISO
@@ -2145,6 +2170,9 @@ type Mutation {
   """To delete multiple connections"""
   deleteConnections(names: [String!]!): Boolean!
 
+  """To delete multiple ConstructionDetailTypes"""
+  deleteConstructionDetailTypes(ids: [String!]!): Boolean!
+
   """To delete multiple ConstructionTypes"""
   deleteConstructionTypes(ids: [String!]!): Boolean!
 
@@ -2653,6 +2681,9 @@ type Mutation {
 
   """To modify multiple connections' information"""
   updateMultipleConnection(patches: [ConnectionPatch!]!): [Connection!]!
+
+  """To modify multiple ConstructionDetailTypes' information"""
+  updateMultipleConstructionDetailType(constructionTypeId: String!, patches: [ConstructionDetailTypePatch!]!): [ConstructionDetailType!]!
 
   """To modify multiple ConstructionTypes' information"""
   updateMultipleConstructionType(patches: [ConstructionTypePatch!]!): [ConstructionType!]!
@@ -4065,6 +4096,9 @@ type Query {
 
   """To fetch multiple connector"""
   connectors: ConnectorList!
+
+  """To fetch multiple ConstructionDetailTypes"""
+  constructionDetailTypes(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): ConstructionDetailTypeList!
 
   """To fetch a ConstructionType"""
   constructionType(id: String!): ConstructionType

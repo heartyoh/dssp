@@ -1,4 +1,5 @@
 /* EXPORT ENTITY TYPES */
+export * from './construction-detail-type/construction-detail-type'
 export * from './checklist-type/checklist-type'
 export * from './checklist-template-item/checklist-template-item'
 export * from './checklist-template/checklist-template'
@@ -11,6 +12,10 @@ export * from './task/task'
 export * from './project/project'
 
 /* IMPORT ENTITIES AND RESOLVERS */
+import {
+  entities as ConstructionDetailTypeEntities,
+  resolvers as ConstructionDetailTypeResolvers
+} from './construction-detail-type'
 import { entities as ChecklistTypeEntities, resolvers as ChecklistTypeResolvers } from './checklist-type'
 import { entities as ChecklistTemplateItemEntities, resolvers as ChecklistTemplateItemResolvers } from './checklist-template-item'
 import { entities as ChecklistTemplateEntities, resolvers as ChecklistTemplateResolvers } from './checklist-template'
@@ -24,6 +29,7 @@ import { entities as ProjectEntities, resolvers as ProjectResolvers, types as Pr
 
 export const entities = [
   /* ENTITIES */
+  ...ConstructionDetailTypeEntities,
   ...ChecklistTypeEntities,
   ...ChecklistTemplateItemEntities,
   ...ChecklistTemplateEntities,
@@ -39,6 +45,7 @@ export const entities = [
 export const schema = {
   resolverClasses: [
     /* RESOLVER CLASSES */
+    ...ConstructionDetailTypeResolvers,
     ...ChecklistTypeResolvers,
     ...ChecklistTemplateItemResolvers,
     ...ChecklistTemplateResolvers,

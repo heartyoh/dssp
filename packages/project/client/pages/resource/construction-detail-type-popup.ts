@@ -10,10 +10,9 @@ import { client } from '@operato/graphql'
 import { ButtonContainerStyles } from '@operato/styles'
 import { FetchOption } from '@operato/data-grist'
 import { notify } from '@operato/layout'
-import { CHECKLIST_MAIN_TYPE_LIST } from './checklist-type-management'
 
-@customElement('checklist-template-item')
-class ChecklistTemplateItem extends LitElement {
+@customElement('construction-detail-type-popup')
+class ConstructionDetailTypePopup extends LitElement {
   static styles = [
     ButtonContainerStyles,
     css`
@@ -30,8 +29,7 @@ class ChecklistTemplateItem extends LitElement {
     `
   ]
 
-  @property({ type: Object }) checklistDetailTypes: any
-  @property({ type: Object }) checklistTemplate: any
+  @property({ type: Object }) constructionType: any
   @property({ type: Object }) gristConfig: any
 
   @query('ox-grist') grist!: DataGrist
@@ -40,8 +38,8 @@ class ChecklistTemplateItem extends LitElement {
     return html`
       <ox-grist .mode=${'GRID'} .config=${this.gristConfig} .fetchHandler=${this.fetchHandler.bind(this)}></ox-grist>
       <div class="button-container">
-        <button danger @click=${this._deleteChecklistTemplateItems.bind(this)}><md-icon>delete</md-icon>삭제</button>
-        <button @click=${this._updateChecklistTemplateItems.bind(this)}><md-icon>save</md-icon>저장</button>
+        <button danger @click=${this._deleteConstructionDetailType.bind(this)}><md-icon>delete</md-icon>삭제</button>
+        <button @click=${this._updateConstructionDetailType.bind(this)}><md-icon>save</md-icon>저장</button>
       </div>
     `
   }
@@ -89,36 +87,11 @@ class ChecklistTemplateItem extends LitElement {
         {
           type: 'string',
           name: 'name',
-          header: '검사 항목',
+          header: '세부 공종 이름',
           record: {
             editable: true
           },
           width: 200
-        },
-        {
-          type: 'select',
-          name: 'mainType',
-          header: '구분',
-          record: {
-            editable: true,
-            options: [{ display: '', value: '' }].concat(
-              Object.keys(CHECKLIST_MAIN_TYPE_LIST).map(key => ({ display: CHECKLIST_MAIN_TYPE_LIST[key], value: key }))
-            )
-          },
-          width: 150
-        },
-        {
-          type: 'select',
-          name: 'detailType',
-          header: '상세 구분',
-          record: {
-            editable: true,
-            options: (columns, data, column) => [
-              { display: '', value: '' },
-              ...this.checklistDetailTypes.filter(v => v.mainType == column.mainType)
-            ]
-          },
-          width: 250
         }
       ],
       rows: {
@@ -129,7 +102,7 @@ class ChecklistTemplateItem extends LitElement {
       pagination: {
         infinite: true
       },
-      sorters: [{ name: 'mainType' }, { name: 'sequence' }]
+      sorters: [{ name: 'sequence' }]
     }
   }
 
@@ -137,41 +110,39 @@ class ChecklistTemplateItem extends LitElement {
     const response = await client.query({
       query: gql`
         query ($filters: [Filter!], $pagination: Pagination, $sortings: [Sorting!]) {
-          checklistTemplateItems(filters: $filters, pagination: $pagination, sortings: $sortings) {
+          constructionDetailTypes(filters: $filters, pagination: $pagination, sortings: $sortings) {
             items {
               id
               sequence
               name
-              mainType
-              detailType
             }
           }
         }
       `,
       variables: {
         filters: {
-          name: 'checklistTemplateId',
-          value: this.checklistTemplate.id,
+          name: 'constructionTypeId',
+          value: this.constructionType.id,
           operator: 'eq'
         },
-        sortings: [{ name: 'mainType' }, { name: 'sequence' }]
+        sortings: [{ name: 'sequence' }]
       }
     })
 
     return {
-      total: response.data.checklistTemplateItems.total || 0,
-      records: response.data.checklistTemplateItems.items || []
+      total: response.data.constructionDetailTypes.total || 0,
+      records: response.data.constructionDetailTypes.items || []
     }
   }
 
-  private async _deleteChecklistTemplateItems() {
+  private async _deleteConstructionDetailType() {
     if (confirm('삭제하시겠습니까?')) {
       const ids = this.grist.selected.map(record => record.id)
       if (ids && ids.length > 0) {
         const response = await client.mutate({
           mutation: gql`
             mutation ($ids: [String!]!) {
-              deleteChecklistTemplateItems(ids: $ids)
+              deleteConstructionDetailTypes(ids: $ids)
             }
           `,
           variables: {
@@ -187,7 +158,7 @@ class ChecklistTemplateItem extends LitElement {
     }
   }
 
-  async _updateChecklistTemplateItems() {
+  async _updateConstructionDetailType() {
     let patches = this.grist.dirtyData.records
     if (patches) {
       patches = patches.map(patch => {
@@ -202,14 +173,14 @@ class ChecklistTemplateItem extends LitElement {
 
       const response = await client.mutate({
         mutation: gql`
-          mutation UpdateMultipleChecklistTemplateItems($checklistTemplateId: String!, $patches: [ChecklistTemplateItemPatch!]!) {
-            updateMultipleChecklistTemplateItems(checklistTemplateId: $checklistTemplateId, patches: $patches) {
+          mutation UpdateMultipleConstructionDetailType($constructionTypeId: String!, $patches: [ConstructionDetailTypePatch!]!) {
+            updateMultipleConstructionDetailType(constructionTypeId: $constructionTypeId, patches: $patches) {
               id
             }
           }
         `,
         variables: {
-          checklistTemplateId: this.checklistTemplate.id,
+          constructionTypeId: this.constructionType.id,
           patches
         }
       })
