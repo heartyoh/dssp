@@ -9,11 +9,13 @@ import { css, html } from 'lit'
 import { customElement, state } from 'lit/decorators.js'
 import { ScopedElementsMixin } from '@open-wc/scoped-elements'
 import { client } from '@operato/graphql'
+import { notify, openPopup } from '@operato/layout'
 
 import gql from 'graphql-tag'
 import { Project } from './project-list'
 import _getWeather from '../lib/waether'
 import '@operato/chart/ox-progress-circle.js'
+import '@dssp/building-complex/dist-client/pages/inspection-create-popup'
 
 export interface InspectionSummary {
   request: number
@@ -167,8 +169,6 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
           }
 
           div[right-top] {
-            flex: 3;
-
             div[state] {
               display: grid;
               grid-template-columns: 0.95fr 0.95fr 1.1fr;
@@ -260,8 +260,6 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
           }
 
           div[right-bottom] {
-            flex: 2;
-
             div[table-container] {
               width: 100%;
               height: 15rem;
@@ -304,7 +302,34 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
               white-space: nowrap;
               text-overflow: ellipsis;
               overflow: hidden;
-              font-size: 15px;
+              font-size: 13px;
+            }
+
+            md-elevated-button {
+              margin: 0px 3px;
+
+              --md-elevated-button-container-height: 35px;
+              --md-elevated-button-label-text-size: 16px;
+              --md-elevated-button-container-color: #0595e5;
+
+              --md-elevated-button-label-text-color: #fff;
+              --md-elevated-button-hover-label-text-color: #fff;
+              --md-elevated-button-pressed-label-text-color: #fff;
+              --md-elevated-button-focus-label-text-color: #fff;
+              --md-elevated-button-icon-color: #fff;
+              --md-elevated-button-hover-icon-color: #fff;
+              --md-elevated-button-pressed-icon-color: #fff;
+              --md-elevated-button-focus-icon-color: #fff;
+
+              &[red] {
+                --md-elevated-button-container-color: #e15757;
+              }
+            }
+
+            div[inspection-button-container] {
+              padding: 0 5px 10px 0;
+              margin-top: 10px;
+              text-align: right;
             }
           }
         }
@@ -517,29 +542,39 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
           </div>
 
           <div right-bottom>
-            <h3>기타 사항</h3>
+            <h3>검측 현황</h3>
             <div table-container>
               <hr />
               <table>
                 <thead>
                   <tr>
-                    <th width="20%">검측 위치</th>
-                    <th width="20%">공종</th>
-                    <th width="40%">내용</th>
-                    <th width="20%">검측결과</th>
+                    <th width="5%">순번</th>
+                    <th width="10%">검측 위치</th>
+                    <th width="10%">공종</th>
+                    <th width="20%">내용</th>
+                    <th width="15%">검측 요청일</th>
+                    <th width="10%">검측 결과</th>
+                    <th width="15%">검측 결과 데이터</th>
                   </tr>
                 </thead>
                 <tbody>
                   ${[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1].map(inspection => {
-                    return html`<tr>
+                    return html` <tr>
+                      <td>1</td>
                       <td>101동 3층</td>
                       <td bold>단열공사</td>
                       <td>단열재 시공 층간 차음재 시공 벽돌/블록 및 ALC 패널 공사</td>
+                      <td>2024-01-04</td>
                       <td bold>검측완료</td>
+                      <td>ㅁㅁㅁㅁㅁㅁ</td>
                     </tr>`
                   })}
                 </tbody>
               </table>
+            </div>
+
+            <div inspection-button-container>
+              <md-elevated-button @click=${this._openCreateInspection}>등록</md-elevated-button>
             </div>
           </div>
         </div>
@@ -627,5 +662,16 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
     }
 
     console.log('init project : ', this.project)
+  }
+
+  _openCreateInspection() {
+    openPopup(
+      html` <inspection-create-popup .projectId=${this.project.id} @requestRefresh="${() => {}}"></inspection-create-popup> `,
+      {
+        backdrop: true,
+        size: 'medium',
+        title: '체크 리스트 아이템 템플릿'
+      }
+    )
   }
 }
