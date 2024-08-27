@@ -1091,7 +1091,7 @@ scalar EmailAddress @specifiedBy(url: "https://html.spec.whatwg.org/multipage/in
 """Entity for Employee"""
 type Employee {
   active: Boolean
-  address: String!
+  address: String
   alias: String
   approvalLines: [ApprovalLine!]!
   contact: Contact
@@ -1442,8 +1442,13 @@ enum InheritedValueType {
 }
 
 type InspectionSummary {
+  """검사 실패 수"""
   fail: Int!
+
+  """검사 통과 수"""
   pass: Int!
+
+  """검사 요청 수"""
   request: Int!
 }
 
@@ -1926,7 +1931,9 @@ type Mutation {
   """To activate user"""
   activateUser(userId: String!): Boolean!
 
-  """To attach a contact on Employee"""
+  """
+  Attaches an existing contact to an employee. The contact is identified by its ID and the employee is identified by their ID.
+  """
   attachContact(contactId: String!, id: String!): Employee!
   cancelInvitation(email: EmailAddress!, reference: String!, type: String!): Boolean!
 
@@ -1989,7 +1996,9 @@ type Mutation {
   """To create domain (Only superuser is granted this privilege.)"""
   createDomain(domainInput: DomainPatch!): Domain!
 
-  """To create new Employee"""
+  """
+  Creates a new employee record with the provided details. Optionally associates the employee with a supervisor, department, and system user. If a photo is provided, it will be attached to the employee record.
+  """
   createEmployee(employee: NewEmployee!): Employee!
 
   """To create new Entity"""
@@ -2058,6 +2067,9 @@ type Mutation {
   """프로젝트 생성"""
   createProject(project: NewProject!): Project!
 
+  """To create new Resource"""
+  createResource(resource: NewResource!): Resource!
+
   """To create new user"""
   createRole(role: NewRole!): User!
 
@@ -2072,6 +2084,9 @@ type Mutation {
 
   """To create new Task"""
   createTask(task: NewTask!): Task!
+
+  """To create new TaskResource"""
+  createTaskResource(taskResource: NewTaskResource!): TaskResource!
 
   """To create new Terminology"""
   createTerminology(terminology: NewTerminology!): Terminology!
@@ -2197,10 +2212,14 @@ type Mutation {
   """To delete multiple domains (Only superuser is granted this privilege.)"""
   deleteDomains(names: [String!]!): Boolean!
 
-  """To delete Employee"""
+  """
+  Deletes an employee record identified by the given ID. Also deletes any attachments associated with the employee.
+  """
   deleteEmployee(id: String!): Boolean!
 
-  """To delete multiple Employees"""
+  """
+  Deletes multiple employee records identified by the given IDs. Also deletes any attachments associated with each employee.
+  """
   deleteEmployees(ids: [String!]!): Boolean!
 
   """To delete multiple Entities"""
@@ -2323,6 +2342,12 @@ type Mutation {
   """To delete Project"""
   deleteProject(id: String!): Boolean!
 
+  """To delete Resource"""
+  deleteResource(id: String!): Boolean!
+
+  """To delete multiple Resources"""
+  deleteResources(ids: [String!]!): Boolean!
+
   """To delete role"""
   deleteRole(id: String!): Boolean!
 
@@ -2352,6 +2377,12 @@ type Mutation {
 
   """To delete Task"""
   deleteTask(id: String!): Boolean!
+
+  """To delete TaskResource"""
+  deleteTaskResource(id: String!): Boolean!
+
+  """To delete multiple TaskResources"""
+  deleteTaskResources(ids: [String!]!): Boolean!
 
   """To delete multiple Tasks"""
   deleteTasks(ids: [String!]!): Boolean!
@@ -2383,7 +2414,9 @@ type Mutation {
   """To delete multiple WorkerTypes"""
   deleteWorkerTypes(ids: [String!]!): Boolean!
 
-  """To detach a contact from Employee"""
+  """
+  Detaches an existing contact from an employee. The employee is identified by their ID.
+  """
   detachContact(id: String!): Employee!
 
   """To disconnect a connection"""
@@ -2437,7 +2470,9 @@ type Mutation {
   """To import multiple Departments"""
   importDepartments(departments: [DepartmentPatch!]!): Boolean!
 
-  """To import multiple Employees"""
+  """
+  Imports multiple employee records into the system. Each employee record must be provided in the EmployeePatch format.
+  """
   importEmployees(employees: [EmployeePatch!]!): Boolean!
 
   """To import multiple MenuButtons"""
@@ -2464,11 +2499,17 @@ type Mutation {
   """To import multiple Oauth2Clients"""
   importOauth2Clients(oauth2Clients: [Oauth2ClientPatch!]!): Boolean!
 
+  """To import multiple Resources"""
+  importResources(resources: [ResourcePatch!]!): Boolean!
+
   """To import multiple scenarios"""
   importScenarios(scenarios: [ScenarioPatch!]!): Boolean!
 
   """To import multiple StateRegisters"""
   importStateRegisters(stateRegisters: [StateRegisterPatch!]!): Boolean!
+
+  """To import multiple TaskResources"""
+  importTaskResources(taskResources: [TaskResourcePatch!]!): Boolean!
 
   """To import multiple Tasks"""
   importTasks(tasks: [TaskPatch!]!): Boolean!
@@ -2513,6 +2554,14 @@ type Mutation {
     """visibility of board template to be regiestered"""
     visibility: String!
   ): BoardTemplate!
+
+  """
+  Registers an existing employee as a system user, granting them access to the system. The employee is identified by their ID.
+  """
+  registerEmployeeAsSystemUser(
+    """Employee Id"""
+    employeeId: String!
+  ): Boolean!
 
   """To release a Board"""
   releaseBoard(id: String!): Board!
@@ -2609,7 +2658,9 @@ type Mutation {
   """To update multiple domains (Only superuser is granted this privilege.)"""
   updateDomains(patches: [DomainPatch!]!): Boolean!
 
-  """To modify Employee information"""
+  """
+  Updates the details of an existing employee identified by the given ID. Optionally updates the supervisor, department, system user, and photo associated with the employee.
+  """
   updateEmployee(id: String!, patch: EmployeePatch!): Employee!
 
   """To modify Entity' information"""
@@ -2694,7 +2745,9 @@ type Mutation {
   """To modify multiple Departments' information"""
   updateMultipleDepartment(patches: [DepartmentPatch!]!): [Department!]!
 
-  """To modify multiple Employees' information"""
+  """
+  Updates or creates multiple employee records based on the provided patches. New employees are created if the "cuFlag" is "+", and existing employees are updated if the "cuFlag" is "M".
+  """
   updateMultipleEmployee(patches: [EmployeePatch!]!): [Employee!]!
 
   """To modify multiple Entitys' information"""
@@ -2727,6 +2780,9 @@ type Mutation {
   """To modify multiple PrinterDevices' information"""
   updateMultiplePrinterDevice(patches: [PrinterDevicePatch!]!): [PrinterDevice!]!
 
+  """To modify multiple Resources' information"""
+  updateMultipleResource(patches: [ResourcePatch!]!): [Resource!]!
+
   """To modify multiple scenarios' information"""
   updateMultipleScenario(patches: [ScenarioPatch!]!): [Scenario!]!
 
@@ -2741,6 +2797,9 @@ type Mutation {
 
   """To modify multiple Tasks' information"""
   updateMultipleTask(patches: [TaskPatch!]!): [Task!]!
+
+  """To modify multiple TaskResources' information"""
+  updateMultipleTaskResource(patches: [TaskResourcePatch!]!): [TaskResource!]!
 
   """To modify multiple Terminologies' information"""
   updateMultipleTerminologies(patches: [TerminologyPatch!]!): [Terminology!]!
@@ -2790,6 +2849,9 @@ type Mutation {
   """프로젝트 도면 업데이트"""
   updateProjectPlan(project: ProjectPatch!): Project!
 
+  """To modify Resource information"""
+  updateResource(id: String!, patch: ResourcePatch!): Resource!
+
   """To modify role information"""
   updateRole(id: String!, patch: RolePatch!): Role!
 
@@ -2816,6 +2878,9 @@ type Mutation {
 
   """To modify Task information"""
   updateTask(id: String!, patch: TaskPatch!): Task!
+
+  """To modify TaskResource information"""
+  updateTaskResource(id: String!, patch: TaskResourcePatch!): TaskResource!
 
   """To modify Terminology information"""
   updateTerminology(id: String!, patch: TerminologyPatch!): Terminology!
@@ -3300,7 +3365,17 @@ input NewPrivilege {
 }
 
 input NewProject {
+  """연관된 건물 복합체 정보 (선택 사항)"""
+  buildingComplex: ObjectRef
+
+  """프로젝트 이름"""
   name: String!
+}
+
+input NewResource {
+  name: String!
+  type: ResourceType!
+  unit: String!
 }
 
 input NewRole {
@@ -3360,10 +3435,32 @@ input NewStateRegister {
 }
 
 input NewTask {
+  """작업이 활성 상태인지 여부 (선택 사항)"""
   active: Boolean
+
+  """프로젝트 내에서 유니크한 작업 코드"""
+  code: String!
+
+  """작업에 대한 설명 (선택 사항)"""
   description: String
+
+  """작업의 이름"""
   name: String!
+
+  """작업에 대한 추가 파라미터, JSON 형식으로 저장 (선택 사항)"""
   params: String
+
+  """부모 작업, 해당 작업이 하위 작업인 경우 (선택 사항)"""
+  parentTask: ObjectRefForTask
+
+  """작업이 속한 프로젝트 (선택 사항)"""
+  project: ObjectRefForProject
+}
+
+input NewTaskResource {
+  quantity: Float!
+  resourceId: ID!
+  taskId: ID!
 }
 
 input NewTerminology {
@@ -3622,6 +3719,31 @@ input ObjectRefForEmployee {
   type: EmployeeType
 }
 
+input ObjectRefForProject {
+  """Field description"""
+  description: String
+
+  """Field id"""
+  id: ID!
+
+  """프로젝트 이름 (선택 사항)"""
+  name: String
+}
+
+input ObjectRefForTask {
+  """작업 코드 (선택 사항)"""
+  code: String
+
+  """Field description"""
+  description: String
+
+  """Field id"""
+  id: ID!
+
+  """Field name"""
+  name: String
+}
+
 input ObjectRefForUser {
   """Field description"""
   description: String
@@ -3725,6 +3847,18 @@ input PartnerSettingPatch {
   partnerDomain: ObjectRef
   setting: ObjectRef
   value: String
+}
+
+type PasswordRule {
+  allowRepeat: Boolean
+  digit: Boolean
+  looseCharacterLength: Float
+  lowerCase: Boolean
+  specialCharacter: Boolean
+  tightCharacterLength: Float
+  upperCase: Boolean
+  useLoosePattern: Boolean
+  useTightPattern: Boolean
 }
 
 """Entity for PayloadLog"""
@@ -3906,6 +4040,7 @@ type Project {
   mainPhoto: Attachment
   name: String!
   robotProgressRate: Float
+  rootTasks: [Task!]
   startDate: String
   state: String!
   structuralSafetyRate: Float
@@ -3917,22 +4052,47 @@ type Project {
 }
 
 type ProjectList {
+  """프로젝트 리스트 항목들"""
   items: [Project!]!
+
+  """전체 프로젝트 수"""
   total: Int!
 }
 
 input ProjectPatch {
   buildingComplex: BuildingComplexPatch
+
+  """프로젝트 준공일정"""
   endDate: String
+
+  """수정할 프로젝트의 ID"""
   id: String!
+
+  """검측/통과 비율 (%)"""
   inspPassRate: Float
+
+  """프로젝트 KPI"""
   kpi: Float
+
+  """프로젝트 대표 사진 업로드"""
   mainPhotoUpload: Upload
+
+  """프로젝트 이름"""
   name: String!
+
+  """로봇 작업 진행율 (%)"""
   robotProgressRate: Float
+
+  """프로젝트 착공일정"""
   startDate: String
+
+  """구조 안전도 (%)"""
   structuralSafetyRate: Float
+
+  """프로젝트 전체 진행현황 (%)"""
   totalProgress: Float
+
+  """프로젝트 주간 진행현황 (%)"""
   weeklyProgress: Float
 }
 
@@ -4031,7 +4191,9 @@ type Query {
   buildingBuildingInspection(id: String!): BuildingInspection
   chatCompletion(input: ChatCompletionInput!): ChatCompletionOutput!
 
-  """To check if system would provide default password to create new user"""
+  """
+  Checks if the system is configured to provide a default password for new users.
+  """
   checkDefaultPassword: Boolean!
 
   """To fetch a CheckItem"""
@@ -4040,16 +4202,20 @@ type Query {
   """To fetch multiple CheckItems"""
   checkItems(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): CheckItemList!
 
-  """To check if system would provide default password to create new user"""
+  """
+  Determines whether the system provides a default password when creating a new user.
+  """
   checkResettablePasswordToDefault: Boolean!
 
   """To fetch the preset of role for new user"""
   checkRolePreset: [Role!]!
 
-  """To check if current user is belongs to current domain"""
+  """
+  Checks if the current authenticated user belongs to the current domain.
+  """
   checkUserBelongsDomain: Boolean!
 
-  """..."""
+  """Checks if a user with the given email address exists in the system."""
   checkUserExistence(email: EmailAddress!): Boolean!
 
   """To fetch a Checklist"""
@@ -4136,10 +4302,14 @@ type Query {
   """To fetch multiple appliance"""
   edges(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): ApplianceList!
 
-  """To fetch a Employee"""
+  """
+  Fetches a specific employee by their unique ID. Returns the employee object if found, or null if not found.
+  """
   employee(id: String!): Employee
 
-  """To fetch multiple Employees"""
+  """
+  Fetches a list of employees based on provided query parameters. Supports searching by name, control number, and alias.
+  """
   employees(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): EmployeeList!
 
   """To fetch multiple Entities"""
@@ -4312,6 +4482,11 @@ type Query {
   partnerSettings(filters: [Filter!]!, pagination: Pagination!, partnerDomain: ObjectRef!, sortings: [Sorting!]!): PartnerSettingList!
   partners(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): PartnerList!
 
+  """
+  Retrieves the current password rule configuration for the system, such as required character types and minimum length.
+  """
+  passwordRule: PasswordRule!
+
   """To fetch a PayloadLog"""
   payloadLog(id: String!): PayloadLog!
 
@@ -4344,6 +4519,12 @@ type Query {
 
   """프로젝트 리스트"""
   projects(projectName: String!): ProjectList!
+
+  """To fetch a Resource"""
+  resource(id: String!): Resource
+
+  """To fetch multiple Resources"""
+  resources(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): ResourceList!
 
   """To fetch role"""
   role(name: String!): Role!
@@ -4397,6 +4578,12 @@ type Query {
   """To fetch a Task"""
   task(id: String!): Task
 
+  """To fetch a TaskResource"""
+  taskResource(id: String!): TaskResource
+
+  """To fetch multiple TaskResources"""
+  taskResources(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): TaskResourceList!
+
   """To fetch a task-type"""
   taskType(name: String!): TaskType!
 
@@ -4421,7 +4608,7 @@ type Query {
   """To fetch multiple Themes"""
   themes(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): ThemeList!
 
-  """To fetch user"""
+  """Fetches a user by their email address within the current domain."""
   user(email: EmailAddress!): User!
 
   """To fetch Menus by role"""
@@ -4430,7 +4617,9 @@ type Query {
   """To fetch roles of a user"""
   userRoles(userId: String!): [UserRole!]!
 
-  """To fetch multiple users"""
+  """
+  Fetches a list of users based on provided search parameters within the current domain.
+  """
   users(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): UserList!
   vendors: [Domain!]!
 
@@ -4445,6 +4634,40 @@ type RecipientItem {
   recipient: OrgMemberTarget
   type: OrgMemberTargetType
   value: String
+}
+
+"""자원"""
+type Resource {
+  createdAt: DateTimeISO
+  creator: User
+  deletedAt: DateTimeISO
+  domain: Domain
+  id: ID!
+  name: String!
+  type: String!
+  unit: String!
+  updatedAt: DateTimeISO
+  updater: User
+}
+
+type ResourceList {
+  items: [Resource!]!
+  total: Int!
+}
+
+input ResourcePatch {
+  cuFlag: String
+  id: ID
+  name: String
+  type: ResourceType
+  unit: String
+}
+
+"""자원 유형"""
+enum ResourceType {
+  EQUIPMENT
+  HUMAN
+  MATERIAL
 }
 
 type Role {
@@ -4798,6 +5021,7 @@ type Subscription {
 """공정표 작업 정보"""
 type Task {
   checklists: Checklist!
+  code: String!
   createdAt: DateTimeISO
   creator: User
   deletedAt: DateTimeISO
@@ -4807,6 +5031,7 @@ type Task {
   parentTaskId: String
   project: Project!
   startDate: DateTimeISO
+  taskResources: [TaskResource!]
   thumbnail: String!
   type: String
   updatedAt: DateTimeISO
@@ -4814,16 +5039,61 @@ type Task {
 }
 
 type TaskList {
+  """작업 리스트 항목들"""
   items: [Task!]!
+
+  """전체 작업 수"""
   total: Int!
 }
 
 input TaskPatch {
+  """작업이 활성 상태인지 여부 (선택 사항)"""
   active: Boolean
+
+  """프로젝트 내에서 유니크한 작업 코드 (선택 사항)"""
+  code: String
+
+  """생성('+') 또는 수정('M') 플래그 (선택 사항)"""
   cuFlag: String
+
+  """작업에 대한 설명 (선택 사항)"""
   description: String
+
+  """수정할 작업의 ID (선택 사항)"""
   id: ID
+
+  """작업의 이름 (선택 사항)"""
   name: String
+
+  """부모 작업, 해당 작업이 하위 작업인 경우 (선택 사항)"""
+  parentTask: ObjectRefForTask
+
+  """작업이 속한 프로젝트 (선택 사항)"""
+  project: ObjectRefForProject
+}
+
+"""작업에 소요되는 자원"""
+type TaskResource {
+  createdAt: DateTimeISO
+  deletedAt: DateTimeISO
+  id: ID!
+  quantity: Float!
+  resource: Resource!
+  task: Task!
+  updatedAt: DateTimeISO
+}
+
+type TaskResourceList {
+  items: [TaskResource!]!
+  total: Int!
+}
+
+input TaskResourcePatch {
+  cuFlag: String
+  id: ID
+  quantity: Float
+  resourceId: ID
+  taskId: ID
 }
 
 type TaskType {

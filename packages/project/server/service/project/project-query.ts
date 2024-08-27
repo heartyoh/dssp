@@ -2,6 +2,7 @@ import { Resolver, Query, FieldResolver, Root, Arg, Ctx } from 'type-graphql'
 import { Domain, getRepository } from '@things-factory/shell'
 import { User } from '@things-factory/auth-base'
 import { Project } from './project'
+import { Task } from '../task/task'
 import { InspectionSummary, ProjectList } from './project-type'
 import { BuildingComplex, InspectionStatus } from '@dssp/building-complex'
 import { Attachment } from '@things-factory/attachment-base'
@@ -63,6 +64,16 @@ export class ProjectQuery {
       pass: result.pass || 0,
       fail: result.fail || 0
     }
+  }
+
+  @FieldResolver(type => [Task], { nullable: true })
+  async rootTasks(@Root() project: Project): Promise<Task[]> {
+    return await getRepository(Task).find({
+      where: {
+        project: { id: project.id },
+        parentTaskId: null // 부모가 없는 루트 작업만 필터링
+      }
+    })
   }
 
   @FieldResolver(type => Attachment)

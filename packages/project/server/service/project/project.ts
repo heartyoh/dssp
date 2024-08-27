@@ -12,7 +12,7 @@ import {
   JoinColumn,
   PrimaryGeneratedColumn
 } from 'typeorm'
-import { ObjectType, Field, ID, registerEnumType } from 'type-graphql'
+import { ObjectType, Field, ID } from 'type-graphql'
 
 import { Domain, roundTransformer } from '@things-factory/shell'
 import { User } from '@things-factory/auth-base'
@@ -25,14 +25,9 @@ export enum ProjectStatus {
   'COMPLICATED' = '20'
 }
 
-registerEnumType(ProjectStatus, {
-  name: 'ProjectStatus',
-  description: '프로젝트 상태'
-})
-
-@Entity()
-@Index('ix_project_0', (project: Project) => [project.buildingComplex], { unique: true, where: '"deleted_at" IS NULL' })
 @ObjectType({ description: '프로젝트' })
+@Entity()
+@Index('ix_project_building', (project: Project) => [project.buildingComplex], { unique: true, where: '"deleted_at" IS NULL' })
 export class Project {
   @PrimaryGeneratedColumn('uuid')
   @Field(type => ID)
@@ -102,6 +97,10 @@ export class Project {
   @Field(() => [Task], { nullable: true })
   @OneToMany(() => Task, task => task.project)
   tasks?: Task[]
+
+  // 루트 작업 정보 (부모가 없는 상위 작업)
+  @Field(() => [Task], { nullable: true })
+  rootTasks?: Task[]
 
   @CreateDateColumn()
   @Field({ nullable: true })

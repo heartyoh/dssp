@@ -47,5 +47,13 @@ export default function route(page: string) {
     case 'checklist-type-management':
       import('./pages/checklist-template/checklist-type-management')
       return page
+  
+    case 'resource-list':
+      import('./pages/resource/resource-list-page')
+      return page
+  
+    case 'task-resource-list':
+      import('./pages/task-resource/task-resource-list-page')
+      return page
   }
 }

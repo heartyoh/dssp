@@ -52,7 +52,7 @@ export class CheckItem {
 
   // 체크리스트 정보 (상위 테이블 참조)
   @ManyToOne(type => Checklist)
-  @Field({ nullable: true })
+  @Field(type => Checklist, { nullable: true })
   checklist?: Checklist
 
   @RelationId((checkItem: CheckItem) => checkItem.checklist)

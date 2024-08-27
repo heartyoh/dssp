@@ -4,10 +4,8 @@ import {
   DeleteDateColumn,
   Entity,
   Index,
-  JoinTable,
   Column,
   RelationId,
-  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn
@@ -17,6 +15,7 @@ import { ObjectType, Field, ID, registerEnumType } from 'type-graphql'
 import { User } from '@things-factory/auth-base'
 import { Project } from '../project/project'
 import { Checklist } from '../checklist/checklist'
+import { TaskResource } from '../task-resource/task-resource'
 
 export enum TaskType {
   GROUP = 'GROUP',
@@ -29,12 +28,16 @@ registerEnumType(TaskType, {
 })
 
 @Entity()
-@Index('ix_task_0', (task: Task) => [task.project], { where: '"deleted_at" IS NULL' })
+@Index('ix_task_project_code', (task: Task) => [task.project, task.code], { unique: true, where: '"deleted_at" IS NULL' })
 @ObjectType({ description: '공정표 작업 정보' })
 export class Task {
   @PrimaryGeneratedColumn('uuid')
   @Field(type => ID)
   readonly id: string
+
+  @Column({ nullable: false, comment: '프로젝트 내에서 유니크한 작업 코드' })
+  @Field({ nullable: false })
+  code: string
 
   @Column({ nullable: true, comment: '작업 명' })
   @Field({ nullable: true })
@@ -56,7 +59,6 @@ export class Task {
   @Field({ nullable: true })
   endDate?: Date
 
-  // 프로젝트 정보 (상위 테이블 참조)
   @Field(() => Project)
   @ManyToOne(() => Project, project => project.tasks)
   project?: Project
@@ -64,10 +66,13 @@ export class Task {
   @RelationId((task: Task) => task.project)
   projectId?: string
 
-  // 체크리스트 정보 (하위 테이블 참조)
   @Field(() => Checklist)
   @OneToMany(() => Checklist, checklist => checklist.task)
   checklists?: Checklist[]
+
+  @OneToMany(() => TaskResource, taskResource => taskResource.task)
+  @Field(type => [TaskResource], { nullable: true })
+  taskResources?: TaskResource[]
 
   @CreateDateColumn()
   @Field({ nullable: true })
