@@ -6,6 +6,7 @@ import { ResourceList } from './resource-type'
 
 @Resolver(Resource)
 export class ResourceQuery {
+  @Directive('@privilege(category: "project", privilege: "query", domainOwnerGranted: true)')
   @Query(returns => Resource!, { nullable: true, description: 'To fetch a Resource' })
   async resource(@Arg('id') id: string, @Ctx() context: ResolverContext): Promise<Resource> {
     const { domain } = context.state
@@ -15,6 +16,7 @@ export class ResourceQuery {
     })
   }
 
+  @Directive('@privilege(category: "project", privilege: "query", domainOwnerGranted: true)')
   @Query(returns => ResourceList, { description: 'To fetch multiple Resources' })
   async resources(@Args() params: ListParam, @Ctx() context: ResolverContext): Promise<ResourceList> {
     const { domain } = context.state

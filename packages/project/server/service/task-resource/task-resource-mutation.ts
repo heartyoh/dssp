@@ -7,6 +7,7 @@ import { NewTaskResource, TaskResourcePatch } from './task-resource-type'
 @Resolver(TaskResource)
 export class TaskResourceMutation {
   @Directive('@transaction')
+  @Directive('@privilege(category: "project", privilege: "mutation", domainOwnerGranted: true)')
   @Mutation(returns => TaskResource, { description: 'To create new TaskResource' })
   async createTaskResource(
     @Arg('taskResource') taskResource: NewTaskResource,
@@ -25,6 +26,7 @@ export class TaskResourceMutation {
   }
 
   @Directive('@transaction')
+  @Directive('@privilege(category: "project", privilege: "mutation", domainOwnerGranted: true)')
   @Mutation(returns => TaskResource, { description: 'To modify TaskResource information' })
   async updateTaskResource(
     @Arg('id') id: string,
@@ -48,6 +50,7 @@ export class TaskResourceMutation {
   }
 
   @Directive('@transaction')
+  @Directive('@privilege(category: "project", privilege: "mutation", domainOwnerGranted: true)')
   @Mutation(returns => [TaskResource], { description: "To modify multiple TaskResources' information" })
   async updateMultipleTaskResource(
     @Arg('patches', type => [TaskResourcePatch]) patches: TaskResourcePatch[],
@@ -94,6 +97,7 @@ export class TaskResourceMutation {
   }
 
   @Directive('@transaction')
+  @Directive('@privilege(category: "project", privilege: "mutation", domainOwnerGranted: true)')
   @Mutation(returns => Boolean, { description: 'To delete TaskResource' })
   async deleteTaskResource(@Arg('id') id: string, @Ctx() context: ResolverContext): Promise<boolean> {
     const { domain, tx } = context.state
@@ -104,6 +108,7 @@ export class TaskResourceMutation {
   }
 
   @Directive('@transaction')
+  @Directive('@privilege(category: "project", privilege: "mutation", domainOwnerGranted: true)')
   @Mutation(returns => Boolean, { description: 'To delete multiple TaskResources' })
   async deleteTaskResources(@Arg('ids', type => [String]) ids: string[], @Ctx() context: ResolverContext): Promise<boolean> {
     const { domain, tx } = context.state
@@ -116,6 +121,7 @@ export class TaskResourceMutation {
   }
 
   @Directive('@transaction')
+  @Directive('@privilege(category: "project", privilege: "mutation", domainOwnerGranted: true)')
   @Mutation(returns => Boolean, { description: 'To import multiple TaskResources' })
   async importTaskResources(
     @Arg('taskResources', type => [TaskResourcePatch]) taskResources: TaskResourcePatch[],

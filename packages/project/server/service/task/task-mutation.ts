@@ -9,6 +9,7 @@ import { NewTask, TaskPatch } from './task-type'
 @Resolver(Task)
 export class TaskMutation {
   @Directive('@transaction')
+  @Directive('@privilege(category: "project", privilege: "mutation", domainOwnerGranted: true)')
   @Mutation(returns => Task, { description: 'To create new Task' })
   async createTask(@Arg('task') task: NewTask, @Ctx() context: ResolverContext): Promise<Task> {
     const { domain, user, tx } = context.state
@@ -24,12 +25,9 @@ export class TaskMutation {
   }
 
   @Directive('@transaction')
+  @Directive('@privilege(category: "project", privilege: "mutation", domainOwnerGranted: true)')
   @Mutation(returns => Task, { description: 'To modify Task information' })
-  async updateTask(
-    @Arg('id') id: string,
-    @Arg('patch') patch: TaskPatch,
-    @Ctx() context: ResolverContext
-  ): Promise<Task> {
+  async updateTask(@Arg('id') id: string, @Arg('patch') patch: TaskPatch, @Ctx() context: ResolverContext): Promise<Task> {
     const { domain, user, tx } = context.state
 
     const repository = tx.getRepository(Task)
@@ -47,6 +45,7 @@ export class TaskMutation {
   }
 
   @Directive('@transaction')
+  @Directive('@privilege(category: "project", privilege: "mutation", domainOwnerGranted: true)')
   @Mutation(returns => [Task], { description: "To modify multiple Tasks' information" })
   async updateMultipleTask(
     @Arg('patches', type => [TaskPatch]) patches: TaskPatch[],
@@ -93,6 +92,7 @@ export class TaskMutation {
   }
 
   @Directive('@transaction')
+  @Directive('@privilege(category: "project", privilege: "mutation", domainOwnerGranted: true)')
   @Mutation(returns => Boolean, { description: 'To delete Task' })
   async deleteTask(@Arg('id') id: string, @Ctx() context: ResolverContext): Promise<boolean> {
     const { domain, tx } = context.state
@@ -104,6 +104,7 @@ export class TaskMutation {
   }
 
   @Directive('@transaction')
+  @Directive('@privilege(category: "project", privilege: "mutation", domainOwnerGranted: true)')
   @Mutation(returns => Boolean, { description: 'To delete multiple Tasks' })
   async deleteTasks(@Arg('ids', type => [String]) ids: string[], @Ctx() context: ResolverContext): Promise<boolean> {
     const { domain, tx } = context.state
@@ -118,11 +119,9 @@ export class TaskMutation {
   }
 
   @Directive('@transaction')
+  @Directive('@privilege(category: "project", privilege: "mutation", domainOwnerGranted: true)')
   @Mutation(returns => Boolean, { description: 'To import multiple Tasks' })
-  async importTasks(
-    @Arg('tasks', type => [TaskPatch]) tasks: TaskPatch[],
-    @Ctx() context: ResolverContext
-  ): Promise<boolean> {
+  async importTasks(@Arg('tasks', type => [TaskPatch]) tasks: TaskPatch[], @Ctx() context: ResolverContext): Promise<boolean> {
     const { domain, tx } = context.state
 
     await Promise.all(

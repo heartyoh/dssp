@@ -7,6 +7,7 @@ import { TaskResourceList } from './task-resource-type'
 
 @Resolver(TaskResource)
 export class TaskResourceQuery {
+  @Directive('@privilege(category: "project", privilege: "query", domainOwnerGranted: true)')
   @Query(returns => TaskResource!, { nullable: true, description: 'To fetch a TaskResource' })
   async taskResource(@Arg('id') id: string, @Ctx() context: ResolverContext): Promise<TaskResource> {
     const { domain } = context.state
@@ -16,6 +17,7 @@ export class TaskResourceQuery {
     })
   }
 
+  @Directive('@privilege(category: "project", privilege: "query", domainOwnerGranted: true)')
   @Query(returns => TaskResourceList, { description: 'To fetch multiple TaskResources' })
   async taskResources(@Args() params: ListParam, @Ctx() context: ResolverContext): Promise<TaskResourceList> {
     const { domain } = context.state

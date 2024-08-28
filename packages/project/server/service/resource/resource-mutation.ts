@@ -7,6 +7,7 @@ import { NewResource, ResourcePatch } from './resource-type'
 @Resolver(Resource)
 export class ResourceMutation {
   @Directive('@transaction')
+  @Directive('@privilege(category: "project", privilege: "mutation", domainOwnerGranted: true)')
   @Mutation(returns => Resource, { description: 'To create new Resource' })
   async createResource(@Arg('resource') resource: NewResource, @Ctx() context: ResolverContext): Promise<Resource> {
     const { domain, user, tx } = context.state
@@ -22,6 +23,7 @@ export class ResourceMutation {
   }
 
   @Directive('@transaction')
+  @Directive('@privilege(category: "project", privilege: "mutation", domainOwnerGranted: true)')
   @Mutation(returns => Resource, { description: 'To modify Resource information' })
   async updateResource(
     @Arg('id') id: string,
@@ -45,6 +47,7 @@ export class ResourceMutation {
   }
 
   @Directive('@transaction')
+  @Directive('@privilege(category: "project", privilege: "mutation", domainOwnerGranted: true)')
   @Mutation(returns => [Resource], { description: "To modify multiple Resources' information" })
   async updateMultipleResource(
     @Arg('patches', type => [ResourcePatch]) patches: ResourcePatch[],
@@ -91,6 +94,7 @@ export class ResourceMutation {
   }
 
   @Directive('@transaction')
+  @Directive('@privilege(category: "project", privilege: "mutation", domainOwnerGranted: true)')
   @Mutation(returns => Boolean, { description: 'To delete Resource' })
   async deleteResource(@Arg('id') id: string, @Ctx() context: ResolverContext): Promise<boolean> {
     const { domain, tx } = context.state
@@ -114,6 +118,7 @@ export class ResourceMutation {
   }
 
   @Directive('@transaction')
+  @Directive('@privilege(category: "project", privilege: "mutation", domainOwnerGranted: true)')
   @Mutation(returns => Boolean, { description: 'To import multiple Resources' })
   async importResources(
     @Arg('resources', type => [ResourcePatch]) resources: ResourcePatch[],
