@@ -84,6 +84,24 @@ export class TaskQuery {
     }
   }
 
+  @FieldResolver(type => String, { nullable: true, description: 'Calculate the duration of the task in days' })
+  async length(@Root() task: Task): Promise<string | undefined> {
+    if (task.type === TaskType.TASK) {
+      return `${task.duration || 1}d`
+    } else {
+      const startDate = await this.startDate(task)
+      const endDate = await this.endDate(task)
+
+      if (startDate && endDate) {
+        const durationInMs = endDate.getTime() - startDate.getTime()
+        const durationInDays = Math.ceil(durationInMs / (1000 * 60 * 60 * 24))
+        return `${durationInDays || 1}d`
+      }
+
+      return
+    }
+  }
+
   @FieldResolver(type => [Task])
   async children(
     @Root() task: Task,

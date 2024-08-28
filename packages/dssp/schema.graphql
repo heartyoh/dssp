@@ -5026,13 +5026,19 @@ type Task {
   createdAt: DateTimeISO
   creator: User
   deletedAt: DateTimeISO
+  dependsOn: String
   duration: Float
   endDate: DateTimeISO
   id: ID!
+
+  """Calculate the duration of the task in days"""
+  length: String
   name: String
   parent: Task
+  progress: Float
   project: Project!
   startDate: DateTimeISO
+  tags: Object
   taskResources: [TaskResource!]
   type: String
   updatedAt: DateTimeISO

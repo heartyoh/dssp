@@ -10,6 +10,7 @@ import { css, html } from 'lit'
 import { customElement, state } from 'lit/decorators.js'
 import { ScopedElementsMixin } from '@open-wc/scoped-elements'
 import { client } from '@operato/graphql'
+import { i18next } from '@operato/i18n'
 import { notify } from '@operato/layout'
 
 import gql from 'graphql-tag'
@@ -153,342 +154,25 @@ export class ProjectSchedule extends ScopedElementsMixin(PageView) {
   @state() projectId: string = ''
   @state() project: Project = { ...this.defaultProject }
   @state() selectedBuildingIdx: number = 0
+  @state() tasks
 
   private fromDate = '2022-12-27'
   private toDate = '2024-12-31'
   private timeScale = 'week-day'
   private extendGridLines = false
-  private tasks = [
-    {
-      id: '1',
-      title: 'Design',
-      type: 'task',
-      // section: developmentSection,
-      startDate: '2023-01-01',
-      endDate: '2023-01-05',
-      progress: 60,
-      dependsOn: '',
-      length: '5d',
-      tags: ['active'],
-      resources: [{ type: '철근/형틀공', allocated: 6 }],
-      children: []
-    },
-    {
-      id: '2',
-      title: 'Development',
-      type: 'milestone',
-      // section: developmentSection,
-      startDate: '2023-01-06',
-      endDate: '2023-01-06',
-      progress: 30,
-      dependsOn: '1',
-      length: '1d',
-      tags: ['milestone'],
-      resources: [{ type: '철근/형틀공', allocated: 6 }],
-      children: []
-    },
-    {
-      id: '3',
-      title: 'Coding',
-      type: 'phase',
-      // section: developmentSection,
-      startDate: '2023-01-07',
-      endDate: '2023-01-15',
-      progress: 10,
-      dependsOn: '2',
-      length: '9d',
-      tags: ['critical'],
-      children: [
-        {
-          id: '3-1',
-          title: 'Coding-A',
-          type: 'task',
-          // section: developmentSection,
-          startDate: '2023-01-07',
-          endDate: '2023-01-10',
-          progress: 60,
-          dependsOn: '',
-          length: '4d',
-          tags: ['done'],
-          children: [
-            {
-              id: '3-1-1',
-              title: 'Coding-A',
-              type: 'task',
-              // section: developmentSection,
-              startDate: '2023-01-07',
-              endDate: '2023-01-10',
-              progress: 60,
-              dependsOn: '',
-              length: '4d',
-              tags: ['active'],
-              resources: [{ type: '창호공', allocated: 5 }],
-              children: []
-            },
-            {
-              id: '3-1-2',
-              title: 'Coding-B',
-              type: 'task',
-              // section: developmentSection,
-              startDate: '2023-01-11',
-              endDate: '2023-01-15',
-              dependsOn: '3-1-1',
-              length: '5d',
-              tags: ['active'],
-              resources: [{ type: '창호공', allocated: 3 }],
-              children: []
-            }
-          ]
-        },
-        {
-          id: '3-2',
-          title: 'Coding-B',
-          type: 'task',
-          // section: developmentSection,
-          startDate: '2023-01-11',
-          endDate: '2023-01-15',
-          dependsOn: '3-1',
-          length: '5d',
-          tags: ['active'],
-          resources: [{ type: '창호공', allocated: 6 }],
-          children: []
-        }
-      ]
-    },
-    {
-      id: '4',
-      title: 'Test',
-      type: 'milestone',
-      // section: developmentSection,
-      startDate: '2023-01-07',
-      endDate: '2023-01-10',
-      progress: 100,
-      dependsOn: '1',
-      length: '1d',
-      tags: ['done'],
-      resources: [{ type: '방수공', allocated: 5 }],
-      children: []
-    },
-    {
-      id: '5',
-      title: 'Deploy',
-      type: 'milestone',
-      // section: developmentSection,
-      startDate: '2023-01-15',
-      endDate: '2023-01-21',
-      dependsOn: '4',
-      length: '1d',
-      tags: ['milestone'],
-      resources: [{ type: '목공', allocated: 3 }],
-      children: []
-    },
-    {
-      id: '6',
-      title: 'Publishing',
-      type: 'milestone',
-      // section: developmentSection,
-      startDate: '2023-01-11',
-      endDate: '2023-01-15',
-      dependsOn: '5',
-      length: '1d',
-      tags: ['milestone'],
-      resources: [{ type: '금속공', allocated: 1 }],
-      children: []
-    },
-    {
-      id: '7',
-      title: 'Provisioning',
-      type: 'milestone',
-      // section: developmentSection,
-      startDate: '2023-01-12',
-      endDate: '2023-01-15',
-      dependsOn: '6',
-      length: '1d',
-      tags: ['milestone'],
-      resources: [{ type: '타일공', allocated: 6 }],
-      children: []
-    },
-    {
-      id: '8',
-      title: 'Alpha Test',
-      type: 'milestone',
-      // section: testSection,
-      startDate: '2023-01-15',
-      endDate: '2023-01-17',
-      dependsOn: '7',
-      length: '1d',
-      tags: ['critical'],
-      resources: [{ type: '창호공', allocated: 7 }],
-      children: []
-    },
-    {
-      id: '9',
-      title: 'Beta Task',
-      type: 'milestone',
-      // section: testSection,
-      startDate: '2023-01-15',
-      endDate: '2023-01-18',
-      dependsOn: '8',
-      length: '1d',
-      tags: ['active'],
-      resources: [{ type: '도배공', allocated: 8 }],
-      children: []
-    },
-    {
-      id: '10',
-      title: 'Gamma Test',
-      type: 'milestone',
-      // section: testSection,
-      startDate: '2023-01-18',
-      endDate: '2023-01-19',
-      dependsOn: '9',
-      length: '1d',
-      tags: ['critical'],
-      resources: [{ type: '조적공', allocated: 6 }],
-      children: []
-    },
-    {
-      id: '11',
-      title: 'Zeta Test',
-      type: 'milestone',
-      // section: testSection,
-      startDate: '2023-01-18',
-      endDate: '2023-01-22',
-      dependsOn: '9',
-      length: '1d',
-      tags: ['milestone'],
-      resources: [{ type: '철근/형틀공', allocated: 6 }],
-      children: []
-    },
-    {
-      id: '12',
-      title: 'Release',
-      type: 'milestone',
-      // section: releaseSection,
-      startDate: '2023-01-18',
-      endDate: '2023-01-23',
-      dependsOn: '9',
-      length: '1d',
-      resources: [{ type: '방수공', allocated: 6 }],
-      tags: ['milestone'],
-      children: [
-        {
-          id: '12-1',
-          title: 'Coding-A',
-          type: 'task',
-          // section: developmentSection,
-          startDate: '2023-01-07',
-          endDate: '2023-01-10',
-          progress: 60,
-          dependsOn: '',
-          length: '4d',
-          tags: ['done'],
-          resources: [{ type: '방수공', allocated: 6 }],
-          children: []
-        },
-        {
-          id: '12-2',
-          title: 'Coding-B',
-          type: 'task',
-          // section: developmentSection,
-          startDate: '2023-01-11',
-          endDate: '2023-01-15',
-          dependsOn: '12-1',
-          length: '5d',
-          tags: ['active'],
-          resources: [{ type: '조적공', allocated: 6 }],
-          children: []
-        }
-      ]
-    },
-    {
-      id: '13',
-      title: 'Release',
-      type: 'milestone',
-      // section: releaseSection,
-      startDate: '2023-01-22',
-      endDate: '2023-01-27',
-      dependsOn: '12',
-      length: '1d',
-      tags: ['done'],
-      children: []
-    },
-    {
-      id: '14',
-      title: 'Release',
-      type: 'milestone',
-      // section: releaseSection,
-      startDate: '2023-01-27',
-      endDate: '2023-01-30',
-      dependsOn: '13',
-      length: '1d',
-      tags: ['milestone'],
-      resources: [{ type: '금속공', allocated: 1 }],
-      children: []
-    },
-    {
-      id: '15',
-      title: 'Release',
-      type: 'milestone',
-      // section: releaseSection,
-      startDate: '2023-01-30',
-      endDate: '2023-01-31',
-      dependsOn: '14',
-      length: '1d',
-      tags: ['milestone'],
-      children: []
-    },
-    {
-      id: '16',
-      title: 'Release',
-      type: 'milestone',
-      // section: releaseSection,
-      startDate: '2023-01-31',
-      endDate: '2023-02-05',
-      dependsOn: '15',
-      length: '1d',
-      resources: [{ type: '창호공', allocated: 1 }],
-      tags: ['active'],
-      children: []
-    },
-    {
-      id: '17',
-      title: 'Release',
-      type: 'milestone',
-      // section: releaseSection,
-      startDate: '2023-02-06',
-      endDate: '2023-02-07',
-      dependsOn: '16',
-      length: '1d',
-      tags: ['milestone'],
-      children: []
-    },
-    {
-      id: '18',
-      title: 'Release',
-      type: 'milestone',
-      // section: releaseSection,
-      startDate: '2023-02-08',
-      endDate: '2023-02-09',
-      dependsOn: '17',
-      length: '1d',
-      tags: ['critical'],
-      children: []
-    },
-    {
-      id: '19',
-      title: 'Release',
-      type: 'milestone',
-      // section: releaseSection,
-      startDate: '2023-02-10',
-      endDate: '2023-02-25',
-      dependsOn: '18',
-      length: '1d',
-      tags: ['milestone'],
-      resources: [{ type: '창호공', allocated: 7 }],
-      children: []
-    }
-  ]
+
+  private columnConfigProvider = function () {
+    return [
+      { name: 'title', label: i18next.t('label.gantt-task-title') || 'title', visible: true, width: 150, order: 1 },
+      {
+        name: 'resources',
+        label: i18next.t('label.gantt-task-resources') || 'resources',
+        visible: true,
+        width: 100,
+        order: 2
+      }
+    ]
+  }
 
   render() {
     return html`
@@ -520,6 +204,10 @@ export class ProjectSchedule extends ScopedElementsMixin(PageView) {
             console.log('task-clicked', e.detail)
           }}
           ?extend-grid-lines=${this.extendGridLines}
+          .columnConfigProvider=${this.columnConfigProvider}
+          .colorProvider=${task => {
+            return task.type == 'GROUP' ? 'green' : 'orange'
+          }}
         >
         </ox-gantt>
         <div select-container>
@@ -549,10 +237,40 @@ export class ProjectSchedule extends ScopedElementsMixin(PageView) {
   async initProject(projectId: string = '') {
     const response = await client.query({
       query: gql`
-        query Project($id: String!) {
+        query Project($id: String!, $sortings: [Sorting!]) {
           project(id: $id) {
             id
             name
+            rootTasks {
+              type
+              title: name
+              id: code
+              duration
+              startDate
+              endDate
+              dependsOn
+              progress
+              children(sortings: $sortings) {
+                type
+                title: name
+                id: code
+                duration
+                startDate
+                endDate
+                dependsOn
+                progress
+                children(sortings: $sortings) {
+                  type
+                  title: name
+                  id: code
+                  duration
+                  startDate
+                  endDate
+                  dependsOn
+                  progress
+                }
+              }
+            }
             buildingComplex {
               id
               planXScale
@@ -578,11 +296,13 @@ export class ProjectSchedule extends ScopedElementsMixin(PageView) {
         }
       `,
       variables: {
-        id: projectId
+        id: projectId,
+        sortings: [{ name: 'startDate' }]
       }
     })
 
     this.project = response.data?.project
+    this.tasks = response.data?.project.rootTasks
 
     console.log('init project : ', this.project)
   }

@@ -12,6 +12,7 @@ import {
 } from 'typeorm'
 import { ObjectType, Field, ID, registerEnumType } from 'type-graphql'
 
+import { ScalarObject } from '@things-factory/shell'
 import { User } from '@things-factory/auth-base'
 import { Project } from '../project/project'
 import { Checklist } from '../checklist/checklist'
@@ -70,12 +71,24 @@ export class Task {
   @Field({ nullable: true })
   duration?: number
 
+  @Column({ nullable: true, comment: '선행 태스크 코드' })
+  @Field({ nullable: true })
+  dependsOn?: string
+
   @ManyToOne(type => Project, project => project.tasks)
   @Field(type => Project)
   project?: Project
 
   @RelationId((task: Task) => task.project)
   projectId?: string
+
+  @Column('simple-json', { nullable: true, default: null })
+  @Field(type => ScalarObject, { nullable: true })
+  tags?: string[]
+
+  @Column({ nullable: true, comment: '진행율' })
+  @Field({ nullable: true })
+  progress?: number
 
   @OneToMany(type => Checklist, checklist => checklist.task, { nullable: true })
   @Field(type => [Checklist], { nullable: true })

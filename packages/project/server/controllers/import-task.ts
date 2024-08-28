@@ -17,6 +17,8 @@ export interface RawTask {
   length?: string /* 1d, 2d, 3d, 4d, ... */
   startDate?: string /* YYYY-MM-DD */
   dependsOn?: string
+  progress?: number
+  tags?: string[]
   resources?: RawResource[]
   children?: RawTask[]
 }
@@ -76,6 +78,9 @@ export async function importTasks(project: Project, tasks: RawTask[], context: R
       project,
       parent,
       duration,
+      dependsOn: rawTask.dependsOn,
+      progress: rawTask.progress,
+      tags: rawTask.tags,
       updater: user,
       creator: user
     })
