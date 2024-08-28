@@ -6,10 +6,7 @@ import { BuildingInspection } from './building-inspection'
 @Resolver(BuildingInspection)
 export class BuildingInspectionQuery {
   @Query(returns => BuildingInspection!, { nullable: true, description: 'To fetch a BuildingInspection' })
-  async buildingBuildingInspection(
-    @Arg('id') id: string,
-    @Ctx() context: ResolverContext
-  ): Promise<BuildingInspection> {
+  async buildingInspection(@Arg('id') id: string, @Ctx() context: ResolverContext): Promise<BuildingInspection> {
     return await getRepository(BuildingInspection).findOne({
       where: { id }
     })

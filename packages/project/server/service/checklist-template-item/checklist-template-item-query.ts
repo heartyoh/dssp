@@ -27,18 +27,6 @@ export class ChecklistTemplateItemQuery {
     return { items, total }
   }
 
-  @FieldResolver(type => String)
-  async thumbnail(@Root() checklistTemplateItem: ChecklistTemplateItem): Promise<string | undefined> {
-    const attachment: Attachment = await getRepository(Attachment).findOne({
-      where: {
-        refType: ChecklistTemplateItem.name,
-        refBy: checklistTemplateItem.id
-      }
-    })
-
-    return attachment?.fullpath
-  }
-
   @FieldResolver(type => User)
   async updater(@Root() checklistTemplateItem: ChecklistTemplateItem): Promise<User> {
     return await getRepository(User).findOneBy({ id: checklistTemplateItem.updaterId })

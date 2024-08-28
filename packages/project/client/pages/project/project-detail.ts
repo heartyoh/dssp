@@ -9,7 +9,7 @@ import { css, html } from 'lit'
 import { customElement, state } from 'lit/decorators.js'
 import { ScopedElementsMixin } from '@open-wc/scoped-elements'
 import { client } from '@operato/graphql'
-import { notify, openPopup } from '@operato/layout'
+import { openPopup } from '@operato/layout'
 
 import gql from 'graphql-tag'
 import { Project } from './project-list'
@@ -401,7 +401,7 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
               <div>
                 <div row>
                   <span>- 면적 : </span>
-                  <span>${this.project.buildingComplex?.area}</span>
+                  <span>${this.project.buildingComplex?.area?.toLocaleString()}</span>
                 </div>
                 <div row>
                   <span>- 착공 ~ 준공 : </span>
@@ -433,11 +433,11 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
               </div>
               <div row>
                 <span>- 공사금액 : </span>
-                <span>${this.project.buildingComplex?.constructionCost}</span>
+                <span>${this.project.buildingComplex?.constructionCost?.toLocaleString()}</span>
               </div>
               <div row>
                 <span>- 세대수 : </span>
-                <span>${this.project.buildingComplex?.householdCount}</span>
+                <span>${this.project.buildingComplex?.householdCount?.toLocaleString()}</span>
               </div>
               <div row>
                 <span>- 기타 : </span>
@@ -670,7 +670,7 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
       {
         backdrop: true,
         size: 'medium',
-        title: '체크 리스트 아이템 템플릿'
+        title: '검측 요청서 등록'
       }
     )
   }

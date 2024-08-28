@@ -32,18 +32,6 @@ export class CheckItemQuery {
     return { items, total }
   }
 
-  @FieldResolver(type => String)
-  async thumbnail(@Root() checkItem: CheckItem): Promise<string | undefined> {
-    const attachment: Attachment = await getRepository(Attachment).findOne({
-      where: {
-        refType: CheckItem.name,
-        refBy: checkItem.id
-      }
-    })
-
-    return attachment?.fullpath
-  }
-
   @FieldResolver(type => User)
   async updater(@Root() checkItem: CheckItem): Promise<User> {
     return await getRepository(User).findOneBy({ id: checkItem.updaterId })

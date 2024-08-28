@@ -43,7 +43,7 @@ export class ConstructionType {
   description?: string
 
   // 상세 공종 정보 (하위 테이블 참조)
-  @Field(() => ConstructionDetailType)
+  @Field(() => [ConstructionDetailType], { nullable: true })
   @OneToMany(() => ConstructionDetailType, constructionDetailType => constructionDetailType.constructionType)
   constructionDetailTypes?: ConstructionDetailType[]
 

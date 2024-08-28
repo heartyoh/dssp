@@ -8,8 +8,6 @@ import { ConstructionDetailTypeList } from './construction-detail-type-type'
 export class ConstructionDetailTypeQuery {
   @Query(returns => ConstructionDetailTypeList, { description: 'To fetch multiple ConstructionDetailTypes' })
   async constructionDetailTypes(@Args() params: ListParam, @Ctx() context: ResolverContext): Promise<ConstructionDetailTypeList> {
-    const { domain } = context.state
-
     const queryBuilder = getQueryBuilderFromListParams({
       params,
       repository: await getRepository(ConstructionDetailType),

@@ -3,6 +3,7 @@ import { Domain, getQueryBuilderFromListParams, getRepository, ListParam } from 
 import { User } from '@things-factory/auth-base'
 import { ConstructionType } from './construction-type'
 import { ConstructionTypeList } from './construction-type-type'
+import { ConstructionDetailType } from '../construction-detail-type/construction-detail-type'
 
 @Resolver(ConstructionType)
 export class ConstructionTypeQuery {
@@ -28,6 +29,11 @@ export class ConstructionTypeQuery {
     const [items, total] = await queryBuilder.getManyAndCount()
 
     return { items, total }
+  }
+
+  @FieldResolver(type => [ConstructionDetailType])
+  async constructionDetailTypes(@Root() constructionType: ConstructionType): Promise<ConstructionDetailType[]> {
+    return await getRepository(ConstructionDetailType).findBy({ constructionType: { id: constructionType.id } })
   }
 
   @FieldResolver(type => Domain)
