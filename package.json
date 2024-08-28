@@ -28,12 +28,12 @@
     "release:force": "lerna publish --force-publish=*",
     "release-beta": "lerna publish --dist-tag beta",
     "clean": "rimraf ./packages/*/dist* ./packages/**/*.tsbuildinfo",
-    "generate": "plop",
-    "generate:package": "plop package && yarn plop docs && prettier --write \"./packages/tsconfig.json\"",
+    "generate": "yarn run plop --plopfile ./node_modules/@things-factory/generator/plopfile.js",
     "tophat": "tophat",
     "docs": "lerna run docs"
   },
   "dependencies": {
+    "@things-factory/generator": "^7.0.0",
     "lerna": "^6.5.1",
     "lodash": "^4.17.21",
     "plop": "^3.1.2",
