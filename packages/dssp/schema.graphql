@@ -1088,7 +1088,7 @@ scalar EmailAddress @specifiedBy(url: "https://html.spec.whatwg.org/multipage/in
 """Entity for Employee"""
 type Employee {
   active: Boolean
-  address: String!
+  address: String
   alias: String
   approvalLines: [ApprovalLine!]!
   contact: Contact
@@ -1928,7 +1928,9 @@ type Mutation {
   """To activate user"""
   activateUser(userId: String!): Boolean!
 
-  """To attach a contact on Employee"""
+  """
+  Attaches an existing contact to an employee. The contact is identified by its ID and the employee is identified by their ID.
+  """
   attachContact(contactId: String!, id: String!): Employee!
   cancelInvitation(email: EmailAddress!, reference: String!, type: String!): Boolean!
 
@@ -1967,6 +1969,9 @@ type Mutation {
   """To create new BoardTemplate"""
   createBoardTemplate(boardTemplate: NewBoardTemplate!): BoardTemplate!
 
+  """To create BuildingInspection information"""
+  createBuildingInspection(patch: BuildingInspectionPatch!): BuildingInspection!
+
   """To create new CheckItem"""
   createCheckItem(checkItem: NewCheckItem!): CheckItem!
 
@@ -1991,7 +1996,9 @@ type Mutation {
   """To create domain (Only superuser is granted this privilege.)"""
   createDomain(domainInput: DomainPatch!): Domain!
 
-  """To create new Employee"""
+  """
+  Creates a new employee record with the provided details. Optionally associates the employee with a supervisor, department, and system user. If a photo is provided, it will be attached to the employee record.
+  """
   createEmployee(employee: NewEmployee!): Employee!
 
   """To create new Entity"""
@@ -2205,10 +2212,14 @@ type Mutation {
   """To delete multiple domains (Only superuser is granted this privilege.)"""
   deleteDomains(names: [String!]!): Boolean!
 
-  """To delete Employee"""
+  """
+  Deletes an employee record identified by the given ID. Also deletes any attachments associated with the employee.
+  """
   deleteEmployee(id: String!): Boolean!
 
-  """To delete multiple Employees"""
+  """
+  Deletes multiple employee records identified by the given IDs. Also deletes any attachments associated with each employee.
+  """
   deleteEmployees(ids: [String!]!): Boolean!
 
   """To delete multiple Entities"""
@@ -2403,7 +2414,9 @@ type Mutation {
   """To delete multiple WorkerTypes"""
   deleteWorkerTypes(ids: [String!]!): Boolean!
 
-  """To detach a contact from Employee"""
+  """
+  Detaches an existing contact from an employee. The employee is identified by their ID.
+  """
   detachContact(id: String!): Employee!
 
   """To disconnect a connection"""
@@ -2457,7 +2470,9 @@ type Mutation {
   """To import multiple Departments"""
   importDepartments(departments: [DepartmentPatch!]!): Boolean!
 
-  """To import multiple Employees"""
+  """
+  Imports multiple employee records into the system. Each employee record must be provided in the EmployeePatch format.
+  """
   importEmployees(employees: [EmployeePatch!]!): Boolean!
 
   """To import multiple MenuButtons"""
@@ -2539,6 +2554,14 @@ type Mutation {
     """visibility of board template to be regiestered"""
     visibility: String!
   ): BoardTemplate!
+
+  """
+  Registers an existing employee as a system user, granting them access to the system. The employee is identified by their ID.
+  """
+  registerEmployeeAsSystemUser(
+    """Employee Id"""
+    employeeId: String!
+  ): Boolean!
 
   """To release a Board"""
   releaseBoard(id: String!): Board!
@@ -2635,7 +2658,9 @@ type Mutation {
   """To update multiple domains (Only superuser is granted this privilege.)"""
   updateDomains(patches: [DomainPatch!]!): Boolean!
 
-  """To modify Employee information"""
+  """
+  Updates the details of an existing employee identified by the given ID. Optionally updates the supervisor, department, system user, and photo associated with the employee.
+  """
   updateEmployee(id: String!, patch: EmployeePatch!): Employee!
 
   """To modify Entity' information"""
@@ -2720,7 +2745,9 @@ type Mutation {
   """To modify multiple Departments' information"""
   updateMultipleDepartment(patches: [DepartmentPatch!]!): [Department!]!
 
-  """To modify multiple Employees' information"""
+  """
+  Updates or creates multiple employee records based on the provided patches. New employees are created if the "cuFlag" is "+", and existing employees are updated if the "cuFlag" is "M".
+  """
   updateMultipleEmployee(patches: [EmployeePatch!]!): [Employee!]!
 
   """To modify multiple Entitys' information"""
@@ -3424,7 +3451,7 @@ input NewTask {
   params: String
 
   """부모 작업, 해당 작업이 하위 작업인 경우 (선택 사항)"""
-  parentTask: ObjectRefForTask
+  parent: ObjectRefForTask
 
   """작업이 속한 프로젝트 (선택 사항)"""
   project: ObjectRefForProject
@@ -3822,6 +3849,18 @@ input PartnerSettingPatch {
   value: String
 }
 
+type PasswordRule {
+  allowRepeat: Boolean
+  digit: Boolean
+  looseCharacterLength: Float
+  lowerCase: Boolean
+  specialCharacter: Boolean
+  tightCharacterLength: Float
+  upperCase: Boolean
+  useLoosePattern: Boolean
+  useTightPattern: Boolean
+}
+
 """Entity for PayloadLog"""
 type PayloadLog {
   createdAt: DateTimeISO
@@ -4149,10 +4188,12 @@ type Query {
   buildingBuildingComplex(id: String!): BuildingComplex
 
   """To fetch a BuildingInspection"""
-  buildingBuildingInspection(id: String!): BuildingInspection
+  buildingInspection(id: String!): BuildingInspection
   chatCompletion(input: ChatCompletionInput!): ChatCompletionOutput!
 
-  """To check if system would provide default password to create new user"""
+  """
+  Checks if the system is configured to provide a default password for new users.
+  """
   checkDefaultPassword: Boolean!
 
   """To fetch a CheckItem"""
@@ -4161,16 +4202,20 @@ type Query {
   """To fetch multiple CheckItems"""
   checkItems(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): CheckItemList!
 
-  """To check if system would provide default password to create new user"""
+  """
+  Determines whether the system provides a default password when creating a new user.
+  """
   checkResettablePasswordToDefault: Boolean!
 
   """To fetch the preset of role for new user"""
   checkRolePreset: [Role!]!
 
-  """To check if current user is belongs to current domain"""
+  """
+  Checks if the current authenticated user belongs to the current domain.
+  """
   checkUserBelongsDomain: Boolean!
 
-  """..."""
+  """Checks if a user with the given email address exists in the system."""
   checkUserExistence(email: EmailAddress!): Boolean!
 
   """To fetch a Checklist"""
@@ -4257,10 +4302,14 @@ type Query {
   """To fetch multiple appliance"""
   edges(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): ApplianceList!
 
-  """To fetch a Employee"""
+  """
+  Fetches a specific employee by their unique ID. Returns the employee object if found, or null if not found.
+  """
   employee(id: String!): Employee
 
-  """To fetch multiple Employees"""
+  """
+  Fetches a list of employees based on provided query parameters. Supports searching by name, control number, and alias.
+  """
   employees(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): EmployeeList!
 
   """To fetch multiple Entities"""
@@ -4433,6 +4482,11 @@ type Query {
   partnerSettings(filters: [Filter!]!, pagination: Pagination!, partnerDomain: ObjectRef!, sortings: [Sorting!]!): PartnerSettingList!
   partners(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): PartnerList!
 
+  """
+  Retrieves the current password rule configuration for the system, such as required character types and minimum length.
+  """
+  passwordRule: PasswordRule!
+
   """To fetch a PayloadLog"""
   payloadLog(id: String!): PayloadLog!
 
@@ -4464,7 +4518,7 @@ type Query {
   project(id: String!): Project
 
   """프로젝트 리스트"""
-  projects(projectName: String!): ProjectList!
+  projects(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): ProjectList!
 
   """To fetch a Resource"""
   resource(id: String!): Resource
@@ -4521,7 +4575,7 @@ type Query {
   """To fetch multiple steps"""
   steps(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): StepList!
 
-  """To fetch a Task"""
+  """Fetch a single Task by its ID"""
   task(id: String!): Task
 
   """To fetch a TaskResource"""
@@ -4539,7 +4593,7 @@ type Query {
   """To fetch the connector from a task-type"""
   taskTypesByConnection(connectionName: String!): TaskTypeList!
 
-  """To fetch multiple Tasks"""
+  """Fetch multiple Tasks based on list parameters"""
   tasks(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): TaskList!
 
   """To fetch multiple Terminologies"""
@@ -4554,7 +4608,7 @@ type Query {
   """To fetch multiple Themes"""
   themes(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): ThemeList!
 
-  """To fetch user"""
+  """Fetches a user by their email address within the current domain."""
   user(email: EmailAddress!): User!
 
   """To fetch Menus by role"""
@@ -4563,7 +4617,9 @@ type Query {
   """To fetch roles of a user"""
   userRoles(userId: String!): [UserRole!]!
 
-  """To fetch multiple users"""
+  """
+  Fetches a list of users based on provided search parameters within the current domain.
+  """
   users(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): UserList!
   vendors: [Domain!]!
 
@@ -4964,19 +5020,20 @@ type Subscription {
 
 """공정표 작업 정보"""
 type Task {
-  checklists: Checklist!
+  checklists: [Checklist!]
+  children(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): [Task!]
   code: String!
   createdAt: DateTimeISO
   creator: User
   deletedAt: DateTimeISO
+  duration: Float
   endDate: DateTimeISO
   id: ID!
   name: String
-  parentTaskId: String
+  parent: Task
   project: Project!
   startDate: DateTimeISO
   taskResources: [TaskResource!]
-  thumbnail: String!
   type: String
   updatedAt: DateTimeISO
   updater: User
@@ -5010,7 +5067,7 @@ input TaskPatch {
   name: String
 
   """부모 작업, 해당 작업이 하위 작업인 경우 (선택 사항)"""
-  parentTask: ObjectRefForTask
+  parent: ObjectRefForTask
 
   """작업이 속한 프로젝트 (선택 사항)"""
   project: ObjectRefForProject

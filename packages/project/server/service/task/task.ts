@@ -47,9 +47,16 @@ export class Task {
   @Field({ nullable: true })
   type?: TaskType
 
-  @Column({ nullable: true, comment: '테스크에 그룹(부모)가 있을 시 taskId' })
+  @ManyToOne(type => Task, task => task.children, { nullable: true })
   @Field({ nullable: true })
-  parentTaskId?: string
+  parent: Task
+
+  @RelationId((task: Task) => task.parent)
+  parentId?: string
+
+  @OneToMany(type => Task, task => task.parent, { nullable: true })
+  @Field(type => [Task], { nullable: true })
+  children?: Task[]
 
   @Column({ nullable: true, comment: '시작일' })
   @Field({ nullable: true })
@@ -59,18 +66,22 @@ export class Task {
   @Field({ nullable: true })
   endDate?: Date
 
-  @Field(() => Project)
-  @ManyToOne(() => Project, project => project.tasks)
+  @Column({ nullable: true, comment: '기간' })
+  @Field({ nullable: true })
+  duration?: number
+
+  @ManyToOne(type => Project, project => project.tasks)
+  @Field(type => Project)
   project?: Project
 
   @RelationId((task: Task) => task.project)
   projectId?: string
 
-  @Field(() => Checklist)
-  @OneToMany(() => Checklist, checklist => checklist.task)
+  @OneToMany(type => Checklist, checklist => checklist.task, { nullable: true })
+  @Field(type => [Checklist], { nullable: true })
   checklists?: Checklist[]
 
-  @OneToMany(() => TaskResource, taskResource => taskResource.task)
+  @OneToMany(type => TaskResource, taskResource => taskResource.task, { cascade: true })
   @Field(type => [TaskResource], { nullable: true })
   taskResources?: TaskResource[]
 

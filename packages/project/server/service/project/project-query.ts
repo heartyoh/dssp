@@ -1,5 +1,6 @@
-import { Resolver, Query, FieldResolver, Root, Arg, Ctx } from 'type-graphql'
-import { Domain, getRepository } from '@things-factory/shell'
+import { Resolver, Query, FieldResolver, Root, Arg, Args, Ctx } from 'type-graphql'
+import { IsNull } from 'typeorm'
+import { Domain, getRepository, ListParam, getQueryBuilderFromListParams } from '@things-factory/shell'
 import { User } from '@things-factory/auth-base'
 import { Project } from './project'
 import { Task } from '../task/task'
@@ -19,22 +20,15 @@ export class ProjectQuery {
   }
 
   @Query(returns => ProjectList, { description: '프로젝트 리스트' })
-  async projects(@Arg('projectName') projectName: string, @Ctx() context: ResolverContext): Promise<ProjectList> {
+  async projects(@Args() params: ListParam, @Ctx() context: ResolverContext): Promise<ProjectList> {
     const { domain } = context.state
-    // const { page = 1, limit = 0 } = params.pagination || {}
 
-    const queryBuilder = await getRepository(Project)
-      .createQueryBuilder('p')
-      .innerJoinAndSelect('p.buildingComplex', 'bc')
-      .where('p.domain = :domain', { domain: domain.id })
-      .orderBy('p.created_at', 'DESC')
-    // .offset((page - 1) * limit)
-    // .limit(limit)
-
-    if (projectName) {
-      projectName = `%${projectName}%`
-      queryBuilder.andWhere('p.name LIKE :projectName', { projectName })
-    }
+    const queryBuilder = getQueryBuilderFromListParams({
+      domain,
+      params,
+      repository: await getRepository(Project),
+      searchables: ['name', 'description']
+    })
 
     const [items, total] = await queryBuilder.getManyAndCount()
 
@@ -71,7 +65,7 @@ export class ProjectQuery {
     return await getRepository(Task).find({
       where: {
         project: { id: project.id },
-        parentTaskId: null // 부모가 없는 루트 작업만 필터링
+        parent: IsNull()
       }
     })
   }

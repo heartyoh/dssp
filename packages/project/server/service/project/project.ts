@@ -94,8 +94,8 @@ export class Project {
   buildingComplexId?: string
 
   // 작업 정보 (하위 테이블 참조)
-  @Field(() => [Task], { nullable: true })
   @OneToMany(() => Task, task => task.project)
+  @Field(() => [Task], { nullable: true })
   tasks?: Task[]
 
   // 루트 작업 정보 (부모가 없는 상위 작업)

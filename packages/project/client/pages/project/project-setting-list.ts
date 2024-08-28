@@ -257,8 +257,8 @@ export class ProjectSettingList extends ScopedElementsMixin(PageView) {
   async getProjectList() {
     const response = await client.query({
       query: gql`
-        query Projects($projectName: String!) {
-          projects(projectName: $projectName) {
+        query Projects($filters: [Filter!]) {
+          projects(filters: $filters) {
             items {
               id
               name
@@ -279,7 +279,15 @@ export class ProjectSettingList extends ScopedElementsMixin(PageView) {
         }
       `,
       variables: {
-        projectName: this.projectName || ''
+        filters: this.projectName
+          ? [
+              {
+                name: 'name',
+                operator: 'search',
+                value: `%${this.projectName}%`
+              }
+            ]
+          : []
       }
     })
 

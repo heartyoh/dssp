@@ -26,7 +26,7 @@ export class NewTask {
   project?: ObjectRefForProject
 
   @Field(type => ObjectRefForTask, { nullable: true, description: '부모 작업, 해당 작업이 하위 작업인 경우 (선택 사항)' })
-  parentTask?: ObjectRefForTask
+  parent?: ObjectRefForTask
 
   @Field({ nullable: true, description: '작업에 대한 설명 (선택 사항)' })
   description?: string
@@ -53,7 +53,7 @@ export class TaskPatch {
   project?: ObjectRefForProject
 
   @Field(type => ObjectRefForTask, { nullable: true, description: '부모 작업, 해당 작업이 하위 작업인 경우 (선택 사항)' })
-  parentTask?: ObjectRefForTask
+  parent?: ObjectRefForTask
 
   @Field({ nullable: true, description: '작업에 대한 설명 (선택 사항)' })
   description?: string

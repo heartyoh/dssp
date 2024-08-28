@@ -175,10 +175,10 @@ export class SeedSampleTasks1723861478421 implements MigrationInterface {
       where: { name: 'SYSTEM' }
     })
     const user = await userRepository.findOne({ where: { id: domain.owner } })
-    const project = await projectRepository.findOne({ where: { id: domain.owner, name: SEED_SAMPLE_PROJECT.name } })
+    const project = await projectRepository.findOne({ where: { domain: { id: domain.id }, name: SEED_SAMPLE_PROJECT.name } })
 
     try {
-      importTasks(project, SEED_SAMPLE_TASKS, { state: { domain, user } as any })
+      await importTasks(project, SEED_SAMPLE_TASKS, { state: { domain, user } as any })
     } catch (e) {
       logger.error(e)
     }
