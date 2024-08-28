@@ -10,8 +10,8 @@ import { Attachment } from '@things-factory/attachment-base'
 import type { FileUpload } from 'graphql-upload/GraphQLUpload.js'
 
 export enum ProjectStatus {
-  'PROCEEDING' = '10',
-  'COMPLICATED' = '20'
+  'ONGOING' = '10',
+  'COMPLETED' = '20'
 }
 export enum InspectionStatus {
   REQUEST = 'REQUEST',
