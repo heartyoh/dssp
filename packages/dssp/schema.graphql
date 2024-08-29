@@ -1020,6 +1020,14 @@ input DepartmentPatch {
   picture: Upload
 }
 
+type DigestedResource {
+  """할당량"""
+  allocated: Float
+
+  """자원 유형"""
+  type: String
+}
+
 type Domain {
   attributes: Object
   brandImage: String
@@ -5037,6 +5045,9 @@ type Task {
   parent: Task
   progress: Float
   project: Project!
+
+  """Return the simple list of resources allocated to the task"""
+  resources: [DigestedResource!]!
   startDate: DateTimeISO
   tags: Object
   taskResources: [TaskResource!]

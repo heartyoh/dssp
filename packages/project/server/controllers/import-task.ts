@@ -90,12 +90,11 @@ export async function importTasks(project: Project, tasks: RawTask[], context: R
       for (const resource of rawTask.resources) {
         const resourceType = await resourceRepository.findOne({ where: { domain: { id: domain.id }, name: resource.type } })
         if (resourceType) {
-          const taskResource = taskResourceRepository.create({
+          await taskResourceRepository.save({
             task,
             resource: resourceType,
             quantity: resource.allocated
           })
-          await taskResourceRepository.save(taskResource)
         } else {
           throw new Error(`unknown resource type: ${resource.type}`)
         }

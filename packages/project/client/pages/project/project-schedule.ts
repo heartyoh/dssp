@@ -17,6 +17,23 @@ import gql from 'graphql-tag'
 import { Building, Project } from './project-list'
 import '@operato/gantt/ox-gantt.js'
 
+const TaskFragment = gql`
+  fragment TaskFragment on Task {
+    type
+    title: name
+    id: code
+    duration
+    startDate
+    endDate
+    dependsOn
+    progress
+    resources {
+      type
+      allocated
+    }
+  }
+`
+
 @customElement('project-schedule')
 export class ProjectSchedule extends ScopedElementsMixin(PageView) {
   static styles = [
@@ -156,8 +173,8 @@ export class ProjectSchedule extends ScopedElementsMixin(PageView) {
   @state() selectedBuildingIdx: number = 0
   @state() tasks
 
-  private fromDate = '2022-12-27'
-  private toDate = '2024-12-31'
+  @state() private fromDate = '2024-01-01'
+  @state() private toDate = '2024-12-31'
   private timeScale = 'week-day'
   private extendGridLines = false
 
@@ -241,33 +258,14 @@ export class ProjectSchedule extends ScopedElementsMixin(PageView) {
           project(id: $id) {
             id
             name
+            startDate
+            endDate
             rootTasks {
-              type
-              title: name
-              id: code
-              duration
-              startDate
-              endDate
-              dependsOn
-              progress
+              ...TaskFragment
               children(sortings: $sortings) {
-                type
-                title: name
-                id: code
-                duration
-                startDate
-                endDate
-                dependsOn
-                progress
+                ...TaskFragment
                 children(sortings: $sortings) {
-                  type
-                  title: name
-                  id: code
-                  duration
-                  startDate
-                  endDate
-                  dependsOn
-                  progress
+                  ...TaskFragment
                 }
               }
             }
@@ -294,6 +292,8 @@ export class ProjectSchedule extends ScopedElementsMixin(PageView) {
             }
           }
         }
+
+        ${TaskFragment}
       `,
       variables: {
         id: projectId,
@@ -303,6 +303,11 @@ export class ProjectSchedule extends ScopedElementsMixin(PageView) {
 
     this.project = response.data?.project
     this.tasks = response.data?.project.rootTasks
+
+    if (this.project) {
+      this.fromDate = this.project.startDate || '2024-01-01' /* TODO default: start date of this year - 3 */
+      this.toDate = this.project.endDate || '2024-12-31' /* TODO defaule: end date of this year + 3 */
+    }
 
     console.log('init project : ', this.project)
   }
