@@ -19,8 +19,8 @@ import { Checklist } from '../checklist/checklist'
 import { TaskResource } from '../task-resource/task-resource'
 
 export enum TaskType {
-  GROUP = 'GROUP',
-  TASK = 'TASK'
+  GROUP = 'group',
+  TASK = 'task'
 }
 
 registerEnumType(TaskType, {

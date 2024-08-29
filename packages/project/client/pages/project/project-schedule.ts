@@ -182,11 +182,25 @@ export class ProjectSchedule extends ScopedElementsMixin(PageView) {
     return [
       { name: 'title', label: i18next.t('label.gantt-task-title') || 'title', visible: true, width: 150, order: 1 },
       {
+        name: 'startDate',
+        label: i18next.t('label.gantt-task-start-date') || 'start date',
+        visible: true,
+        width: 100,
+        order: 2
+      },
+      {
         name: 'resources',
         label: i18next.t('label.gantt-task-resources') || 'resources',
         visible: true,
         width: 100,
-        order: 2
+        order: 3
+      },
+      {
+        name: 'duration',
+        label: i18next.t('label.gantt-task-duration') || 'duration',
+        visible: true,
+        width: 30,
+        order: 4
       }
     ]
   }
@@ -223,7 +237,7 @@ export class ProjectSchedule extends ScopedElementsMixin(PageView) {
           ?extend-grid-lines=${this.extendGridLines}
           .columnConfigProvider=${this.columnConfigProvider}
           .colorProvider=${task => {
-            return task.type == 'GROUP' ? 'green' : 'orange'
+            return task.type == 'group' ? 'green' : 'orange'
           }}
         >
         </ox-gantt>

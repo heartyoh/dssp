@@ -14,7 +14,7 @@ export interface RawTask {
   code: string
   title: string
   type?: TaskType
-  length?: string /* 1d, 2d, 3d, 4d, ... */
+  duration?: number
   startDate?: string /* YYYY-MM-DD */
   dependsOn?: string
   progress?: number
@@ -43,7 +43,7 @@ export async function importTasks(project: Project, tasks: RawTask[], context: R
     }
 
     // 유효성 검사
-    if (!rawTask.title || !rawTask.code || (rawTask.type == TaskType.TASK && !rawTask.length)) {
+    if (!rawTask.title || !rawTask.code || (rawTask.type == TaskType.TASK && (rawTask.duration ?? null) === null)) {
       throw new Error(`Task '${rawTask.code}' is missing required fields.`)
     }
 
@@ -63,7 +63,7 @@ export async function importTasks(project: Project, tasks: RawTask[], context: R
         throw new Error(`Task '${rawTask.code}' must have either a start date or a valid dependency.`)
       }
 
-      var duration = parseInt(rawTask.length.replace('d', ''), 10)
+      var duration = rawTask.duration
       var endDate = new Date(startDate)
       endDate.setDate(startDate.getDate() + duration - 1)
     }
