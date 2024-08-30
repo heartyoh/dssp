@@ -7,14 +7,13 @@ import '@material/web/button/outlined-button.js'
 import { PageView } from '@operato/shell'
 import { PageLifecycle } from '@operato/shell/dist/src/app/pages/page-view'
 import { css, html } from 'lit'
-import { customElement, state } from 'lit/decorators.js'
+import { customElement, query, state } from 'lit/decorators.js'
 import { ScopedElementsMixin } from '@open-wc/scoped-elements'
 import { client } from '@operato/graphql'
 import { i18next } from '@operato/i18n'
-import { notify } from '@operato/layout'
 
 import gql from 'graphql-tag'
-import { Building, Project } from './project-list'
+import { Project } from './project-list'
 import '@operato/gantt/ox-gantt.js'
 
 const TaskFragment = gql`
@@ -175,6 +174,10 @@ export class ProjectSchedule extends ScopedElementsMixin(PageView) {
 
   @state() private fromDate = '2024-01-01'
   @state() private toDate = '2024-12-31'
+
+  @query('input[name="startDate"]') inputStartDate!: HTMLInputElement
+  @query('input[name="endDate"]') inputEndDate!: HTMLInputElement
+
   private timeScale = 'week-day'
   private extendGridLines = false
 
@@ -244,7 +247,7 @@ export class ProjectSchedule extends ScopedElementsMixin(PageView) {
         <div select-container>
           <div date>
             <span name>기간선택</span>
-            <div>
+            <div @change=${() => this.onChangePeriodRange()}>
               <input type="date" name="startDate" project .value=${this.project.startDate || ''} max="9999-12-31" />
               ~
               <input type="date" name="endDate" project .value=${this.project.endDate || ''} max="9999-12-31" />
@@ -324,5 +327,10 @@ export class ProjectSchedule extends ScopedElementsMixin(PageView) {
     }
 
     console.log('init project : ', this.project)
+  }
+
+  onChangePeriodRange() {
+    this.fromDate = this.inputStartDate.value
+    this.toDate = this.inputEndDate.value
   }
 }
