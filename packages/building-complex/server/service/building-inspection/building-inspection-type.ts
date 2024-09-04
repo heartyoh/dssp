@@ -1,14 +1,7 @@
-import type { FileUpload } from 'graphql-upload/GraphQLUpload.js'
-import GraphQLUpload from 'graphql-upload/GraphQLUpload.js'
-import { ObjectType, Field, InputType, Int, ID, registerEnumType } from 'type-graphql'
-
-import { ObjectRef, ScalarObject } from '@things-factory/shell'
-
-import { Inspection, InspectionStatus } from './inspection'
-// import { InspectionAttachmentPatch } from '../inspection-attachment/inspection-attachment'
+import { ObjectType, Field, InputType, Int, ID } from 'type-graphql'
 
 @InputType()
-export class InspectionPatch {
+export class BuildingInspectionPatch {
   @Field(type => ID, { nullable: true })
   id?: string
 
@@ -32,7 +25,7 @@ export class InspectionPatch {
 }
 
 @ObjectType()
-export class InspectionSummary {
+export class BuildingInspectionSummary {
   @Field(type => Int, { description: '검사 요청 수' })
   request: number
 

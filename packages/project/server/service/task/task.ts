@@ -15,7 +15,7 @@ import { ObjectType, Field, ID, registerEnumType } from 'type-graphql'
 import { ScalarObject } from '@things-factory/shell'
 import { User } from '@things-factory/auth-base'
 import { Project } from '../project/project'
-import { Checklist } from '../checklist/checklist'
+// import { Checklist } from '@dssp/supervisor'
 import { TaskResource } from '../task-resource/task-resource'
 
 export enum TaskType {
@@ -90,9 +90,9 @@ export class Task {
   @Field({ nullable: true })
   progress?: number
 
-  @OneToMany(type => Checklist, checklist => checklist.task, { nullable: true })
-  @Field(type => [Checklist], { nullable: true })
-  checklists?: Checklist[]
+  // @OneToMany(type => Checklist, checklist => checklist.task, { nullable: true })
+  // @Field(type => [Checklist], { nullable: true })
+  // checklists?: Checklist[]
 
   @OneToMany(type => TaskResource, taskResource => taskResource.task, { cascade: true })
   @Field(type => [TaskResource], { nullable: true })

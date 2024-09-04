@@ -639,7 +639,7 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
             }
           }
 
-          inspectionSummary(projectId: $projectId) {
+          buildingInspectionSummary(projectId: $projectId) {
             request
             pass
             fail

@@ -13,45 +13,49 @@ import {
 import { ObjectType, Field, ID, registerEnumType } from 'type-graphql'
 
 import { User } from '@things-factory/auth-base'
-import { BuildingLevel } from '@dssp/building-complex/dist-server'
+import { BuildingLevel } from '../building-level/building-level'
 import { Attachment } from '@things-factory/attachment-base'
-import { Checklist } from '../checklist/checklist'
+// import { Checklist } from '@dssp/supervision/checklist'
 
-export enum InspectionStatus {
+export enum BuildingInspectionStatus {
   REQUEST = 'REQUEST',
   PASS = 'PASS',
   FAIL = 'FAIL'
 }
 
-registerEnumType(InspectionStatus, {
-  name: 'InspectionStatus',
+registerEnumType(BuildingInspectionStatus, {
+  name: 'BuildingInspectionStatus',
   description: '검측 상태'
 })
 
 @Entity()
-@Index('ix_inspection_0', (inspection: Inspection) => [inspection.buildingLevel], { where: '"deleted_at" IS NULL' })
-@Index('ix_inspection_1', (inspection: Inspection) => [inspection.requestDate], { where: '"deleted_at" IS NULL' })
+@Index('ix_building_inspection_0', (buildingInspection: BuildingInspection) => [buildingInspection.buildingLevel], {
+  where: '"deleted_at" IS NULL'
+})
+@Index('ix_building_inspection_1', (buildingInspection: BuildingInspection) => [buildingInspection.requestDate], {
+  where: '"deleted_at" IS NULL'
+})
 @ObjectType({ description: '시공 검측 (층별 도면의 검측 리스트)' })
-export class Inspection {
+export class BuildingInspection {
   @PrimaryGeneratedColumn('uuid')
   @Field(type => ID)
   readonly id: string
 
   @Column({ nullable: false, comment: '상태(REQUEST: 요청, PASS: 합격, FAIL: 불합격)' })
   @Field({ nullable: true })
-  status?: InspectionStatus
+  status?: BuildingInspectionStatus
 
   // 시공 검측 첨부 파일 정보 (하위 테이블 참조)
-  @OneToOne(() => Checklist, checklist => checklist.inspection)
-  @Field(() => Checklist, { nullable: true })
-  checklist?: Checklist
+  // @OneToOne(() => Checklist, checklist => checklist.buildingInspection)
+  // @Field(() => Checklist, { nullable: true })
+  // checklist?: Checklist
 
   // 층 정보 (1:1 테이블 참조)
   @ManyToOne(type => BuildingLevel)
   @Field({ nullable: true })
   buildingLevel?: BuildingLevel
 
-  @RelationId((inspection: Inspection) => inspection.buildingLevel)
+  @RelationId((buildingInspection: BuildingInspection) => buildingInspection.buildingLevel)
   buildingLevelId?: string
 
   @Column({ nullable: false, comment: '검측 요청일' })
@@ -74,13 +78,13 @@ export class Inspection {
   @Field(type => User, { nullable: true })
   creator?: User
 
-  @RelationId((inspection: Inspection) => inspection.creator)
+  @RelationId((buildingInspection: BuildingInspection) => buildingInspection.creator)
   creatorId?: string
 
   @ManyToOne(type => User, { nullable: true })
   @Field(type => User, { nullable: true })
   updater?: User
 
-  @RelationId((inspection: Inspection) => inspection.updater)
+  @RelationId((buildingInspection: BuildingInspection) => buildingInspection.updater)
   updaterId?: string
 }

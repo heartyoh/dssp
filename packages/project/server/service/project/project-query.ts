@@ -6,8 +6,8 @@ import { Project } from './project'
 import { Task } from '../task/task'
 import { ProjectList } from './project-type'
 import { BuildingComplex } from '@dssp/building-complex'
-import { InspectionStatus } from '../inspection/inspection'
-import { InspectionSummary } from '../inspection/inspection-type'
+import { BuildingInspectionStatus } from '@dssp/building-complex/dist-server/service/building-inspection/building-inspection'
+import { BuildingInspectionSummary } from '@dssp/building-complex/dist-server/service/building-inspection/building-inspection-type'
 import { Attachment } from '@things-factory/attachment-base'
 
 @Resolver(Project)
@@ -37,10 +37,14 @@ export class ProjectQuery {
     return { items, total }
   }
 
-  @Query(returns => InspectionSummary, { description: '프로젝트의 검측상태 별 카운트' })
-  async inspectionSummary(@Arg('projectId') projectId: string, @Ctx() context: ResolverContext): Promise<InspectionSummary> {
+  @Query(returns => BuildingInspectionSummary, { description: '프로젝트의 검측상태 별 카운트' })
+  async buildingInspectionSummary(
+    @Arg('projectId') projectId: string,
+    @Ctx() context: ResolverContext
+  ): Promise<BuildingInspectionSummary> {
     const { domain } = context.state
 
+    // TOTO 수정
     return {
       request: 0,
       pass: 0,
@@ -49,9 +53,9 @@ export class ProjectQuery {
 
     const queryBuilder = getRepository(Project)
       .createQueryBuilder('p')
-      .select(`COUNT(CASE WHEN bi.status='${InspectionStatus.REQUEST}' THEN 1 ELSE NULL END) AS request`)
-      .addSelect(`COUNT(CASE WHEN bi.status='${InspectionStatus.PASS}' THEN 1 ELSE NULL END) AS pass`)
-      .addSelect(`COUNT(CASE WHEN bi.status='${InspectionStatus.FAIL}' THEN 1 ELSE NULL END) AS fail`)
+      .select(`COUNT(CASE WHEN bi.status='${BuildingInspectionStatus.REQUEST}' THEN 1 ELSE NULL END) AS request`)
+      .addSelect(`COUNT(CASE WHEN bi.status='${BuildingInspectionStatus.PASS}' THEN 1 ELSE NULL END) AS pass`)
+      .addSelect(`COUNT(CASE WHEN bi.status='${BuildingInspectionStatus.FAIL}' THEN 1 ELSE NULL END) AS fail`)
       .innerJoin('p.buildingComplex', 'bc')
       .innerJoin('bc.buildings', 'b')
       .innerJoin('b.buildingLevels', 'bl')

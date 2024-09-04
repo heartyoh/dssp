@@ -8,11 +8,8 @@ export * from './checklist-template/checklist-template'
 export * from './construction-type/construction-type'
 export * from './worker-type/worker-type'
 export * from './manager/manager'
-export * from './checklist-item/checklist-item'
-export * from './checklist/checklist'
 export * from './task/task'
 export * from './project/project'
-export * from './inspection/inspection'
 
 /* IMPORT ENTITIES AND RESOLVERS */
 import { entities as TaskResourceEntities, resolvers as TaskResourceResolvers } from './task-resource'
@@ -27,11 +24,8 @@ import { entities as ChecklistTemplateEntities, resolvers as ChecklistTemplateRe
 import { entities as ConstructionTypeEntities, resolvers as ConstructionTypeResolvers } from './construction-type'
 import { entities as WorkerTypeEntities, resolvers as WorkerTypeResolvers } from './worker-type'
 import { entities as ManagerEntities, resolvers as ManagerResolvers } from './manager'
-import { entities as CheckItemEntities, resolvers as CheckItemResolvers } from './checklist-item'
-import { entities as ChecklistEntities, resolvers as ChecklistResolvers } from './checklist'
 import { entities as TaskEntities, resolvers as TaskResolvers } from './task'
 import { entities as ProjectEntities, resolvers as ProjectResolvers } from './project'
-import { entities as InspectionEntities, resolvers as InspectionResolvers, types as InspectionTypes } from './inspection'
 
 export const entities = [
   /* ENTITIES */
@@ -44,11 +38,8 @@ export const entities = [
   ...ConstructionTypeEntities,
   ...WorkerTypeEntities,
   ...ManagerEntities,
-  ...CheckItemEntities,
-  ...ChecklistEntities,
   ...TaskEntities,
-  ...ProjectEntities,
-  ...InspectionEntities
+  ...ProjectEntities
 ]
 
 export const schema = {
@@ -63,12 +54,7 @@ export const schema = {
     ...ConstructionTypeResolvers,
     ...WorkerTypeResolvers,
     ...ManagerResolvers,
-    ...CheckItemResolvers,
-    ...ChecklistResolvers,
     ...TaskResolvers,
-    ...ProjectResolvers,
-    ...InspectionResolvers
+    ...ProjectResolvers
   ]
 }
-
-export const types = [...InspectionTypes]

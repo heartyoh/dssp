@@ -64,3 +64,15 @@ export class ProjectList {
   @Field(type => Int, { description: '전체 프로젝트 수' })
   total: number
 }
+
+@ObjectType()
+export class BuildingInspectionSummary {
+  @Field(type => Int, { description: '검사 요청 수' })
+  request: number
+
+  @Field(type => Int, { description: '검사 통과 수' })
+  pass: number
+
+  @Field(type => Int, { description: '검사 실패 수' })
+  fail: number
+}

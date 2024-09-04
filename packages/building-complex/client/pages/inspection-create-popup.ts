@@ -9,7 +9,17 @@ import { DataGrist } from '@operato/data-grist/ox-grist.js'
 import { client } from '@operato/graphql'
 import { ButtonContainerStyles } from '@operato/styles'
 import { notify } from '@operato/layout'
-import { CHECKLIST_MAIN_TYPE_LIST } from '@dssp/project/dist-client/pages/checklist-template/checklist-type-management'
+
+// TODO 검측에서 이거 임포트로
+// import { CHECKLIST_MAIN_TYPE_LIST } from '@dssp/project/dist-client/pages/checklist-template/checklist-type-management'
+enum ChecklistTypeMainType {
+  BASIC = '10',
+  NON_BASIC = '20'
+}
+const CHECKLIST_MAIN_TYPE_LIST = {
+  [ChecklistTypeMainType.BASIC]: '기본 업무',
+  [ChecklistTypeMainType.NON_BASIC]: '기본 외 업무'
+}
 
 @customElement('inspection-create-popup')
 class InspectionCreatePopup extends LitElement {

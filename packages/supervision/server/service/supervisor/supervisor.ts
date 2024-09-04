@@ -16,7 +16,6 @@ import { ObjectType, Field, Int, ID, registerEnumType } from 'type-graphql'
 import { Domain } from '@things-factory/shell'
 import { User } from '@things-factory/auth-base'
 import { ProjectReport } from 'service/project-report/project-report'
-import { CheckItem } from 'service/check-item/check-item'
 
 export enum SupervisorStatus {
   STATUS_A = 'STATUS_A',
@@ -77,10 +76,6 @@ export class Supervisor {
   @Field(() => [ProjectReport])
   @OneToMany(() => ProjectReport, report => report.supervisor)
   reports: ProjectReport[]
-
-  @Field(() => [CheckItem])
-  @OneToMany(() => CheckItem, checkItem => checkItem.supervisor)
-  checkItems: CheckItem[]
 
   @CreateDateColumn()
   @Field({ nullable: true })

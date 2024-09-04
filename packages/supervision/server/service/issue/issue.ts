@@ -15,7 +15,6 @@ import { ObjectType, Field, Int, ID, registerEnumType } from 'type-graphql'
 
 import { Domain } from '@things-factory/shell'
 import { User } from '@things-factory/auth-base'
-import { CheckItem } from 'service/check-item/check-item'
 import { ActionPlan } from 'service/action-plan/action-plan'
 
 export enum IssueStatus {
@@ -65,10 +64,6 @@ export class Issue {
   @Column({ nullable: true })
   @Field({ nullable: true })
   params?: string
-
-  @Field(() => CheckItem)
-  @ManyToOne(() => CheckItem, checkItem => checkItem.issues)
-  checkItem: CheckItem
 
   @Field(() => [ActionPlan])
   @OneToMany(() => ActionPlan, actionPlan => actionPlan.issue)
