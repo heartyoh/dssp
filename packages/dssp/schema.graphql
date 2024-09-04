@@ -201,6 +201,7 @@ type Attachment {
   refBy: String
   refType: String
   size: String!
+  tags: Object
   updatedAt: DateTimeISO!
   updater: User
 }
@@ -219,6 +220,7 @@ input AttachmentPatch {
   name: String
   refBy: String
   refType: String
+  tags: Object
 }
 
 """Entity for AttributeSet"""
@@ -511,54 +513,15 @@ input BuildingComplexPatch {
   supervisoryCompany: String
 }
 
-"""시공 검측 (층별 도면의 검측 리스트)"""
-type BuildingInspection {
-  attachments: [Attachment!]
-  attatchments: [Attachment!]!
-  buildingInspectionAttachments: [BuildingInspectionAttachment!]
-  buildingLevel: BuildingLevel
-  createdAt: DateTimeISO
-  creator: User
-  deletedAt: DateTimeISO
-  detail: String
-  id: ID!
-  indexX: Float
-  indexY: Float
-  status: String
-  updatedAt: DateTimeISO
-  updater: User
-}
-
-"""시공 검측 첨부 파일"""
-type BuildingInspectionAttachment {
-  buildingInspection: BuildingInspection
-  createdAt: DateTimeISO
-  creator: User
-  deletedAt: DateTimeISO
-  id: ID!
-  updatedAt: DateTimeISO
-  updater: User
-}
-
-input BuildingInspectionPatch {
-  detail: String
-  id: ID
-  indexX: Float
-  indexY: Float
-  status: String
-}
-
 """층 정보"""
 type BuildingLevel {
   building: Building!
-  buildingInspections: [BuildingInspection!]
   createdAt: DateTimeISO
   creator: User
   deletedAt: DateTimeISO
   elevationDrawing: Attachment
   elevationDrawingThumbnail: String
   floor: Float!
-  floorInspectionSummary: FloorInspectionSummary!
   id: ID!
   mainDrawing: Attachment
   mainDrawingImage: String
@@ -570,7 +533,6 @@ type BuildingLevel {
 }
 
 input BuildingLevelPatch {
-  buildingInspections: [BuildingInspectionPatch!]
   elevationDrawingUpload: Upload
   floor: Float!
   id: ID
@@ -594,8 +556,31 @@ type ChatCompletionOutput {
   message: String
 }
 
+"""체크리스트"""
+type Checklist {
+  checklistItems: ChecklistItem!
+  constructionInspectorDate: DateTimeISO
+  createdAt: DateTimeISO
+  creator: User
+  deletedAt: DateTimeISO
+  documentNo: String
+  id: ID!
+  inspection: Inspection
+  location: String
+  name: String
+  overallConstructionSignature: String
+  overallSupervisorySignature: String
+  part: String
+  supervisorInspectorDate: DateTimeISO
+  task: Task!
+  taskConstructionSignature: String
+  taskSupervisorySignature: String
+  updatedAt: DateTimeISO
+  updater: User
+}
+
 """체크 리스트 항목"""
-type CheckItem {
+type ChecklistItem {
   action: String
   checklist: Checklist
   comment: String
@@ -612,39 +597,17 @@ type CheckItem {
   updater: User
 }
 
-type CheckItemList {
-  items: [CheckItem!]!
+type ChecklistItemList {
+  items: [ChecklistItem!]!
   total: Int!
 }
 
-input CheckItemPatch {
+input ChecklistItemPatch {
   active: Boolean
   cuFlag: String
   description: String
   id: ID
   name: String
-}
-
-"""체크리스트"""
-type Checklist {
-  checkItems: CheckItem!
-  constructionInspectorDate: DateTimeISO
-  createdAt: DateTimeISO
-  creator: User
-  deletedAt: DateTimeISO
-  documentNo: String
-  id: ID!
-  location: String
-  name: String
-  overallConstructionSignature: String
-  overallSupervisorySignature: String
-  part: String
-  supervisorInspectorDate: DateTimeISO
-  task: Task!
-  taskConstructionSignature: String
-  taskSupervisorySignature: String
-  updatedAt: DateTimeISO
-  updater: User
 }
 
 type ChecklistList {
@@ -732,9 +695,9 @@ type ChecklistTypeList {
 
 input ChecklistTypePatch {
   cuFlag: String
-  detailType: String!
+  detailType: String
   id: ID
-  mainType: String!
+  mainType: String
 }
 
 input CodeDecipherInput {
@@ -1365,12 +1328,6 @@ input Filter {
   value: Any
 }
 
-type FloorInspectionSummary {
-  fail: Int!
-  pass: Int!
-  request: Int!
-}
-
 """Entity for Font"""
 type Font {
   active: Boolean!
@@ -1444,6 +1401,30 @@ enum InheritedValueType {
   Include
   None
   Only
+}
+
+"""시공 검측 (층별 도면의 검측 리스트)"""
+type Inspection {
+  attatchments: [Attachment!]!
+  buildingLevel: BuildingLevel
+  checklist: Checklist
+  createdAt: DateTimeISO
+  creator: User
+  deletedAt: DateTimeISO
+  id: ID!
+  requestDate: DateTimeISO
+  status: String
+  updatedAt: DateTimeISO
+  updater: User
+}
+
+input InspectionPatch {
+  buildingId: String
+  buildingLevelId: String
+  checklistTemplateId: String
+  constructionDetailTypeId: String
+  constructionTypeId: String
+  id: ID
 }
 
 type InspectionSummary {
@@ -1977,14 +1958,11 @@ type Mutation {
   """To create new BoardTemplate"""
   createBoardTemplate(boardTemplate: NewBoardTemplate!): BoardTemplate!
 
-  """To create BuildingInspection information"""
-  createBuildingInspection(patch: BuildingInspectionPatch!): BuildingInspection!
-
-  """To create new CheckItem"""
-  createCheckItem(checkItem: NewCheckItem!): CheckItem!
-
   """To create new Checklist"""
   createChecklist(checklist: NewChecklist!): Checklist!
+
+  """To create new ChecklistItem"""
+  createChecklistItem(checklistItem: NewChecklistItem!): ChecklistItem!
 
   """To create new CommonCode"""
   createCommonCode(commonCode: NewCommonCode!): CommonCode!
@@ -2023,6 +2001,9 @@ type Mutation {
 
   """To create new Group"""
   createGroup(group: NewGroup!): Group
+
+  """To create Inspection information"""
+  createInspection(patch: InspectionPatch!): Inspection!
 
   """To create new LiteMenu"""
   createLiteMenu(liteMenu: NewLiteMenu!): LiteMenu!
@@ -2151,14 +2132,14 @@ type Mutation {
   """To delete multiple Buildings"""
   deleteBuildings(ids: [String!]!): Boolean!
 
-  """To delete CheckItem"""
-  deleteCheckItem(id: String!): Boolean!
-
-  """To delete multiple CheckItems"""
-  deleteCheckItems(ids: [String!]!): Boolean!
-
   """To delete Checklist"""
   deleteChecklist(id: String!): Boolean!
+
+  """To delete ChecklistItem"""
+  deleteChecklistItem(id: String!): Boolean!
+
+  """To delete multiple ChecklistItems"""
+  deleteChecklistItems(ids: [String!]!): Boolean!
 
   """To delete ChecklistTemplateItem"""
   deleteChecklistTemplateItem(id: String!): Boolean!
@@ -2457,8 +2438,8 @@ type Mutation {
   """To import multiple Buildings"""
   importBuildings(buildings: [BuildingPatch!]!): Boolean!
 
-  """To import multiple CheckItems"""
-  importCheckItems(checkItems: [CheckItemPatch!]!): Boolean!
+  """To import multiple ChecklistItems"""
+  importChecklistItems(checklistItems: [ChecklistItemPatch!]!): Boolean!
 
   """To import multiple Checklists"""
   importChecklists(checklists: [ChecklistPatch!]!): Boolean!
@@ -2639,11 +2620,11 @@ type Mutation {
   """To modify BuildingComplex information"""
   updateBuildingComplex(id: String!, patch: BuildingComplexPatch!): BuildingComplex!
 
-  """To modify CheckItem information"""
-  updateCheckItem(id: String!, patch: CheckItemPatch!): CheckItem!
-
   """To modify Checklist information"""
   updateChecklist(id: String!, patch: ChecklistPatch!): Checklist!
+
+  """To modify ChecklistItem information"""
+  updateChecklistItem(id: String!, patch: ChecklistItemPatch!): ChecklistItem!
 
   """To modify CommonCode information"""
   updateCommonCode(name: String!, patch: CommonCodePatch!): CommonCode!
@@ -2717,11 +2698,11 @@ type Mutation {
   """To modify multiple BuildingComplexes' information"""
   updateMultipleBuildingComplex(patches: [BuildingComplexPatch!]!): [BuildingComplex!]!
 
-  """To modify multiple CheckItems' information"""
-  updateMultipleCheckItem(patches: [CheckItemPatch!]!): [CheckItem!]!
-
   """To modify multiple Checklists' information"""
   updateMultipleChecklist(patches: [ChecklistPatch!]!): [Checklist!]!
+
+  """To modify multiple ChecklistItems' information"""
+  updateMultipleChecklistItem(patches: [ChecklistItemPatch!]!): [ChecklistItem!]!
 
   """To modify multiple ChecklistTemplates' information"""
   updateMultipleChecklistTemplate(patches: [ChecklistTemplatePatch!]!): [ChecklistTemplate!]!
@@ -2940,6 +2921,7 @@ input NewAttachment {
   file: Upload!
   refBy: String
   refType: String
+  tags: Object
 }
 
 input NewAttributeSet {
@@ -2975,14 +2957,14 @@ input NewBoardTemplate {
   visibility: String!
 }
 
-input NewCheckItem {
+input NewChecklist {
   active: Boolean
   description: String
   name: String!
   params: String
 }
 
-input NewChecklist {
+input NewChecklistItem {
   active: Boolean
   description: String
   name: String!
@@ -4194,21 +4176,12 @@ type Query {
 
   """To fetch a BuildingComplex"""
   buildingBuildingComplex(id: String!): BuildingComplex
-
-  """To fetch a BuildingInspection"""
-  buildingInspection(id: String!): BuildingInspection
   chatCompletion(input: ChatCompletionInput!): ChatCompletionOutput!
 
   """
   Checks if the system is configured to provide a default password for new users.
   """
   checkDefaultPassword: Boolean!
-
-  """To fetch a CheckItem"""
-  checkItem(id: String!): CheckItem
-
-  """To fetch multiple CheckItems"""
-  checkItems(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): CheckItemList!
 
   """
   Determines whether the system provides a default password when creating a new user.
@@ -4228,6 +4201,12 @@ type Query {
 
   """To fetch a Checklist"""
   checklist(id: String!): Checklist
+
+  """To fetch a ChecklistItem"""
+  checklistItem(id: String!): ChecklistItem
+
+  """To fetch multiple ChecklistItems"""
+  checklistItems(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): ChecklistItemList!
 
   """To fetch a ChecklistTemplateItem"""
   checklistTemplateItem(id: String!): ChecklistTemplateItem
@@ -4366,8 +4345,14 @@ type Query {
   i18nCompletion(input: i18nCompletionInput!): i18nCompletionOutput!
   imageCompletion(input: ImageCompletionInput!): ImageCompletionOutput!
 
+  """To fetch a Inspection"""
+  inspection(id: String!): Inspection
+
   """프로젝트의 검측상태 별 카운트"""
   inspectionSummary(projectId: String!): InspectionSummary!
+
+  """To fetch a Inspection Summary"""
+  inspectionSummaryOfBuildingLevel(buildingLevelId: String!): InspectionSummary
 
   """To fetch integration Analyses"""
   integrationAnalysis: Object!

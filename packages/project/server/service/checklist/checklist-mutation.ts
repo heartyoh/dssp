@@ -10,10 +10,7 @@ import { NewChecklist, ChecklistPatch } from './checklist-type'
 export class ChecklistMutation {
   @Directive('@transaction')
   @Mutation(returns => Checklist, { description: 'To create new Checklist' })
-  async createChecklist(
-    @Arg('checklist') checklist: NewChecklist,
-    @Ctx() context: ResolverContext
-  ): Promise<Checklist> {
+  async createChecklist(@Arg('checklist') checklist: NewChecklist, @Ctx() context: ResolverContext): Promise<Checklist> {
     const { domain, user, tx } = context.state
 
     const result = await tx.getRepository(Checklist).save({
@@ -108,10 +105,7 @@ export class ChecklistMutation {
 
   @Directive('@transaction')
   @Mutation(returns => Boolean, { description: 'To delete multiple Checklists' })
-  async deleteChecklists(
-    @Arg('ids', type => [String]) ids: string[],
-    @Ctx() context: ResolverContext
-  ): Promise<boolean> {
+  async deleteChecklists(@Arg('ids', type => [String]) ids: string[], @Ctx() context: ResolverContext): Promise<boolean> {
     const { domain, tx } = context.state
 
     await tx.getRepository(Checklist).delete({

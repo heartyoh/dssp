@@ -15,9 +15,9 @@ import { User } from '@things-factory/auth-base'
 import { Checklist } from '../checklist/checklist'
 
 @Entity()
-@Index('ix_check_item_0', (checkItem: CheckItem) => [checkItem.checklist], { where: '"deleted_at" IS NULL' })
+@Index('ix_checklist_item_0', (checklistItem: ChecklistItem) => [checklistItem.checklist], { where: '"deleted_at" IS NULL' })
 @ObjectType({ description: '체크 리스트 항목' })
-export class CheckItem {
+export class ChecklistItem {
   @PrimaryGeneratedColumn('uuid')
   @Field(type => ID)
   readonly id: string
@@ -55,7 +55,7 @@ export class CheckItem {
   @Field(type => Checklist, { nullable: true })
   checklist?: Checklist
 
-  @RelationId((checkItem: CheckItem) => checkItem.checklist)
+  @RelationId((checklistItem: ChecklistItem) => checklistItem.checklist)
   checklistId?: string
 
   @CreateDateColumn()
@@ -74,13 +74,13 @@ export class CheckItem {
   @Field(type => User, { nullable: true })
   creator?: User
 
-  @RelationId((checkItem: CheckItem) => checkItem.creator)
+  @RelationId((checklistItem: ChecklistItem) => checklistItem.creator)
   creatorId?: string
 
   @ManyToOne(type => User, { nullable: true })
   @Field(type => User, { nullable: true })
   updater?: User
 
-  @RelationId((checkItem: CheckItem) => checkItem.updater)
+  @RelationId((checklistItem: ChecklistItem) => checklistItem.updater)
   updaterId?: string
 }

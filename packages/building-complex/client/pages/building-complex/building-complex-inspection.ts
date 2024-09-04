@@ -541,11 +541,6 @@ export class BuildingComplexInspection extends ScopedElementsMixin(PageView) {
             buildingLevels {
               id
               floor
-              floorInspectionSummary {
-                request
-                pass
-                fail
-              }
               mainDrawing {
                 id
                 name

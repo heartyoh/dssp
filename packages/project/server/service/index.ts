@@ -8,14 +8,15 @@ export * from './checklist-template/checklist-template'
 export * from './construction-type/construction-type'
 export * from './worker-type/worker-type'
 export * from './manager/manager'
-export * from './check-item/check-item'
+export * from './checklist-item/checklist-item'
 export * from './checklist/checklist'
 export * from './task/task'
 export * from './project/project'
+export * from './inspection/inspection'
 
 /* IMPORT ENTITIES AND RESOLVERS */
-import { entities as TaskResourceEntities, resolvers as TaskResourceResolvers, subscribers as TaskResourceSubscribers } from './task-resource'
-import { entities as ResourceEntities, resolvers as ResourceResolvers, subscribers as ResourceSubscribers } from './resource'
+import { entities as TaskResourceEntities, resolvers as TaskResourceResolvers } from './task-resource'
+import { entities as ResourceEntities, resolvers as ResourceResolvers } from './resource'
 import {
   entities as ConstructionDetailTypeEntities,
   resolvers as ConstructionDetailTypeResolvers
@@ -26,15 +27,16 @@ import { entities as ChecklistTemplateEntities, resolvers as ChecklistTemplateRe
 import { entities as ConstructionTypeEntities, resolvers as ConstructionTypeResolvers } from './construction-type'
 import { entities as WorkerTypeEntities, resolvers as WorkerTypeResolvers } from './worker-type'
 import { entities as ManagerEntities, resolvers as ManagerResolvers } from './manager'
-import { entities as CheckItemEntities, resolvers as CheckItemResolvers } from './check-item'
+import { entities as CheckItemEntities, resolvers as CheckItemResolvers } from './checklist-item'
 import { entities as ChecklistEntities, resolvers as ChecklistResolvers } from './checklist'
 import { entities as TaskEntities, resolvers as TaskResolvers } from './task'
-import { entities as ProjectEntities, resolvers as ProjectResolvers, types as ProjectTypes } from './project'
+import { entities as ProjectEntities, resolvers as ProjectResolvers } from './project'
+import { entities as InspectionEntities, resolvers as InspectionResolvers, types as InspectionTypes } from './inspection'
 
 export const entities = [
   /* ENTITIES */
-	...TaskResourceEntities,
-	...ResourceEntities,
+  ...TaskResourceEntities,
+  ...ResourceEntities,
   ...ConstructionDetailTypeEntities,
   ...ChecklistTypeEntities,
   ...ChecklistTemplateItemEntities,
@@ -45,14 +47,15 @@ export const entities = [
   ...CheckItemEntities,
   ...ChecklistEntities,
   ...TaskEntities,
-  ...ProjectEntities
+  ...ProjectEntities,
+  ...InspectionEntities
 ]
 
 export const schema = {
   resolverClasses: [
     /* RESOLVER CLASSES */
-		...TaskResourceResolvers,
-		...ResourceResolvers,
+    ...TaskResourceResolvers,
+    ...ResourceResolvers,
     ...ConstructionDetailTypeResolvers,
     ...ChecklistTypeResolvers,
     ...ChecklistTemplateItemResolvers,
@@ -63,8 +66,9 @@ export const schema = {
     ...CheckItemResolvers,
     ...ChecklistResolvers,
     ...TaskResolvers,
-    ...ProjectResolvers
+    ...ProjectResolvers,
+    ...InspectionResolvers
   ]
 }
 
-export const types = [...ProjectTypes]
+export const types = [...InspectionTypes]

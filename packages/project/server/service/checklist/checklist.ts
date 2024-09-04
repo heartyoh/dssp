@@ -8,13 +8,15 @@ import {
   RelationId,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn
 } from 'typeorm'
 import { ObjectType, Field, ID } from 'type-graphql'
 
 import { User } from '@things-factory/auth-base'
 import { Task } from '../task/task'
-import { CheckItem } from '../check-item/check-item'
+import { ChecklistItem } from '../checklist-item/checklist-item'
+import { Inspection } from '../inspection/inspection'
 
 @Entity()
 @Index('ix_checklist_0', (checklist: Checklist) => [checklist.task], { where: '"deleted_at" IS NULL' })
@@ -65,17 +67,25 @@ export class Checklist {
   taskSupervisorySignature?: string
 
   // 공정표 작업 정보 (상위 테이블 참조)
-  @Field(() => Task)
   @ManyToOne(() => Task, task => task.checklists)
+  @Field(() => Task)
   task?: Task
 
   @RelationId((checklist: Checklist) => checklist.task)
   taskId?: string
 
   // 체크리스트 아이템 정보 (하위 테이블 참조)
-  @Field(() => CheckItem)
-  @OneToMany(() => CheckItem, checkItem => checkItem.checklist)
-  checkItems?: CheckItem[]
+  @OneToMany(() => ChecklistItem, checklistItem => checklistItem.checklist)
+  @Field(() => ChecklistItem)
+  checklistItems?: ChecklistItem[]
+
+  // 검측 정보 (1:1 테이블 참조)
+  @OneToOne(type => Inspection, inspection => inspection.checklist)
+  @Field({ nullable: true })
+  inspection?: Inspection
+
+  @RelationId((checklist: Checklist) => checklist.inspection)
+  inspectionId?: string
 
   @CreateDateColumn()
   @Field({ nullable: true })

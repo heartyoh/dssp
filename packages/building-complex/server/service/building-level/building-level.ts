@@ -14,14 +14,11 @@ import { ObjectType, Field, ID } from 'type-graphql'
 
 import { User } from '@things-factory/auth-base'
 import { Building } from '../building/building'
-import { BuildingInspection } from '../building-inspection/building-inspection'
 import { Attachment } from '@things-factory/attachment-base'
 import { FileUpload } from 'graphql-upload/GraphQLUpload.js'
 
 @Entity()
-@Index('ix_building_level_0', (buildingLevel: BuildingLevel) => [buildingLevel.building], {
-  where: '"deleted_at" IS NULL'
-})
+@Index('ix_building_level_0', (buildingLevel: BuildingLevel) => [buildingLevel.building], { where: '"deleted_at" IS NULL' })
 @ObjectType({ description: '층 정보' })
 export class BuildingLevel {
   @PrimaryGeneratedColumn('uuid')
@@ -78,9 +75,9 @@ export class BuildingLevel {
   buildingId?: string
 
   // 시공 검측 정보 (하위 테이블 참조)
-  @OneToMany(() => BuildingInspection, buildingInspection => buildingInspection.buildingLevel)
-  @Field(() => [BuildingInspection], { nullable: true })
-  buildingInspections?: BuildingInspection[]
+  // @OneToMany(() => Inspection, inspection => inspection.buildingLevel)
+  // @Field(() => [Inspection], { nullable: true })
+  // inspections?: Inspection[]
 
   @CreateDateColumn()
   @Field({ nullable: true })

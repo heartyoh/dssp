@@ -4,31 +4,25 @@ import { ObjectType, Field, InputType, Int, ID, registerEnumType } from 'type-gr
 
 import { ObjectRef, ScalarObject } from '@things-factory/shell'
 
-import { CheckItem, CheckItemStatus } from './check-item'
+import { ChecklistItem } from './checklist-item'
 
 @InputType()
-export class NewCheckItem {
+export class NewChecklistItem {
   @Field()
   name: string
 
   @Field({ nullable: true })
   description?: string
 
-  @Field(type => CheckItemStatus, { nullable: true })
-  state?: CheckItemStatus
-
   @Field({ nullable: true })
   active?: boolean
 
   @Field({ nullable: true })
   params?: string
-
-  @Field(type => GraphQLUpload, { nullable: true })
-  thumbnail?: FileUpload
 }
 
 @InputType()
-export class CheckItemPatch {
+export class ChecklistItemPatch {
   @Field(type => ID, { nullable: true })
   id?: string
 
@@ -38,23 +32,17 @@ export class CheckItemPatch {
   @Field({ nullable: true })
   description?: string
 
-  @Field(type => CheckItemStatus, { nullable: true })
-  state?: CheckItemStatus
-
   @Field({ nullable: true })
   active?: boolean
-
-  @Field(type => GraphQLUpload, { nullable: true })
-  thumbnail?: FileUpload
 
   @Field({ nullable: true })
   cuFlag?: string
 }
 
 @ObjectType()
-export class CheckItemList {
-  @Field(type => [CheckItem])
-  items: CheckItem[]
+export class ChecklistItemList {
+  @Field(type => [ChecklistItem])
+  items: ChecklistItem[]
 
   @Field(type => Int)
   total: number

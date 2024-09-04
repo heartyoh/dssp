@@ -4,8 +4,10 @@ import { Domain, getRepository, ListParam, getQueryBuilderFromListParams } from 
 import { User } from '@things-factory/auth-base'
 import { Project } from './project'
 import { Task } from '../task/task'
-import { InspectionSummary, ProjectList } from './project-type'
-import { BuildingComplex, InspectionStatus } from '@dssp/building-complex'
+import { ProjectList } from './project-type'
+import { BuildingComplex } from '@dssp/building-complex'
+import { InspectionStatus } from '../inspection/inspection'
+import { InspectionSummary } from '../inspection/inspection-type'
 import { Attachment } from '@things-factory/attachment-base'
 
 @Resolver(Project)
@@ -38,6 +40,12 @@ export class ProjectQuery {
   @Query(returns => InspectionSummary, { description: '프로젝트의 검측상태 별 카운트' })
   async inspectionSummary(@Arg('projectId') projectId: string, @Ctx() context: ResolverContext): Promise<InspectionSummary> {
     const { domain } = context.state
+
+    return {
+      request: 0,
+      pass: 0,
+      fail: 0
+    }
 
     const queryBuilder = getRepository(Project)
       .createQueryBuilder('p')

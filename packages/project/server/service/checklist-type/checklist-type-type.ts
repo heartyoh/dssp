@@ -6,10 +6,10 @@ export class ChecklistTypePatch {
   @Field(type => ID, { nullable: true })
   id?: string
 
-  @Field({ nullable: false })
+  @Field({ nullable: true })
   mainType: ChecklistTypeMainType
 
-  @Field({ nullable: false })
+  @Field({ nullable: true })
   detailType: string
 
   @Field({ nullable: true })

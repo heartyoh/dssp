@@ -87,15 +87,6 @@ class ChecklistTemplateItem extends LitElement {
           hidden: true
         },
         {
-          type: 'string',
-          name: 'name',
-          header: '검사 항목',
-          record: {
-            editable: true
-          },
-          width: 200
-        },
-        {
           type: 'select',
           name: 'mainType',
           header: '구분',
@@ -119,6 +110,15 @@ class ChecklistTemplateItem extends LitElement {
             ]
           },
           width: 250
+        },
+        {
+          type: 'string',
+          name: 'name',
+          header: '검사 항목',
+          record: {
+            editable: true
+          },
+          width: 200
         }
       ],
       rows: {

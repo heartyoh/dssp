@@ -293,6 +293,7 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
             thead th {
               padding: 5px;
               font-size: 15px;
+              text-wrap: pretty;
             }
 
             tbody td {
@@ -669,7 +670,7 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
       html` <inspection-create-popup .projectId=${this.project.id} @requestRefresh="${() => {}}"></inspection-create-popup> `,
       {
         backdrop: true,
-        size: 'medium',
+        size: 'large',
         title: '검측 요청서 등록'
       }
     )
