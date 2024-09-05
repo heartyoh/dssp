@@ -29,9 +29,9 @@
   "dependencies": {
     "@dssp/project": "^0.0.9",
     "@dssp/building-complex": "^0.0.9",
-    "@operato/graphql": "^7.0.0",
-    "@operato/shell": "^7.0.0",
-    "@things-factory/auth-base": "^7.0.0",
-    "@things-factory/shell": "^7.0.0"
+    "@operato/graphql": "^8.0.0-alpha",
+    "@operato/shell": "^8.0.0-alpha",
+    "@things-factory/auth-base": "^8.0.0-alpha",
+    "@things-factory/shell": "^8.0.0-alpha"
   }
 }
