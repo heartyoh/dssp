@@ -310,30 +310,6 @@ class InspectionCreatePopup extends LitElement {
     return response.data?.constructionType || {}
   }
 
-  async _createInspection() {
-    const patches = {}
-
-    const response = await client.mutate({
-      mutation: gql`
-        mutation UpdateMultipleChecklistTemplateItems($checklistTemplateId: String!, $patches: [ChecklistTemplateItemPatch!]!) {
-          updateMultipleChecklistTemplateItems(checklistTemplateId: $checklistTemplateId, patches: $patches) {
-            id
-          }
-        }
-      `,
-      variables: {
-        patches
-      }
-    })
-
-    if (!response.errors) {
-      notify({ message: '검측 요청서를 등록하였습니다.' })
-      this.requestRefresh()
-    } else {
-      notify({ message: '검측 요청서 등록에 실패하였습니다.', level: 'error' })
-    }
-  }
-
   private async _onSelectBuilding(e) {
     const buildingId = e.target.value
     this.selectedBuilding = await this._getBuilding(buildingId)
@@ -470,6 +446,30 @@ class InspectionCreatePopup extends LitElement {
     if (checklistTemplateId) {
       this.checklistTemplateId = checklistTemplateId
       this.grist.fetch()
+    }
+  }
+
+  async _createInspection() {
+    const patches = {}
+
+    const response = await client.mutate({
+      mutation: gql`
+        mutation UpdateMultipleChecklistTemplateItems($checklistTemplateId: String!, $patches: [ChecklistTemplateItemPatch!]!) {
+          updateMultipleChecklistTemplateItems(checklistTemplateId: $checklistTemplateId, patches: $patches) {
+            id
+          }
+        }
+      `,
+      variables: {
+        patches
+      }
+    })
+
+    if (!response.errors) {
+      notify({ message: '검측 요청서를 등록하였습니다.' })
+      this.requestRefresh()
+    } else {
+      notify({ message: '검측 요청서 등록에 실패하였습니다.', level: 'error' })
     }
   }
 }

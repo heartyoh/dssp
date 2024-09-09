@@ -4,6 +4,8 @@ export * from './issue/issue'
 export * from './project-report/project-report'
 export * from './supervisor/supervisor'
 export * from './checklist-type/checklist-type'
+export * from './checklist/checklist'
+export * from './checklist-item/checklist-item'
 export * from './checklist-template/checklist-template'
 export * from './checklist-template-item/checklist-template-item'
 
@@ -24,9 +26,11 @@ import {
   resolvers as SupervisorResolvers,
   subscribers as SupervisorSubscribers
 } from './supervisor'
+import { entities as ChecklistEntities, resolvers as ChecklistResolvers } from './checklist'
+import { entities as ChecklistItemEntities, resolvers as ChecklistItemResolvers } from './checklist-item'
 import { entities as ChecklistTypeEntities, resolvers as ChecklistTypeResolvers } from './checklist-type'
-import { entities as ChecklistTemplateItemEntities, resolvers as ChecklistTemplateItemResolvers } from './checklist-template-item'
 import { entities as ChecklistTemplateEntities, resolvers as ChecklistTemplateResolvers } from './checklist-template'
+import { entities as ChecklistTemplateItemEntities, resolvers as ChecklistTemplateItemResolvers } from './checklist-template-item'
 
 export const entities = [
   /* ENTITIES */
@@ -34,6 +38,8 @@ export const entities = [
   ...IssueEntities,
   ...ProjectReportEntities,
   ...SupervisorEntities,
+  ...ChecklistEntities,
+  ...ChecklistItemEntities,
   ...ChecklistTypeEntities,
   ...ChecklistTemplateItemEntities,
   ...ChecklistTemplateEntities
@@ -54,6 +60,8 @@ export const schema = {
     ...IssueResolvers,
     ...ProjectReportResolvers,
     ...SupervisorResolvers,
+    ...ChecklistResolvers,
+    ...ChecklistItemResolvers,
     ...ChecklistTypeResolvers,
     ...ChecklistTemplateItemResolvers,
     ...ChecklistTemplateResolvers

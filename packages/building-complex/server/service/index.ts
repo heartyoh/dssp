@@ -13,6 +13,7 @@ import { entities as ComplexEntities, resolvers as ComplexResolvers, types as Co
 import {
   entities as BuildingInspectionEntities,
   resolvers as BuildingInspectionResolvers,
+  subscribers as BuildingInspectionSubscribers,
   types as BuildingInspectionTypes
 } from './building-inspection'
 
@@ -22,6 +23,11 @@ export const entities = [
   ...BuildingEntities,
   ...ComplexEntities,
   ...BuildingInspectionEntities
+]
+
+export const subscribers = [
+  /* SUBSCRIBERS */
+  ...BuildingInspectionSubscribers
 ]
 
 export const schema = {

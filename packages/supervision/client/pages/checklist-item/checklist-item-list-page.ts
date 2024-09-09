@@ -1,12 +1,15 @@
 import '@material/web/icon/icon.js'
-import '@operato/data-grist'
+import '@material/web/button/elevated-button.js'
+import '@operato/data-grist/ox-grist.js'
+import '@operato/data-grist/ox-filters-form.js'
+import '@operato/data-grist/ox-record-creator.js'
 
-import { CommonButtonStyles, CommonGristStyles, ScrollbarStyles } from '@operato/styles'
+import { CommonButtonStyles, CommonHeaderStyles, CommonGristStyles, ScrollbarStyles } from '@operato/styles'
 import { PageView, store } from '@operato/shell'
 import { css, html } from 'lit'
-import { customElement, property, query, state } from 'lit/decorators.js'
+import { customElement, property, query } from 'lit/decorators.js'
 import { ScopedElementsMixin } from '@open-wc/scoped-elements'
-import { ColumnConfig, DataGrist, FetchOption, SortersControl } from '@operato/data-grist'
+import { ColumnConfig, DataGrist, FetchOption } from '@operato/data-grist'
 import { client } from '@operato/graphql'
 import { i18next, localize } from '@operato/i18n'
 import { notify, openPopup } from '@operato/layout'
@@ -16,32 +19,50 @@ import { isMobileDevice } from '@operato/utils'
 import { connect } from 'pwa-helpers/connect-mixin'
 import gql from 'graphql-tag'
 
-@customElement('checklist-list-page')
-export class ChecklistListPage extends ScopedElementsMixin(PageView) {
+import { ChecklistItemImporter } from './checklist-item-importer'
+
+@customElement('checklist-item-list-page')
+export class ChecklistItemListPage extends connect(store)(localize(i18next)(ScopedElementsMixin(PageView))) {
+
   static styles = [
     ScrollbarStyles,
     CommonGristStyles,
+    CommonHeaderStyles,
     css`
       :host {
         display: flex;
 
         width: 100%;
 
-        --grid-record-emphasized-background-color: red;
-        --grid-record-emphasized-color: yellow;
+        --grid-record-emphasized-background-color: #8B0000;
+        --grid-record-emphasized-color: #FF6B6B;
+      }
+
+      ox-grist {
+        overflow-y: auto;
+        flex: 1;
+      }
+
+      ox-filters-form {
+        flex: 1;
       }
     `
   ]
 
-  @state() private gristConfig: any
-  @state() private mode: 'CARD' | 'GRID' | 'LIST' = isMobileDevice() ? 'CARD' : 'GRID'
+  static get scopedElements() {
+    return {
+      'checklist-item-importer': ChecklistItemImporter
+    }
+  }
+
+  @property({ type: Object }) gristConfig: any
+  @property({ type: String }) mode: 'CARD' | 'GRID' | 'LIST' = isMobileDevice() ? 'CARD' : 'GRID'
 
   @query('ox-grist') private grist!: DataGrist
-  @query('#sorter-control') private sortersControl!: OxPopup
 
   get context() {
     return {
-      title: i18next.t('title.checklist list'),
+      title: i18next.t('title.checklist-item list'),
       search: {
         handler: (search: string) => {
           this.grist.searchText = search
@@ -53,19 +74,26 @@ export class ChecklistListPage extends ScopedElementsMixin(PageView) {
           this.grist.toggleHeadroom()
         }
       },
-      help: 'project/checklist',
+      help: 'supervision/checklist-item',
       actions: [
         {
           title: i18next.t('button.save'),
-          action: this.updateChecklist.bind(this),
+          action: this._updateChecklistItem.bind(this),
           ...CommonButtonStyles.save
         },
         {
           title: i18next.t('button.delete'),
-          action: this.deleteChecklist.bind(this),
+          action: this._deleteChecklistItem.bind(this),
           ...CommonButtonStyles.delete
         }
-      ]
+      ],
+      exportable: {
+        name: i18next.t('title.checklist-item list'),
+        data: this.exportHandler.bind(this)
+      },
+      importable: {
+        handler: this.importHandler.bind(this)
+      }
     }
   }
 
@@ -73,33 +101,27 @@ export class ChecklistListPage extends ScopedElementsMixin(PageView) {
     const mode = this.mode || (isMobileDevice() ? 'CARD' : 'GRID')
 
     return html`
-      <ox-grist .mode=${mode} .config=${this.gristConfig} .fetchHandler=${this.fetchHandler.bind(this)}>
-        <div slot="headroom">
-          <div id="filters">
-            <ox-filters-form autofocus></ox-filters-form>
-          </div>
+      <ox-grist
+        .mode=${mode}
+        .config=${this.gristConfig}
+        .fetchHandler=${this.fetchHandler.bind(this)}
+      >
+        <div slot="headroom" class="header">
+          <div class="filters">
+            <ox-filters-form autofocus without-search></ox-filters-form>
 
-          <div id="sorters">
-            Sort
-            <md-icon
-              @click=${e => {
-                const target = e.currentTarget
-                this.sortersControl.open({
-                  right: 0,
-                  top: target.offsetTop + target.offsetHeight
-                })
-              }}
-              >expand_more</md-icon
-            >
-            <ox-popup id="sorter-control">
-              <ox-sorters-control> </ox-sorters-control>
-            </ox-popup>
-          </div>
+            <div id="modes">
+              <md-icon @click=${() => (this.mode = 'GRID')} ?active=${mode == 'GRID'}>grid_on</md-icon>
+              <md-icon @click=${() => (this.mode = 'LIST')} ?active=${mode == 'LIST'}>format_list_bulleted</md-icon>
+              <md-icon @click=${() => (this.mode = 'CARD')} ?active=${mode == 'CARD'}>apps</md-icon>
+            </div>
 
-          <div id="modes">
-            <md-icon @click=${() => (this.mode = 'GRID')} ?active=${mode == 'GRID'}>grid_on</md-icon>
-            <md-icon @click=${() => (this.mode = 'LIST')} ?active=${mode == 'LIST'}>format_list_bulleted</md-icon>
-            <md-icon @click=${() => (this.mode = 'CARD')} ?active=${mode == 'CARD'}>apps</md-icon>
+            <ox-record-creator id="add" .callback=${this.creationCallback.bind(this)}>
+              <button>
+                <md-icon>add</md-icon>
+              </button>
+            </ox-record-creator>
+
           </div>
         </div>
       </ox-grist>
@@ -170,6 +192,7 @@ export class ChecklistListPage extends ScopedElementsMixin(PageView) {
         }
       ],
       rows: {
+        appendable: false,
         selectable: {
           multiple: true
         }
@@ -192,7 +215,7 @@ export class ChecklistListPage extends ScopedElementsMixin(PageView) {
     const response = await client.query({
       query: gql`
         query ($filters: [Filter!], $pagination: Pagination, $sortings: [Sorting!]) {
-          responses: checklists(filters: $filters, pagination: $pagination, sortings: $sortings) {
+          responses: checklistItems(filters: $filters, pagination: $pagination, sortings: $sortings) {
             items {
               id
               name
@@ -221,7 +244,7 @@ export class ChecklistListPage extends ScopedElementsMixin(PageView) {
     }
   }
 
-  private async deleteChecklist() {
+  async _deleteChecklistItem() {
     if (
       await OxPrompt.open({
         title: i18next.t('text.are_you_sure'),
@@ -235,7 +258,7 @@ export class ChecklistListPage extends ScopedElementsMixin(PageView) {
         const response = await client.mutate({
           mutation: gql`
             mutation ($ids: [String!]!) {
-              deleteChecklists(ids: $ids)
+              deleteChecklistItems(ids: $ids)
             }
           `,
           variables: {
@@ -253,7 +276,7 @@ export class ChecklistListPage extends ScopedElementsMixin(PageView) {
     }
   }
 
-  private async updateChecklist() {
+  async _updateChecklistItem() {
     let patches = this.grist.dirtyRecords
     if (patches && patches.length) {
       patches = patches.map(patch => {
@@ -269,8 +292,8 @@ export class ChecklistListPage extends ScopedElementsMixin(PageView) {
 
       const response = await client.mutate({
         mutation: gql`
-          mutation ($patches: [ChecklistPatch!]!) {
-            updateMultipleChecklist(patches: $patches) {
+          mutation ($patches: [ChecklistItemPatch!]!) {
+            updateMultipleChecklistItem(patches: $patches) {
               name
             }
           }
@@ -285,4 +308,91 @@ export class ChecklistListPage extends ScopedElementsMixin(PageView) {
       }
     }
   }
+
+  async creationCallback(checklistItem) {
+    try {
+      const response = await client.query({
+        query: gql`
+          mutation ($checklistItem: NewChecklistItem!) {
+            createChecklistItem(checklistItem: $checklistItem) {
+              id
+            }
+          }
+        `,
+        variables: {
+          checklistItem
+        },
+        context: {
+          hasUpload: true
+        }
+      })
+
+      if (!response.errors) {
+        this.grist.fetch()
+        document.dispatchEvent(
+          new CustomEvent('notify', {
+            detail: {
+              message: i18next.t('text.data_created_successfully')
+            }
+          })
+        )
+      }
+
+      return true
+    } catch (ex) {
+      console.error(ex)
+      document.dispatchEvent(
+        new CustomEvent('notify', {
+          detail: {
+            type: 'error',
+            message: i18next.t('text.error')
+          }
+        })
+      )
+      return false
+    }
+  }
+
+  async exportHandler() {
+    const exportTargets = this.grist.selected.length ? this.grist.selected : this.grist.dirtyData.records
+    const targetFieldSet = new Set([
+      'id',
+      'name',
+      'description',
+      'active'
+    ])
+
+    return exportTargets.map(checklistItem => {
+      let tempObj = {}
+      for (const field of targetFieldSet) {
+        tempObj[field] = checklistItem[field]
+      }
+
+      return tempObj
+    })
+  }
+
+  async importHandler(records) {
+    const popup = openPopup(
+      html`
+        <checklist-item-importer
+          .checklistItems=${records}
+          @imported=${() => {
+            history.back()
+            this.grist.fetch()
+          }}
+        ></checklist-item-importer>
+      `,
+      {
+        backdrop: true,
+        size: 'large',
+        title: i18next.t('title.import checklist-item')
+      }
+    )
+    
+    popup.onclosed = () => {
+      this.grist.fetch()
+    }
+  }
 }
+

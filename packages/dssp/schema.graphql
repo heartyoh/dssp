@@ -557,6 +557,7 @@ input BuildingComplexPatch {
 type BuildingInspection {
   attatchments: [Attachment!]!
   buildingLevel: BuildingLevel
+  checklistId: String
   createdAt: DateTimeISO
   creator: User
   deletedAt: DateTimeISO

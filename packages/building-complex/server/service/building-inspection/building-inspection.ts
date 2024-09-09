@@ -7,7 +7,6 @@ import {
   Column,
   RelationId,
   ManyToOne,
-  OneToOne,
   PrimaryGeneratedColumn
 } from 'typeorm'
 import { ObjectType, Field, ID, registerEnumType } from 'type-graphql'
@@ -15,7 +14,6 @@ import { ObjectType, Field, ID, registerEnumType } from 'type-graphql'
 import { User } from '@things-factory/auth-base'
 import { BuildingLevel } from '../building-level/building-level'
 import { Attachment } from '@things-factory/attachment-base'
-// import { Checklist } from '@dssp/supervision/checklist'
 
 export enum BuildingInspectionStatus {
   REQUEST = 'REQUEST',
@@ -45,11 +43,6 @@ export class BuildingInspection {
   @Field({ nullable: true })
   status?: BuildingInspectionStatus
 
-  // 시공 검측 첨부 파일 정보 (하위 테이블 참조)
-  // @OneToOne(() => Checklist, checklist => checklist.buildingInspection)
-  // @Field(() => Checklist, { nullable: true })
-  // checklist?: Checklist
-
   // 층 정보 (1:1 테이블 참조)
   @ManyToOne(type => BuildingLevel)
   @Field({ nullable: true })
@@ -61,6 +54,11 @@ export class BuildingInspection {
   @Column({ nullable: false, comment: '검측 요청일' })
   @Field({ nullable: true })
   requestDate?: Date
+
+  // 체크리스트 ID (1:1 테이블 참조)
+  @Field({ nullable: true })
+  @Column({ nullable: true, comment: '체크리스트 ID' })
+  checklistId: string
 
   @CreateDateColumn()
   @Field({ nullable: true })
