@@ -33,7 +33,7 @@ export class ChecklistTemplateItem {
 
   // 체크리스트 템플릿 정보 (상위 테이블 참조)
   @ManyToOne(type => ChecklistTemplate)
-  @Field({ nullable: true })
+  @Field(type => ChecklistTemplate, { nullable: true })
   checklistTemplate?: ChecklistTemplate
 
   @RelationId((checklistTemplateItem: ChecklistTemplateItem) => checklistTemplateItem.checklistTemplate)
