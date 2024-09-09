@@ -9,13 +9,11 @@ import { css, html } from 'lit'
 import { customElement, state } from 'lit/decorators.js'
 import { ScopedElementsMixin } from '@open-wc/scoped-elements'
 import { client } from '@operato/graphql'
-import { openPopup } from '@operato/layout'
 
 import gql from 'graphql-tag'
 import { Project } from './project-list'
 import _getWeather from '../lib/waether'
 import '@operato/chart/ox-progress-circle.js'
-import '@dssp/building-complex/dist-client/pages/inspection-create-popup'
 
 export interface InspectionSummary {
   request: number
@@ -100,6 +98,11 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
           color: #2e79be;
           font-size: 18px;
           margin: 0px;
+
+          a {
+            text-decoration: none;
+            color: #2e79be;
+          }
         }
 
         & > div {
@@ -326,12 +329,6 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
                 --md-elevated-button-container-color: #e15757;
               }
             }
-
-            div[inspection-button-container] {
-              padding: 0 5px 10px 0;
-              margin-top: 10px;
-              text-align: right;
-            }
           }
         }
       }
@@ -543,7 +540,7 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
           </div>
 
           <div right-bottom>
-            <h3>검측 현황</h3>
+            <h3><a href=${`building-inspection/${this.projectId}`}>검측 현황</a></h3>
             <div table-container>
               <hr />
               <table>
@@ -572,10 +569,6 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
                   })}
                 </tbody>
               </table>
-            </div>
-
-            <div inspection-button-container>
-              <md-elevated-button @click=${this._openCreateInspection}>등록</md-elevated-button>
             </div>
           </div>
         </div>
@@ -663,16 +656,5 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
     }
 
     console.log('init project : ', this.project)
-  }
-
-  _openCreateInspection() {
-    openPopup(
-      html` <inspection-create-popup .projectId=${this.project.id} @requestRefresh="${() => {}}"></inspection-create-popup> `,
-      {
-        backdrop: true,
-        size: 'large',
-        title: '검측 요청서 등록'
-      }
-    )
   }
 }

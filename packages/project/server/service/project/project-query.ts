@@ -43,7 +43,7 @@ export class ProjectQuery {
   ): Promise<BuildingInspectionSummary> {
     const { domain } = context.state
 
-    // TOTO 수정
+    // TODO 수정
     return {
       request: 0,
       pass: 0,
