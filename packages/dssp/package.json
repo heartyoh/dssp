@@ -41,6 +41,7 @@
   "dependencies": {
     "@dssp/building-complex": "^0.0.9",
     "@dssp/project": "^0.0.9",
+    "@dssp/supervision": "^0.0.9",
     "@material/web": "^2.1.0",
     "@operato/chart": "^8.0.0-alpha",
     "@operato/gantt": "^8.0.0-alpha",

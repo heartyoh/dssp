@@ -592,83 +592,6 @@ type ChatCompletionOutput {
   message: String
 }
 
-"""Entity for ChecklistTemplate"""
-type ChecklistTemplate {
-  checklistTemplateItems: ChecklistTemplateItem!
-  createdAt: DateTimeISO
-  creator: User
-  deletedAt: DateTimeISO
-  domain: Domain
-  id: ID!
-  name: String
-  updatedAt: DateTimeISO
-  updater: User
-}
-
-"""Entity for ChecklistTemplateItem"""
-type ChecklistTemplateItem {
-  checklistTemplate: ChecklistTemplate
-  createdAt: DateTimeISO
-  creator: User
-  detailType: String!
-  id: ID!
-  mainType: String!
-  name: String!
-  sequence: Int
-  updatedAt: DateTimeISO
-  updater: User
-}
-
-type ChecklistTemplateItemList {
-  items: [ChecklistTemplateItem!]!
-  total: Int!
-}
-
-input ChecklistTemplateItemPatch {
-  checklistTemplateId: String
-  cuFlag: String
-  detailType: String
-  id: ID
-  mainType: String
-  name: String
-  sequence: Int
-}
-
-type ChecklistTemplateList {
-  items: [ChecklistTemplate!]!
-  total: Int!
-}
-
-input ChecklistTemplatePatch {
-  cuFlag: String
-  id: ID
-  name: String
-}
-
-"""Entity for ChecklistType"""
-type ChecklistType {
-  createdAt: DateTimeISO
-  creator: User
-  detailType: String!
-  domain: Domain
-  id: ID!
-  mainType: String!
-  updatedAt: DateTimeISO
-  updater: User
-}
-
-type ChecklistTypeList {
-  items: [ChecklistType!]!
-  total: Int!
-}
-
-input ChecklistTypePatch {
-  cuFlag: String
-  detailType: String
-  id: ID
-  mainType: String
-}
-
 input CodeDecipherInput {
   code: String!
   language: String
@@ -2060,18 +1983,6 @@ type Mutation {
   """To delete multiple Buildings"""
   deleteBuildings(ids: [String!]!): Boolean!
 
-  """To delete ChecklistTemplateItem"""
-  deleteChecklistTemplateItem(id: String!): Boolean!
-
-  """To delete multiple ChecklistTemplateItems"""
-  deleteChecklistTemplateItems(ids: [String!]!): Boolean!
-
-  """To delete multiple ChecklistTemplates"""
-  deleteChecklistTemplates(ids: [String!]!): Boolean!
-
-  """To delete multiple ChecklistTypes"""
-  deleteChecklistTypes(ids: [String!]!): Boolean!
-
   """To delete CommonCode"""
   deleteCommonCode(id: String!): Boolean!
 
@@ -2601,15 +2512,6 @@ type Mutation {
 
   """To modify multiple BuildingComplexes' information"""
   updateMultipleBuildingComplex(patches: [BuildingComplexPatch!]!): [BuildingComplex!]!
-
-  """To modify multiple ChecklistTemplates' information"""
-  updateMultipleChecklistTemplate(patches: [ChecklistTemplatePatch!]!): [ChecklistTemplate!]!
-
-  """To modify multiple ChecklistTemplateItems' information"""
-  updateMultipleChecklistTemplateItems(checklistTemplateId: String!, patches: [ChecklistTemplateItemPatch!]!): [ChecklistTemplateItem!]!
-
-  """To modify multiple ChecklistTypes' information"""
-  updateMultipleChecklistType(patches: [ChecklistTypePatch!]!): [ChecklistType!]!
 
   """To modify multiple CommonCodes' information"""
   updateMultipleCommonCode(patches: [CommonCodePatch!]!): [CommonCode!]!
@@ -4091,18 +3993,6 @@ type Query {
 
   """Checks if a user with the given email address exists in the system."""
   checkUserExistence(email: EmailAddress!): Boolean!
-
-  """To fetch a ChecklistTemplateItem"""
-  checklistTemplateItem(id: String!): ChecklistTemplateItem
-
-  """To fetch multiple ChecklistTemplateItems"""
-  checklistTemplateItems(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): ChecklistTemplateItemList!
-
-  """To fetch multiple ChecklistTemplates"""
-  checklistTemplates(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): ChecklistTemplateList!
-
-  """To fetch multiple ChecklistTypes"""
-  checklistTypes(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): ChecklistTypeList!
 
   """To fetch common approval lines"""
   commonApprovalLines(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): ApprovalLineList!

@@ -4,12 +4,13 @@ import bootstrap from './dist-client/bootstrap'
 export default {
   route,
   routes: [
-    { tagname: 'supervision-main', page: 'supervision-main' },
-    { tagname: 'supervisor-list-page', page: 'supervisor-list' },
-    { tagname: 'project-report-list-page', page: 'project-report-list' },
-    { tagname: 'check-item-list-page', page: 'check-item-list' },
-    { tagname: 'issue-list-page', page: 'issue-list' },
-    { tagname: 'action-plan-list-page', page: 'action-plan-list' }
-  ],
+    'checklist-template-list', // 체크리스트 템플릿
+    'checklist-type-management', // 체크리스트 구분 관리
+  ].map(page => {
+    return {
+      page,
+      tagname: page
+    }
+  }),
   bootstrap
 }
