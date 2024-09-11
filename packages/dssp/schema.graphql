@@ -553,13 +553,11 @@ input BuildingComplexPatch {
   supervisoryCompany: String
 }
 
-"""시공 검측 (층별 도면의 검측 리스트)"""
 type BuildingInspection {
   attatchments: [Attachment!]!
   buildingInspectionSummary: BuildingInspectionSummary!
-  buildingInspections: [BuildingInspection!]!
   buildingLevel: BuildingLevel
-  checklistId: String
+  checklist: Checklist
   createdAt: DateTimeISO
   creator: User
   deletedAt: DateTimeISO
@@ -568,6 +566,11 @@ type BuildingInspection {
   status: String
   updatedAt: DateTimeISO
   updater: User
+}
+
+type BuildingInspectionList {
+  items: [BuildingInspection!]!
+  total: Int!
 }
 
 type BuildingInspectionSummary {
@@ -624,9 +627,8 @@ type ChatCompletionOutput {
   message: String
 }
 
-"""체크리스트"""
 type Checklist {
-  buildingInspection: BuildingInspection
+  buildingInspection: BuildingInspection!
   checklistItems: ChecklistItem!
   constructionDetailType: String
   constructionInspectorDate: DateTimeISO
@@ -635,7 +637,7 @@ type Checklist {
   creator: User
   deletedAt: DateTimeISO
   documentNo: String
-  id: ID
+  id: ID!
   location: String
   name: String
   overallConstructionSignature: String
@@ -657,7 +659,6 @@ input ChecklistInputType {
   part: String!
 }
 
-"""체크 리스트 항목"""
 type ChecklistItem {
   action: String
   checklist: Checklist
@@ -699,7 +700,6 @@ input ChecklistPatch {
   name: String
 }
 
-"""Entity for ChecklistTemplate"""
 type ChecklistTemplate {
   checklistTemplateItems: ChecklistTemplateItem!
   createdAt: DateTimeISO
@@ -712,7 +712,6 @@ type ChecklistTemplate {
   updater: User
 }
 
-"""Entity for ChecklistTemplateItem"""
 type ChecklistTemplateItem {
   checklistTemplate: ChecklistTemplate
   createdAt: DateTimeISO
@@ -752,7 +751,6 @@ input ChecklistTemplatePatch {
   name: String
 }
 
-"""Entity for ChecklistType"""
 type ChecklistType {
   createdAt: DateTimeISO
   creator: User
@@ -4396,6 +4394,9 @@ type Query {
 
   """프로젝트의 검측상태 별 카운트"""
   buildingInspectionSummaryOfProject(projectId: String!): BuildingInspectionSummary!
+
+  """To fetch multiple BuildingInspections"""
+  buildingInspections(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): BuildingInspectionList!
   chatCompletion(input: ChatCompletionInput!): ChatCompletionOutput!
 
   """

@@ -24,9 +24,9 @@ registerEnumType(ChecklistItemConfirmStatus, {
   description: '적합 상태'
 })
 
-@Entity()
+@Entity({ comment: '체크 리스트 항목' })
 @Index('ix_checklist_item_0', (checklistItem: ChecklistItem) => [checklistItem.checklist], { where: '"deleted_at" IS NULL' })
-@ObjectType({ description: '체크 리스트 항목' })
+@ObjectType()
 export class ChecklistItem {
   @PrimaryGeneratedColumn('uuid')
   @Field(type => ID)

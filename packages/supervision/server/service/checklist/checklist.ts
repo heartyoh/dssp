@@ -19,9 +19,9 @@ import { Task } from '@dssp/project'
 import { ChecklistItem } from '../checklist-item/checklist-item'
 import { BuildingInspection } from '../building-inspection/building-inspection'
 
-@Entity()
+@Entity({ comment: '체크리스트' })
 @Index('ix_checklist_0', (checklist: Checklist) => [checklist.task], { where: '"deleted_at" IS NULL' })
-@ObjectType({ description: '체크리스트' })
+@ObjectType()
 export class Checklist {
   @PrimaryGeneratedColumn('uuid')
   @Field(type => ID)
@@ -89,9 +89,9 @@ export class Checklist {
   @Field(() => ChecklistItem)
   checklistItems?: ChecklistItem[]
 
-  // 검측 정보 (1:1 테이블 참조)
-  @Field(() => BuildingInspection, { nullable: true })
-  @OneToOne(() => BuildingInspection)
+  // 검측 정보 (1:1 하위 테이블 참조)
+  @OneToOne(() => BuildingInspection, buildingInspection => buildingInspection.checklist)
+  @Field(() => BuildingInspection)
   buildingInspection?: BuildingInspection
 
   @CreateDateColumn()

@@ -1,9 +1,10 @@
-import { Resolver, Query, FieldResolver, Root, Arg, Ctx } from 'type-graphql'
+import { Resolver, Query, FieldResolver, Root, Arg, Args, Ctx } from 'type-graphql'
 import { Attachment } from '@things-factory/attachment-base'
-import { getRepository } from '@things-factory/shell'
+import { getRepository, getQueryBuilderFromListParams, ListParam } from '@things-factory/shell'
 import { BuildingInspection, BuildingInspectionStatus } from './building-inspection'
-import { BuildingInspectionSummary } from './building-inspection-type'
+import { BuildingInspectionList, BuildingInspectionSummary } from './building-inspection-type'
 import { BuildingLevel } from '@dssp/building-complex'
+import { Checklist } from '../checklist/checklist'
 
 @Resolver(BuildingInspection)
 export class BuildingInspectionQuery {
@@ -12,6 +13,21 @@ export class BuildingInspectionQuery {
     return await getRepository(BuildingInspection).findOne({
       where: { id }
     })
+  }
+
+  @Query(returns => BuildingInspectionList, { description: 'To fetch multiple BuildingInspections' })
+  async buildingInspections(@Args() params: ListParam, @Ctx() context: ResolverContext): Promise<BuildingInspectionList> {
+    const { domain } = context.state
+
+    const queryBuilder = getQueryBuilderFromListParams({
+      params,
+      repository: await getRepository(BuildingInspection),
+      searchables: ['name']
+    })
+
+    const [items, total] = await queryBuilder.getManyAndCount()
+
+    return { items, total }
   }
 
   // 층 별로 검수 개수 써머리
@@ -34,11 +50,6 @@ export class BuildingInspectionQuery {
       pass: buildingInspectionSummary?.pass || 0,
       fail: buildingInspectionSummary?.fail || 0
     }
-  }
-
-  @FieldResolver(type => [BuildingInspection])
-  async buildingInspections(@Root() buildingLevel: BuildingLevel): Promise<BuildingInspection[]> {
-    return await getRepository(BuildingInspection).findBy({ buildingLevel: { id: buildingLevel.id } })
   }
 
   // 층 별로 검수 개수 써머리
@@ -93,6 +104,11 @@ export class BuildingInspectionQuery {
     //   pass: result.pass || 0,
     //   fail: result.fail || 0
     // }
+  }
+
+  @FieldResolver(type => Checklist)
+  async checklist(@Root() buildingInspection: BuildingInspection): Promise<Checklist> {
+    return await getRepository(Checklist).findOneBy({ id: buildingInspection.checklistId })
   }
 
   @FieldResolver(type => [Attachment])

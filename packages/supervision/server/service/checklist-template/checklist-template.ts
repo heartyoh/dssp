@@ -16,12 +16,12 @@ import { Domain } from '@things-factory/shell'
 import { User } from '@things-factory/auth-base'
 import { ChecklistTemplateItem } from '../checklist-template-item/checklist-template-item'
 
-@Entity()
+@Entity({ comment: '체크리스트 템플릿' })
 @Index('ix_checklist_template_0', (checklistTemplate: ChecklistTemplate) => [checklistTemplate.domain, checklistTemplate.name], {
   unique: true,
   where: '"deleted_at" IS NULL'
 })
-@ObjectType({ description: 'Entity for ChecklistTemplate' })
+@ObjectType()
 export class ChecklistTemplate {
   @PrimaryGeneratedColumn('uuid')
   @Field(type => ID)

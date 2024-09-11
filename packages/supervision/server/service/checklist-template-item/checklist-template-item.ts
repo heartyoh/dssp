@@ -5,11 +5,11 @@ import { User } from '@things-factory/auth-base'
 import { ChecklistTemplate } from '../checklist-template/checklist-template'
 import { ChecklistTypeMainType } from '../checklist-type/checklist-type'
 
-@Entity()
+@Entity({ comment: '체크리스트 템플릿 아이템' })
 @Index('ix_checklist_template_item_0', (checklistTemplateItem: ChecklistTemplateItem) => [checklistTemplateItem.name], {
   unique: true
 })
-@ObjectType({ description: 'Entity for ChecklistTemplateItem' })
+@ObjectType()
 export class ChecklistTemplateItem {
   @PrimaryGeneratedColumn('uuid')
   @Field(type => ID)

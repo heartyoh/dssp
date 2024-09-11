@@ -422,7 +422,7 @@ class InspectionCreatePopup extends LitElement {
     }
   }
 
-  async fetchHandler(checklistTemplateId: string) {
+  async fetchHandler() {
     const response = await client.query({
       query: gql`
         query ($filters: [Filter!], $pagination: Pagination, $sortings: [Sorting!]) {
@@ -474,7 +474,7 @@ class InspectionCreatePopup extends LitElement {
       name: this.checklistName,
       constructionType: this.htmlSelectConstructionType.displayText,
       constructionDetailType: this.htmlSelectConstructionDetailType.displayText,
-      part: `${this.htmlSelectBuilding.displayText}동 ${this.htmlSelectLevel.displayText}층`,
+      part: `${this.htmlSelectBuilding.displayText} ${this.htmlSelectLevel.displayText}층`,
       location: ''
     }
     patch.checklistItem = this.grist.exportRecords().map(row => {

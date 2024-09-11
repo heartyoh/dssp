@@ -7,12 +7,15 @@ import {
   Column,
   RelationId,
   ManyToOne,
-  PrimaryGeneratedColumn
+  OneToOne,
+  PrimaryGeneratedColumn,
+  JoinColumn
 } from 'typeorm'
 import { ObjectType, Field, ID, registerEnumType } from 'type-graphql'
 
 import { User } from '@things-factory/auth-base'
 import { BuildingLevel } from '@dssp/building-complex'
+import { Checklist } from '../checklist/checklist'
 
 export enum BuildingInspectionStatus {
   REQUEST = 'REQUEST',
@@ -25,14 +28,17 @@ registerEnumType(BuildingInspectionStatus, {
   description: '검측 상태'
 })
 
-@Entity()
+@Entity({ comment: '시공 검측 (층별 도면의 검측 리스트)' })
 @Index('ix_building_inspection_0', (buildingInspection: BuildingInspection) => [buildingInspection.buildingLevel], {
   where: '"deleted_at" IS NULL'
 })
-@Index('ix_building_inspection_1', (buildingInspection: BuildingInspection) => [buildingInspection.requestDate], {
+@Index('ix_building_inspection_1', (buildingInspection: BuildingInspection) => [buildingInspection.checklist], {
   where: '"deleted_at" IS NULL'
 })
-@ObjectType({ description: '시공 검측 (층별 도면의 검측 리스트)' })
+@Index('ix_building_inspection_2', (buildingInspection: BuildingInspection) => [buildingInspection.requestDate], {
+  where: '"deleted_at" IS NULL'
+})
+@ObjectType()
 export class BuildingInspection {
   @PrimaryGeneratedColumn('uuid')
   @Field(type => ID)
@@ -42,22 +48,26 @@ export class BuildingInspection {
   @Field({ nullable: true })
   status?: BuildingInspectionStatus
 
-  // 층 정보 (1:1 테이블 참조)
-  @ManyToOne(type => BuildingLevel)
+  @Column({ nullable: false, comment: '검측 요청일' })
   @Field({ nullable: true })
+  requestDate?: Date
+
+  // 층 정보 (1:1 상위 테이블 참조)
+  @ManyToOne(type => BuildingLevel)
+  @Field(() => BuildingLevel, { nullable: true })
   buildingLevel?: BuildingLevel
 
   @RelationId((buildingInspection: BuildingInspection) => buildingInspection.buildingLevel)
   buildingLevelId?: string
 
-  @Column({ nullable: false, comment: '검측 요청일' })
-  @Field({ nullable: true })
-  requestDate?: Date
+  // 체크리스트 (1:1 상위 테이블 참조)
+  @OneToOne(type => Checklist)
+  @JoinColumn()
+  @Field(() => Checklist, { nullable: true })
+  checklist?: Checklist
 
-  // 체크리스트 ID (1:1 테이블 참조)
-  @Field({ nullable: true })
-  @Column({ nullable: true, comment: '체크리스트 ID' })
-  checklistId: string
+  @RelationId((buildingInspection: BuildingInspection) => buildingInspection.checklist)
+  checklistId?: string
 
   @CreateDateColumn()
   @Field({ nullable: true })

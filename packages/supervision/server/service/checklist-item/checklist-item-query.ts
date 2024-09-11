@@ -21,7 +21,6 @@ export class ChecklistItemQuery {
     const { domain } = context.state
 
     const queryBuilder = getQueryBuilderFromListParams({
-      domain,
       params,
       repository: await getRepository(ChecklistItem),
       searchables: ['name', 'description']

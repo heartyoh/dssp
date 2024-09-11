@@ -1,6 +1,5 @@
 import { ObjectType, Field, InputType, Int, ID } from 'type-graphql'
-import { Checklist } from '../checklist/checklist'
-import { ChecklistItem } from '../checklist-item/checklist-item'
+import { BuildingInspection } from './building-inspection'
 
 @InputType()
 class ChecklistInputType {
@@ -54,4 +53,13 @@ export class BuildingInspectionSummary {
 
   @Field(type => Int, { description: '검사 실패 수' })
   fail: number
+}
+
+@ObjectType()
+export class BuildingInspectionList {
+  @Field(type => [BuildingInspection])
+  items: BuildingInspection[]
+
+  @Field(type => Int)
+  total: number
 }

@@ -13,13 +13,13 @@ registerEnumType(ChecklistTypeMainType, {
   description: '체크리스트 구분 메인 구분'
 })
 
-@Entity()
+@Entity({ comment: '체크리스트 구분' })
 @Index(
   'ix_checklist_type_0',
   (checklistType: ChecklistType) => [checklistType.domain, checklistType.mainType, checklistType.detailType],
   { unique: true }
 )
-@ObjectType({ description: 'Entity for ChecklistType' })
+@ObjectType()
 export class ChecklistType {
   @PrimaryGeneratedColumn('uuid')
   @Field(type => ID)

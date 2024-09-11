@@ -23,6 +23,17 @@ export const CHECKLIST_MAIN_TYPE_LIST = {
   [ChecklistTypeMainType.NON_BASIC]: '기본 외 업무'
 }
 
+export enum BuildingInspectionStatus {
+  REQUEST = 'REQUEST',
+  PASS = 'PASS',
+  FAIL = 'FAIL'
+}
+export const BUILDING_INSPECTION_STATUS = {
+  [BuildingInspectionStatus.REQUEST]: '요청',
+  [BuildingInspectionStatus.PASS]: '합격',
+  [BuildingInspectionStatus.FAIL]: '불합격'
+}
+
 @customElement('building-inspection-list')
 export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
   static styles = [
@@ -87,44 +98,52 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
         { type: 'gutter', gutterName: 'sequence' },
         { type: 'gutter', gutterName: 'row-selector', multiple: true },
         {
-          type: 'select',
-          name: 'mainType',
+          type: 'string',
+          name: 'part',
           header: '검측 위치',
-          filter: 'search',
-          sortable: true,
           width: 150
         },
         {
           type: 'string',
-          name: 'detailType',
+          name: 'constructionType',
           header: '공종',
-          filter: 'search',
-          sortable: true,
-          width: 250
+          width: 120
         },
         {
           type: 'string',
-          name: 'updater',
-          header: '내용',
+          name: 'constructionDetailType',
+          header: '세부 공종',
+          width: 200
+        },
+        {
+          type: 'string',
+          name: 'requestDate',
+          header: '검측 요청일',
+          record: {
+            renderer: value =>
+              value
+                ? new Intl.DateTimeFormat('en-CA', {
+                    timeZone: 'Asia/Seoul',
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit'
+                  }).format(new Date(value))
+                : ''
+          },
+          width: 120
+        },
+        {
+          type: 'string',
+          name: 'status',
+          header: '검측 결과',
+          record: {
+            renderer: value => BUILDING_INSPECTION_STATUS[value]
+          },
           width: 120
         },
         {
           type: 'datetime',
-          name: 'updatedAt',
-          header: '검측 요청일',
-          sortable: true,
-          width: 180
-        },
-        {
-          type: 'datetime',
-          name: 'updatedAt',
-          header: '검측 결과',
-          sortable: true,
-          width: 180
-        },
-        {
-          type: 'datetime',
-          name: 'updatedAt',
+          name: '',
           header: '검측 결과 데이터',
           sortable: true,
           width: 180
@@ -135,24 +154,27 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
           multiple: true
         }
       },
-      sorters: [{ name: 'updatedAt' }, { name: 'mainType' }, { name: 'detailType' }]
+      sorters: [{ name: 'requestDate' }]
     }
   }
 
   async fetchHandler({ page = 1, limit = 100, sortings = [], filters = [] }: FetchOption) {
     const response = await client.query({
       query: gql`
-        query ($filters: [Filter!], $pagination: Pagination, $sortings: [Sorting!]) {
-          responses: checklistTypes(filters: $filters, pagination: $pagination, sortings: $sortings) {
+        query BuildingInspections($filters: [Filter!], $pagination: Pagination) {
+          buildingInspections(filters: $filters, pagination: $pagination) {
             items {
               id
-              mainType
-              detailType
-              updater {
+              status
+              requestDate
+              checklist {
                 id
                 name
+                constructionType
+                constructionDetailType
+                part
+                location
               }
-              updatedAt
             }
             total
           }
@@ -165,9 +187,18 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
       }
     })
 
+    let items = response.data.buildingInspections?.items || []
+    items = items.map(item => ({
+      part: item.checklist.part,
+      constructionType: item.checklist.constructionType,
+      constructionDetailType: item.checklist.constructionDetailType,
+      requestDate: item.requestDate,
+      status: item.status
+    }))
+
     return {
-      total: response.data.responses.total || 0,
-      records: response.data.responses.items || []
+      total: response.data.buildingInspections.total || 0,
+      records: items
     }
   }
 
