@@ -13,7 +13,6 @@ import { ObjectType, Field, ID, registerEnumType } from 'type-graphql'
 
 import { User } from '@things-factory/auth-base'
 import { BuildingLevel } from '@dssp/building-complex'
-import { Attachment } from '@things-factory/attachment-base'
 
 export enum BuildingInspectionStatus {
   REQUEST = 'REQUEST',
@@ -39,7 +38,7 @@ export class BuildingInspection {
   @Field(type => ID)
   readonly id: string
 
-  @Column({ nullable: false, comment: '상태(REQUEST: 요청, PASS: 합격, FAIL: 불합격)' })
+  @Column({ nullable: false, comment: '상태(REQUEST: 요청, PASS: 합격, FAIL: 불합격)', default: 'REQUEST' })
   @Field({ nullable: true })
   status?: BuildingInspectionStatus
 

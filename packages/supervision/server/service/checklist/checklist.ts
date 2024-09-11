@@ -12,7 +12,7 @@ import {
   JoinColumn,
   PrimaryGeneratedColumn
 } from 'typeorm'
-import { ObjectType, Field, ID } from 'type-graphql'
+import { ObjectType, Field, ID, registerEnumType } from 'type-graphql'
 
 import { User } from '@things-factory/auth-base'
 import { Task } from '@dssp/project'
@@ -35,11 +35,19 @@ export class Checklist {
   @Field({ nullable: true })
   documentNo?: string
 
-  @Column({ nullable: true, comment: '부위 (x동 x층)' })
+  @Column({ nullable: false, comment: '공종' })
+  @Field({ nullable: true })
+  constructionType?: string
+
+  @Column({ nullable: false, comment: '세부 공종' })
+  @Field({ nullable: true })
+  constructionDetailType?: string
+
+  @Column({ nullable: false, comment: '부위 (x동 x층)' })
   @Field({ nullable: true })
   part?: string
 
-  @Column({ nullable: true, comment: '위치' })
+  @Column({ nullable: false, comment: '위치' })
   @Field({ nullable: true })
   location?: string
 

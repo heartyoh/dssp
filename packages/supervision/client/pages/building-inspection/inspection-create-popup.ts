@@ -79,6 +79,7 @@ class InspectionCreatePopup extends LitElement {
   @state() selectedConstructionDetailType: any = {}
 
   @state() checklistTemplates: any = []
+  @state() checklistName: string = ''
 
   @query('md-filled-select[building]') htmlSelectBuilding
   @query('md-filled-select[level]') htmlSelectLevel
@@ -96,7 +97,7 @@ class InspectionCreatePopup extends LitElement {
             <span>세부 정보</span>
           </div>
 
-          <div select>
+          <div>
             <md-filled-select label="공종" constructionType @change=${this._onSelectConstructionType}>
               ${this.constructionTypes?.map(constructionType => {
                 const selected = constructionType.id === this.selectedConstructionType?.id
@@ -116,7 +117,7 @@ class InspectionCreatePopup extends LitElement {
             </md-filled-select>
           </div>
 
-          <div select>
+          <div>
             <md-filled-select label="동" building @change=${this._onSelectBuilding}>
               ${this.buildings?.map(building => {
                 return html` <md-select-option .value=${building.id}>
@@ -139,7 +140,7 @@ class InspectionCreatePopup extends LitElement {
             <span>체크리스트</span>
           </div>
 
-          <div select>
+          <div>
             <label>체크리스트 템플릿 불러오기</label>
 
             <md-filled-select label="템플릿" checklistTemplate @change=${this._onSelectChecklistTemplate}>
@@ -150,6 +151,17 @@ class InspectionCreatePopup extends LitElement {
                 </md-select-option>`
               })}
             </md-filled-select>
+          </div>
+
+          <div>
+            <md-filled-text-field
+              name="checklistName"
+              type="text"
+              label="체크리스트 이름"
+              .value=${this.checklistName}
+              @input=${this._onInputChange}
+            >
+            </md-filled-text-field>
           </div>
 
           <ox-grist .mode=${'GRID'} .config=${this.gristConfig} .fetchHandler=${this.fetchHandler.bind(this)}> </ox-grist>
@@ -443,45 +455,60 @@ class InspectionCreatePopup extends LitElement {
   private _onSelectChecklistTemplate(e) {
     const checklistTemplateId = e.target.value
 
+    // 그리드 아이템 셋팅
     if (checklistTemplateId) {
       this.checklistTemplateId = checklistTemplateId
       this.grist.fetch()
     }
+
+    // 체크 리스트 이름 셋팅
+    this.checklistName = e.target.displayText
   }
 
   async _createInspection() {
-    const patches = {}
+    let patch: any = {}
+    const checklistDetailTypes = Object.fromEntries(this.checklistDetailTypes.map(item => [item.value, item.display]))
 
-    const constructionType = this.htmlSelectConstructionType.displayText
-    const constructionDetailType = this.htmlSelectConstructionDetailType.displayText
-    const part = `${this.htmlSelectBuilding.displayText}동 ${this.htmlSelectLevel.displayText}층`
-
-    const grist = this.grist
-
-    console.log('this.htmlSelectBuilding : ', this.htmlSelectBuilding.displayText)
-    console.log('this.htmlSelectLevel : ', this.htmlSelectLevel.displayText)
-    console.log('this.htmlSelectConstructionType : ', this.htmlSelectConstructionType.displayText)
-    console.log('this.htmlSelectConstructionDetailType : ', this.htmlSelectConstructionDetailType.displayText)
-    console.log('this.grist : ', grist)
+    patch.buildingLevelId = this.htmlSelectLevel.value
+    patch.checklist = {
+      name: this.checklistName,
+      constructionType: this.htmlSelectConstructionType.displayText,
+      constructionDetailType: this.htmlSelectConstructionDetailType.displayText,
+      part: `${this.htmlSelectBuilding.displayText}동 ${this.htmlSelectLevel.displayText}층`,
+      location: ''
+    }
+    patch.checklistItem = this.grist.exportRecords().map(row => {
+      return {
+        name: row.name,
+        mainType: CHECKLIST_MAIN_TYPE_LIST[row.mainType],
+        detailType: checklistDetailTypes[row.detailType]
+      }
+    })
 
     const response = await client.mutate({
       mutation: gql`
-        mutation CreateBuildingInspection($patch: BuildingInspectionPatch!) {
+        mutation CreateBuildingInspection($patch: NewBuildingInspection!) {
           createBuildingInspection(patch: $patch) {
             id
           }
         }
       `,
       variables: {
-        patches
+        patch
       }
     })
 
     if (!response.errors) {
       notify({ message: '검측 요청서를 등록하였습니다.' })
       this.requestRefresh()
+      this._close()
     } else {
       notify({ message: '검측 요청서 등록에 실패하였습니다.', level: 'error' })
     }
+  }
+  // Input 요소의 값이 변경될 때 호출되는 콜백 함수
+  private _onInputChange(event: InputEvent) {
+    const target = event.target as HTMLInputElement
+    this[target.name] = target.value
   }
 }

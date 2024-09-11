@@ -570,15 +570,6 @@ type BuildingInspection {
   updater: User
 }
 
-input BuildingInspectionPatch {
-  buildingId: String
-  buildingLevelId: String
-  checklistTemplateId: String
-  constructionDetailTypeId: String
-  constructionTypeId: String
-  id: ID
-}
-
 type BuildingInspectionSummary {
   """검사 실패 수"""
   fail: Int!
@@ -637,12 +628,14 @@ type ChatCompletionOutput {
 type Checklist {
   buildingInspection: BuildingInspection
   checklistItems: ChecklistItem!
+  constructionDetailType: String
   constructionInspectorDate: DateTimeISO
+  constructionType: String
   createdAt: DateTimeISO
   creator: User
   deletedAt: DateTimeISO
   documentNo: String
-  id: ID!
+  id: ID
   location: String
   name: String
   overallConstructionSignature: String
@@ -656,6 +649,14 @@ type Checklist {
   updater: User
 }
 
+input ChecklistInputType {
+  constructionDetailType: String!
+  constructionType: String!
+  location: String
+  name: String!
+  part: String!
+}
+
 """체크 리스트 항목"""
 type ChecklistItem {
   action: String
@@ -667,24 +668,22 @@ type ChecklistItem {
   deletedAt: DateTimeISO
   detailType: String!
   id: ID!
+  mainType: String!
   name: String
   supervisoryConfirmStatus: String
-  type: String!
   updatedAt: DateTimeISO
   updater: User
+}
+
+input ChecklistItemInputType {
+  detailType: String!
+  mainType: String!
+  name: String!
 }
 
 type ChecklistItemList {
   items: [ChecklistItem!]!
   total: Int!
-}
-
-input ChecklistItemPatch {
-  active: Boolean
-  cuFlag: String
-  description: String
-  id: ID
-  name: String
 }
 
 type ChecklistList {
@@ -2043,13 +2042,10 @@ type Mutation {
   createBoardTemplate(boardTemplate: NewBoardTemplate!): BoardTemplate!
 
   """To create Building Inspection information"""
-  createBuildingInspection(patch: BuildingInspectionPatch!): BuildingInspection!
+  createBuildingInspection(patch: NewBuildingInspection!): BuildingInspection!
 
   """To create new Checklist"""
   createChecklist(checklist: NewChecklist!): Checklist!
-
-  """To create new ChecklistItem"""
-  createChecklistItem(checklistItem: NewChecklistItem!): ChecklistItem!
 
   """To create new CommonCode"""
   createCommonCode(commonCode: NewCommonCode!): CommonCode!
@@ -2230,12 +2226,6 @@ type Mutation {
 
   """To delete multiple Buildings"""
   deleteBuildings(ids: [String!]!): Boolean!
-
-  """To delete ChecklistItem"""
-  deleteChecklistItem(id: String!): Boolean!
-
-  """To delete multiple ChecklistItems"""
-  deleteChecklistItems(ids: [String!]!): Boolean!
 
   """To delete ChecklistTemplateItem"""
   deleteChecklistTemplateItem(id: String!): Boolean!
@@ -2746,9 +2736,6 @@ type Mutation {
   """To modify Checklist information"""
   updateChecklist(id: String!, patch: ChecklistPatch!): Checklist!
 
-  """To modify ChecklistItem information"""
-  updateChecklistItem(id: String!, patch: ChecklistItemPatch!): ChecklistItem!
-
   """To modify CommonCode information"""
   updateCommonCode(name: String!, patch: CommonCodePatch!): CommonCode!
 
@@ -2829,9 +2816,6 @@ type Mutation {
 
   """To modify multiple Checklists' information"""
   updateMultipleChecklist(patches: [ChecklistPatch!]!): [Checklist!]!
-
-  """To modify multiple ChecklistItems' information"""
-  updateMultipleChecklistItem(patches: [ChecklistItemPatch!]!): [ChecklistItem!]!
 
   """To modify multiple ChecklistTemplates' information"""
   updateMultipleChecklistTemplate(patches: [ChecklistTemplatePatch!]!): [ChecklistTemplate!]!
@@ -3110,14 +3094,13 @@ input NewBoardTemplate {
   visibility: String!
 }
 
-input NewChecklist {
-  active: Boolean
-  description: String
-  name: String!
-  params: String
+input NewBuildingInspection {
+  buildingLevelId: String!
+  checklist: ChecklistInputType!
+  checklistItem: [ChecklistItemInputType!]!
 }
 
-input NewChecklistItem {
+input NewChecklist {
   active: Boolean
   description: String
   name: String!

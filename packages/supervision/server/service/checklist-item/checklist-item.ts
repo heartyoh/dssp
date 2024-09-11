@@ -9,10 +9,20 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn
 } from 'typeorm'
-import { ObjectType, Field, ID } from 'type-graphql'
+import { ObjectType, Field, ID, registerEnumType } from 'type-graphql'
 
 import { User } from '@things-factory/auth-base'
 import { Checklist } from '../checklist/checklist'
+
+export enum ChecklistItemConfirmStatus {
+  T = '적합',
+  F = '부적합'
+}
+
+registerEnumType(ChecklistItemConfirmStatus, {
+  name: 'ChecklistItemConfirmStatus',
+  description: '적합 상태'
+})
 
 @Entity()
 @Index('ix_checklist_item_0', (checklistItem: ChecklistItem) => [checklistItem.checklist], { where: '"deleted_at" IS NULL' })
@@ -28,7 +38,7 @@ export class ChecklistItem {
 
   @Column({ nullable: false, comment: '구분 (텍스트)' })
   @Field({ nullable: false })
-  type?: string
+  mainType?: string
 
   @Column({ nullable: false, comment: '상세 구분 (텍스트)' })
   @Field({ nullable: false })
@@ -36,11 +46,11 @@ export class ChecklistItem {
 
   @Column({ nullable: true, comment: '시공 관리자 적합 여부 (T: 적합, F: 부적합)' })
   @Field({ nullable: true })
-  constructionConfirmStatus?: string
+  constructionConfirmStatus?: ChecklistItemConfirmStatus
 
   @Column({ nullable: true, comment: '감리 관리자 적합 여부 (T: 적합, F: 부적합)' })
   @Field({ nullable: true })
-  supervisoryConfirmStatus?: string
+  supervisoryConfirmStatus?: ChecklistItemConfirmStatus
 
   @Column({ nullable: true, comment: '조치 사항' })
   @Field({ nullable: true })

@@ -1,27 +1,47 @@
 import { ObjectType, Field, InputType, Int, ID } from 'type-graphql'
+import { Checklist } from '../checklist/checklist'
+import { ChecklistItem } from '../checklist-item/checklist-item'
 
 @InputType()
-export class BuildingInspectionPatch {
-  @Field(type => ID, { nullable: true })
-  id?: string
+class ChecklistInputType {
+  @Field({ nullable: false })
+  name: string
+
+  @Field({ nullable: false })
+  constructionType: string
+
+  @Field({ nullable: false })
+  constructionDetailType: string
+
+  @Field({ nullable: false })
+  part: string
 
   @Field({ nullable: true })
-  checklistTemplateId?: string
+  location?: string
+}
 
-  @Field({ nullable: true })
-  constructionTypeId?: string
+@InputType()
+class ChecklistItemInputType {
+  @Field({ nullable: false })
+  name: string
 
-  @Field({ nullable: true })
-  constructionDetailTypeId?: string
+  @Field({ nullable: false })
+  mainType: string
 
-  @Field({ nullable: true })
-  buildingId?: string
+  @Field({ nullable: false })
+  detailType: string
+}
 
-  @Field({ nullable: true })
-  buildingLevelId?: string
+@InputType()
+export class NewBuildingInspection {
+  @Field({ nullable: false })
+  buildingLevelId: string
 
-  // @Field(type => [InspectionAttachmentPatch], { nullable: true })
-  // buildingInspectionAttachments?: BuildingInspectionAttachmentPatch[]
+  @Field(type => ChecklistInputType, { nullable: false })
+  checklist: ChecklistInputType
+
+  @Field(type => [ChecklistItemInputType], { nullable: false })
+  checklistItem: ChecklistItemInputType[]
 }
 
 @ObjectType()
