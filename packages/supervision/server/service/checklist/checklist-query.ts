@@ -1,6 +1,5 @@
-import { Resolver, Query, FieldResolver, Root, Args, Arg, Ctx, Directive } from 'type-graphql'
-import { Attachment } from '@things-factory/attachment-base'
-import { Domain, getQueryBuilderFromListParams, getRepository, ListParam } from '@things-factory/shell'
+import { Resolver, Query, FieldResolver, Root, Args, Arg, Ctx } from 'type-graphql'
+import { getQueryBuilderFromListParams, getRepository, ListParam } from '@things-factory/shell'
 import { User } from '@things-factory/auth-base'
 import { Checklist } from './checklist'
 import { ChecklistList } from './checklist-type'

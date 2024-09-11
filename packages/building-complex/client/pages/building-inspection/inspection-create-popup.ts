@@ -452,10 +452,22 @@ class InspectionCreatePopup extends LitElement {
   async _createInspection() {
     const patches = {}
 
+    const constructionType = this.htmlSelectConstructionType.displayText
+    const constructionDetailType = this.htmlSelectConstructionDetailType.displayText
+    const part = `${this.htmlSelectBuilding.displayText}동 ${this.htmlSelectLevel.displayText}층`
+
+    const grist = this.grist
+
+    console.log('this.htmlSelectBuilding : ', this.htmlSelectBuilding.displayText)
+    console.log('this.htmlSelectLevel : ', this.htmlSelectLevel.displayText)
+    console.log('this.htmlSelectConstructionType : ', this.htmlSelectConstructionType.displayText)
+    console.log('this.htmlSelectConstructionDetailType : ', this.htmlSelectConstructionDetailType.displayText)
+    console.log('this.grist : ', grist)
+
     const response = await client.mutate({
       mutation: gql`
-        mutation UpdateMultipleChecklistTemplateItems($checklistTemplateId: String!, $patches: [ChecklistTemplateItemPatch!]!) {
-          updateMultipleChecklistTemplateItems(checklistTemplateId: $checklistTemplateId, patches: $patches) {
+        mutation CreateBuildingInspection($patch: BuildingInspectionPatch!) {
+          createBuildingInspection(patch: $patch) {
             id
           }
         }

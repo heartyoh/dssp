@@ -1,8 +1,5 @@
 import { Resolver, Mutation, Arg, Ctx, Directive } from 'type-graphql'
 import { In } from 'typeorm'
-
-import { createAttachment, deleteAttachmentsByRef } from '@things-factory/attachment-base'
-
 import { Checklist } from './checklist'
 import { NewChecklist, ChecklistPatch } from './checklist-type'
 
@@ -93,17 +90,6 @@ export class ChecklistMutation {
   }
 
   @Directive('@transaction')
-  @Mutation(returns => Boolean, { description: 'To delete Checklist' })
-  async deleteChecklist(@Arg('id') id: string, @Ctx() context: ResolverContext): Promise<boolean> {
-    const { domain, tx } = context.state
-
-    await tx.getRepository(Checklist).delete({ id })
-    await deleteAttachmentsByRef(null, { refBys: [id] }, context)
-
-    return true
-  }
-
-  @Directive('@transaction')
   @Mutation(returns => Boolean, { description: 'To delete multiple Checklists' })
   async deleteChecklists(@Arg('ids', type => [String]) ids: string[], @Ctx() context: ResolverContext): Promise<boolean> {
     const { domain, tx } = context.state
@@ -111,25 +97,6 @@ export class ChecklistMutation {
     await tx.getRepository(Checklist).delete({
       id: In(ids)
     })
-
-    await deleteAttachmentsByRef(null, { refBys: ids }, context)
-
-    return true
-  }
-
-  @Directive('@transaction')
-  @Mutation(returns => Boolean, { description: 'To import multiple Checklists' })
-  async importChecklists(
-    @Arg('checklists', type => [ChecklistPatch]) checklists: ChecklistPatch[],
-    @Ctx() context: ResolverContext
-  ): Promise<boolean> {
-    const { domain, tx } = context.state
-
-    await Promise.all(
-      checklists.map(async (checklist: ChecklistPatch) => {
-        const createdChecklist: Checklist = await tx.getRepository(Checklist).save({ domain, ...checklist })
-      })
-    )
 
     return true
   }
