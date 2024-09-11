@@ -23,8 +23,8 @@ export const CHECKLIST_MAIN_TYPE_LIST = {
   [ChecklistTypeMainType.NON_BASIC]: '기본 외 업무'
 }
 
-@customElement('building-inspection')
-export class BuildingInspection extends ScopedElementsMixin(PageView) {
+@customElement('building-inspection-list')
+export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
   static styles = [
     ScrollbarStyles,
     CommonGristStyles,

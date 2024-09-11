@@ -556,6 +556,8 @@ input BuildingComplexPatch {
 """시공 검측 (층별 도면의 검측 리스트)"""
 type BuildingInspection {
   attatchments: [Attachment!]!
+  buildingInspectionSummary: BuildingInspectionSummary!
+  buildingInspections: [BuildingInspection!]!
   buildingLevel: BuildingLevel
   checklistId: String
   createdAt: DateTimeISO
@@ -591,8 +593,6 @@ type BuildingInspectionSummary {
 """층 정보"""
 type BuildingLevel {
   building: Building!
-  buildingInspectionSummary: BuildingInspectionSummary!
-  buildingInspections: [BuildingInspection!]!
   createdAt: DateTimeISO
   creator: User
   deletedAt: DateTimeISO
@@ -631,6 +631,73 @@ input ChatCompletionInput {
 
 type ChatCompletionOutput {
   message: String
+}
+
+"""체크리스트"""
+type Checklist {
+  buildingInspection: BuildingInspection
+  checklistItems: ChecklistItem!
+  constructionInspectorDate: DateTimeISO
+  createdAt: DateTimeISO
+  creator: User
+  deletedAt: DateTimeISO
+  documentNo: String
+  id: ID!
+  location: String
+  name: String
+  overallConstructionSignature: String
+  overallSupervisorySignature: String
+  part: String
+  supervisorInspectorDate: DateTimeISO
+  task: Task!
+  taskConstructionSignature: String
+  taskSupervisorySignature: String
+  updatedAt: DateTimeISO
+  updater: User
+}
+
+"""체크 리스트 항목"""
+type ChecklistItem {
+  action: String
+  checklist: Checklist
+  comment: String
+  constructionConfirmStatus: String
+  createdAt: DateTimeISO
+  creator: User
+  deletedAt: DateTimeISO
+  detailType: String!
+  id: ID!
+  name: String
+  supervisoryConfirmStatus: String
+  type: String!
+  updatedAt: DateTimeISO
+  updater: User
+}
+
+type ChecklistItemList {
+  items: [ChecklistItem!]!
+  total: Int!
+}
+
+input ChecklistItemPatch {
+  active: Boolean
+  cuFlag: String
+  description: String
+  id: ID
+  name: String
+}
+
+type ChecklistList {
+  items: [Checklist!]!
+  total: Int!
+}
+
+input ChecklistPatch {
+  active: Boolean
+  cuFlag: String
+  description: String
+  id: ID
+  name: String
 }
 
 """Entity for ChecklistTemplate"""
@@ -1978,6 +2045,12 @@ type Mutation {
   """To create Building Inspection information"""
   createBuildingInspection(patch: BuildingInspectionPatch!): BuildingInspection!
 
+  """To create new Checklist"""
+  createChecklist(checklist: NewChecklist!): Checklist!
+
+  """To create new ChecklistItem"""
+  createChecklistItem(checklistItem: NewChecklistItem!): ChecklistItem!
+
   """To create new CommonCode"""
   createCommonCode(commonCode: NewCommonCode!): CommonCode!
 
@@ -2158,6 +2231,12 @@ type Mutation {
   """To delete multiple Buildings"""
   deleteBuildings(ids: [String!]!): Boolean!
 
+  """To delete ChecklistItem"""
+  deleteChecklistItem(id: String!): Boolean!
+
+  """To delete multiple ChecklistItems"""
+  deleteChecklistItems(ids: [String!]!): Boolean!
+
   """To delete ChecklistTemplateItem"""
   deleteChecklistTemplateItem(id: String!): Boolean!
 
@@ -2169,6 +2248,9 @@ type Mutation {
 
   """To delete multiple ChecklistTypes"""
   deleteChecklistTypes(ids: [String!]!): Boolean!
+
+  """To delete multiple Checklists"""
+  deleteChecklists(ids: [String!]!): Boolean!
 
   """To delete CommonCode"""
   deleteCommonCode(id: String!): Boolean!
@@ -2661,6 +2743,12 @@ type Mutation {
   """To modify BuildingComplex information"""
   updateBuildingComplex(id: String!, patch: BuildingComplexPatch!): BuildingComplex!
 
+  """To modify Checklist information"""
+  updateChecklist(id: String!, patch: ChecklistPatch!): Checklist!
+
+  """To modify ChecklistItem information"""
+  updateChecklistItem(id: String!, patch: ChecklistItemPatch!): ChecklistItem!
+
   """To modify CommonCode information"""
   updateCommonCode(name: String!, patch: CommonCodePatch!): CommonCode!
 
@@ -2738,6 +2826,12 @@ type Mutation {
 
   """To modify multiple BuildingComplexes' information"""
   updateMultipleBuildingComplex(patches: [BuildingComplexPatch!]!): [BuildingComplex!]!
+
+  """To modify multiple Checklists' information"""
+  updateMultipleChecklist(patches: [ChecklistPatch!]!): [Checklist!]!
+
+  """To modify multiple ChecklistItems' information"""
+  updateMultipleChecklistItem(patches: [ChecklistItemPatch!]!): [ChecklistItem!]!
 
   """To modify multiple ChecklistTemplates' information"""
   updateMultipleChecklistTemplate(patches: [ChecklistTemplatePatch!]!): [ChecklistTemplate!]!
@@ -3014,6 +3108,20 @@ input NewBoardTemplate {
   name: String!
   thumbnail: String
   visibility: String!
+}
+
+input NewChecklist {
+  active: Boolean
+  description: String
+  name: String!
+  params: String
+}
+
+input NewChecklistItem {
+  active: Boolean
+  description: String
+  name: String!
+  params: String
 }
 
 input NewCommonCode {
@@ -4300,11 +4408,11 @@ type Query {
   """To fetch a BuildingInspection"""
   buildingInspection(id: String!): BuildingInspection
 
-  """프로젝트의 검측상태 별 카운트"""
-  buildingInspectionSummary(projectId: String!): BuildingInspectionSummary!
-
   """To fetch a BuildingInspection Summary"""
   buildingInspectionSummaryOfBuildingLevel(buildingLevelId: String!): BuildingInspectionSummary
+
+  """프로젝트의 검측상태 별 카운트"""
+  buildingInspectionSummaryOfProject(projectId: String!): BuildingInspectionSummary!
   chatCompletion(input: ChatCompletionInput!): ChatCompletionOutput!
 
   """
@@ -4328,6 +4436,15 @@ type Query {
   """Checks if a user with the given email address exists in the system."""
   checkUserExistence(email: EmailAddress!): Boolean!
 
+  """To fetch a Checklist"""
+  checklist(id: String!): Checklist
+
+  """To fetch a ChecklistItem"""
+  checklistItem(id: String!): ChecklistItem
+
+  """To fetch multiple ChecklistItems"""
+  checklistItems(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): ChecklistItemList!
+
   """To fetch a ChecklistTemplateItem"""
   checklistTemplateItem(id: String!): ChecklistTemplateItem
 
@@ -4339,6 +4456,9 @@ type Query {
 
   """To fetch multiple ChecklistTypes"""
   checklistTypes(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): ChecklistTypeList!
+
+  """To fetch multiple Checklists"""
+  checklists(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): ChecklistList!
 
   """To fetch common approval lines"""
   commonApprovalLines(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): ApprovalLineList!

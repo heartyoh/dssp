@@ -540,7 +540,7 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
           </div>
 
           <div right-bottom>
-            <h3><a href=${`building-inspection/${this.projectId}`}>검측 현황</a></h3>
+            <h3><a href=${`building-inspection-list/${this.projectId}`}>검측 현황</a></h3>
             <div table-container>
               <hr />
               <table>
@@ -632,7 +632,7 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
             }
           }
 
-          buildingInspectionSummary(projectId: $projectId) {
+          buildingInspectionSummaryOfProject(projectId: $projectId) {
             request
             pass
             fail

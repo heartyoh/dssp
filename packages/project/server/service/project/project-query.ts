@@ -5,9 +5,8 @@ import { User } from '@things-factory/auth-base'
 import { Project } from './project'
 import { Task } from '../task/task'
 import { ProjectList } from './project-type'
-import { BuildingComplex, BuildingInspectionStatus } from '@dssp/building-complex'
-import { BuildingInspectionSummary } from '@dssp/building-complex/dist-server/service/building-inspection/building-inspection-type'
 import { Attachment } from '@things-factory/attachment-base'
+import { BuildingComplex } from '@dssp/building-complex'
 
 @Resolver(Project)
 export class ProjectQuery {
@@ -34,41 +33,6 @@ export class ProjectQuery {
     const [items, total] = await queryBuilder.getManyAndCount()
 
     return { items, total }
-  }
-
-  @Query(returns => BuildingInspectionSummary, { description: '프로젝트의 검측상태 별 카운트' })
-  async buildingInspectionSummary(
-    @Arg('projectId') projectId: string,
-    @Ctx() context: ResolverContext
-  ): Promise<BuildingInspectionSummary> {
-    const { domain } = context.state
-
-    // TODO 수정
-    return {
-      request: 0,
-      pass: 0,
-      fail: 0
-    }
-
-    const queryBuilder = getRepository(Project)
-      .createQueryBuilder('p')
-      .select(`COUNT(CASE WHEN bi.status='${BuildingInspectionStatus.REQUEST}' THEN 1 ELSE NULL END) AS request`)
-      .addSelect(`COUNT(CASE WHEN bi.status='${BuildingInspectionStatus.PASS}' THEN 1 ELSE NULL END) AS pass`)
-      .addSelect(`COUNT(CASE WHEN bi.status='${BuildingInspectionStatus.FAIL}' THEN 1 ELSE NULL END) AS fail`)
-      .innerJoin('p.buildingComplex', 'bc')
-      .innerJoin('bc.buildings', 'b')
-      .innerJoin('b.buildingLevels', 'bl')
-      .innerJoin('bl.buildingInspections', 'bi')
-      .where('p.domain = :domain', { domain: domain.id })
-      .andWhere('p.id = :projectId', { projectId })
-      .groupBy('p.id')
-
-    const result = (await queryBuilder.getRawOne()) || {}
-    return {
-      request: result.request || 0,
-      pass: result.pass || 0,
-      fail: result.fail || 0
-    }
   }
 
   @FieldResolver(type => [Task], { nullable: true })

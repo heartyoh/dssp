@@ -12,7 +12,7 @@ import {
 import { ObjectType, Field, ID, registerEnumType } from 'type-graphql'
 
 import { User } from '@things-factory/auth-base'
-import { BuildingLevel } from '../building-level/building-level'
+import { BuildingLevel } from '@dssp/building-complex'
 import { Attachment } from '@things-factory/attachment-base'
 
 export enum BuildingInspectionStatus {

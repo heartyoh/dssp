@@ -2,7 +2,7 @@ import { EventSubscriber } from 'typeorm'
 
 import { HistoryEntitySubscriber } from '@operato/typeorm-history'
 
-import { BuildingInspection } from '../building-inspection/building-inspection'
+import { BuildingInspection } from './building-inspection'
 import { BuildingInspectionHistory } from './building-inspection-history'
 
 @EventSubscriber()

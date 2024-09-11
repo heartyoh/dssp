@@ -17,7 +17,7 @@ import { ObjectType, Field, ID } from 'type-graphql'
 import { User } from '@things-factory/auth-base'
 import { Task } from '@dssp/project'
 import { ChecklistItem } from '../checklist-item/checklist-item'
-import { BuildingInspection } from '@dssp/building-complex'
+import { BuildingInspection } from '../building-inspection/building-inspection'
 
 @Entity()
 @Index('ix_checklist_0', (checklist: Checklist) => [checklist.task], { where: '"deleted_at" IS NULL' })

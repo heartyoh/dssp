@@ -9,7 +9,7 @@ import { DataGrist } from '@operato/data-grist/ox-grist.js'
 import { client } from '@operato/graphql'
 import { ButtonContainerStyles } from '@operato/styles'
 import { notify } from '@operato/layout'
-import { CHECKLIST_MAIN_TYPE_LIST } from './building-inspection'
+import { CHECKLIST_MAIN_TYPE_LIST } from './building-inspection-list'
 
 @customElement('inspection-create-popup')
 class InspectionCreatePopup extends LitElement {

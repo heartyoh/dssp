@@ -6,7 +6,7 @@ import { User } from '@things-factory/auth-base'
 import { config } from '@things-factory/env'
 
 import { BuildingInspection, BuildingInspectionStatus } from './building-inspection'
-import { BuildingLevel } from '../building-level/building-level'
+import { BuildingLevel } from '@dssp/building-complex'
 
 const ORMCONFIG = config.get('ormconfig', {})
 const DATABASE_TYPE = ORMCONFIG.type

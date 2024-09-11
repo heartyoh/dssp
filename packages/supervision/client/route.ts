@@ -7,5 +7,9 @@ export default function route(page: string) {
     case 'checklist-type-management':
       import('./pages/checklist-template/checklist-type-management')
       return page
+
+    case 'building-inspection-list':
+      import('./pages/building-inspection/building-inspection-list')
+      return page
   }
 }
