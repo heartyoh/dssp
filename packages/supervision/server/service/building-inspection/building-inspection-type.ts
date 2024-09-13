@@ -13,9 +13,6 @@ class ChecklistInputType {
   constructionDetailType: string
 
   @Field({ nullable: false })
-  part: string
-
-  @Field({ nullable: true })
   location?: string
 }
 

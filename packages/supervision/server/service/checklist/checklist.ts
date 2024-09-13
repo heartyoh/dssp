@@ -43,11 +43,7 @@ export class Checklist {
   @Field({ nullable: true })
   constructionDetailType?: string
 
-  @Column({ nullable: false, comment: '부위 (x동 x층)' })
-  @Field({ nullable: true })
-  part?: string
-
-  @Column({ nullable: false, comment: '위치' })
+  @Column({ nullable: false, comment: '위치 및 부위 (x동 x층)' })
   @Field({ nullable: true })
   location?: string
 

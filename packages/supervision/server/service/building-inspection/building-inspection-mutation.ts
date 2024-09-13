@@ -27,10 +27,11 @@ export class BuildingInspectionMutation {
     })
 
     // 2. checklistItem 저장
-    const checklistItems = patch.checklistItem.map(item => ({
+    const checklistItems = patch.checklistItem.map((item, idx) => ({
       name: item.name,
       mainType: item.mainType,
       detailType: item.detailType,
+      sequence: idx,
       checklist: savedChecklist,
       creator: user,
       updater: user

@@ -642,7 +642,6 @@ type Checklist {
   name: String
   overallConstructionSignature: String
   overallSupervisorySignature: String
-  part: String
   supervisorInspectorDate: DateTimeISO
   task: Task!
   taskConstructionSignature: String
@@ -654,9 +653,8 @@ type Checklist {
 input ChecklistInputType {
   constructionDetailType: String!
   constructionType: String!
-  location: String
+  location: String!
   name: String!
-  part: String!
 }
 
 type ChecklistItem {
@@ -671,6 +669,7 @@ type ChecklistItem {
   id: ID!
   mainType: String!
   name: String
+  sequence: Int
   supervisoryConfirmStatus: String
   updatedAt: DateTimeISO
   updater: User

@@ -99,8 +99,8 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
         { type: 'gutter', gutterName: 'row-selector', multiple: true },
         {
           type: 'string',
-          name: 'part',
-          header: '검측 위치',
+          name: 'location',
+          header: '위치 및 부위',
           width: 150
         },
         {
@@ -145,7 +145,6 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
           type: 'datetime',
           name: '',
           header: '검측 결과 데이터',
-          sortable: true,
           width: 180
         }
       ],
@@ -156,6 +155,10 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
       },
       sorters: [{ name: 'requestDate' }]
     }
+
+    setTimeout(() => {
+      this._openCreateInspection()
+    }, 1000)
   }
 
   async fetchHandler({ page = 1, limit = 100, sortings = [], filters = [] }: FetchOption) {
@@ -172,7 +175,7 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
                 name
                 constructionType
                 constructionDetailType
-                part
+                location
                 location
               }
             }
@@ -189,7 +192,7 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
 
     let items = response.data.buildingInspections?.items || []
     items = items.map(item => ({
-      part: item.checklist.part,
+      location: item.checklist.location,
       constructionType: item.checklist.constructionType,
       constructionDetailType: item.checklist.constructionDetailType,
       requestDate: item.requestDate,
@@ -227,7 +230,12 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
 
   private _openCreateInspection() {
     openPopup(
-      html` <inspection-create-popup .projectId=${this.projectId} @requestRefresh="${() => {}}"></inspection-create-popup> `,
+      html`
+        <inspection-create-popup
+          .projectId=${this.projectId}
+          @requestRefresh="${() => this.grist.fetch()}"
+        ></inspection-create-popup>
+      `,
       {
         backdrop: true,
         size: 'large',

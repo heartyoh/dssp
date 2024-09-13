@@ -10,6 +10,7 @@ import { client } from '@operato/graphql'
 import { ButtonContainerStyles } from '@operato/styles'
 import { notify } from '@operato/layout'
 import { CHECKLIST_MAIN_TYPE_LIST } from './building-inspection-list'
+import '../checklist/checklist-view'
 
 @customElement('inspection-create-popup')
 class InspectionCreatePopup extends LitElement {
@@ -40,7 +41,8 @@ class InspectionCreatePopup extends LitElement {
       div[body] {
         display: flex;
         height: 100%;
-        gap: 2rem;
+        gap: 15px;
+        justify-content: flex-start;
 
         div[left] {
           width: 60%;
@@ -61,6 +63,12 @@ class InspectionCreatePopup extends LitElement {
             }
           }
         }
+
+        div[right] {
+          display: flex;
+          overflow: auto;
+          max-width: calc(40% - 15px);
+        }
       }
     `
   ]
@@ -80,6 +88,7 @@ class InspectionCreatePopup extends LitElement {
 
   @state() checklistTemplates: any = []
   @state() checklistName: string = ''
+  @state() checklistItem: any = []
 
   @query('md-filled-select[building]') htmlSelectBuilding
   @query('md-filled-select[level]') htmlSelectLevel
@@ -87,6 +96,7 @@ class InspectionCreatePopup extends LitElement {
   @query('md-filled-select[constructionDetailType]') htmlSelectConstructionDetailType
   @query('md-filled-select[checklistTemplate]') htmlSelectChecklistTemplate
   @query('ox-grist') grist!: DataGrist
+  @query('#ifChecklist') ifChecklist!: HTMLIFrameElement
 
   render() {
     return html`
@@ -164,7 +174,13 @@ class InspectionCreatePopup extends LitElement {
             </md-filled-text-field>
           </div>
 
-          <ox-grist .mode=${'GRID'} .config=${this.gristConfig} .fetchHandler=${this.fetchHandler.bind(this)}> </ox-grist>
+          <ox-grist
+            .mode=${'GRID'}
+            .config=${this.gristConfig}
+            .fetchHandler=${this.fetchHandler.bind(this)}
+            @change=${this.onChangeGird}
+          >
+          </ox-grist>
 
           <div button-container>
             <md-elevated-button @click=${this._createInspection}>
@@ -174,10 +190,28 @@ class InspectionCreatePopup extends LitElement {
         </div>
 
         <div right>
-          <div>체크리스트 미리보기</div>
+          <checklist-view
+            .checklistName=${this.checklistName}
+            .checklistConstructionType=${this.selectedConstructionType?.name}
+            .checklistConstructionDetailType=${this.selectedConstructionDetailType?.name}
+            .location=${`${this.selectedBuilding?.name || ''} ${this.selectedLevel.name || ''}층`}
+          ></checklist-view>
         </div>
       </div>
     `
+  }
+
+  updated() {
+    // this.ifChecklist.contentDocument?.open()
+    // this.ifChecklist.contentDocument?.write(
+    //   `<checklist-view
+    //         .checklistName=${this.checklistName}
+    //         .checklistConstructionType=${this.selectedConstructionType?.name}
+    //         .checklistConstructionDetailType=${this.selectedConstructionDetailType?.name}
+    //         .location=${`${this.selectedBuilding?.name || ''} ${this.selectedLevel.name || ''}층`}
+    //       ></checklist-view>`
+    // )
+    // this.ifChecklist.contentDocument?.close()
   }
 
   async firstUpdated() {
@@ -474,8 +508,7 @@ class InspectionCreatePopup extends LitElement {
       name: this.checklistName,
       constructionType: this.htmlSelectConstructionType.displayText,
       constructionDetailType: this.htmlSelectConstructionDetailType.displayText,
-      part: `${this.htmlSelectBuilding.displayText} ${this.htmlSelectLevel.displayText}층`,
-      location: ''
+      location: `${this.htmlSelectBuilding.displayText} ${this.htmlSelectLevel.displayText}층`
     }
     patch.checklistItem = this.grist.exportRecords().map(row => {
       return {
@@ -510,5 +543,9 @@ class InspectionCreatePopup extends LitElement {
   private _onInputChange(event: InputEvent) {
     const target = event.target as HTMLInputElement
     this[target.name] = target.value
+  }
+
+  private onChangeGird() {
+    console.log('onChangeGird')
   }
 }

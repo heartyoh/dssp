@@ -9,7 +9,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn
 } from 'typeorm'
-import { ObjectType, Field, ID, registerEnumType } from 'type-graphql'
+import { ObjectType, Field, ID, Int, registerEnumType } from 'type-graphql'
 
 import { User } from '@things-factory/auth-base'
 import { Checklist } from '../checklist/checklist'
@@ -35,6 +35,10 @@ export class ChecklistItem {
   @Column({ nullable: true, comment: '검사 항목' })
   @Field({ nullable: true })
   name?: string
+
+  @Column({ nullable: true, comment: '시퀀스' })
+  @Field(type => Int, { nullable: true })
+  sequence?: number
 
   @Column({ nullable: false, comment: '구분 (텍스트)' })
   @Field({ nullable: false })
