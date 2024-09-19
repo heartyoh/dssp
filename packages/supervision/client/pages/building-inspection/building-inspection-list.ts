@@ -41,19 +41,144 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
     CommonGristStyles,
     css`
       :host {
-        display: flex;
-        flex-direction: column;
+        display: grid;
+        grid-template-rows: 75px auto;
+        color: #4e5055;
 
         width: 100%;
+        background-color: #f7f7f7;
+        overflow-y: auto;
 
         --grid-record-emphasized-background-color: red;
         --grid-record-emphasized-color: yellow;
       }
+
+      md-filled-button {
+        --md-filled-button-container-color: #0595e5;
+        --md-filled-button-container-height: 30px;
+        --md-filled-button-trailing-space: 15px;
+        --md-filled-button-leading-space: 15px;
+      }
+      md-outlined-button {
+        --md-outlined-button-container-height: 30px;
+        --md-outlined-button-trailing-space: 15px;
+        --md-outlined-button-leading-space: 15px;
+      }
+
+      *[bold] {
+        font-weight: bold;
+      }
+
+      div[header] {
+        display: flex;
+        margin: 0px 20px;
+
+        h2 {
+          flex: 0.5;
+          color: #3f71a0;
+        }
+
+        div[button-container] {
+          display: flex;
+          align-items: center;
+          justify-content: end;
+          flex: 0.5;
+
+          md-elevated-button {
+            margin: 0px 3px;
+
+            --md-elevated-button-container-height: 35px;
+            --md-elevated-button-label-text-size: 16px;
+            --md-elevated-button-container-color: #0595e5;
+
+            --md-elevated-button-label-text-color: #fff;
+            --md-elevated-button-hover-label-text-color: #fff;
+            --md-elevated-button-pressed-label-text-color: #fff;
+            --md-elevated-button-focus-label-text-color: #fff;
+            --md-elevated-button-icon-color: #fff;
+            --md-elevated-button-hover-icon-color: #fff;
+            --md-elevated-button-pressed-icon-color: #fff;
+            --md-elevated-button-focus-icon-color: #fff;
+          }
+        }
+      }
+
+      div[body] {
+        display: grid;
+        grid-template-columns: 4fr 6fr;
+        margin: 0px 25px 25px 25px;
+        gap: 10px;
+        min-height: fit-content;
+
+        h3 {
+          color: #2e79be;
+          font-size: 18px;
+          margin: 0px;
+        }
+
+        & > div {
+          display: flex;
+          gap: 10px;
+          padding: 15px;
+          border-radius: 5px;
+        }
+
+        div[left] {
+          flex-direction: column;
+          background-color: #ffffff;
+          border: 1px solid #cccccc80;
+
+          div[drawing] {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            [building-img] {
+              width: 70%;
+              height: auto;
+            }
+            img[building-img] {
+              opacity: 0.5;
+            }
+          }
+
+          div[subject] {
+            margin-bottom: 7px;
+          }
+          div[building-container] {
+            display: block;
+            height: 40px;
+            overflow-y: auto;
+
+            & > * {
+              margin-right: 2px;
+              margin-bottom: 7px;
+            }
+          }
+        }
+
+        div[right] {
+          height: auto;
+          overflow-y: auto;
+        }
+      }
     `
   ]
 
+  private defaultProject = {
+    name: '',
+    buildingComplex: {
+      buildings: []
+    }
+  }
+
   @state() private gristConfig: any
   @state() projectId: string = ''
+  @state() project: any = { ...this.defaultProject }
+  @state() selectedBuilding: any = {}
+  @state() building: any = {}
+
   @query('ox-grist') private grist!: DataGrist
 
   get context() {
@@ -76,20 +201,134 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
 
   render() {
     return html`
-      <ox-grist .mode=${'GRID'} .config=${this.gristConfig} .fetchHandler=${this.fetchHandler.bind(this)}>
-        <div slot="headroom">
-          <div id="filters">
-            <ox-filters-form autofocus></ox-filters-form>
+      <div header>
+        <h2>${this.project.name} ${this.selectedBuilding.name}</h2>
+        <div button-container>
+          <md-elevated-button href=${`project-update/${this.project.id}`}>
+            <md-icon slot="icon">assignment</md-icon>프로젝트 정보 수정
+          </md-elevated-button>
+          <md-elevated-button href=${`project-plan-management/${this.project.id}`}>
+            <md-icon slot="icon">description</md-icon>도면 관리
+          </md-elevated-button>
+        </div>
+      </div>
+
+      <div body>
+        <div left>
+          <h3>${this.selectedBuilding.name} BIM도면</h3>
+          <div drawing>
+            ${this.selectedBuilding?.drawing?.fullpath
+              ? html`<div building-img></div>`
+              : html`<img building-img src="/assets/images/img-building-default.png" />`}
+          </div>
+          <div>
+            <div subject bold>개별 단지 상세정보 바로가기</div>
+            <div building-container>
+              ${this.project.buildingComplex?.buildings?.map(building => {
+                return this.selectedBuilding.id === building.id
+                  ? html`
+                      <md-filled-button @click=${() => this._onClickBuilding(building)}> ${building.name} </md-filled-button>
+                    `
+                  : html`
+                      <md-outlined-button @click=${() => this._onClickBuilding(building)}> ${building.name} </md-outlined-button>
+                    `
+              })}
+            </div>
           </div>
         </div>
-      </ox-grist>
+
+        <div right>
+          <ox-grist .mode=${'GRID'} .config=${this.gristConfig} .fetchHandler=${this.fetchHandler.bind(this)}> </ox-grist>
+        </div>
+      </div>
     `
   }
 
   async pageUpdated(changes: any, lifecycle: PageLifecycle) {
     if (this.active) {
       this.projectId = lifecycle.resourceId || ''
+
+      // buildingId가 있으면 선택
+      const params: any = lifecycle.params
+      await this.initProject(lifecycle.resourceId, params.buildingId)
     }
+  }
+
+  async initProject(projectId: string = '', buildingId: string = '') {
+    const response = await client.query({
+      query: gql`
+        query Project($id: String!) {
+          project(id: $id) {
+            id
+            name
+            mainPhoto {
+              fullpath
+            }
+            buildingComplex {
+              id
+              drawing {
+                id
+                name
+                fullpath
+              }
+              buildings {
+                id
+                name
+              }
+            }
+          }
+        }
+      `,
+      variables: {
+        id: projectId
+      }
+    })
+
+    if (response.errors) return
+
+    this.project = response.data?.project
+
+    // buildingId 파라미터가 있으면 선택된 빌딩, 없으면 첫번째 빌딩 선택
+    this.selectedBuilding = buildingId
+      ? this.project?.buildingComplex?.buildings.filter(v => v.id === buildingId)[0]
+      : this.project?.buildingComplex?.buildings[0]
+
+    // 좌측 빌딩 도면 불러오기
+    this._getBuilding(this.selectedBuilding.id)
+  }
+
+  async _getBuilding(buildingId: string = '') {
+    const response = await client.query({
+      query: gql`
+        query Building($id: String!) {
+          building(id: $id) {
+            id
+            buildingLevels {
+              id
+              floor
+              mainDrawing {
+                id
+                name
+                fullpath
+              }
+              mainDrawingImage
+            }
+          }
+        }
+      `,
+      variables: {
+        id: buildingId
+      }
+    })
+
+    if (response.errors) return
+
+    this.building = response.data?.building
+  }
+
+  private _onClickBuilding(building) {
+    this.selectedBuilding = { ...building }
+    this._getBuilding(this.selectedBuilding.id)
   }
 
   async pageInitialized(lifecycle: any) {
@@ -97,6 +336,11 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
       columns: [
         { type: 'gutter', gutterName: 'sequence' },
         { type: 'gutter', gutterName: 'row-selector', multiple: true },
+        {
+          type: 'string',
+          name: 'id',
+          hidden: true
+        },
         {
           type: 'string',
           name: 'location',
@@ -151,6 +395,12 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
       rows: {
         selectable: {
           multiple: true
+        },
+        appendable: false,
+        handlers: {
+          click: (columns, data, column, record, rowIndex) => {
+            console.log('record :', record)
+          }
         }
       },
       sorters: [{ name: 'requestDate' }]
@@ -167,11 +417,10 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
               status
               requestDate
               checklist {
-                id
+                checklistId: id
                 name
                 constructionType
                 constructionDetailType
-                location
                 location
               }
             }
@@ -188,11 +437,8 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
 
     let items = response.data.buildingInspections?.items || []
     items = items.map(item => ({
-      location: item.checklist.location,
-      constructionType: item.checklist.constructionType,
-      constructionDetailType: item.checklist.constructionDetailType,
-      requestDate: item.requestDate,
-      status: item.status
+      ...item,
+      ...item.checklist
     }))
 
     return {
@@ -208,7 +454,7 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
         const response = await client.mutate({
           mutation: gql`
             mutation ($ids: [String!]!) {
-              deleteChecklistTypes(ids: $ids)
+              deleteBuildingInspections(ids: $ids)
             }
           `,
           variables: {

@@ -2221,6 +2221,9 @@ type Mutation {
   """To delete multiple BuildingComplexes"""
   deleteBuildingComplexes(ids: [String!]!): Boolean!
 
+  """To delete multiple Checklists"""
+  deleteBuildingInspections(ids: [String!]!): Boolean!
+
   """To delete multiple Buildings"""
   deleteBuildings(ids: [String!]!): Boolean!
 

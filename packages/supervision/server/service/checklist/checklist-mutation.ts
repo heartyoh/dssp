@@ -94,7 +94,7 @@ export class ChecklistMutation {
   async deleteChecklists(@Arg('ids', type => [String]) ids: string[], @Ctx() context: ResolverContext): Promise<boolean> {
     const { domain, tx } = context.state
 
-    await tx.getRepository(Checklist).delete({
+    await tx.getRepository(Checklist).softDelete({
       id: In(ids)
     })
 

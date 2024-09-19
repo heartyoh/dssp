@@ -7,7 +7,7 @@ import { customElement, property, query, state } from 'lit/decorators.js'
 import { DataGrist } from '@operato/data-grist/ox-grist.js'
 
 import { client } from '@operato/graphql'
-import { ButtonContainerStyles } from '@operato/styles'
+import { ButtonContainerStyles, ScrollbarStyles } from '@operato/styles'
 import { notify } from '@operato/layout'
 import { CHECKLIST_MAIN_TYPE_LIST } from './building-inspection-list'
 import '../checklist/checklist-view'
@@ -16,6 +16,7 @@ import '../checklist/checklist-view'
 class InspectionCreatePopup extends LitElement {
   static styles = [
     ButtonContainerStyles,
+    ScrollbarStyles,
     css`
       :host {
         display: flex;
@@ -499,7 +500,13 @@ class InspectionCreatePopup extends LitElement {
       constructionDetailType: this.htmlSelectConstructionDetailType.displayText,
       location: `${this.htmlSelectBuilding.displayText} ${this.htmlSelectLevel.displayText}층`
     }
-    patch.checklistItem = this.checklistItem
+    patch.checklistItem = this.checklistItem.map(item => {
+      return {
+        name: item.name,
+        mainType: item.mainType,
+        detailType: item.detailType
+      }
+    })
 
     const response = await client.mutate({
       mutation: gql`

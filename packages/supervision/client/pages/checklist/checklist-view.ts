@@ -1,13 +1,14 @@
 import '@material/web/icon/icon.js'
 import { css, html, LitElement } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
-import { ButtonContainerStyles } from '@operato/styles'
+import { ButtonContainerStyles, ScrollbarStyles } from '@operato/styles'
 import { ChecklistTypeMainType, CHECKLIST_MAIN_TYPE_LIST } from '../building-inspection/building-inspection-list'
 
 @customElement('checklist-view')
 class ChecklistView extends LitElement {
   static styles = [
     ButtonContainerStyles,
+    ScrollbarStyles,
     css`
       :host {
         display: flex;
