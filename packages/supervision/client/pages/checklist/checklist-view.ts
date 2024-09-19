@@ -1,6 +1,6 @@
 import '@material/web/icon/icon.js'
 import { css, html, LitElement } from 'lit'
-import { customElement, property, query, state } from 'lit/decorators.js'
+import { customElement, property } from 'lit/decorators.js'
 import { ButtonContainerStyles } from '@operato/styles'
 import { ChecklistTypeMainType, CHECKLIST_MAIN_TYPE_LIST } from '../building-inspection/building-inspection-list'
 
@@ -123,43 +123,11 @@ class ChecklistView extends LitElement {
   @property({ type: String }) checklistConstructionType: string = ''
   @property({ type: String }) checklistConstructionDetailType: string = ''
   @property({ type: String }) location: string = ''
-  @property({ type: Array }) checklistItem: any = [
-    {
-      name: '검사 항목1',
-      mainType: '10',
-      detailType: '상세 구분1',
-      sequence: 1
-    },
-    {
-      name: '검사 항목2',
-      mainType: '10',
-      detailType: '상세 구분2',
-      sequence: 2
-    },
-    {
-      name: '검사 항목3검사 항목3검사 항목3검사 항목3검사 항목3검사 항목3검사',
-      mainType: '10',
-      detailType: '상세 구분3 입니다. 상세해요',
-      sequence: 3
-    },
-    {
-      name: '검사 항목3',
-      mainType: '20',
-      detailType: '상세 구분4',
-      sequence: 4
-    },
-    {
-      name: '검사 항목3검사 항목3검사 항목3검사 항목3',
-      mainType: '20',
-      detailType: '상세 구분5',
-      sequence: 5
-    }
-  ]
+  @property({ type: Array }) checklistItem: any = []
 
   render() {
     const today = this._getToday()
     const mainTypeCount = this.checklistItem?.filter(v => v.mainType === ChecklistTypeMainType.BASIC).length
-    console.log('mainTypeCount :', mainTypeCount)
 
     // 체크리스트 아이템 정렬
     this.checklistItem.sort((a, b) => {

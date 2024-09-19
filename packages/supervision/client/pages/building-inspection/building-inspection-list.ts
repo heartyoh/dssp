@@ -155,10 +155,6 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
       },
       sorters: [{ name: 'requestDate' }]
     }
-
-    setTimeout(() => {
-      this._openCreateInspection()
-    }, 1000)
   }
 
   async fetchHandler({ page = 1, limit = 100, sortings = [], filters = [] }: FetchOption) {

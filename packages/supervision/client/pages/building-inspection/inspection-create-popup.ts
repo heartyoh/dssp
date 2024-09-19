@@ -178,7 +178,7 @@ class InspectionCreatePopup extends LitElement {
             .mode=${'GRID'}
             .config=${this.gristConfig}
             .fetchHandler=${this.fetchHandler.bind(this)}
-            @change=${this.onChangeGird}
+            @field-change=${this.onChangeGird}
           >
           </ox-grist>
 
@@ -195,27 +195,14 @@ class InspectionCreatePopup extends LitElement {
             .checklistConstructionType=${this.selectedConstructionType?.name}
             .checklistConstructionDetailType=${this.selectedConstructionDetailType?.name}
             .location=${`${this.selectedBuilding?.name || ''} ${this.selectedLevel.name || ''}층`}
+            .checklistItem=${this.checklistItem}
           ></checklist-view>
         </div>
       </div>
     `
   }
 
-  updated() {
-    // this.ifChecklist.contentDocument?.open()
-    // this.ifChecklist.contentDocument?.write(
-    //   `<checklist-view
-    //         .checklistName=${this.checklistName}
-    //         .checklistConstructionType=${this.selectedConstructionType?.name}
-    //         .checklistConstructionDetailType=${this.selectedConstructionDetailType?.name}
-    //         .location=${`${this.selectedBuilding?.name || ''} ${this.selectedLevel.name || ''}층`}
-    //       ></checklist-view>`
-    // )
-    // this.ifChecklist.contentDocument?.close()
-  }
-
   async firstUpdated() {
-    console.log('this.projectId :', this.projectId)
     const response = await client.query({
       query: gql`
         query Project($id: String!) {
@@ -497,11 +484,13 @@ class InspectionCreatePopup extends LitElement {
 
     // 체크 리스트 이름 셋팅
     this.checklistName = e.target.displayText
+
+    // 체크리스트 아이템 데이터 갱신
+    this.onChangeGird()
   }
 
   async _createInspection() {
     let patch: any = {}
-    const checklistDetailTypes = Object.fromEntries(this.checklistDetailTypes.map(item => [item.value, item.display]))
 
     patch.buildingLevelId = this.htmlSelectLevel.value
     patch.checklist = {
@@ -510,13 +499,7 @@ class InspectionCreatePopup extends LitElement {
       constructionDetailType: this.htmlSelectConstructionDetailType.displayText,
       location: `${this.htmlSelectBuilding.displayText} ${this.htmlSelectLevel.displayText}층`
     }
-    patch.checklistItem = this.grist.exportRecords().map(row => {
-      return {
-        name: row.name,
-        mainType: CHECKLIST_MAIN_TYPE_LIST[row.mainType],
-        detailType: checklistDetailTypes[row.detailType]
-      }
-    })
+    patch.checklistItem = this.checklistItem
 
     const response = await client.mutate({
       mutation: gql`
@@ -545,7 +528,20 @@ class InspectionCreatePopup extends LitElement {
     this[target.name] = target.value
   }
 
+  // 체크리스트 아이템 데이터 갱신
   private onChangeGird() {
-    console.log('onChangeGird')
+    const checklistDetailTypes = Object.fromEntries(this.checklistDetailTypes.map(item => [item.value, item.display]))
+    const grist = this.grist
+
+    // grist field-change가 오는 시점이 데이터 변경 전이라 setTimeout으로 변경
+    setTimeout(() => {
+      this.checklistItem = grist.dirtyData.records.map((row, idx) => {
+        return {
+          ...row,
+          detailType: checklistDetailTypes[row.detailType],
+          sequence: idx
+        }
+      })
+    }, 100)
   }
 }
