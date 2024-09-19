@@ -111,6 +111,11 @@ export class BuildingInspectionQuery {
     return await getRepository(Checklist).findOneBy({ id: buildingInspection.checklistId })
   }
 
+  @FieldResolver(type => BuildingLevel)
+  async buildingLevel(@Root() buildingInspection: BuildingInspection): Promise<BuildingLevel> {
+    return await getRepository(BuildingLevel).findOneBy({ id: buildingInspection.buildingLevelId })
+  }
+
   @FieldResolver(type => [Attachment])
   async attatchments(@Root() buildingInspection: BuildingInspection): Promise<Attachment[] | undefined> {
     const attachment: Attachment[] = await getRepository(Attachment).find({

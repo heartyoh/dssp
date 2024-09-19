@@ -4730,6 +4730,9 @@ type Query {
   """To fetch a Project"""
   project(id: String!): Project
 
+  """To fetch a Project"""
+  projectByBuildingComplexId(buildingComplexId: String!): Project
+
   """To fetch a ProjectReport"""
   projectReport(id: String!): ProjectReport
 

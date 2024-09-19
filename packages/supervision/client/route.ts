@@ -11,5 +11,13 @@ export default function route(page: string) {
     case 'building-inspection-list':
       import('./pages/building-inspection/building-inspection-list')
       return page
+
+    case 'building-inspection-detail-drawing':
+      import('./pages/building-inspection/building-inspection-detail-drawing')
+      return page
+
+    case 'building-inspection-detail-checklist':
+      import('./pages/building-inspection/building-inspection-detail-checklist')
+      return page
   }
 }

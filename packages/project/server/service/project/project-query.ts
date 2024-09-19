@@ -35,6 +35,18 @@ export class ProjectQuery {
     return { items, total }
   }
 
+  @Query(returns => Project!, { nullable: true, description: 'To fetch a Project' })
+  async projectByBuildingComplexId(
+    @Arg('buildingComplexId') buildingComplexId: string,
+    @Ctx() context: ResolverContext
+  ): Promise<Project> {
+    const { domain } = context.state
+
+    return await getRepository(Project).findOne({
+      where: { domain: { id: domain.id }, buildingComplex: { id: buildingComplexId } }
+    })
+  }
+
   @FieldResolver(type => [Task], { nullable: true })
   async rootTasks(@Root() project: Project): Promise<Task[]> {
     return await getRepository(Task).find({

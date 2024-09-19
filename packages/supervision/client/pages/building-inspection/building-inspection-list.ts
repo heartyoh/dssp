@@ -2,7 +2,7 @@ import '@material/web/icon/icon.js'
 import '@operato/data-grist'
 
 import { CommonGristStyles, CommonButtonStyles, ScrollbarStyles } from '@operato/styles'
-import { PageView } from '@operato/shell'
+import { PageView, navigate } from '@operato/shell'
 import { css, html } from 'lit'
 import { PageLifecycle } from '@operato/shell/dist/src/app/pages/page-view'
 import { customElement, query, state } from 'lit/decorators.js'
@@ -76,30 +76,6 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
         h2 {
           flex: 0.5;
           color: #3f71a0;
-        }
-
-        div[button-container] {
-          display: flex;
-          align-items: center;
-          justify-content: end;
-          flex: 0.5;
-
-          md-elevated-button {
-            margin: 0px 3px;
-
-            --md-elevated-button-container-height: 35px;
-            --md-elevated-button-label-text-size: 16px;
-            --md-elevated-button-container-color: #0595e5;
-
-            --md-elevated-button-label-text-color: #fff;
-            --md-elevated-button-hover-label-text-color: #fff;
-            --md-elevated-button-pressed-label-text-color: #fff;
-            --md-elevated-button-focus-label-text-color: #fff;
-            --md-elevated-button-icon-color: #fff;
-            --md-elevated-button-hover-icon-color: #fff;
-            --md-elevated-button-pressed-icon-color: #fff;
-            --md-elevated-button-focus-icon-color: #fff;
-          }
         }
       }
 
@@ -203,14 +179,6 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
     return html`
       <div header>
         <h2>${this.project.name} ${this.selectedBuilding.name}</h2>
-        <div button-container>
-          <md-elevated-button href=${`project-update/${this.project.id}`}>
-            <md-icon slot="icon">assignment</md-icon>프로젝트 정보 수정
-          </md-elevated-button>
-          <md-elevated-button href=${`project-plan-management/${this.project.id}`}>
-            <md-icon slot="icon">description</md-icon>도면 관리
-          </md-elevated-button>
-        </div>
       </div>
 
       <div body>
@@ -399,7 +367,7 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
         appendable: false,
         handlers: {
           click: (columns, data, column, record, rowIndex) => {
-            console.log('record :', record)
+            navigate(`building-inspection-detail-drawing/${record.id}`)
           }
         }
       },

@@ -3,9 +3,15 @@ import { Attachment } from '@things-factory/attachment-base'
 import { getRepository } from '@things-factory/shell'
 import { User } from '@things-factory/auth-base'
 import { BuildingLevel } from './building-level'
+import { Building } from '../building/building'
 
 @Resolver(BuildingLevel)
 export class BuildingLevelQuery {
+  @FieldResolver(type => Building)
+  async building(@Root() buildingLevel: BuildingLevel): Promise<Building> {
+    return await getRepository(Building).findOneBy({ id: buildingLevel.buildingId })
+  }
+
   @FieldResolver(type => Attachment)
   async mainDrawing(@Root() buildingLevel: BuildingLevel): Promise<Attachment | undefined> {
     const attachment: Attachment = await getRepository(Attachment).findOne({
