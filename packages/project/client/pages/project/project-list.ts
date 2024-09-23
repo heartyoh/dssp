@@ -13,10 +13,15 @@ export enum ProjectStatus {
   'ONGOING' = '10',
   'COMPLETED' = '20'
 }
-export enum InspectionStatus {
+export enum BuildingInspectionStatus {
   REQUEST = 'REQUEST',
   PASS = 'PASS',
   FAIL = 'FAIL'
+}
+export const BUILDING_INSPECTION_STATUS = {
+  REQUEST: '요청',
+  PASS: '통과',
+  FAIL: '실패'
 }
 
 export interface Project {
@@ -78,17 +83,37 @@ export interface BuildingLevel {
   rebarDistributionDrawing?: Attachment
   rebarDistributionDrawingThumbnail?: string
   rebarDistributionDrawingUpload?: FileUpload
+  building?: Building
   buildingInspections?: BuildingInspection[]
 }
 
 export interface BuildingInspection {
   id?: string
-  indexX?: number
-  indexY?: number
-  status?: InspectionStatus
-  detail?: string
   attatchments?: Attachment[]
   // buildingInspectionAttachments?: BuildingInspectionAttachment[]
+  status?: BuildingInspectionStatus
+  requestDate?: Date
+  buildingLevel?: BuildingLevel
+  checklist?: Checklist
+  createdAt?: Date
+  updatedAt?: Date
+  deletedAt?: Date
+}
+
+export interface Checklist {
+  id: string
+  name?: string
+  documentNo?: string
+  constructionType?: string
+  constructionDetailType?: string
+  location?: string
+  constructionInspectorDate?: Date
+  supervisorInspectorDate?: Date
+  overallConstructionSignature?: string
+  taskConstructionSignature?: string
+  overallSupervisorySignature?: string
+  taskSupervisorySignature?: string
+  // checklistItems?: ChecklistItem[]
 }
 
 @customElement('project-list')

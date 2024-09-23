@@ -584,6 +584,11 @@ type BuildingInspectionSummary {
   request: Int!
 }
 
+input BuildingInspectionsOfProject {
+  limit: Float
+  projectId: String!
+}
+
 """층 정보"""
 type BuildingLevel {
   building: Building!
@@ -1135,6 +1140,8 @@ type Employee {
   address: String
   alias: String
   approvalLines: [ApprovalLine!]!
+  bankAccount: String
+  bankName: String
   contact: Contact
   controlNo: String!
   createdAt: DateTimeISO
@@ -1143,8 +1150,10 @@ type Employee {
   department: Department
   domain: Domain!
   email: EmailAddress
+  emergencyContact: String
+  emergencyContactPhone: String
   extension: String
-  hiredOn: String
+  hiredOn: DateTimeISO
   id: ID!
   jobPosition: String
   jobResponsibility: String
@@ -1154,7 +1163,7 @@ type Employee {
   phone: String
   photo: String
   profile: Profile
-  retiredAt: String
+  retiredOn: DateTimeISO
   supervises: [Employee!]!
   supervisor: Employee
   type: String
@@ -1172,18 +1181,22 @@ type EmployeeList {
 input EmployeePatch {
   active: Boolean
   alias: String
+  bankAccount: String
+  bankName: String
   contact: ObjectRefForContact
   controlNo: String
   cuFlag: String
   department: ObjectRefForDepartment
-  hiredOn: String
+  emergencyContact: String
+  emergencyContactPhone: String
+  hiredOn: DateTimeISO
   id: ID
   jobPosition: String
   jobResponsibility: String
   name: String
   note: String
   photo: Upload
-  retiredAt: String
+  retiredOn: DateTimeISO
   supervisor: ObjectRefForEmployee
   type: EmployeeType
   user: ObjectRefForUser
@@ -1554,6 +1567,7 @@ type LiteMenu {
   parent: String
   privilege: PrivilegeObject
   rank: Int
+  role: Role
   type: String
   updatedAt: DateTimeISO
   updater: User
@@ -1573,8 +1587,8 @@ input LiteMenuPatch {
   labels: Object
   name: String
   parent: String
-  privilege: PrivilegeInput
   rank: Int
+  role: ObjectRef
   type: String
   value: String
 }
@@ -3156,17 +3170,21 @@ input NewDepartment {
 input NewEmployee {
   active: Boolean
   alias: String
+  bankAccount: String
+  bankName: String
   contact: ObjectRefForContact
   controlNo: String!
   department: ObjectRefForDepartment
+  emergencyContact: String
+  emergencyContactPhone: String
   extension: String
-  hiredOn: String
+  hiredOn: DateTimeISO
   jobPosition: String
   jobResponsibility: String
   name: String!
   note: String
   photo: Upload
-  retiredAt: String
+  retiredOn: DateTimeISO
   supervisor: ObjectRefForEmployee
   type: EmployeeType
   user: ObjectRefForUser
@@ -3265,8 +3283,8 @@ input NewLiteMenu {
   labels: Object
   name: String!
   parent: String
-  privilege: PrivilegeInput
   rank: Int
+  role: ObjectRef
   type: String
   value: String
 }
@@ -3533,7 +3551,7 @@ input NewScenario {
   active: Boolean
   description: String
   name: String!
-  privilege: PrivilegeInput
+  role: ObjectRef
   schedule: String
   timezone: String
   ttl: Float
@@ -3859,7 +3877,7 @@ input ObjectRefForEmployee {
   """Field description"""
   description: String
   email: EmailAddress
-  hiredOn: String
+  hiredOn: DateTimeISO
 
   """Field id"""
   id: ID!
@@ -4399,6 +4417,9 @@ type Query {
 
   """To fetch multiple BuildingInspections"""
   buildingInspections(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): BuildingInspectionList!
+
+  """To fetch multiple BuildingInspections"""
+  buildingInspectionsOfProject(params: BuildingInspectionsOfProject!): BuildingInspectionList!
   chatCompletion(input: ChatCompletionInput!): ChatCompletionOutput!
 
   """
@@ -4949,6 +4970,7 @@ type Scenario {
   """accessible and executable system-wide"""
   public: Boolean
   publishTags: [Connection!]!
+  role: Role
   schedule: String
   scheduleId: String
   state: String
@@ -5030,7 +5052,7 @@ input ScenarioPatch {
   description: String
   id: ID
   name: String
-  privilege: PrivilegeInput
+  role: ObjectRef
   schedule: String
   steps: [StepPatch!]
   timezone: String

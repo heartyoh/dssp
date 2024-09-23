@@ -40,6 +40,15 @@ export class NewBuildingInspection {
   checklistItem: ChecklistItemInputType[]
 }
 
+@InputType()
+export class BuildingInspectionsOfProject {
+  @Field({ nullable: false })
+  projectId: string
+
+  @Field({ nullable: true })
+  limit: number
+}
+
 @ObjectType()
 export class BuildingInspectionSummary {
   @Field(type => Int, { description: '검사 요청 수' })

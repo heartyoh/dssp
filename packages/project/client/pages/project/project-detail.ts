@@ -3,15 +3,16 @@ import '@material/web/button/elevated-button.js'
 import '@material/web/textfield/outlined-text-field.js'
 import '@material/web/button/outlined-button.js'
 
-import { PageView } from '@operato/shell'
+import { navigate, PageView } from '@operato/shell'
 import { PageLifecycle } from '@operato/shell/dist/src/app/pages/page-view'
 import { css, html } from 'lit'
 import { customElement, state } from 'lit/decorators.js'
 import { ScopedElementsMixin } from '@open-wc/scoped-elements'
 import { client } from '@operato/graphql'
+import { ScrollbarStyles } from '@operato/styles'
 
 import gql from 'graphql-tag'
-import { Project } from './project-list'
+import { BUILDING_INSPECTION_STATUS, BuildingInspection, BuildingInspectionStatus, Project } from './project-list'
 import _getWeather from '../lib/waether'
 import '@operato/chart/ox-progress-circle.js'
 
@@ -31,6 +32,7 @@ interface Weather {
 @customElement('project-detail')
 export class ProjectDetail extends ScopedElementsMixin(PageView) {
   static styles = [
+    ScrollbarStyles,
     css`
       :host {
         display: grid;
@@ -357,6 +359,7 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
 
   @state() projectId: string = ''
   @state() project: Project = { ...this.defaultProject }
+  @state() buildingInspections: BuildingInspection[] = []
   @state() inspectionSummary: InspectionSummary = {
     request: 0,
     pass: 0,
@@ -556,14 +559,14 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
                   </tr>
                 </thead>
                 <tbody>
-                  ${[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1].map(inspection => {
-                    return html` <tr>
-                      <td>1</td>
-                      <td>101동 3층</td>
-                      <td bold>단열공사</td>
-                      <td>단열재 시공 층간 차음재 시공 벽돌/블록 및 ALC 패널 공사</td>
-                      <td>2024-01-04</td>
-                      <td bold>검측완료</td>
+                  ${this.buildingInspections.map((inspection, idx) => {
+                    return html` <tr @click=${() => this._onClickInspection(inspection.id || '')}>
+                      <td>${idx + 1}</td>
+                      <td>${inspection?.buildingLevel?.building?.name} ${inspection?.buildingLevel?.floor}층</td>
+                      <td bold>${inspection.checklist?.constructionType}</td>
+                      <td>${inspection.checklist?.constructionDetailType}</td>
+                      <td>${this._formatDate(inspection.requestDate)}</td>
+                      <td bold>${inspection.status && BUILDING_INSPECTION_STATUS[inspection.status]}</td>
                       <td>ㅁㅁㅁㅁㅁㅁ</td>
                     </tr>`
                   })}
@@ -588,7 +591,7 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
   async initProject(projectId: string = '') {
     const response = await client.query({
       query: gql`
-        query Project($id: String!, $projectId: String!) {
+        query Project($id: String!, $projectId: String!, $params: BuildingInspectionsOfProject!) {
           project(id: $id) {
             id
             name
@@ -632,16 +635,40 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
             }
           }
 
-          buildingInspectionSummaryOfProject(projectId: $projectId) {
+          inspectionSummary: buildingInspectionSummaryOfProject(projectId: $projectId) {
             request
             pass
             fail
+          }
+
+          buildingInspectionsOfProject(params: $params) {
+            items {
+              id
+              status
+              requestDate
+              buildingLevel {
+                floor
+                building {
+                  name
+                }
+              }
+              checklist {
+                name
+                constructionType
+                constructionDetailType
+              }
+            }
+            total
           }
         }
       `,
       variables: {
         id: projectId,
-        projectId
+        projectId,
+        params: {
+          projectId,
+          limit: 20
+        }
       }
     })
 
@@ -649,12 +676,27 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
 
     this.project = response.data?.project || {}
     this.inspectionSummary = response.data?.inspectionSummary || {}
+    this.buildingInspections = response.data?.buildingInspectionsOfProject?.items || []
 
     const { latitude, longitude } = this.project?.buildingComplex
     if (latitude && longitude) {
       this.weather = await _getWeather(latitude, longitude)
     }
+  }
 
-    console.log('init project : ', this.project)
+  private _onClickInspection(buildingInspectionId: string) {
+    console.log('buildingInspectionId :', buildingInspectionId)
+    navigate(`building-inspection-detail-drawing/${buildingInspectionId}`)
+  }
+
+  private _formatDate(date: Date | undefined) {
+    return date
+      ? new Intl.DateTimeFormat('en-CA', {
+          timeZone: 'Asia/Seoul',
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit'
+        }).format(new Date(date))
+      : ''
   }
 }

@@ -219,6 +219,7 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
       // buildingId가 있으면 선택
       const params: any = lifecycle.params
       await this.initProject(lifecycle.resourceId, params.buildingId)
+      this.grist.fetch()
     }
   }
 
@@ -331,17 +332,6 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
           type: 'string',
           name: 'requestDate',
           header: '검측 요청일',
-          record: {
-            renderer: value =>
-              value
-                ? new Intl.DateTimeFormat('en-CA', {
-                    timeZone: 'Asia/Seoul',
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit'
-                  }).format(new Date(value))
-                : ''
-          },
           width: 120
         },
         {
@@ -378,12 +368,18 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
   async fetchHandler({ page = 1, limit = 100, sortings = [], filters = [] }: FetchOption) {
     const response = await client.query({
       query: gql`
-        query BuildingInspections($filters: [Filter!], $pagination: Pagination) {
-          buildingInspections(filters: $filters, pagination: $pagination) {
+        query BuildingInspectionsOfProject($params: BuildingInspectionsOfProject!) {
+          buildingInspectionsOfProject(params: $params) {
             items {
               id
               status
               requestDate
+              buildingLevel {
+                floor
+                building {
+                  name
+                }
+              }
               checklist {
                 checklistId: id
                 name
@@ -397,20 +393,22 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
         }
       `,
       variables: {
-        filters,
-        pagination: { page, limit },
-        sortings
+        params: {
+          projectId: this.projectId,
+          limit: 0
+        }
       }
     })
 
-    let items = response.data.buildingInspections?.items || []
+    let items = response.data.buildingInspectionsOfProject?.items || []
     items = items.map(item => ({
       ...item,
-      ...item.checklist
+      ...item.checklist,
+      requestDate: this._formatDate(item.requestDate)
     }))
 
     return {
-      total: response.data.buildingInspections.total || 0,
+      total: response.data.buildingInspectionsOfProject.total || 0,
       records: items
     }
   }
@@ -452,5 +450,16 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
         title: '검측 요청서 등록'
       }
     )
+  }
+
+  private _formatDate(date: Date | undefined) {
+    return date
+      ? new Intl.DateTimeFormat('en-CA', {
+          timeZone: 'Asia/Seoul',
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit'
+        }).format(new Date(date))
+      : ''
   }
 }

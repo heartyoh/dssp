@@ -2,9 +2,10 @@ import { Resolver, Query, FieldResolver, Root, Arg, Args, Ctx } from 'type-graph
 import { Attachment } from '@things-factory/attachment-base'
 import { getRepository, getQueryBuilderFromListParams, ListParam } from '@things-factory/shell'
 import { BuildingInspection, BuildingInspectionStatus } from './building-inspection'
-import { BuildingInspectionList, BuildingInspectionSummary } from './building-inspection-type'
+import { BuildingInspectionList, BuildingInspectionsOfProject, BuildingInspectionSummary } from './building-inspection-type'
 import { BuildingLevel } from '@dssp/building-complex'
 import { Checklist } from '../checklist/checklist'
+import { Project } from '@dssp/project'
 
 @Resolver(BuildingInspection)
 export class BuildingInspectionQuery {
@@ -24,6 +25,34 @@ export class BuildingInspectionQuery {
       repository: await getRepository(BuildingInspection),
       searchables: ['name']
     })
+
+    const [items, total] = await queryBuilder.getManyAndCount()
+
+    return { items, total }
+  }
+
+  @Query(returns => BuildingInspectionList, { description: 'To fetch multiple BuildingInspections' })
+  async buildingInspectionsOfProject(
+    @Arg('params') params: BuildingInspectionsOfProject,
+    @Ctx() context: ResolverContext
+  ): Promise<BuildingInspectionList> {
+    const { domain } = context.state
+    const { projectId, limit } = params
+
+    const queryBuilder = getRepository(BuildingInspection)
+      .createQueryBuilder('bi')
+      .innerJoin('building_levels', 'bl', 'bi.building_level_id = bl.id')
+      .innerJoin('buildings', 'b', 'bl.building_id = b.id')
+      .innerJoin('building_complexes', 'bc', 'b.building_complex_id = bc.id')
+      .innerJoin('projects', 'p', 'bc.id = p.building_complex_id')
+      .innerJoin('checklists', 'c', 'bi.checklist_id = c.id')
+      .where('p.domain = :domain', { domain: domain.id })
+      .andWhere('p.id = :projectId', { projectId })
+      .orderBy('bi.created_at', 'DESC')
+
+    if (limit) {
+      queryBuilder.limit(limit)
+    }
 
     const [items, total] = await queryBuilder.getManyAndCount()
 
@@ -78,32 +107,25 @@ export class BuildingInspectionQuery {
   ): Promise<BuildingInspectionSummary> {
     const { domain } = context.state
 
-    // TODO 수정
+    const result = await getRepository(Project)
+      .createQueryBuilder('p')
+      .select(`COUNT(CASE WHEN bi.status = '${BuildingInspectionStatus.REQUEST}' THEN 1 ELSE NULL END) AS request`)
+      .addSelect(`COUNT(CASE WHEN bi.status = '${BuildingInspectionStatus.PASS}' THEN 1 ELSE NULL END) AS pass`)
+      .addSelect(`COUNT(CASE WHEN bi.status = '${BuildingInspectionStatus.FAIL}' THEN 1 ELSE NULL END) AS fail`)
+      .innerJoin('p.buildingComplex', 'bc')
+      .innerJoin('bc.buildings', 'b')
+      .innerJoin('b.buildingLevels', 'bl')
+      .leftJoin('building_inspections', 'bi', 'bi.building_level_id = bl.id AND bi.deleted_at IS NULL')
+      .where('p.domain = :domain', { domain: domain.id })
+      .andWhere('p.id = :projectId', { projectId })
+      .groupBy('p.id')
+      .getRawOne()
+
     return {
-      request: 0,
-      pass: 0,
-      fail: 0
+      request: result.request || 0,
+      pass: result.pass || 0,
+      fail: result.fail || 0
     }
-
-    // const queryBuilder = getRepository(Project)
-    //   .createQueryBuilder('p')
-    //   .select(`COUNT(CASE WHEN bi.status='${BuildingInspectionStatus.REQUEST}' THEN 1 ELSE NULL END) AS request`)
-    //   .addSelect(`COUNT(CASE WHEN bi.status='${BuildingInspectionStatus.PASS}' THEN 1 ELSE NULL END) AS pass`)
-    //   .addSelect(`COUNT(CASE WHEN bi.status='${BuildingInspectionStatus.FAIL}' THEN 1 ELSE NULL END) AS fail`)
-    //   .innerJoin('p.buildingComplex', 'bc')
-    //   .innerJoin('bc.buildings', 'b')
-    //   .innerJoin('b.buildingLevels', 'bl')
-    //   .innerJoin('bl.buildingInspections', 'bi')
-    //   .where('p.domain = :domain', { domain: domain.id })
-    //   .andWhere('p.id = :projectId', { projectId })
-    //   .groupBy('p.id')
-
-    // const result = (await queryBuilder.getRawOne()) || {}
-    // return {
-    //   request: result.request || 0,
-    //   pass: result.pass || 0,
-    //   fail: result.fail || 0
-    // }
   }
 
   @FieldResolver(type => Checklist)
