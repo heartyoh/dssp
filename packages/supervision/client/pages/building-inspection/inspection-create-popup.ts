@@ -526,7 +526,7 @@ class InspectionCreatePopup extends LitElement {
       this.requestRefresh()
       this._close()
     } else {
-      notify({ message: '검측 요청서 등록에 실패하였습니다.', level: 'error' })
+      notify({ message: response.errors?.[0]?.message || '검측 요청서 등록에 실패하였습니다.', level: 'error' })
     }
   }
   // Input 요소의 값이 변경될 때 호출되는 콜백 함수

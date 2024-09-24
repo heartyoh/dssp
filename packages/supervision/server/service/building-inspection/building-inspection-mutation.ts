@@ -14,21 +14,29 @@ export class BuildingInspectionMutation {
     @Arg('patch') patch: NewBuildingInspection,
     @Ctx() context: ResolverContext
   ): Promise<BuildingInspection> {
-    const { domain, user, tx } = context.state
-
+    const { user, tx } = context.state
     const buildingInspectionRepository = tx.getRepository(BuildingInspection)
     const checklistRepository = tx.getRepository(Checklist)
     const checklistItemRepository = tx.getRepository(ChecklistItem)
+    const { buildingLevelId, checklist, checklistItem } = patch
 
-    // 1. checklist 저장
+    // 1. 벨리데이션
+    if (!buildingLevelId) throw new Error('층 아이디가 없습니다.')
+    if (!checklist.name) throw new Error('체크리스트 이름이 없습니다.')
+    if (!checklist.constructionType) throw new Error('공종 타입이 없습니다.')
+    if (!checklist.constructionDetailType) throw new Error('상세 공종 타입이 없습니다.')
+    if (!checklist.location) throw new Error('위치가 없습니다.')
+    if (checklistItem.length === 0) throw new Error('체크리스트 아이템이 없습니다.')
+
+    // 2. checklist 저장
     const savedChecklist = await checklistRepository.save({
-      ...patch.checklist,
+      ...checklist,
       creator: user,
       updater: user
     })
 
-    // 2. checklistItem 저장
-    const checklistItems = patch.checklistItem.map((item, idx) => ({
+    // 3. checklistItem 저장
+    const checklistItems = checklistItem.map((item, idx) => ({
       name: item.name,
       mainType: item.mainType,
       detailType: item.detailType,
@@ -39,10 +47,10 @@ export class BuildingInspectionMutation {
     }))
     await checklistItemRepository.save(checklistItems)
 
-    // 3. buildingInspection 저장
+    // 4. buildingInspection 저장
     const result = await buildingInspectionRepository.save({
       status: BuildingInspectionStatus.REQUEST,
-      buildingLevel: { id: patch.buildingLevelId },
+      buildingLevel: { id: buildingLevelId },
       requestDate: new Date(),
       checklist: savedChecklist,
       creator: user,
