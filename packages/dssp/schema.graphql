@@ -634,9 +634,9 @@ type ChatCompletionOutput {
 
 type Checklist {
   buildingInspection: BuildingInspection!
-  checklistItems: ChecklistItem!
+  checklistItems: [ChecklistItem!]!
   constructionDetailType: String
-  constructionInspectorDate: DateTimeISO
+  constructionInsprctionDate: DateTimeISO
   constructionType: String
   createdAt: DateTimeISO
   creator: User
@@ -647,7 +647,7 @@ type Checklist {
   name: String
   overallConstructionSignature: String
   overallSupervisorySignature: String
-  supervisorInspectorDate: DateTimeISO
+  supervisorInsprctionDate: DateTimeISO
   task: Task!
   taskConstructionSignature: String
   taskSupervisorySignature: String
@@ -705,7 +705,7 @@ input ChecklistPatch {
 }
 
 type ChecklistTemplate {
-  checklistTemplateItems: ChecklistTemplateItem!
+  checklistTemplateItems: [ChecklistTemplateItem!]!
   createdAt: DateTimeISO
   creator: User
   deletedAt: DateTimeISO

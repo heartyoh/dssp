@@ -39,7 +39,7 @@ export class ChecklistTemplate {
   name?: string
 
   // 체크리스트 템플릿 아이템 정보 (하위 테이블 참조)
-  @Field(() => ChecklistTemplateItem)
+  @Field(() => [ChecklistTemplateItem])
   @OneToMany(() => ChecklistTemplateItem, checklistTemplateItem => checklistTemplateItem.checklistTemplate)
   checklistTemplateItems?: ChecklistTemplateItem[]
 

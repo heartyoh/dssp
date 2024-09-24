@@ -4,6 +4,11 @@ import { customElement, property } from 'lit/decorators.js'
 import { ButtonContainerStyles, ScrollbarStyles } from '@operato/styles'
 import { ChecklistTypeMainType, CHECKLIST_MAIN_TYPE_LIST } from '../building-inspection/building-inspection-list'
 
+export const enum ChecklistMode {
+  VIEWER = 'VIEWER',
+  EDITOR = 'EDITOR'
+}
+
 @customElement('checklist-view')
 class ChecklistView extends LitElement {
   static styles = [
@@ -120,18 +125,16 @@ class ChecklistView extends LitElement {
     `
   ]
 
-  @property({ type: String }) checklistName: string = ''
-  @property({ type: String }) checklistConstructionType: string = ''
-  @property({ type: String }) checklistConstructionDetailType: string = ''
-  @property({ type: String }) location: string = ''
-  @property({ type: Array }) checklistItem: any = []
+  @property({ type: String }) mode: ChecklistMode = ChecklistMode.VIEWER
+  @property({ type: String }) checklist: any = {}
+  @property({ type: Array }) checklistItems: any = []
 
   render() {
-    const today = this._getToday()
-    const mainTypeCount = this.checklistItem?.filter(v => v.mainType === ChecklistTypeMainType.BASIC).length
+    const today = this._getDate(new Date())
+    const mainTypeCount = this.checklistItems?.filter(v => v.mainType === ChecklistTypeMainType.BASIC).length
 
     // 체크리스트 아이템 정렬
-    this.checklistItem.sort((a, b) => {
+    this.checklistItems.sort((a, b) => {
       // 1순위: mainType 오름차순
       if (a.mainType < b.mainType) return -1
       if (a.mainType > b.mainType) return 1
@@ -142,20 +145,20 @@ class ChecklistView extends LitElement {
 
     return html`
       <div wrapper>
-        <div name>${this.checklistName}</div>
+        <div name>${this.checklist.name}</div>
 
         <table header>
           <tr>
             <th>공종</th>
-            <td>${this.checklistConstructionType}</td>
+            <td>${this.checklist.constructionType}</td>
             <th>문서 번호</th>
             <td></td>
           </tr>
           <tr>
             <th>세부 공종</th>
-            <td>${this.checklistConstructionDetailType}</td>
+            <td>${this.checklist.constructionDetailType}</td>
             <th>위치 및 부위</th>
-            <td>${this.location}</td>
+            <td>${this.checklist.location}</td>
           </tr>
         </table>
 
@@ -181,7 +184,7 @@ class ChecklistView extends LitElement {
             </tr>
           </thead>
           <tbody>
-            ${this.checklistItem.map((item, idx) => {
+            ${this.checklistItems.map((item, idx) => {
               let basicMainType: any = ''
               if (idx === 0) {
                 basicMainType = html` <td type bold rowspan="${mainTypeCount}">${CHECKLIST_MAIN_TYPE_LIST[item.mainType]}</td>`
@@ -189,7 +192,7 @@ class ChecklistView extends LitElement {
 
               let nonBasicMainType: any = ''
               if (idx === mainTypeCount) {
-                nonBasicMainType = html` <td type bold rowspan="${this.checklistItem.length - mainTypeCount}">
+                nonBasicMainType = html` <td type bold rowspan="${this.checklistItems.length - mainTypeCount}">
                   ${CHECKLIST_MAIN_TYPE_LIST[item.mainType]}
                 </td>`
               }
@@ -199,8 +202,8 @@ class ChecklistView extends LitElement {
                 <td bold>${item.detailType}</td>
                 <td bold>${idx + 1}. ${item.name}</td>
                 <td></td>
-                <td></td>
-                <td></td>
+                <td><md-radio name="animals" value="cats"></md-radio></td>
+                <td><md-radio name="animals" value="cats"></md-radio></td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -214,7 +217,9 @@ class ChecklistView extends LitElement {
           <tbody>
             <tr first>
               <th rowspan="2">시공자점검일</th>
-              <td rowspan="2">${today}</td>
+              <td rowspan="2">
+                ${this.mode == ChecklistMode.VIEWER ? today : this._getDate(this.checklist.constructionInsprctionDate)}
+              </td>
               <th>총괄 시공책임자</th>
               <td>(인)</td>
             </tr>
@@ -223,8 +228,10 @@ class ChecklistView extends LitElement {
               <td>(인)</td>
             </tr>
             <tr>
-              <th rowspan="2">시공자점검일</th>
-              <td rowspan="2">${today}</td>
+              <th rowspan="2">감리자점검일</th>
+              <td rowspan="2">
+                ${this.mode == ChecklistMode.VIEWER ? today : this._getDate(this.checklist.supervisorInsprctionDate)}
+              </td>
               <th>총괄 감리책임자</th>
               <td>(인)</td>
             </tr>
@@ -246,8 +253,11 @@ class ChecklistView extends LitElement {
     `
   }
 
-  private _getToday() {
-    return new Date().toLocaleDateString('ko-KR', {
+  private _getDate(date) {
+    if (!date) return ' 년 월 일'
+
+    const _date = date || new Date()
+    return _date.toLocaleDateString('ko-KR', {
       timeZone: 'Asia/Seoul',
       year: 'numeric',
       month: 'long',

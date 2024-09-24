@@ -11,6 +11,7 @@ import { ButtonContainerStyles, ScrollbarStyles } from '@operato/styles'
 import { notify } from '@operato/layout'
 import { CHECKLIST_MAIN_TYPE_LIST } from './building-inspection-list'
 import '../checklist/checklist-view'
+import { ChecklistMode } from '../checklist/checklist-view'
 
 @customElement('inspection-create-popup')
 class InspectionCreatePopup extends LitElement {
@@ -88,8 +89,8 @@ class InspectionCreatePopup extends LitElement {
   @state() selectedConstructionDetailType: any = {}
 
   @state() checklistTemplates: any = []
-  @state() checklistName: string = ''
-  @state() checklistItem: any = []
+  @state() checklist: any = {}
+  @state() checklistItems: any = []
 
   @query('md-filled-select[building]') htmlSelectBuilding
   @query('md-filled-select[level]') htmlSelectLevel
@@ -97,7 +98,6 @@ class InspectionCreatePopup extends LitElement {
   @query('md-filled-select[constructionDetailType]') htmlSelectConstructionDetailType
   @query('md-filled-select[checklistTemplate]') htmlSelectChecklistTemplate
   @query('ox-grist') grist!: DataGrist
-  @query('#ifChecklist') ifChecklist!: HTMLIFrameElement
 
   render() {
     return html`
@@ -169,7 +169,7 @@ class InspectionCreatePopup extends LitElement {
               name="checklistName"
               type="text"
               label="체크리스트 이름"
-              .value=${this.checklistName}
+              .value=${this.checklist?.name || ''}
               @input=${this._onInputChange}
             >
             </md-filled-text-field>
@@ -192,11 +192,9 @@ class InspectionCreatePopup extends LitElement {
 
         <div right>
           <checklist-view
-            .checklistName=${this.checklistName}
-            .checklistConstructionType=${this.selectedConstructionType?.name}
-            .checklistConstructionDetailType=${this.selectedConstructionDetailType?.name}
-            .location=${`${this.selectedBuilding?.name || ''} ${this.selectedLevel.name || ''}층`}
-            .checklistItem=${this.checklistItem}
+            .mode=${ChecklistMode.VIEWER}
+            .checklist=${this.checklist}
+            .checklistItems=${this.checklistItems}
           ></checklist-view>
         </div>
       </div>
@@ -287,6 +285,12 @@ class InspectionCreatePopup extends LitElement {
     await this.htmlSelectConstructionDetailType.select(this.selectedConstructionDetailType.id)
     await this.htmlSelectChecklistTemplate.selectIndex(0)
 
+    this.checklist = {
+      constructionType: this.selectedConstructionType?.name,
+      constructionDetailType: this.selectedConstructionDetailType?.name,
+      location: `${this.selectedBuilding?.name || ''} ${this.selectedLevel.floor || ''}층`
+    }
+
     // 기본 셋팅
     this.setGristConfig()
   }
@@ -348,6 +352,7 @@ class InspectionCreatePopup extends LitElement {
     const buildingId = e.target.value
     this.selectedBuilding = await this._getBuilding(buildingId)
     this.selectedLevel = await { ...this.selectedBuilding?.buildingLevels?.[0] }
+    this.checklist = { ...this.checklist, location: `${this.selectedBuilding?.name || ''} ${this.selectedLevel.floor || ''}층` }
 
     await this.htmlSelectLevel.selectIndex(0)
   }
@@ -357,12 +362,18 @@ class InspectionCreatePopup extends LitElement {
     this.selectedLevel = {
       ...(this.selectedBuilding?.buildingLevels?.find(v => v.id == buildingLevelId) || {})
     }
+    this.checklist = { ...this.checklist, location: `${this.selectedBuilding?.name || ''} ${this.selectedLevel.floor || ''}층` }
   }
 
   private async _onSelectConstructionType(e) {
     const constructionTypeId = e.target.value
     this.selectedConstructionType = await this._getConstructionType(constructionTypeId)
     this.selectedConstructionDetailType = await { ...this.selectedConstructionType?.constructionDetailTypes?.[0] }
+    this.checklist = {
+      ...this.checklist,
+      constructionType: this.selectedConstructionType?.name,
+      constructionDetailType: this.selectedConstructionDetailType?.name
+    }
 
     await this.htmlSelectConstructionDetailType.selectIndex(0)
   }
@@ -371,6 +382,11 @@ class InspectionCreatePopup extends LitElement {
     const constructionDetailTypeId = e.target.value
     this.selectedConstructionDetailType = {
       ...(this.selectedConstructionType?.constructionDetailTypes?.find(v => v.id == constructionDetailTypeId) || {})
+    }
+    this.checklist = {
+      ...this.checklist,
+      constructionType: this.selectedConstructionType?.name,
+      constructionDetailType: this.selectedConstructionDetailType?.name
     }
   }
 
@@ -484,7 +500,7 @@ class InspectionCreatePopup extends LitElement {
     }
 
     // 체크 리스트 이름 셋팅
-    this.checklistName = e.target.displayText
+    this.checklist = { ...this.checklist, name: e.target.displayText }
 
     // 체크리스트 아이템 데이터 갱신
     this.onChangeGird()
@@ -495,12 +511,12 @@ class InspectionCreatePopup extends LitElement {
 
     patch.buildingLevelId = this.htmlSelectLevel.value
     patch.checklist = {
-      name: this.checklistName,
+      name: this.checklist.name,
       constructionType: this.htmlSelectConstructionType.displayText,
       constructionDetailType: this.htmlSelectConstructionDetailType.displayText,
       location: `${this.htmlSelectBuilding.displayText} ${this.htmlSelectLevel.displayText}층`
     }
-    patch.checklistItem = this.checklistItem.map(item => {
+    patch.checklistItem = this.checklistItems.map(item => {
       return {
         name: item.name,
         mainType: item.mainType,
@@ -533,6 +549,7 @@ class InspectionCreatePopup extends LitElement {
   private _onInputChange(event: InputEvent) {
     const target = event.target as HTMLInputElement
     this[target.name] = target.value
+    this.checklist = { ...this.checklist, name: target.value }
   }
 
   // 체크리스트 아이템 데이터 갱신
@@ -542,7 +559,7 @@ class InspectionCreatePopup extends LitElement {
 
     // grist field-change가 오는 시점이 데이터 변경 전이라 setTimeout으로 변경
     setTimeout(() => {
-      this.checklistItem = grist.dirtyData.records.map((row, idx) => {
+      this.checklistItems = grist.dirtyData.records.map((row, idx) => {
         return {
           ...row,
           detailType: checklistDetailTypes[row.detailType],

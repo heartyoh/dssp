@@ -64,21 +64,20 @@ class buildingInspectionDetailHeader extends LitElement {
     `
   ]
 
-  @property({ type: Object }) gristConfig: any
-  @property({ type: Object }) checklistDetailTypes: any
+  @property({ type: String }) buildingInspectionId: string = ''
   @property({ type: String }) projectId: string = ''
-  @property({ type: String }) checklistTemplateId: string = ''
-
-  @state() buildingInspectionId: string = ''
-  @state() projectName: string = ''
-  @state() buildingName: string = ''
-  @state() buildingLevelFloor: string = ''
+  @property({ type: String }) projectName: string = ''
+  @property({ type: String }) buildingName: string = ''
+  @property({ type: String }) buildingLevelFloor: string = ''
 
   render() {
     return html`
       <div header>
         <h2>${this.projectName || ''} ${this.buildingName || ''} ${this.buildingLevelFloor || ''}층</h2>
         <div button-container>
+          <md-elevated-button href=${`building-inspection-list/${this.projectId}`}>
+            <md-icon slot="icon">assignment</md-icon>검측 리스트
+          </md-elevated-button>
           <md-elevated-button href=${`building-inspection-detail-drawing/${this.buildingInspectionId}`}>
             <md-icon slot="icon">assignment</md-icon>검측도면
           </md-elevated-button>

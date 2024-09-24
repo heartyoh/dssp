@@ -14,6 +14,8 @@ import gql from 'graphql-tag'
 import { openPopup } from '@operato/layout'
 
 import './component/building-inspection-detail-header'
+import '../checklist/checklist-view'
+import { ChecklistMode } from '../checklist/checklist-view'
 
 @customElement('building-inspection-detail-checklist')
 export class buildingInspectionDetailChecklist extends ScopedElementsMixin(PageView) {
@@ -58,13 +60,18 @@ export class buildingInspectionDetailChecklist extends ScopedElementsMixin(PageV
     return html`
       <building-inspection-detail-header
         .buildingInspectionId=${this.buildingInspection?.id}
+        .projectId=${this.project.id}
         .projectName=${this.project.name}
         .buildingName=${this.buildingInspection?.buildingLevel?.building?.name}
         .buildingLevelFloor=${this.buildingInspection?.buildingLevel?.floor}
       ></building-inspection-detail-header>
 
       <div body>
-        <img src=${this.buildingInspection?.buildingLevel?.mainDrawingImage || '/assets/images/img-drawing-default.png'} />
+        <checklist-view
+          .mode=${ChecklistMode.EDITOR}
+          .checklist=${this.buildingInspection.checklist}
+          .checklistItems=${this.buildingInspection.checklist.checklistItems}
+        ></checklist-view>
       </div>
     `
   }
@@ -84,6 +91,23 @@ export class buildingInspectionDetailChecklist extends ScopedElementsMixin(PageV
             id
             status
             requestDate
+            checklist {
+              id
+              name
+              constructionType
+              constructionDetailType
+              location
+              checklistItems {
+                id
+                name
+                sequence
+                mainType
+                detailType
+                constructionConfirmStatus
+                supervisoryConfirmStatus
+                comment
+              }
+            }
             buildingLevel {
               id
               floor

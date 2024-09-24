@@ -3,6 +3,7 @@ import { getQueryBuilderFromListParams, getRepository, ListParam } from '@things
 import { User } from '@things-factory/auth-base'
 import { Checklist } from './checklist'
 import { ChecklistList } from './checklist-type'
+import { ChecklistItem } from '../checklist-item/checklist-item'
 
 @Resolver(Checklist)
 export class ChecklistQuery {
@@ -28,6 +29,15 @@ export class ChecklistQuery {
     const [items, total] = await queryBuilder.getManyAndCount()
 
     return { items, total }
+  }
+
+  @FieldResolver(type => [ChecklistItem])
+  async checklistItems(@Root() checklist: Checklist): Promise<ChecklistItem[]> {
+    return await getRepository(ChecklistItem)
+      .createQueryBuilder('ci')
+      .where('ci.checklist_id = :checklistId', { checklistId: checklist.id })
+      .orderBy('ci.sequence', 'ASC')
+      .getMany()
   }
 
   @FieldResolver(type => User)

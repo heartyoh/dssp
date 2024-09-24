@@ -49,11 +49,11 @@ export class Checklist {
 
   @Column({ nullable: true, comment: '시공자 점검일' })
   @Field({ nullable: true })
-  constructionInspectorDate?: Date
+  constructionInsprctionDate?: Date
 
   @Column({ nullable: true, comment: '감리자 점검일' })
   @Field({ nullable: true })
-  supervisorInspectorDate?: Date
+  supervisorInsprctionDate?: Date
 
   @Column({ nullable: true, comment: '총괄 시공 책임자 사인' })
   @Field({ nullable: true })
@@ -82,7 +82,7 @@ export class Checklist {
 
   // 체크리스트 아이템 정보 (하위 테이블 참조)
   @OneToMany(() => ChecklistItem, checklistItem => checklistItem.checklist)
-  @Field(() => ChecklistItem)
+  @Field(() => [ChecklistItem])
   checklistItems?: ChecklistItem[]
 
   // 검측 정보 (1:1 하위 테이블 참조)
