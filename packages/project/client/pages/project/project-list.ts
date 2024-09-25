@@ -15,13 +15,15 @@ export enum ProjectStatus {
 }
 export enum BuildingInspectionStatus {
   REQUEST = 'REQUEST',
+  REQUEST_SUPERVISORY = 'REQUEST_SUPERVISORY',
   PASS = 'PASS',
   FAIL = 'FAIL'
 }
 export const BUILDING_INSPECTION_STATUS = {
-  REQUEST: '요청',
-  PASS: '통과',
-  FAIL: '실패'
+  [BuildingInspectionStatus.REQUEST]: '요청',
+  [BuildingInspectionStatus.REQUEST_SUPERVISORY]: '감리 요청',
+  [BuildingInspectionStatus.PASS]: '합격',
+  [BuildingInspectionStatus.FAIL]: '불합격'
 }
 
 export interface Project {
@@ -109,8 +111,8 @@ export interface Checklist {
   location?: string
   constructionInspectorDate?: Date
   supervisorInspectorDate?: Date
-  overallConstructionSignature?: string
-  taskConstructionSignature?: string
+  overallConstructorSignature?: string
+  taskConstructorSignature?: string
   overallSupervisorySignature?: string
   taskSupervisorySignature?: string
   // checklistItems?: ChecklistItem[]

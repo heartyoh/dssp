@@ -2,7 +2,12 @@ import '@material/web/icon/icon.js'
 import { css, html, LitElement } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
 import { ButtonContainerStyles, ScrollbarStyles } from '@operato/styles'
-import { ChecklistTypeMainType, CHECKLIST_MAIN_TYPE_LIST } from '../building-inspection/building-inspection-list'
+import {
+  ChecklistTypeMainType,
+  CHECKLIST_MAIN_TYPE_LIST,
+  BuildingInspectionStatus
+} from '../building-inspection/building-inspection-list'
+import '@operato/input/ox-input-signature.js'
 
 export const enum ChecklistMode {
   VIEWER = 'VIEWER',
@@ -56,6 +61,14 @@ class ChecklistView extends LitElement {
         }
         td {
           height: 35px;
+          &[radio] {
+            text-align: center;
+            vertical-align: middle;
+            width: 55px;
+          }
+          &[attachment] {
+            width: 90px;
+          }
         }
       }
 
@@ -105,10 +118,26 @@ class ChecklistView extends LitElement {
           width: 25%;
           border-left: none;
           text-align: center;
+          position: relative;
         }
         th {
           width: 25%;
           border-right: none;
+        }
+
+        span[sign-text] {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          pointer-events: none;
+        }
+        ox-input-signature {
+          margin: 10px;
+
+          &[disabled] {
+            background: #eee;
+          }
         }
       }
 
@@ -126,15 +155,18 @@ class ChecklistView extends LitElement {
   ]
 
   @property({ type: String }) mode: ChecklistMode = ChecklistMode.VIEWER
-  @property({ type: String }) checklist: any = {}
-  @property({ type: Array }) checklistItems: any = []
+  @property({ type: Object }) checklist: any = {}
+  @property({ type: String }) status: BuildingInspectionStatus = BuildingInspectionStatus.REQUEST
 
   render() {
     const today = this._getDate(new Date())
-    const mainTypeCount = this.checklistItems?.filter(v => v.mainType === ChecklistTypeMainType.BASIC).length
+    const mainTypeCount = this.checklist.checklistItems?.filter(v => v.mainType === ChecklistTypeMainType.BASIC).length
+    const isConstructorStep = this.status == BuildingInspectionStatus.REQUEST
+    const isSupervisoryStep =
+      this.status == BuildingInspectionStatus.REQUEST_SUPERVISORY || this.status == BuildingInspectionStatus.FAIL
 
     // 체크리스트 아이템 정렬
-    this.checklistItems.sort((a, b) => {
+    this.checklist?.checklistItems?.sort((a, b) => {
       // 1순위: mainType 오름차순
       if (a.mainType < b.mainType) return -1
       if (a.mainType > b.mainType) return 1
@@ -184,7 +216,7 @@ class ChecklistView extends LitElement {
             </tr>
           </thead>
           <tbody>
-            ${this.checklistItems.map((item, idx) => {
+            ${this.checklist?.checklistItems?.map((item, idx) => {
               let basicMainType: any = ''
               if (idx === 0) {
                 basicMainType = html` <td type bold rowspan="${mainTypeCount}">${CHECKLIST_MAIN_TYPE_LIST[item.mainType]}</td>`
@@ -192,7 +224,7 @@ class ChecklistView extends LitElement {
 
               let nonBasicMainType: any = ''
               if (idx === mainTypeCount) {
-                nonBasicMainType = html` <td type bold rowspan="${this.checklistItems.length - mainTypeCount}">
+                nonBasicMainType = html` <td type bold rowspan="${this.checklist?.checklistItems?.length - mainTypeCount}">
                   ${CHECKLIST_MAIN_TYPE_LIST[item.mainType]}
                 </td>`
               }
@@ -202,11 +234,47 @@ class ChecklistView extends LitElement {
                 <td bold>${item.detailType}</td>
                 <td bold>${idx + 1}. ${item.name}</td>
                 <td></td>
-                <td><md-radio name="animals" value="cats"></md-radio></td>
-                <td><md-radio name="animals" value="cats"></md-radio></td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td radio>
+                  <md-radio
+                    item-id=${item.id}
+                    item-name="constructionConfirmStatus"
+                    name=${'radio-construction-' + item.id}
+                    value="T"
+                    ?disabled=${!isConstructorStep}
+                    @change=${this._onChangeConfirmStatus}
+                  ></md-radio>
+                </td>
+                <td radio>
+                  <md-radio
+                    item-id=${item.id}
+                    item-name="constructionConfirmStatus"
+                    name=${'radio-construction-' + item.id}
+                    value="F"
+                    ?disabled=${!isConstructorStep}
+                    @change=${this._onChangeConfirmStatus}
+                  ></md-radio>
+                </td>
+                <td radio>
+                  <md-radio
+                    item-id=${item.id}
+                    item-name="supervisoryConfirmStatus"
+                    name=${'radio-supervisory-' + item.id}
+                    value="T"
+                    ?disabled=${!isSupervisoryStep}
+                    @change=${this._onChangeConfirmStatus}
+                  ></md-radio>
+                </td>
+                <td radio>
+                  <md-radio
+                    item-id=${item.id}
+                    item-name="supervisoryConfirmStatus"
+                    name=${'radio-supervisory-' + item.id}
+                    value="F"
+                    ?disabled=${!isSupervisoryStep}
+                    @change=${this._onChangeConfirmStatus}
+                  ></md-radio>
+                </td>
+                <td attachment></td>
                 <td></td>
               </tr>`
             })}
@@ -221,11 +289,29 @@ class ChecklistView extends LitElement {
                 ${this.mode == ChecklistMode.VIEWER ? today : this._getDate(this.checklist.constructionInsprctionDate)}
               </td>
               <th>총괄 시공책임자</th>
-              <td>(인)</td>
+              <td>
+                <span sign-text>(인)</span>
+                <ox-input-signature
+                  .value=${this.checklist.overallConstructorSignature || ''}
+                  name="overallConstructorSignature"
+                  @change=${this._onChangeSignature}
+                  ?disabled=${!isConstructorStep}
+                >
+                </ox-input-signature>
+              </td>
             </tr>
             <tr>
               <th>공종별 시공관리자</th>
-              <td>(인)</td>
+              <td>
+                <span sign-text>(인)</span>
+                <ox-input-signature
+                  .value=${this.checklist.taskConstructorSignature || ''}
+                  name="taskConstructorSignature"
+                  @change=${this._onChangeSignature}
+                  ?disabled=${!isConstructorStep}
+                >
+                </ox-input-signature>
+              </td>
             </tr>
             <tr>
               <th rowspan="2">감리자점검일</th>
@@ -233,11 +319,29 @@ class ChecklistView extends LitElement {
                 ${this.mode == ChecklistMode.VIEWER ? today : this._getDate(this.checklist.supervisorInsprctionDate)}
               </td>
               <th>총괄 감리책임자</th>
-              <td>(인)</td>
+              <td>
+                <span sign-text>(인)</span>
+                <ox-input-signature
+                  .value=${this.checklist.overallSupervisorySignature || ''}
+                  name="overallSupervisorySignature"
+                  @change=${this._onChangeSignature}
+                  ?disabled=${!isSupervisoryStep}
+                >
+                </ox-input-signature>
+              </td>
             </tr>
             <tr>
               <th>공종별 감리 책임자</th>
-              <td>(인)</td>
+              <td>
+                <span sign-text>(인)</span>
+                <ox-input-signature
+                  .value=${this.checklist.taskSupervisorySignature || ''}
+                  name="taskSupervisorySignature"
+                  @change=${this._onChangeSignature}
+                  ?disabled=${!isSupervisoryStep}
+                >
+                </ox-input-signature>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -251,6 +355,23 @@ class ChecklistView extends LitElement {
         </div>
       </div>
     `
+  }
+
+  private _onChangeConfirmStatus(e: Event) {
+    const target = e.target as HTMLInputElement
+    const itemId = target.getAttribute('item-id')
+    const name = target.getAttribute('item-name') || ''
+    const value = target.value
+
+    this.checklist.checklistItems = this.checklist?.checklistItems?.map(item =>
+      item.id == itemId ? { ...item, [name]: value } : item
+    )
+  }
+
+  private _onChangeSignature(e: Event) {
+    const target = e.target as HTMLInputElement
+
+    this.checklist[target.name] = target.value
   }
 
   private _getDate(date) {

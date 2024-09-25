@@ -32,10 +32,6 @@ export class ChecklistItem {
   @Field(type => ID)
   readonly id: string
 
-  @Column({ nullable: true, comment: '검사 항목' })
-  @Field({ nullable: true })
-  name?: string
-
   @Column({ nullable: true, comment: '시퀀스' })
   @Field(type => Int, { nullable: true })
   sequence?: number
@@ -47,6 +43,10 @@ export class ChecklistItem {
   @Column({ nullable: false, comment: '상세 구분 (텍스트)' })
   @Field({ nullable: false })
   detailType?: string
+
+  @Column({ nullable: true, comment: '검사 항목' })
+  @Field({ nullable: true })
+  name?: string
 
   @Column({ nullable: true, comment: '시공 관리자 적합 여부 (T: 적합, F: 부적합)' })
   @Field({ nullable: true })

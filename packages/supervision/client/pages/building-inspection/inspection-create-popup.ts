@@ -40,6 +40,10 @@ class InspectionCreatePopup extends LitElement {
         margin-left: 20px;
       }
 
+      checklist-view {
+        pointer-events: none;
+      }
+
       div[body] {
         display: flex;
         height: 100%;
@@ -90,7 +94,6 @@ class InspectionCreatePopup extends LitElement {
 
   @state() checklistTemplates: any = []
   @state() checklist: any = {}
-  @state() checklistItems: any = []
 
   @query('md-filled-select[building]') htmlSelectBuilding
   @query('md-filled-select[level]') htmlSelectLevel
@@ -191,11 +194,7 @@ class InspectionCreatePopup extends LitElement {
         </div>
 
         <div right>
-          <checklist-view
-            .mode=${ChecklistMode.VIEWER}
-            .checklist=${this.checklist}
-            .checklistItems=${this.checklistItems}
-          ></checklist-view>
+          <checklist-view .mode=${ChecklistMode.VIEWER} .checklist=${this.checklist}></checklist-view>
         </div>
       </div>
     `
@@ -516,7 +515,7 @@ class InspectionCreatePopup extends LitElement {
       constructionDetailType: this.htmlSelectConstructionDetailType.displayText,
       location: `${this.htmlSelectBuilding.displayText} ${this.htmlSelectLevel.displayText}층`
     }
-    patch.checklistItem = this.checklistItems.map(item => {
+    patch.checklistItem = this.checklist.checklistItems.map(item => {
       return {
         name: item.name,
         mainType: item.mainType,
@@ -559,13 +558,14 @@ class InspectionCreatePopup extends LitElement {
 
     // grist field-change가 오는 시점이 데이터 변경 전이라 setTimeout으로 변경
     setTimeout(() => {
-      this.checklistItems = grist.dirtyData.records.map((row, idx) => {
+      this.checklist.checklistItems = grist.dirtyData.records.map((row, idx) => {
         return {
           ...row,
           detailType: checklistDetailTypes[row.detailType],
           sequence: idx
         }
       })
+      this.checklist = { ...this.checklist }
     }, 100)
   }
 }

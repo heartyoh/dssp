@@ -645,11 +645,11 @@ type Checklist {
   id: ID!
   location: String
   name: String
-  overallConstructionSignature: String
+  overallConstructorSignature: String
   overallSupervisorySignature: String
   supervisorInsprctionDate: DateTimeISO
   task: Task!
-  taskConstructionSignature: String
+  taskConstructorSignature: String
   taskSupervisorySignature: String
   updatedAt: DateTimeISO
   updater: User

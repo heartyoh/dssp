@@ -25,11 +25,13 @@ export const CHECKLIST_MAIN_TYPE_LIST = {
 
 export enum BuildingInspectionStatus {
   REQUEST = 'REQUEST',
+  REQUEST_SUPERVISORY = 'REQUEST_SUPERVISORY',
   PASS = 'PASS',
   FAIL = 'FAIL'
 }
 export const BUILDING_INSPECTION_STATUS = {
   [BuildingInspectionStatus.REQUEST]: '요청',
+  [BuildingInspectionStatus.REQUEST_SUPERVISORY]: '감리 요청',
   [BuildingInspectionStatus.PASS]: '합격',
   [BuildingInspectionStatus.FAIL]: '불합격'
 }

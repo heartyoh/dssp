@@ -19,6 +19,7 @@ import { Checklist } from '../checklist/checklist'
 
 export enum BuildingInspectionStatus {
   REQUEST = 'REQUEST',
+  REQUEST_SUPERVISORY = 'REQUEST_SUPERVISORY',
   PASS = 'PASS',
   FAIL = 'FAIL'
 }
@@ -44,7 +45,11 @@ export class BuildingInspection {
   @Field(type => ID)
   readonly id: string
 
-  @Column({ nullable: false, comment: '상태(REQUEST: 요청, PASS: 합격, FAIL: 불합격)', default: 'REQUEST' })
+  @Column({
+    nullable: false,
+    comment: '상태(REQUEST: 요청, REQUEST_SUPERVISORY: 감리 요청, PASS: 합격, FAIL: 불합격)',
+    default: 'REQUEST'
+  })
   @Field({ nullable: true })
   status?: BuildingInspectionStatus
 

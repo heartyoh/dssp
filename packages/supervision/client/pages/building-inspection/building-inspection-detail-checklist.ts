@@ -7,7 +7,6 @@ import { css, html } from 'lit'
 import { PageLifecycle } from '@operato/shell/dist/src/app/pages/page-view'
 import { customElement, query, state } from 'lit/decorators.js'
 import { ScopedElementsMixin } from '@open-wc/scoped-elements'
-import { DataGrist, FetchOption } from '@operato/data-grist'
 import { client } from '@operato/graphql'
 import { notify } from '@operato/layout'
 import gql from 'graphql-tag'
@@ -43,6 +42,17 @@ export class buildingInspectionDetailChecklist extends ScopedElementsMixin(PageV
       div[body] {
         display: flex;
         justify-content: center;
+        flex-direction: column;
+        align-items: center;
+
+        div[button-container] {
+          display: flex;
+          justify-content: flex-end;
+          width: 100%;
+          gap: 10px;
+          margin-right: 50px;
+          margin-bottom: 15px;
+        }
       }
     `
   ]
@@ -69,9 +79,16 @@ export class buildingInspectionDetailChecklist extends ScopedElementsMixin(PageV
       <div body>
         <checklist-view
           .mode=${ChecklistMode.EDITOR}
-          .checklist=${this.buildingInspection.checklist}
-          .checklistItems=${this.buildingInspection.checklist.checklistItems}
+          status=${this.buildingInspection.status}
+          .checklist=${this.buildingInspection.checklist || {}}
         ></checklist-view>
+
+        <div button-container>
+          <md-elevated-button @click=${this._onClickModifyChecklist}>
+            <md-icon slot="icon">assignment</md-icon>등록
+          </md-elevated-button>
+          <md-elevated-button> <md-icon slot="icon">assignment</md-icon>취소 </md-elevated-button>
+        </div>
       </div>
     `
   }
@@ -158,5 +175,9 @@ export class buildingInspectionDetailChecklist extends ScopedElementsMixin(PageV
     if (response.errors) return
 
     this.project = response.data.project
+  }
+
+  private _onClickModifyChecklist() {
+    console.log('checklist : ', this.buildingInspection.checklist)
   }
 }

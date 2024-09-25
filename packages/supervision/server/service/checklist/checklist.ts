@@ -57,11 +57,11 @@ export class Checklist {
 
   @Column({ nullable: true, comment: '총괄 시공 책임자 사인' })
   @Field({ nullable: true })
-  overallConstructionSignature?: string
+  overallConstructorSignature?: string
 
   @Column({ nullable: true, comment: '공종별 시공 관리자 사인' })
   @Field({ nullable: true })
-  taskConstructionSignature?: string
+  taskConstructorSignature?: string
 
   @Column({ nullable: true, comment: '총괄 감리 책임자 사인' })
   @Field({ nullable: true })
