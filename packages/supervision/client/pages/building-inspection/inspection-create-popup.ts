@@ -42,6 +42,7 @@ class InspectionCreatePopup extends LitElement {
 
       checklist-view {
         pointer-events: none;
+        transform-origin: top left;
       }
 
       div[body] {
@@ -49,6 +50,7 @@ class InspectionCreatePopup extends LitElement {
         height: 100%;
         gap: 15px;
         justify-content: flex-start;
+        overflow-y: auto;
 
         div[left] {
           width: 60%;
@@ -72,7 +74,8 @@ class InspectionCreatePopup extends LitElement {
 
         div[right] {
           display: flex;
-          overflow: auto;
+          overflow-y: auto;
+          overflow-x: hidden;
           max-width: calc(40% - 15px);
         }
       }
@@ -101,6 +104,8 @@ class InspectionCreatePopup extends LitElement {
   @query('md-filled-select[constructionDetailType]') htmlSelectConstructionDetailType
   @query('md-filled-select[checklistTemplate]') htmlSelectChecklistTemplate
   @query('ox-grist') grist!: DataGrist
+  @query('div[right]') checklistViewContainer!: HTMLDivElement
+  @query('checklist-view') checklistView!: HTMLElement
 
   render() {
     return html`
@@ -198,6 +203,11 @@ class InspectionCreatePopup extends LitElement {
         </div>
       </div>
     `
+  }
+
+  updated() {
+    const ratio = Math.round((this.checklistViewContainer.offsetWidth / this.checklistView.offsetWidth) * 100) / 100
+    this.checklistView.style.transform = `scale(${ratio})`
   }
 
   async firstUpdated() {

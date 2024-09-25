@@ -25,7 +25,6 @@ class ChecklistView extends LitElement {
         flex-direction: column;
         font-size: 14px;
         padding: 20px;
-        overflow-y: auto;
         min-width: 800px;
 
         background-color: var(--md-sys-color-surface);
