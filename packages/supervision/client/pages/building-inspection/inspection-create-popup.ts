@@ -206,7 +206,7 @@ class InspectionCreatePopup extends LitElement {
   }
 
   updated() {
-    const ratio = Math.round((this.checklistViewContainer.offsetWidth / this.checklistView.offsetWidth) * 100) / 100
+    const ratio = Math.round((this.checklistViewContainer?.offsetWidth / this.checklistView?.offsetWidth) * 100) / 100 || 1
     this.checklistView.style.transform = `scale(${ratio})`
   }
 

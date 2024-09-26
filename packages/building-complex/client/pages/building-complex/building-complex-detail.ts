@@ -291,9 +291,7 @@ export class BuildingComplexDetail extends ScopedElementsMixin(PageView) {
 
             return html`
               <div row .style="bottom:${bottom}px">
-                <a
-                  href=${`building-complex-inspection/${this.project.id}?buildingId=${this.selectedBuilding.id}&levelId=${buildingLevel.id}`}
-                >
+                <a href=${`building-inspection-list/${buildingLevel.id}`}>
                   <div drawing>
                     <div>
                       <img floor-drawing src=${buildingLevel?.mainDrawingImage || '/assets/images/img-drawing-default.png'} />

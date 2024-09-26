@@ -13,6 +13,7 @@ import { notify } from '@operato/layout'
 import gql from 'graphql-tag'
 import { openPopup } from '@operato/layout'
 import './inspection-create-popup'
+import '@operato/event-view/ox-event-view.js'
 
 export enum ChecklistTypeMainType {
   BASIC = '10',
@@ -139,6 +140,8 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
         div[right] {
           height: auto;
           overflow-y: auto;
+          display: flex;
+          flex-direction: column;
         }
       }
     `
@@ -152,12 +155,13 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
   }
 
   @state() private gristConfig: any
-  @state() projectId: string = ''
+  @state() buildingLevelId: string = ''
   @state() project: any = { ...this.defaultProject }
   @state() selectedBuilding: any = {}
   @state() building: any = {}
 
   @query('ox-grist') private grist!: DataGrist
+  @query('ox-event-view') private eventView!: HTMLElement
 
   get context() {
     return {
@@ -208,6 +212,7 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
         </div>
 
         <div right>
+          <ox-event-view mode=${'monthly'}> </ox-event-view>
           <ox-grist .mode=${'GRID'} .config=${this.gristConfig} .fetchHandler=${this.fetchHandler.bind(this)}> </ox-grist>
         </div>
       </div>
@@ -216,7 +221,7 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
 
   async pageUpdated(changes: any, lifecycle: PageLifecycle) {
     if (this.active) {
-      this.projectId = lifecycle.resourceId || ''
+      this.buildingLevelId = lifecycle.resourceId || ''
 
       // buildingId가 있으면 선택
       const params: any = lifecycle.params
@@ -225,11 +230,11 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
     }
   }
 
-  async initProject(projectId: string = '', buildingId: string = '') {
+  async initProject(buildingLevelId: string = '', buildingId: string = '') {
     const response = await client.query({
       query: gql`
-        query Project($id: String!) {
-          project(id: $id) {
+        query ProjectByBuildingLevelId($buildingLevelId: String!) {
+          projectByBuildingLevelId(buildingLevelId: $buildingLevelId) {
             id
             name
             mainPhoto {
@@ -251,13 +256,13 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
         }
       `,
       variables: {
-        id: projectId
+        buildingLevelId: buildingLevelId
       }
     })
 
     if (response.errors) return
 
-    this.project = response.data?.project
+    this.project = response.data?.projectByBuildingLevelId
 
     // buildingId 파라미터가 있으면 선택된 빌딩, 없으면 첫번째 빌딩 선택
     this.selectedBuilding = buildingId
@@ -266,6 +271,9 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
 
     // 좌측 빌딩 도면 불러오기
     this._getBuilding(this.selectedBuilding.id)
+
+    // 캘린더 최소 높이 속성 수정
+    this.eventView.style.setProperty('--calendar-monthly-date-min-height', '50px')
   }
 
   async _getBuilding(buildingId: string = '') {
@@ -370,8 +378,8 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
   async fetchHandler({ page = 1, limit = 100, sortings = [], filters = [] }: FetchOption) {
     const response = await client.query({
       query: gql`
-        query BuildingInspectionsOfProject($params: BuildingInspectionsOfProject!) {
-          buildingInspectionsOfProject(params: $params) {
+        query BuildingInspectionsOfBuildingLevel($params: BuildingInspectionsOfBuildingLevel!) {
+          buildingInspectionsOfBuildingLevel(params: $params) {
             items {
               id
               status
@@ -396,13 +404,13 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
       `,
       variables: {
         params: {
-          projectId: this.projectId,
+          buildingLevelId: this.buildingLevelId,
           limit: 0
         }
       }
     })
 
-    let items = response.data.buildingInspectionsOfProject?.items || []
+    let items = response.data.buildingInspectionsOfBuildingLevel?.items || []
     items = items.map(item => ({
       ...item,
       ...item.checklist,
@@ -410,7 +418,7 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
     }))
 
     return {
-      total: response.data.buildingInspectionsOfProject.total || 0,
+      total: response.data.buildingInspectionsOfBuildingLevel.total || 0,
       records: items
     }
   }
@@ -442,7 +450,7 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
     openPopup(
       html`
         <inspection-create-popup
-          .projectId=${this.projectId}
+          .projectId=${this.project.id}
           @requestRefresh="${() => this.grist.fetch()}"
         ></inspection-create-popup>
       `,

@@ -2,7 +2,12 @@ import { Resolver, Query, FieldResolver, Root, Arg, Args, Ctx } from 'type-graph
 import { Attachment } from '@things-factory/attachment-base'
 import { getRepository, getQueryBuilderFromListParams, ListParam } from '@things-factory/shell'
 import { BuildingInspection, BuildingInspectionStatus } from './building-inspection'
-import { BuildingInspectionList, BuildingInspectionsOfProject, BuildingInspectionSummary } from './building-inspection-type'
+import {
+  BuildingInspectionList,
+  BuildingInspectionsOfBuildingLevel,
+  BuildingInspectionsOfProject,
+  BuildingInspectionSummary
+} from './building-inspection-type'
 import { BuildingLevel } from '@dssp/building-complex'
 import { Checklist } from '../checklist/checklist'
 import { Project } from '@dssp/project'
@@ -49,6 +54,47 @@ export class BuildingInspectionQuery {
       .where('p.domain = :domain', { domain: domain.id })
       .andWhere('p.id = :projectId', { projectId })
       .orderBy('bi.created_at', 'DESC')
+
+    if (limit) {
+      queryBuilder.limit(limit)
+    }
+
+    const [items, total] = await queryBuilder.getManyAndCount()
+
+    return { items, total }
+  }
+
+  @Query(returns => Project!, { description: 'To fetch Project' })
+  async projectByBuildingLevelId(
+    @Arg('buildingLevelId') buildingLevelId: string,
+    @Ctx() context: ResolverContext
+  ): Promise<Project> {
+    const queryBuilder = getRepository(Project)
+      .createQueryBuilder('p')
+      .innerJoin('building_complexes', 'bc', 'p.building_complex_id = bc.id')
+      .innerJoin('buildings', 'b', 'b.building_complex_id = bc.id')
+      .innerJoin('building_levels', 'bl', 'bl.building_id = b.id')
+      .where('bl.id = :buildingLevelId', { buildingLevelId })
+
+    const result = await queryBuilder.getOne()
+
+    console.log('result :', result)
+    return result
+  }
+
+  @Query(returns => BuildingInspectionList, { description: 'To fetch multiple BuildingInspections' })
+  async buildingInspectionsOfBuildingLevel(
+    @Arg('params') params: BuildingInspectionsOfBuildingLevel,
+    @Ctx() context: ResolverContext
+  ): Promise<BuildingInspectionList> {
+    const { buildingLevelId, limit } = params
+
+    const queryBuilder = getRepository(BuildingInspection)
+      .createQueryBuilder('bi')
+      .innerJoin('building_levels', 'bl', 'bi.building_level_id = bl.id')
+      .innerJoin('checklists', 'c', 'bi.checklist_id = c.id')
+      .where('bl.id = :buildingLevelId', { buildingLevelId })
+      .orderBy('bi.updated_at', 'DESC')
 
     if (limit) {
       queryBuilder.limit(limit)

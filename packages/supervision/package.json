@@ -32,6 +32,7 @@
     "@operato/graphql": "^8.0.0-alpha",
     "@operato/shell": "^8.0.0-alpha",
     "@operato/input": "^8.0.0-alpha",
+    "@operato/event-view": "^8.0.0-alpha",
     "@things-factory/auth-base": "^8.0.0-alpha",
     "@things-factory/shell": "^8.0.0-alpha"
   }

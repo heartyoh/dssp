@@ -49,6 +49,15 @@ export class BuildingInspectionsOfProject {
   limit: number
 }
 
+@InputType()
+export class BuildingInspectionsOfBuildingLevel {
+  @Field({ nullable: false })
+  buildingLevelId: string
+
+  @Field({ nullable: true })
+  limit: number
+}
+
 @ObjectType()
 export class BuildingInspectionSummary {
   @Field(type => Int, { description: '검사 요청 수' })

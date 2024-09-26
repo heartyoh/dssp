@@ -584,6 +584,11 @@ type BuildingInspectionSummary {
   request: Int!
 }
 
+input BuildingInspectionsOfBuildingLevel {
+  buildingLevelId: String!
+  limit: Float
+}
+
 input BuildingInspectionsOfProject {
   limit: Float
   projectId: String!
@@ -4419,6 +4424,9 @@ type Query {
   buildingInspections(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): BuildingInspectionList!
 
   """To fetch multiple BuildingInspections"""
+  buildingInspectionsOfBuildingLevel(params: BuildingInspectionsOfBuildingLevel!): BuildingInspectionList!
+
+  """To fetch multiple BuildingInspections"""
   buildingInspectionsOfProject(params: BuildingInspectionsOfProject!): BuildingInspectionList!
   chatCompletion(input: ChatCompletionInput!): ChatCompletionOutput!
 
@@ -4753,6 +4761,9 @@ type Query {
 
   """To fetch a Project"""
   projectByBuildingComplexId(buildingComplexId: String!): Project
+
+  """To fetch Project"""
+  projectByBuildingLevelId(buildingLevelId: String!): Project!
 
   """To fetch a ProjectReport"""
   projectReport(id: String!): ProjectReport
