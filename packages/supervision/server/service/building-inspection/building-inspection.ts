@@ -18,8 +18,8 @@ import { BuildingLevel } from '@dssp/building-complex'
 import { Checklist } from '../checklist/checklist'
 
 export enum BuildingInspectionStatus {
+  WAIT = 'WAIT',
   REQUEST = 'REQUEST',
-  REQUEST_SUPERVISORY = 'REQUEST_SUPERVISORY',
   PASS = 'PASS',
   FAIL = 'FAIL'
 }
@@ -47,7 +47,7 @@ export class BuildingInspection {
 
   @Column({
     nullable: false,
-    comment: '상태(REQUEST: 요청, REQUEST_SUPERVISORY: 감리 요청, PASS: 합격, FAIL: 불합격)',
+    comment: '상태(WAIT: 검측 대기, REQUEST: 검측 요청, PASS: 합격, FAIL: 불합격)',
     default: 'REQUEST'
   })
   @Field({ nullable: true })

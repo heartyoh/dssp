@@ -49,7 +49,7 @@ export class BuildingInspectionMutation {
 
     // 4. buildingInspection 저장
     const result = await buildingInspectionRepository.save({
-      status: BuildingInspectionStatus.REQUEST,
+      status: BuildingInspectionStatus.WAIT,
       buildingLevel: { id: buildingLevelId },
       requestDate: new Date(),
       checklist: savedChecklist,

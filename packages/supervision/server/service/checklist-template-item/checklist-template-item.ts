@@ -19,6 +19,10 @@ export class ChecklistTemplateItem {
   @Field({ nullable: false })
   name: string
 
+  @Column({ nullable: true, comment: '검사 기준' })
+  @Field({ nullable: true })
+  inspctionCriteria?: string
+
   @Column({ nullable: true, comment: '시퀀스' })
   @Field(type => Int, { nullable: true })
   sequence?: number

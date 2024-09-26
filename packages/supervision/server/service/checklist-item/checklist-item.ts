@@ -48,6 +48,10 @@ export class ChecklistItem {
   @Field({ nullable: true })
   name?: string
 
+  @Column({ nullable: true, comment: '검사 기준' })
+  @Field({ nullable: true })
+  inspctionCriteria?: string
+
   @Column({ nullable: true, comment: '시공 관리자 적합 여부 (T: 적합, F: 부적합)' })
   @Field({ nullable: true })
   constructionConfirmStatus?: ChecklistItemConfirmStatus
@@ -55,10 +59,6 @@ export class ChecklistItem {
   @Column({ nullable: true, comment: '감리 관리자 적합 여부 (T: 적합, F: 부적합)' })
   @Field({ nullable: true })
   supervisoryConfirmStatus?: ChecklistItemConfirmStatus
-
-  @Column({ nullable: true, comment: '조치 사항' })
-  @Field({ nullable: true })
-  action?: string
 
   @Column({ nullable: true, comment: '참고 사항' })
   @Field({ nullable: true })

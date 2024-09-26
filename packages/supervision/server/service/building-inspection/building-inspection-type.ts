@@ -60,13 +60,16 @@ export class BuildingInspectionsOfBuildingLevel {
 
 @ObjectType()
 export class BuildingInspectionSummary {
-  @Field(type => Int, { description: '검사 요청 수' })
+  @Field(type => Int, { description: '검측 대기 수' })
+  wait: number
+
+  @Field(type => Int, { description: '검측 요청 수' })
   request: number
 
-  @Field(type => Int, { description: '검사 통과 수' })
+  @Field(type => Int, { description: '검측 통과 수' })
   pass: number
 
-  @Field(type => Int, { description: '검사 실패 수' })
+  @Field(type => Int, { description: '검측 실패 수' })
   fail: number
 }
 

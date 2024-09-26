@@ -10,6 +10,9 @@ export class ChecklistTemplateItemPatch {
   @Field({ nullable: true })
   name?: string
 
+  @Field({ nullable: true })
+  inspctionCriteria?: string
+
   @Field(type => Int, { nullable: true })
   sequence?: number
 

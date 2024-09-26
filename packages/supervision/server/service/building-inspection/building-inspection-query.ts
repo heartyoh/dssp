@@ -113,6 +113,7 @@ export class BuildingInspectionQuery {
   ): Promise<BuildingInspectionSummary> {
     const buildingInspectionSummary = await getRepository(BuildingInspection)
       .createQueryBuilder('bi')
+      .select(`COUNT(CASE WHEN bi.status='${BuildingInspectionStatus.WAIT}' THEN 1 ELSE NULL END) AS wait`)
       .select(`COUNT(CASE WHEN bi.status='${BuildingInspectionStatus.REQUEST}' THEN 1 ELSE NULL END) AS request`)
       .addSelect(`COUNT(CASE WHEN bi.status='${BuildingInspectionStatus.PASS}' THEN 1 ELSE NULL END) AS pass`)
       .addSelect(`COUNT(CASE WHEN bi.status='${BuildingInspectionStatus.FAIL}' THEN 1 ELSE NULL END) AS fail`)
@@ -121,6 +122,7 @@ export class BuildingInspectionQuery {
       .getRawOne()
 
     return {
+      wait: buildingInspectionSummary?.wait || 0,
       request: buildingInspectionSummary?.request || 0,
       pass: buildingInspectionSummary?.pass || 0,
       fail: buildingInspectionSummary?.fail || 0
@@ -132,6 +134,7 @@ export class BuildingInspectionQuery {
   async buildingInspectionSummary(@Root() buildingLevel: BuildingLevel): Promise<BuildingInspectionSummary> {
     const buildingInspectionSummary = await getRepository(BuildingInspection)
       .createQueryBuilder('bi')
+      .select(`COUNT(CASE WHEN bi.status='${BuildingInspectionStatus.WAIT}' THEN 1 ELSE NULL END) AS wait`)
       .select(`COUNT(CASE WHEN bi.status='${BuildingInspectionStatus.REQUEST}' THEN 1 ELSE NULL END) AS request`)
       .addSelect(`COUNT(CASE WHEN bi.status='${BuildingInspectionStatus.PASS}' THEN 1 ELSE NULL END) AS pass`)
       .addSelect(`COUNT(CASE WHEN bi.status='${BuildingInspectionStatus.FAIL}' THEN 1 ELSE NULL END) AS fail`)
@@ -140,6 +143,7 @@ export class BuildingInspectionQuery {
       .getRawOne()
 
     return {
+      wait: buildingInspectionSummary?.wait || 0,
       request: buildingInspectionSummary?.request || 0,
       pass: buildingInspectionSummary?.pass || 0,
       fail: buildingInspectionSummary?.fail || 0
@@ -155,6 +159,7 @@ export class BuildingInspectionQuery {
 
     const result = await getRepository(Project)
       .createQueryBuilder('p')
+      .select(`COUNT(CASE WHEN bi.status = '${BuildingInspectionStatus.WAIT}' THEN 1 ELSE NULL END) AS wait`)
       .select(`COUNT(CASE WHEN bi.status = '${BuildingInspectionStatus.REQUEST}' THEN 1 ELSE NULL END) AS request`)
       .addSelect(`COUNT(CASE WHEN bi.status = '${BuildingInspectionStatus.PASS}' THEN 1 ELSE NULL END) AS pass`)
       .addSelect(`COUNT(CASE WHEN bi.status = '${BuildingInspectionStatus.FAIL}' THEN 1 ELSE NULL END) AS fail`)
@@ -168,6 +173,7 @@ export class BuildingInspectionQuery {
       .getRawOne()
 
     return {
+      wait: result.wait || 0,
       request: result.request || 0,
       pass: result.pass || 0,
       fail: result.fail || 0

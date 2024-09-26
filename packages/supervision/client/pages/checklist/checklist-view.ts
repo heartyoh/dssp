@@ -155,14 +155,13 @@ class ChecklistView extends LitElement {
 
   @property({ type: String }) mode: ChecklistMode = ChecklistMode.VIEWER
   @property({ type: Object }) checklist: any = {}
-  @property({ type: String }) status: BuildingInspectionStatus = BuildingInspectionStatus.REQUEST
+  @property({ type: String }) status: BuildingInspectionStatus = BuildingInspectionStatus.WAIT
 
   render() {
     const today = this._getDate(new Date())
     const mainTypeCount = this.checklist.checklistItems?.filter(v => v.mainType === ChecklistTypeMainType.BASIC).length
-    const isConstructorStep = this.status == BuildingInspectionStatus.REQUEST
-    const isSupervisoryStep =
-      this.status == BuildingInspectionStatus.REQUEST_SUPERVISORY || this.status == BuildingInspectionStatus.FAIL
+    const isConstructorStep = this.status == BuildingInspectionStatus.WAIT || this.status == BuildingInspectionStatus.FAIL
+    const isSupervisoryStep = this.status == BuildingInspectionStatus.REQUEST
 
     // 체크리스트 아이템 정렬
     this.checklist?.checklistItems?.sort((a, b) => {
@@ -232,7 +231,7 @@ class ChecklistView extends LitElement {
                 ${basicMainType} ${nonBasicMainType}
                 <td bold>${item.detailType}</td>
                 <td bold>${idx + 1}. ${item.name}</td>
-                <td></td>
+                <td>${item.inspctionCriteria}</td>
                 <td radio>
                   <md-radio
                     item-id=${item.id}

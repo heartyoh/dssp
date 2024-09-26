@@ -119,6 +119,15 @@ class ChecklistTemplateItem extends LitElement {
             editable: true
           },
           width: 200
+        },
+        {
+          type: 'string',
+          name: 'inspctionCriteria',
+          header: '검사 기준',
+          record: {
+            editable: true
+          },
+          width: 200
         }
       ],
       rows: {
@@ -142,6 +151,7 @@ class ChecklistTemplateItem extends LitElement {
               id
               sequence
               name
+              inspctionCriteria
               mainType
               detailType
             }

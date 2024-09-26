@@ -574,14 +574,17 @@ type BuildingInspectionList {
 }
 
 type BuildingInspectionSummary {
-  """검사 실패 수"""
+  """검측 실패 수"""
   fail: Int!
 
-  """검사 통과 수"""
+  """검측 통과 수"""
   pass: Int!
 
-  """검사 요청 수"""
+  """검측 요청 수"""
   request: Int!
+
+  """검측 대기 수"""
+  wait: Int!
 }
 
 input BuildingInspectionsOfBuildingLevel {
@@ -668,7 +671,6 @@ input ChecklistInputType {
 }
 
 type ChecklistItem {
-  action: String
   checklist: Checklist
   comment: String
   constructionConfirmStatus: String
@@ -677,6 +679,7 @@ type ChecklistItem {
   deletedAt: DateTimeISO
   detailType: String!
   id: ID!
+  inspctionCriteria: String
   mainType: String!
   name: String
   sequence: Int
@@ -727,6 +730,7 @@ type ChecklistTemplateItem {
   creator: User
   detailType: String!
   id: ID!
+  inspctionCriteria: String
   mainType: String!
   name: String!
   sequence: Int
@@ -744,6 +748,7 @@ input ChecklistTemplateItemPatch {
   cuFlag: String
   detailType: String
   id: ID
+  inspctionCriteria: String
   mainType: String
   name: String
   sequence: Int
