@@ -43,9 +43,13 @@ export class Checklist {
   @Field({ nullable: true })
   constructionDetailType?: string
 
-  @Column({ nullable: false, comment: '위치 및 부위 (x동 x층)' })
+  @Column({ nullable: false, comment: '위치 (x동 x층)' })
   @Field({ nullable: true })
   location?: string
+
+  @Column('simple-array', { nullable: true, comment: '검측 부위' })
+  @Field(() => [String], { nullable: true })
+  inspectionParts?: string[]
 
   @Column({ nullable: true, comment: '시공자 점검일' })
   @Field({ nullable: true })

@@ -65,7 +65,7 @@ class buildingInspectionDetailHeader extends LitElement {
   ]
 
   @property({ type: String }) buildingInspectionId: string = ''
-  @property({ type: String }) projectId: string = ''
+  @property({ type: String }) buildingLevelId: string = ''
   @property({ type: String }) projectName: string = ''
   @property({ type: String }) buildingName: string = ''
   @property({ type: String }) buildingLevelFloor: string = ''
@@ -75,7 +75,7 @@ class buildingInspectionDetailHeader extends LitElement {
       <div header>
         <h2>${this.projectName || ''} ${this.buildingName || ''} ${this.buildingLevelFloor || ''}층</h2>
         <div button-container>
-          <md-elevated-button href=${`building-inspection-list/${this.projectId}`}>
+          <md-elevated-button href=${`building-inspection-list/${this.buildingLevelId}`}>
             <md-icon slot="icon">assignment</md-icon>검측 리스트
           </md-elevated-button>
           <md-elevated-button href=${`building-inspection-detail-drawing/${this.buildingInspectionId}`}>

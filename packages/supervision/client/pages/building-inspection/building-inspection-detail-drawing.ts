@@ -54,7 +54,7 @@ export class buildingInspectionDetailDrawing extends ScopedElementsMixin(PageVie
     return html`
       <building-inspection-detail-header
         .buildingInspectionId=${this.buildingInspection?.id}
-        .projectId=${this.project.id}
+        .buildingLevelId=${this.buildingInspection?.buildingLevel?.id}
         .projectName=${this.project.name}
         .buildingName=${this.buildingInspection?.buildingLevel?.building?.name}
         .buildingLevelFloor=${this.buildingInspection?.buildingLevel?.floor}

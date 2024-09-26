@@ -78,7 +78,6 @@ export class BuildingInspectionQuery {
 
     const result = await queryBuilder.getOne()
 
-    console.log('result :', result)
     return result
   }
 

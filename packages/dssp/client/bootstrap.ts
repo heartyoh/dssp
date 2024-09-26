@@ -189,6 +189,17 @@ export default async function bootstrap() {
     }
   })
 
+  store.dispatch({
+    type: ADD_MORENDA,
+    morenda: {
+      icon: html` <md-icon>view_timeline</md-icon> `,
+      name: html` <ox-i18n msgid="도면 타입 및 검측 부위 관리"></ox-i18n> `,
+      action: () => {
+        navigate('inspection-drawing-type-management')
+      }
+    }
+  })
+
   /* set auth management menus into more-panel */
   setAuthManagementMenus()
 

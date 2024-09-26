@@ -14,6 +14,7 @@ export default {
     'manager-management', // 담당자 관리
     'worker-type-management', // 인력 관리
     'construction-type-management', // 공종 관리
+    'inspection-drawing-type-management', // 도면 타입 및 검측 부위 관리
   ].map(page => {
     return {
       page,

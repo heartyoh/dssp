@@ -651,6 +651,7 @@ type Checklist {
   deletedAt: DateTimeISO
   documentNo: String
   id: ID!
+  inspectionParts: [String!]
   location: String
   name: String
   overallConstructorSignature: String
@@ -1499,6 +1500,28 @@ enum InheritedValueType {
   Only
 }
 
+"""Entity for InspectionDrawingType"""
+type InspectionDrawingType {
+  createdAt: DateTimeISO
+  creator: User
+  domain: Domain
+  id: ID!
+  name: String
+  updatedAt: DateTimeISO
+  updater: User
+}
+
+type InspectionDrawingTypeList {
+  items: [InspectionDrawingType!]!
+  total: Int!
+}
+
+input InspectionDrawingTypePatch {
+  cuFlag: String
+  id: ID
+  name: String
+}
+
 type Invitation {
   createdAt: DateTimeISO
   creator: User
@@ -2342,6 +2365,9 @@ type Mutation {
   """To delete Group"""
   deleteGroup(id: String!): Boolean!
 
+  """To delete multiple InspectionDrawingTypes"""
+  deleteInspectionDrawingTypes(ids: [String!]!): Boolean!
+
   """To delete Issue"""
   deleteIssue(id: String!): Boolean!
 
@@ -2881,6 +2907,9 @@ type Mutation {
 
   """To modify multiple Entitys' information"""
   updateMultipleEntityColumn(patches: [EntityColumnPatch!]!): [EntityColumn!]!
+
+  """To modify multiple InspectionDrawingTypes' information"""
+  updateMultipleInspectionDrawingType(patches: [InspectionDrawingTypePatch!]!): [InspectionDrawingType!]!
 
   """To modify multiple Issues' information"""
   updateMultipleIssue(patches: [IssuePatch!]!): [Issue!]!
@@ -4601,6 +4630,12 @@ type Query {
   hasPrivilege(category: String!, privilege: String!): Boolean!
   i18nCompletion(input: i18nCompletionInput!): i18nCompletionOutput!
   imageCompletion(input: ImageCompletionInput!): ImageCompletionOutput!
+
+  """To fetch a InspectionDrawingType"""
+  inspectionDrawingType(id: String!): InspectionDrawingType
+
+  """To fetch multiple InspectionDrawingTypes"""
+  inspectionDrawingTypes(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): InspectionDrawingTypeList!
 
   """To fetch integration Analyses"""
   integrationAnalysis: Object!

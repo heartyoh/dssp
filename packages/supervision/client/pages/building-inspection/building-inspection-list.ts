@@ -83,8 +83,8 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
       }
 
       div[body] {
-        display: grid;
-        grid-template-columns: 4fr 6fr;
+        display: flex;
+        flex-direction: column;
         margin: 0px 25px 25px 25px;
         gap: 10px;
         min-height: fit-content;
@@ -102,42 +102,21 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
           border-radius: 5px;
         }
 
-        div[left] {
-          flex-direction: column;
+        div[top] {
           background-color: #ffffff;
           border: 1px solid #cccccc80;
 
-          div[drawing] {
-            flex: 1;
+          img[drawing] {
+            width: 400px;
+            height: 400px;
+          }
+
+          div[inspection-data] {
             display: flex;
-            align-items: center;
-            justify-content: center;
-
-            [building-img] {
-              width: 70%;
-              height: auto;
-            }
-            img[building-img] {
-              opacity: 0.5;
-            }
-          }
-
-          div[subject] {
-            margin-bottom: 7px;
-          }
-          div[building-container] {
-            display: block;
-            height: 40px;
-            overflow-y: auto;
-
-            & > * {
-              margin-right: 2px;
-              margin-bottom: 7px;
-            }
           }
         }
 
-        div[right] {
+        div[bottom] {
           height: auto;
           overflow-y: auto;
           display: flex;
@@ -157,8 +136,9 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
   @state() private gristConfig: any
   @state() buildingLevelId: string = ''
   @state() project: any = { ...this.defaultProject }
-  @state() selectedBuilding: any = {}
-  @state() building: any = {}
+  @state() location: string = ''
+  @state() drawingImage: string = ''
+  @state() buildingInspectionSummary: any = {}
 
   @query('ox-grist') private grist!: DataGrist
   @query('ox-event-view') private eventView!: HTMLElement
@@ -184,35 +164,26 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
   render() {
     return html`
       <div header>
-        <h2>${this.project.name} ${this.selectedBuilding.name}</h2>
+        <h2>${this.project.name} ${this.location}</h2>
       </div>
 
       <div body>
-        <div left>
-          <h3>${this.selectedBuilding.name} BIM도면</h3>
-          <div drawing>
-            ${this.selectedBuilding?.drawing?.fullpath
-              ? html`<div building-img></div>`
-              : html`<img building-img src="/assets/images/img-building-default.png" />`}
-          </div>
+        <div top>
+          <img drawing src=${this.drawingImage || '/assets/images/img-drawing-default.png'} />
           <div>
-            <div subject bold>개별 단지 상세정보 바로가기</div>
-            <div building-container>
-              ${this.project.buildingComplex?.buildings?.map(building => {
-                return this.selectedBuilding.id === building.id
-                  ? html`
-                      <md-filled-button @click=${() => this._onClickBuilding(building)}> ${building.name} </md-filled-button>
-                    `
-                  : html`
-                      <md-outlined-button @click=${() => this._onClickBuilding(building)}> ${building.name} </md-outlined-button>
-                    `
-              })}
+            <h3>${this.location} 검측 현황</h3>
+            <div inspection-data>
+              <div>
+                ${Object.entries(BUILDING_INSPECTION_STATUS).map(
+                  status => html` <div>${status[1]} ${this.buildingInspectionSummary[status[0].toLowerCase()]}건</div> `
+                )}
+              </div>
+              <ox-event-view mode=${'monthly'}> </ox-event-view>
             </div>
           </div>
         </div>
 
-        <div right>
-          <ox-event-view mode=${'monthly'}> </ox-event-view>
+        <div bottom>
           <ox-grist .mode=${'GRID'} .config=${this.gristConfig} .fetchHandler=${this.fetchHandler.bind(this)}> </ox-grist>
         </div>
       </div>
@@ -223,14 +194,12 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
     if (this.active) {
       this.buildingLevelId = lifecycle.resourceId || ''
 
-      // buildingId가 있으면 선택
-      const params: any = lifecycle.params
-      await this.initProject(lifecycle.resourceId, params.buildingId)
+      await this.initProject(this.buildingLevelId)
       this.grist.fetch()
     }
   }
 
-  async initProject(buildingLevelId: string = '', buildingId: string = '') {
+  async initProject(buildingLevelId: string = '') {
     const response = await client.query({
       query: gql`
         query ProjectByBuildingLevelId($buildingLevelId: String!) {
@@ -253,6 +222,13 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
               }
             }
           }
+
+          buildingInspectionSummaryOfBuildingLevel(buildingLevelId: $buildingLevelId) {
+            wait
+            request
+            pass
+            fail
+          }
         }
       `,
       variables: {
@@ -263,51 +239,10 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
     if (response.errors) return
 
     this.project = response.data?.projectByBuildingLevelId
-
-    // buildingId 파라미터가 있으면 선택된 빌딩, 없으면 첫번째 빌딩 선택
-    this.selectedBuilding = buildingId
-      ? this.project?.buildingComplex?.buildings.filter(v => v.id === buildingId)[0]
-      : this.project?.buildingComplex?.buildings[0]
-
-    // 좌측 빌딩 도면 불러오기
-    this._getBuilding(this.selectedBuilding.id)
+    this.buildingInspectionSummary = response.data?.buildingInspectionSummaryOfBuildingLevel
 
     // 캘린더 최소 높이 속성 수정
     this.eventView.style.setProperty('--calendar-monthly-date-min-height', '50px')
-  }
-
-  async _getBuilding(buildingId: string = '') {
-    const response = await client.query({
-      query: gql`
-        query Building($id: String!) {
-          building(id: $id) {
-            id
-            buildingLevels {
-              id
-              floor
-              mainDrawing {
-                id
-                name
-                fullpath
-              }
-              mainDrawingImage
-            }
-          }
-        }
-      `,
-      variables: {
-        id: buildingId
-      }
-    })
-
-    if (response.errors) return
-
-    this.building = response.data?.building
-  }
-
-  private _onClickBuilding(building) {
-    this.selectedBuilding = { ...building }
-    this._getBuilding(this.selectedBuilding.id)
   }
 
   async pageInitialized(lifecycle: any) {
@@ -323,7 +258,7 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
         {
           type: 'string',
           name: 'location',
-          header: '위치 및 부위',
+          header: '위치',
           width: 150
         },
         {
@@ -334,8 +269,11 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
         },
         {
           type: 'string',
-          name: 'constructionDetailType',
-          header: '세부 공종',
+          name: 'inspectionParts',
+          header: '검측 부위',
+          record: {
+            renderer: value => value?.join(', ') || ''
+          },
           width: 200
         },
         {
@@ -389,6 +327,12 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
                 building {
                   name
                 }
+                mainDrawing {
+                  id
+                  name
+                  fullpath
+                }
+                mainDrawingImage
               }
               checklist {
                 checklistId: id
@@ -416,6 +360,9 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
       ...item.checklist,
       requestDate: this._formatDate(item.requestDate)
     }))
+
+    this.location = items[0].checklist.location
+    this.drawingImage = items[0].buildingLevel.mainDrawingImage
 
     return {
       total: response.data.buildingInspectionsOfBuildingLevel.total || 0,

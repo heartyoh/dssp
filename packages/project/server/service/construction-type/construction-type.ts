@@ -11,7 +11,6 @@ import {
   OneToMany
 } from 'typeorm'
 import { ObjectType, Field, ID } from 'type-graphql'
-
 import { Domain } from '@things-factory/shell'
 import { User } from '@things-factory/auth-base'
 import { ConstructionDetailType } from '../construction-detail-type/construction-detail-type'

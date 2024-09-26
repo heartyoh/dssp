@@ -40,6 +40,10 @@ export default function route(page: string) {
       import('./pages/resource/construction-type-management')
       return page
 
+    case 'inspection-drawing-type-management':
+      import('./pages/resource/inspection-drawing-type-management')
+      return page
+
     case 'resource-list':
       import('./pages/resource/resource-list-page')
       return page
