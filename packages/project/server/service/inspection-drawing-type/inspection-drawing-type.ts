@@ -1,7 +1,18 @@
-import { CreateDateColumn, UpdateDateColumn, Entity, Index, Column, RelationId, ManyToOne, PrimaryGeneratedColumn } from 'typeorm'
+import {
+  CreateDateColumn,
+  UpdateDateColumn,
+  Entity,
+  Index,
+  Column,
+  RelationId,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn
+} from 'typeorm'
 import { ObjectType, Field, ID } from 'type-graphql'
 import { User } from '@things-factory/auth-base'
 import { Domain } from '@things-factory/shell'
+import { InspectionPart } from '../inspection-part/inspection-part'
 
 @Entity()
 @Index(
@@ -27,6 +38,11 @@ export class InspectionDrawingType {
   @Column({ nullable: false, comment: '검측 도면 타입 이름' })
   @Field({ nullable: true })
   name?: string
+
+  // 검측 부위 정보 (하위 테이블 참조)
+  @Field(() => [InspectionPart], { nullable: true })
+  @OneToMany(() => InspectionPart, inspectionPart => inspectionPart.inspectionDrawingType)
+  inspectionParts?: InspectionPart[]
 
   @CreateDateColumn()
   @Field({ nullable: true })

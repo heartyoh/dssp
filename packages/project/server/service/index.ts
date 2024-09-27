@@ -4,6 +4,7 @@ export * from './resource/resource'
 export * from './construction-detail-type/construction-detail-type'
 export * from './construction-type/construction-type'
 export * from './inspection-drawing-type/inspection-drawing-type'
+export * from './inspection-part/inspection-part'
 export * from './worker-type/worker-type'
 export * from './manager/manager'
 export * from './task/task'
@@ -18,6 +19,7 @@ import {
 } from './construction-detail-type'
 import { entities as ConstructionTypeEntities, resolvers as ConstructionTypeResolvers } from './construction-type'
 import { entities as InspectionDrawingTypeEntities, resolvers as InspectionDrawingTypeResolvers } from './inspection-drawing-type'
+import { entities as InspectionPartEntities, resolvers as InspectionPartResolvers } from './inspection-part'
 import { entities as WorkerTypeEntities, resolvers as WorkerTypeResolvers } from './worker-type'
 import { entities as ManagerEntities, resolvers as ManagerResolvers } from './manager'
 import { entities as TaskEntities, resolvers as TaskResolvers } from './task'
@@ -30,6 +32,7 @@ export const entities = [
   ...ConstructionDetailTypeEntities,
   ...ConstructionTypeEntities,
   ...InspectionDrawingTypeEntities,
+  ...InspectionPartEntities,
   ...WorkerTypeEntities,
   ...ManagerEntities,
   ...TaskEntities,
@@ -44,6 +47,7 @@ export const schema = {
     ...ConstructionDetailTypeResolvers,
     ...ConstructionTypeResolvers,
     ...InspectionDrawingTypeResolvers,
+    ...InspectionPartResolvers,
     ...WorkerTypeResolvers,
     ...ManagerResolvers,
     ...TaskResolvers,

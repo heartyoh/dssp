@@ -1506,6 +1506,7 @@ type InspectionDrawingType {
   creator: User
   domain: Domain
   id: ID!
+  inspectionParts: [InspectionPart!]
   name: String
   updatedAt: DateTimeISO
   updater: User
@@ -1520,6 +1521,30 @@ input InspectionDrawingTypePatch {
   cuFlag: String
   id: ID
   name: String
+}
+
+"""Entity for InspectionPart"""
+type InspectionPart {
+  createdAt: DateTimeISO
+  creator: User
+  id: ID!
+  inspectionDrawingType: InspectionDrawingType
+  name: String
+  sequence: Int
+  updatedAt: DateTimeISO
+  updater: User
+}
+
+type InspectionPartList {
+  items: [InspectionPart!]!
+  total: Int!
+}
+
+input InspectionPartPatch {
+  cuFlag: String
+  id: ID
+  name: String
+  sequence: Int
 }
 
 type Invitation {
@@ -2368,6 +2393,9 @@ type Mutation {
   """To delete multiple InspectionDrawingTypes"""
   deleteInspectionDrawingTypes(ids: [String!]!): Boolean!
 
+  """To delete multiple InspectionParts"""
+  deleteInspectionParts(ids: [String!]!): Boolean!
+
   """To delete Issue"""
   deleteIssue(id: String!): Boolean!
 
@@ -2910,6 +2938,9 @@ type Mutation {
 
   """To modify multiple InspectionDrawingTypes' information"""
   updateMultipleInspectionDrawingType(patches: [InspectionDrawingTypePatch!]!): [InspectionDrawingType!]!
+
+  """To modify multiple InspectionParts' information"""
+  updateMultipleInspectionPart(inspectionDrawingTypeId: String!, patches: [InspectionPartPatch!]!): [InspectionPart!]!
 
   """To modify multiple Issues' information"""
   updateMultipleIssue(patches: [IssuePatch!]!): [Issue!]!
@@ -4636,6 +4667,12 @@ type Query {
 
   """To fetch multiple InspectionDrawingTypes"""
   inspectionDrawingTypes(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): InspectionDrawingTypeList!
+
+  """To fetch a InspectionPart"""
+  inspectionPart(id: String!): InspectionPart
+
+  """To fetch multiple InspectionParts"""
+  inspectionParts(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): InspectionPartList!
 
   """To fetch integration Analyses"""
   integrationAnalysis: Object!

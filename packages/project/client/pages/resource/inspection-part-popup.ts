@@ -29,7 +29,7 @@ class InspectionPartPopup extends LitElement {
     `
   ]
 
-  @property({ type: Object }) constructionType: any
+  @property({ type: Object }) inspectionDrawingType: any
   @property({ type: Object }) gristConfig: any
 
   @query('ox-grist') grist!: DataGrist
@@ -87,11 +87,11 @@ class InspectionPartPopup extends LitElement {
         {
           type: 'string',
           name: 'name',
-          header: '세부 공종 이름',
+          header: '검측 부위',
           record: {
             editable: true
           },
-          width: 200
+          width: 300
         }
       ],
       rows: {
@@ -121,8 +121,8 @@ class InspectionPartPopup extends LitElement {
       `,
       variables: {
         filters: {
-          name: 'constructionTypeId',
-          value: this.constructionType.id,
+          name: 'inspectionDrawingTypeId',
+          value: this.inspectionDrawingType.id,
           operator: 'eq'
         },
         sortings: [{ name: 'sequence' }]
@@ -173,14 +173,14 @@ class InspectionPartPopup extends LitElement {
 
       const response = await client.mutate({
         mutation: gql`
-          mutation UpdateMultipleInspectionPart($constructionTypeId: String!, $patches: [InspectionPartPatch!]!) {
-            updateMultipleInspectionPart(constructionTypeId: $constructionTypeId, patches: $patches) {
+          mutation UpdateMultipleInspectionPart($inspectionDrawingTypeId: String!, $patches: [InspectionPartPatch!]!) {
+            updateMultipleInspectionPart(inspectionDrawingTypeId: $inspectionDrawingTypeId, patches: $patches) {
               id
             }
           }
         `,
         variables: {
-          constructionTypeId: this.constructionType.id,
+          inspectionDrawingTypeId: this.inspectionDrawingType.id,
           patches
         }
       })

@@ -71,10 +71,10 @@ export class InspectionDrawingTypeManagement extends PageView {
               if (!record.id) return
               openPopup(
                 html`
-                  <inspection-drawing-type-popup
+                  <inspection-part-popup
                     .inspectionDrawingType=${record}
                     @requestRefresh="${() => this.grist.fetch()}"
-                  ></inspection-drawing-type-popup>
+                  ></inspection-part-popup>
                 `,
                 {
                   backdrop: true,
