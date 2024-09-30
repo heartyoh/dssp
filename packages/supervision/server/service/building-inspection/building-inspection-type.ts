@@ -14,6 +14,12 @@ class ChecklistInputType {
 
   @Field({ nullable: false })
   location?: string
+
+  @Field({ nullable: false })
+  inspectionDrawingType?: string
+
+  @Field(type => [String], { nullable: false })
+  inspectionParts?: string[]
 }
 
 @InputType()

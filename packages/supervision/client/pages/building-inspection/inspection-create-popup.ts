@@ -86,6 +86,8 @@ class InspectionCreatePopup extends LitElement {
   @property({ type: Object }) checklistDetailTypes: any
   @property({ type: String }) projectId: string = ''
   @property({ type: String }) checklistTemplateId: string = ''
+  @property({ type: String }) selectedBuildingId: string = ''
+  @property({ type: String }) selectedBuildingLevelId: string = ''
 
   @state() buildings: any = []
   @state() selectedBuilding: any = {}
@@ -95,6 +97,10 @@ class InspectionCreatePopup extends LitElement {
   @state() selectedConstructionType: any = {}
   @state() selectedConstructionDetailType: any = {}
 
+  @state() inspectionDrawingTypes: any = []
+  @state() selectedInspectionDrawingType: any = {}
+  @state() selectedInspectionParts: Array<string> = []
+
   @state() checklistTemplates: any = []
   @state() checklist: any = {}
 
@@ -102,6 +108,8 @@ class InspectionCreatePopup extends LitElement {
   @query('md-filled-select[level]') htmlSelectLevel
   @query('md-filled-select[constructionType]') htmlSelectConstructionType
   @query('md-filled-select[constructionDetailType]') htmlSelectConstructionDetailType
+  @query('md-filled-select[inspectionDrawingType]') htmlSelectInspectionDrawingType
+  @query('md-filled-select[inspectionPart]') htmlSelectInspectionPart
   @query('md-filled-select[checklistTemplate]') htmlSelectChecklistTemplate
   @query('ox-grist') grist!: DataGrist
   @query('div[right]') checklistViewContainer!: HTMLDivElement
@@ -150,6 +158,27 @@ class InspectionCreatePopup extends LitElement {
                 return html`<md-select-option .value=${level.id}>
                   <div slot="headline">${level.floor}</div>
                 </md-select-option>`
+              })}
+            </md-filled-select>
+          </div>
+
+          <div>
+            <md-filled-select label="검측 도면" inspectionDrawingType @change=${this._onSelectInspectionDrawingType}>
+              ${this.inspectionDrawingTypes?.map(inspectionDrawingType => {
+                return html` <md-select-option .value=${inspectionDrawingType.id}>
+                  <div slot="headline">${inspectionDrawingType.name}</div>
+                </md-select-option>`
+              })}
+            </md-filled-select>
+
+            <md-filled-select label="검측 부위" level>
+              ${this.selectedInspectionDrawingType?.inspectionParts?.map(inspectionPart => {
+                return html`
+                  <md-list-option label="검측 부위12" @click=${() => this._onSelectInspectionPart(inspectionPart)}>
+                    <md-checkbox></md-checkbox>
+                    ${inspectionPart.name}
+                  </md-list-option>
+                `
               })}
             </md-filled-select>
           </div>
@@ -233,6 +262,13 @@ class InspectionCreatePopup extends LitElement {
             }
           }
 
+          inspectionDrawingTypes {
+            items {
+              name
+              id
+            }
+          }
+
           checklistTemplates {
             items {
               id
@@ -258,6 +294,7 @@ class InspectionCreatePopup extends LitElement {
 
     const project = response.data?.project
     const constructionTypes = response.data?.constructionTypes?.items || []
+    const inspectionDrawingTypes = response.data?.inspectionDrawingTypes?.items || []
     const checklistTemplates = response.data?.checklistTemplates?.items || []
     this.checklistDetailTypes = response.data.checklistTypes?.items?.map(v => {
       return {
@@ -269,19 +306,29 @@ class InspectionCreatePopup extends LitElement {
 
     this.buildings = [...(project?.buildingComplex?.buildings || [])]
     this.constructionTypes = [...constructionTypes]
+    this.inspectionDrawingTypes = [...inspectionDrawingTypes]
     this.checklistTemplates = [...checklistTemplates]
 
-    // 첫번째 빌딩 선택
-    this.selectedBuilding = project?.buildingComplex?.buildings?.[0]
+    // selectedBuildingId가 있으면 해당 빌딩 선택, 없으면 첫번째 빌딩 선택
+    this.selectedBuilding = this.selectedBuildingId
+      ? this.buildings.find(building => building.id == this.selectedBuildingId)
+      : this.buildings[0]
+
     this.selectedConstructionType = constructionTypes?.[0]
+    this.selectedInspectionDrawingType = inspectionDrawingTypes?.[0]
 
     // 선택된 동의 층 리스트 가져오기
     this.selectedBuilding = await this._getBuilding(this.selectedBuilding.id)
     this.selectedConstructionType = await this._getConstructionType(this.selectedConstructionType.id)
+    this.selectedInspectionDrawingType = await this._getInspectionDrawingType(this.selectedInspectionDrawingType.id)
 
-    // levelId 파라미터가 있으면 선택된 층, 없으면 첫번째 층 선택
-    this.selectedLevel = this.selectedBuilding?.buildingLevels?.[0]
+    // selectedBuildingLevelId가 있으면 선택된 층, 없으면 첫번째 층 선택
+    this.selectedLevel = this.selectedBuildingLevelId
+      ? this.selectedBuilding?.buildingLevels?.find(level => level.id == this.selectedBuildingLevelId)
+      : this.selectedBuilding?.buildingLevels?.[0]
+
     this.selectedConstructionDetailType = this.selectedConstructionType?.constructionDetailTypes?.[0]
+    this.selectedInspectionParts = this.selectedInspectionDrawingType?.inspectionParts?.[0]
 
     // 동, 층이 랜더링 된 후에 select를 위해 이 시점에서 랜더링
     this.selectedBuilding = await { ...this.selectedBuilding }
@@ -292,6 +339,7 @@ class InspectionCreatePopup extends LitElement {
     await this.htmlSelectLevel.select(this.selectedLevel.id)
     await this.htmlSelectConstructionType.select(this.selectedConstructionType.id)
     await this.htmlSelectConstructionDetailType.select(this.selectedConstructionDetailType.id)
+    await this.htmlSelectInspectionDrawingType.select(this.selectedInspectionDrawingType.id)
     await this.htmlSelectChecklistTemplate.selectIndex(0)
 
     this.checklist = {
@@ -300,7 +348,7 @@ class InspectionCreatePopup extends LitElement {
       location: `${this.selectedBuilding?.name || ''} ${this.selectedLevel.floor || ''}층`
     }
 
-    // 기본 셋팅
+    // 그리드 셋팅
     this.setGristConfig()
   }
 
@@ -357,6 +405,28 @@ class InspectionCreatePopup extends LitElement {
     return response.data?.constructionType || {}
   }
 
+  async _getInspectionDrawingType(id: string = '') {
+    const response = await client.query({
+      query: gql`
+        query InspectionDrawingType($id: String!) {
+          inspectionDrawingType(id: $id) {
+            id
+            name
+            inspectionParts {
+              id
+              name
+            }
+          }
+        }
+      `,
+      variables: { id }
+    })
+
+    if (response.errors) return
+
+    return response.data?.inspectionDrawingType || {}
+  }
+
   private async _onSelectBuilding(e) {
     const buildingId = e.target.value
     this.selectedBuilding = await this._getBuilding(buildingId)
@@ -396,6 +466,26 @@ class InspectionCreatePopup extends LitElement {
       ...this.checklist,
       constructionType: this.selectedConstructionType?.name,
       constructionDetailType: this.selectedConstructionDetailType?.name
+    }
+  }
+
+  private async _onSelectInspectionDrawingType(e) {
+    const inspectionDrawingTypeId = e.target.value
+    this.selectedInspectionDrawingType = await this._getInspectionDrawingType(inspectionDrawingTypeId)
+    this.selectedInspectionParts = []
+  }
+
+  private async _onSelectInspectionPart(part) {
+    if (this.selectedInspectionParts.includes(part.name)) {
+      this.selectedInspectionParts = this.selectedInspectionParts.filter(item => item !== part.name)
+    } else {
+      this.selectedInspectionParts.push(part.name)
+    }
+
+    this.selectedInspectionParts = [...this.selectedInspectionParts]
+    this.checklist = {
+      ...this.checklist,
+      inspectionParts: this.selectedInspectionParts
     }
   }
 
@@ -533,7 +623,9 @@ class InspectionCreatePopup extends LitElement {
       name: this.checklist.name,
       constructionType: this.htmlSelectConstructionType.displayText,
       constructionDetailType: this.htmlSelectConstructionDetailType.displayText,
-      location: `${this.htmlSelectBuilding.displayText} ${this.htmlSelectLevel.displayText}층`
+      location: `${this.htmlSelectBuilding.displayText} ${this.htmlSelectLevel.displayText}층`,
+      inspectionDrawingType: this.selectedInspectionDrawingType.name,
+      inspectionParts: this.checklist.inspectionParts
     }
     patch.checklistItem = this.checklist.checklistItems.map(item => {
       return {

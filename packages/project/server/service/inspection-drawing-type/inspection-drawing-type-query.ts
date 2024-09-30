@@ -3,6 +3,7 @@ import { Domain, getQueryBuilderFromListParams, getRepository, ListParam } from 
 import { User } from '@things-factory/auth-base'
 import { InspectionDrawingType } from './inspection-drawing-type'
 import { InspectionDrawingTypeList } from './inspection-drawing-type-type'
+import { InspectionPart } from '../inspection-part/inspection-part'
 
 @Resolver(InspectionDrawingType)
 export class InspectionDrawingTypeQuery {
@@ -32,6 +33,14 @@ export class InspectionDrawingTypeQuery {
     const [items, total] = await queryBuilder.getManyAndCount()
 
     return { items, total }
+  }
+
+  @FieldResolver(type => [InspectionPart])
+  async inspectionParts(@Root() inspectionDrawingType: InspectionDrawingType): Promise<InspectionPart[]> {
+    return await getRepository(InspectionPart).find({
+      where: { inspectionDrawingType: { id: inspectionDrawingType.id } },
+      order: { sequence: 'ASC' }
+    })
   }
 
   @FieldResolver(type => User)

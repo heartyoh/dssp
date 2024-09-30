@@ -31,8 +31,8 @@ export enum BuildingInspectionStatus {
   FAIL = 'FAIL'
 }
 export const BUILDING_INSPECTION_STATUS = {
-  [BuildingInspectionStatus.REQUEST]: '검측 대기',
-  [BuildingInspectionStatus.WAIT]: '검측 요청',
+  [BuildingInspectionStatus.WAIT]: '검측 대기',
+  [BuildingInspectionStatus.REQUEST]: '검측 요청',
   [BuildingInspectionStatus.PASS]: '합격',
   [BuildingInspectionStatus.FAIL]: '불합격'
 }
@@ -272,7 +272,10 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
           name: 'inspectionParts',
           header: '검측 부위',
           record: {
-            renderer: value => value?.join(', ') || ''
+            renderer: value => {
+              console.log(value)
+              return value?.join(', ') || ''
+            }
           },
           width: 200
         },
@@ -325,6 +328,7 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
               buildingLevel {
                 floor
                 building {
+                  id
                   name
                 }
                 mainDrawing {
@@ -340,6 +344,7 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
                 constructionType
                 constructionDetailType
                 location
+                inspectionParts
               }
             }
             total
@@ -361,8 +366,9 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
       requestDate: this._formatDate(item.requestDate)
     }))
 
-    this.location = items[0].checklist.location
-    this.drawingImage = items[0].buildingLevel.mainDrawingImage
+    this.location = items[0]?.checklist?.location || ''
+    this.drawingImage = items[0]?.buildingLevel?.mainDrawingImage || ''
+    this.building = items[0]?.buildingLevel?.building || {}
 
     return {
       total: response.data.buildingInspectionsOfBuildingLevel.total || 0,
@@ -398,6 +404,8 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
       html`
         <inspection-create-popup
           .projectId=${this.project.id}
+          .selectedBuildingId=${this.building.id}
+          .selectedBuildingLevelId=${this.buildingLevelId}
           @requestRefresh="${() => this.grist.fetch()}"
         ></inspection-create-popup>
       `,

@@ -26,6 +26,8 @@ export class BuildingInspectionMutation {
     if (!checklist.constructionType) throw new Error('공종 타입이 없습니다.')
     if (!checklist.constructionDetailType) throw new Error('상세 공종 타입이 없습니다.')
     if (!checklist.location) throw new Error('위치가 없습니다.')
+    if (!checklist.inspectionDrawingType) throw new Error('검측 도면 타입이 없습니다.')
+    if (checklist.inspectionParts.length === 0) throw new Error('검측 부위가 없습니다.')
     if (checklistItem.length === 0) throw new Error('체크리스트 아이템이 없습니다.')
 
     // 2. checklist 저장

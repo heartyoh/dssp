@@ -47,6 +47,10 @@ export class Checklist {
   @Field({ nullable: true })
   location?: string
 
+  @Column({ nullable: false, comment: '검측 도면 타입', default: '' })
+  @Field({ nullable: true })
+  inspectionDrawingType?: string
+
   @Column('simple-array', { nullable: true, comment: '검측 부위' })
   @Field(() => [String], { nullable: true })
   inspectionParts?: string[]

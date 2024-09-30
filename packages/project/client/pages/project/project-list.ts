@@ -20,8 +20,8 @@ export enum BuildingInspectionStatus {
   FAIL = 'FAIL'
 }
 export const BUILDING_INSPECTION_STATUS = {
-  [BuildingInspectionStatus.REQUEST]: '검측 대기',
-  [BuildingInspectionStatus.WAIT]: '검측 요청',
+  [BuildingInspectionStatus.WAIT]: '검측 대기',
+  [BuildingInspectionStatus.REQUEST]: '검측 요청',
   [BuildingInspectionStatus.PASS]: '합격',
   [BuildingInspectionStatus.FAIL]: '불합격'
 }

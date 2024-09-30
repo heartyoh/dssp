@@ -62,7 +62,7 @@ export class buildingInspectionDetailChecklist extends ScopedElementsMixin(PageV
 
   get context() {
     return {
-      title: '검측 관리 상세 - 검측 도면'
+      title: '검측 관리 상세 - 검측 체크리스트'
     }
   }
 
@@ -70,7 +70,7 @@ export class buildingInspectionDetailChecklist extends ScopedElementsMixin(PageV
     return html`
       <building-inspection-detail-header
         .buildingInspectionId=${this.buildingInspection?.id}
-        .projectId=${this.project.id}
+        .buildingLevelId=${this.buildingInspection?.buildingLevel?.id}
         .projectName=${this.project.name}
         .buildingName=${this.buildingInspection?.buildingLevel?.building?.name}
         .buildingLevelFloor=${this.buildingInspection?.buildingLevel?.floor}

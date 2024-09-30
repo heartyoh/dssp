@@ -33,7 +33,10 @@ export class ConstructionTypeQuery {
 
   @FieldResolver(type => [ConstructionDetailType])
   async constructionDetailTypes(@Root() constructionType: ConstructionType): Promise<ConstructionDetailType[]> {
-    return await getRepository(ConstructionDetailType).findBy({ constructionType: { id: constructionType.id } })
+    return await getRepository(ConstructionDetailType).find({
+      where: { constructionType: { id: constructionType.id } },
+      order: { sequence: 'ASC' }
+    })
   }
 
   @FieldResolver(type => Domain)

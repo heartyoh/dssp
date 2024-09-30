@@ -651,6 +651,7 @@ type Checklist {
   deletedAt: DateTimeISO
   documentNo: String
   id: ID!
+  inspectionDrawingType: String
   inspectionParts: [String!]
   location: String
   name: String
@@ -667,6 +668,8 @@ type Checklist {
 input ChecklistInputType {
   constructionDetailType: String!
   constructionType: String!
+  inspectionDrawingType: String!
+  inspectionParts: [String!]!
   location: String!
   name: String!
 }
