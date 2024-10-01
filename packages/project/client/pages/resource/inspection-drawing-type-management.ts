@@ -112,6 +112,7 @@ export class InspectionDrawingTypeManagement extends PageView {
           multiple: true
         }
       },
+      sorters: [{ name: 'updatedAt', desc: true }],
       pagination: { infinite: true }
     }
   }
@@ -119,8 +120,8 @@ export class InspectionDrawingTypeManagement extends PageView {
   async fetchHandler() {
     const response = await client.query({
       query: gql`
-        query InspectionDrawingTypes {
-          inspectionDrawingTypes {
+        query InspectionDrawingTypes($sortings: [Sorting!]) {
+          inspectionDrawingTypes(sortings: $sortings) {
             items {
               id
               name
@@ -130,7 +131,14 @@ export class InspectionDrawingTypeManagement extends PageView {
             total
           }
         }
-      `
+      `,
+      variables: {
+        sortings: [
+          {
+            name: 'name'
+          }
+        ]
+      }
     })
 
     if (response.errors) return {}

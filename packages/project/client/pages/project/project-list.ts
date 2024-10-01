@@ -115,6 +115,7 @@ export interface Checklist {
   taskConstructorSignature?: string
   overallSupervisorySignature?: string
   taskSupervisorySignature?: string
+  inspectionParts?: string[]
   // checklistItems?: ChecklistItem[]
 }
 

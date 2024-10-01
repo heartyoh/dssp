@@ -76,6 +76,12 @@ export class ChecklistTemplateListPage extends ScopedElementsMixin(PageView) {
     `
   }
 
+  async pageUpdated(changes: any, lifecycle) {
+    if (this.active) {
+      this.getchecklistTypes()
+    }
+  }
+
   async pageInitialized(lifecycle: any) {
     this.gristConfig = {
       columns: [
@@ -147,8 +153,6 @@ export class ChecklistTemplateListPage extends ScopedElementsMixin(PageView) {
         }
       ]
     }
-
-    this.getchecklistTypes()
   }
 
   async getchecklistTypes() {

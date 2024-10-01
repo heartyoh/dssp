@@ -137,6 +137,7 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
   @state() buildingLevelId: string = ''
   @state() project: any = { ...this.defaultProject }
   @state() location: string = ''
+  @state() building: any = {}
   @state() drawingImage: string = ''
   @state() buildingInspectionSummary: any = {}
 
@@ -232,7 +233,7 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
         }
       `,
       variables: {
-        buildingLevelId: buildingLevelId
+        buildingLevelId
       }
     })
 
@@ -272,10 +273,7 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
           name: 'inspectionParts',
           header: '검측 부위',
           record: {
-            renderer: value => {
-              console.log(value)
-              return value?.join(', ') || ''
-            }
+            renderer: value => value?.join(', ') || ''
           },
           width: 200
         },
@@ -317,6 +315,8 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
   }
 
   async fetchHandler({ page = 1, limit = 100, sortings = [], filters = [] }: FetchOption) {
+    if (!this.buildingLevelId) return
+
     const response = await client.query({
       query: gql`
         query BuildingInspectionsOfBuildingLevel($params: BuildingInspectionsOfBuildingLevel!) {
@@ -359,7 +359,7 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
       }
     })
 
-    let items = response.data.buildingInspectionsOfBuildingLevel?.items || []
+    let items = response.data?.buildingInspectionsOfBuildingLevel?.items || []
     items = items.map(item => ({
       ...item,
       ...item.checklist,
@@ -371,7 +371,7 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
     this.building = items[0]?.buildingLevel?.building || {}
 
     return {
-      total: response.data.buildingInspectionsOfBuildingLevel.total || 0,
+      total: response.data?.buildingInspectionsOfBuildingLevel?.total || 0,
       records: items
     }
   }

@@ -135,9 +135,17 @@ export class ChecklistTypeManagement extends ScopedElementsMixin(PageView) {
       rows: {
         selectable: {
           multiple: true
+        },
+        classifier: (record, rowIndex) => {
+          return {
+            emphasized:
+              record.mainType == ChecklistTypeMainType.BASIC
+                ? ['var(--grid-record-odd-background-color)', 'var(--grid-record-color)']
+                : ['var(--grid-record-background-color)', 'var(--grid-record-color)']
+          }
         }
       },
-      sorters: [{ name: 'updatedAt' }, { name: 'mainType' }, { name: 'detailType' }]
+      sorters: [{ name: 'mainType' }, { name: 'updatedAt', desc: true }, { name: 'detailType' }]
     }
   }
 

@@ -170,10 +170,10 @@ export default async function bootstrap() {
   store.dispatch({
     type: ADD_MORENDA,
     morenda: {
-      icon: html` <md-icon>fact_check</md-icon> `,
-      name: html` <ox-i18n msgid="체크리스트"></ox-i18n> `,
+      icon: html` <md-icon>view_timeline</md-icon> `,
+      name: html` <ox-i18n msgid="도면 타입 및 검측 부위 관리"></ox-i18n> `,
       action: () => {
-        navigate('checklist-template-list')
+        navigate('inspection-drawing-type-management')
       }
     }
   })
@@ -192,10 +192,10 @@ export default async function bootstrap() {
   store.dispatch({
     type: ADD_MORENDA,
     morenda: {
-      icon: html` <md-icon>view_timeline</md-icon> `,
-      name: html` <ox-i18n msgid="도면 타입 및 검측 부위 관리"></ox-i18n> `,
+      icon: html` <md-icon>fact_check</md-icon> `,
+      name: html` <ox-i18n msgid="체크리스트 템플릿 관리"></ox-i18n> `,
       action: () => {
-        navigate('inspection-drawing-type-management')
+        navigate('checklist-template-list')
       }
     }
   })

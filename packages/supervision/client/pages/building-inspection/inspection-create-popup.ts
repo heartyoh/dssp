@@ -171,11 +171,13 @@ class InspectionCreatePopup extends LitElement {
               })}
             </md-filled-select>
 
-            <md-filled-select label="검측 부위" level>
+            <md-filled-select label="검측 부위" inspectionParts>
+              <div slot="label">${this.selectedInspectionParts?.join(', ') || ''}</div>
+
               ${this.selectedInspectionDrawingType?.inspectionParts?.map(inspectionPart => {
                 return html`
-                  <md-list-option label="검측 부위12" @click=${() => this._onSelectInspectionPart(inspectionPart)}>
-                    <md-checkbox></md-checkbox>
+                  <md-list-option @click=${() => this._onSelectInspectionPart(inspectionPart)}>
+                    <md-checkbox ?checked="${this.isSelected(inspectionPart)}"></md-checkbox>
                     ${inspectionPart.name}
                   </md-list-option>
                 `
@@ -328,7 +330,7 @@ class InspectionCreatePopup extends LitElement {
       : this.selectedBuilding?.buildingLevels?.[0]
 
     this.selectedConstructionDetailType = this.selectedConstructionType?.constructionDetailTypes?.[0]
-    this.selectedInspectionParts = this.selectedInspectionDrawingType?.inspectionParts?.[0]
+    this.selectedInspectionParts = []
 
     // 동, 층이 랜더링 된 후에 select를 위해 이 시점에서 랜더링
     this.selectedBuilding = await { ...this.selectedBuilding }
@@ -345,7 +347,8 @@ class InspectionCreatePopup extends LitElement {
     this.checklist = {
       constructionType: this.selectedConstructionType?.name,
       constructionDetailType: this.selectedConstructionDetailType?.name,
-      location: `${this.selectedBuilding?.name || ''} ${this.selectedLevel.floor || ''}층`
+      location: `${this.selectedBuilding?.name || ''} ${this.selectedLevel.floor || ''}층`,
+      documentNo: '0000-000-000000'
     }
 
     // 그리드 셋팅
@@ -473,6 +476,10 @@ class InspectionCreatePopup extends LitElement {
     const inspectionDrawingTypeId = e.target.value
     this.selectedInspectionDrawingType = await this._getInspectionDrawingType(inspectionDrawingTypeId)
     this.selectedInspectionParts = []
+    this.checklist = {
+      ...this.checklist,
+      inspectionParts: this.selectedInspectionParts
+    }
   }
 
   private async _onSelectInspectionPart(part) {
@@ -487,6 +494,10 @@ class InspectionCreatePopup extends LitElement {
       ...this.checklist,
       inspectionParts: this.selectedInspectionParts
     }
+  }
+
+  isSelected(option: any): boolean {
+    return this.selectedInspectionParts.includes(option.name)
   }
 
   requestRefresh() {
@@ -569,6 +580,8 @@ class InspectionCreatePopup extends LitElement {
   }
 
   async fetchHandler() {
+    if (!this.checklistTemplateId) return []
+
     const response = await client.query({
       query: gql`
         query ($filters: [Filter!], $pagination: Pagination, $sortings: [Sorting!]) {

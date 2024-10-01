@@ -114,6 +114,7 @@ export class buildingInspectionDetailChecklist extends ScopedElementsMixin(PageV
               constructionType
               constructionDetailType
               location
+              inspectionParts
               checklistItems {
                 id
                 name

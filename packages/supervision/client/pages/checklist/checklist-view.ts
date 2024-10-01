@@ -182,7 +182,7 @@ class ChecklistView extends LitElement {
             <th>공종</th>
             <td>${this.checklist.constructionType}</td>
             <th>문서 번호</th>
-            <td>0000-000-000000</td>
+            <td>${this.checklist.documentNo}</td>
           </tr>
           <tr>
             <th>세부 공종</th>

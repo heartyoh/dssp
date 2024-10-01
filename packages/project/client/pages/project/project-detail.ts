@@ -564,7 +564,7 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
                       <td>${idx + 1}</td>
                       <td>${inspection?.buildingLevel?.building?.name} ${inspection?.buildingLevel?.floor}층</td>
                       <td bold>${inspection.checklist?.constructionType}</td>
-                      <td>${inspection.checklist?.constructionDetailType}</td>
+                      <td>${inspection.checklist?.inspectionParts?.join(', ') || ''}</td>
                       <td>${this._formatDate(inspection.requestDate)}</td>
                       <td bold>${inspection.status && BUILDING_INSPECTION_STATUS[inspection.status]}</td>
                       <td>ㅁㅁㅁㅁㅁㅁ</td>
@@ -584,7 +584,7 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
   async pageUpdated(changes: any, lifecycle: PageLifecycle) {
     if (this.active) {
       this.projectId = lifecycle.resourceId || ''
-      await this.initProject(this.projectId)
+      await this.initProject(lifecycle.resourceId)
     }
   }
 
@@ -636,6 +636,7 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
           }
 
           inspectionSummary: buildingInspectionSummaryOfProject(projectId: $projectId) {
+            wait
             request
             pass
             fail
@@ -656,6 +657,7 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
                 name
                 constructionType
                 constructionDetailType
+                inspectionParts
               }
             }
             total
@@ -685,7 +687,6 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
   }
 
   private _onClickInspection(buildingInspectionId: string) {
-    console.log('buildingInspectionId :', buildingInspectionId)
     navigate(`building-inspection-detail-drawing/${buildingInspectionId}`)
   }
 

@@ -1626,7 +1626,6 @@ type LiteMenu {
   labels: Object
   name: String!
   parent: String
-  privilege: PrivilegeObject
   rank: Int
   role: Role
   type: String
@@ -1729,7 +1728,6 @@ type Menu {
   name: String
   pagination: Boolean
   parent: Menu
-  privilege: PrivilegeObject
   rank: Float
   resourceId: String
   resourceName: String
@@ -2051,7 +2049,6 @@ input MenuPatch {
   name: String
   pagination: Boolean
   parent: ObjectRef
-  privilege: PrivilegeInput
   rank: Int
   resourceId: String
   resourceName: String
@@ -3380,7 +3377,6 @@ input NewMenu {
   name: String!
   pagination: Boolean
   parent: ObjectRef
-  privilege: PrivilegeInput
   rank: Int
   resourceId: String
   resourceName: String
@@ -4224,13 +4220,6 @@ type Privilege {
   roles: [Role!]
   updatedAt: DateTimeISO
   updater: User
-}
-
-input PrivilegeInput {
-  category: String
-  owner: Boolean
-  privilege: String
-  super: Boolean
 }
 
 type PrivilegeList {
