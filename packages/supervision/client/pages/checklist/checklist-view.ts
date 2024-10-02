@@ -95,6 +95,12 @@ class ChecklistView extends LitElement {
           &[result] {
             width: 270px;
           }
+          &[criteria] {
+            width: 90px;
+          }
+          &[small] {
+            width: 60px;
+          }
         }
         td {
           &[type] {
@@ -203,10 +209,10 @@ class ChecklistView extends LitElement {
             <tr>
               <th colspan="2" rowspan="3">구분</th>
               <th rowspan="3">검사항목</th>
-              <th rowspan="3">검사기준</th>
+              <th rowspan="3" criteria>검사기준</th>
               <th colspan="4" result>검사결과</th>
-              <th rowspan="3">첨부자료</th>
-              <th rowspan="3">조치사항</th>
+              <th rowspan="3" small>첨부자료</th>
+              <th rowspan="3" small>조치사항</th>
             </tr>
             <tr>
               <th colspan="2">시공자</th>
