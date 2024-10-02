@@ -17,6 +17,7 @@ import _getWeather from '../lib/waether'
 import '@operato/chart/ox-progress-circle.js'
 
 export interface InspectionSummary {
+  wait: number
   request: number
   pass: number
   fail: number
@@ -215,7 +216,7 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
             }
             div[inspection] {
               display: grid;
-              grid-template-columns: 1.4fr 0.9fr 0.9fr 0.9fr;
+              grid-template-columns: 1.4fr 0.9fr 0.9fr 0.9fr 0.9fr;
               margin-top: 5px;
               background: #f6f6f6;
               border-radius: 7px;
@@ -361,6 +362,7 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
   @state() project: Project = { ...this.defaultProject }
   @state() buildingInspections: BuildingInspection[] = []
   @state() inspectionSummary: InspectionSummary = {
+    wait: 0,
     request: 0,
     pass: 0,
     fail: 0
@@ -434,7 +436,7 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
               </div>
               <div row>
                 <span>- 공사금액 : </span>
-                <span>${this.project.buildingComplex?.constructionCost?.toLocaleString()}</span>
+                <span>${this.project.buildingComplex?.constructionCost?.toLocaleString()} 원</span>
               </div>
               <div row>
                 <span>- 세대수 : </span>
@@ -471,7 +473,7 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
             <div state>
               <span progress>
                 <ox-progress-circle
-                  .value=${70}
+                  .value=${this.project.totalProgress}
                   titleText="전체"
                   suffix="%"
                   fontSize="27px"
@@ -486,8 +488,9 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
               </span>
               <span progress>
                 <ox-progress-circle
-                  .value=${30.4}
+                  .value=${this.project.weeklyProgress}
                   titleText="주간"
+                  suffix="%"
                   fontSize="27px"
                   fontColor="#4E5055"
                   borderStyle="none"
@@ -501,7 +504,7 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
               <span weather>
                 <div bold>현장현황</div>
                 <div>
-                  <span><md-icon slot="icon">rainy</md-icon> 강수확률</span>
+                  <span><md-icon slot="icon">rainy</md-icon>강수확률</span>
                   <span bold>${this.weather.rain}%</span>
                 </div>
                 <div>
@@ -525,6 +528,10 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
               </span>
               <span>
                 <div>검측요청</div>
+                <div bold>${this.inspectionSummary.wait}</div>
+              </span>
+              <span>
+                <div>검측대기</div>
                 <div bold>${this.inspectionSummary.request}</div>
               </span>
               <span>
