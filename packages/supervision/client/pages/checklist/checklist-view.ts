@@ -92,6 +92,12 @@ class ChecklistView extends LitElement {
         th {
           text-align: center;
 
+          &[type] {
+            min-width: 150px;
+          }
+          &[inspection-name] {
+            min-width: 250px;
+          }
           &[result] {
             width: 270px;
           }
@@ -103,7 +109,7 @@ class ChecklistView extends LitElement {
           }
         }
         td {
-          &[type] {
+          &[main-type] {
             width: 50px;
             text-align: center;
             word-break: keep-all;
@@ -165,7 +171,6 @@ class ChecklistView extends LitElement {
 
   render() {
     const today = this._getDate(new Date())
-    const mainTypeCount = this.checklist.checklistItems?.filter(v => v.mainType === ChecklistTypeMainType.BASIC).length
     const isConstructorStep = this.status == BuildingInspectionStatus.WAIT || this.status == BuildingInspectionStatus.FAIL
     const isSupervisoryStep = this.status == BuildingInspectionStatus.REQUEST
 
@@ -175,9 +180,15 @@ class ChecklistView extends LitElement {
       if (a.mainType < b.mainType) return -1
       if (a.mainType > b.mainType) return 1
 
-      // 2순위: sequence 오름차순
+      // 2순위: detailType 오름차순
+      if (a.detailType < b.detailType) return -1
+      if (a.detailType > b.detailType) return 1
+
+      // 3순위: sequence 오름차순
       return a.sequence - b.sequence
     })
+
+    const processedItems = this.processChecklistItems(this.checklist?.checklistItems || [])
 
     return html`
       <div wrapper>
@@ -207,8 +218,8 @@ class ChecklistView extends LitElement {
         <table body>
           <thead>
             <tr>
-              <th colspan="2" rowspan="3">구분</th>
-              <th rowspan="3">검사항목</th>
+              <th colspan="2" rowspan="3" type>구분</th>
+              <th rowspan="3" inspection-name>검사항목</th>
               <th rowspan="3" criteria>검사기준</th>
               <th colspan="4" result>검사결과</th>
               <th rowspan="3" small>첨부자료</th>
@@ -226,22 +237,13 @@ class ChecklistView extends LitElement {
             </tr>
           </thead>
           <tbody>
-            ${this.checklist?.checklistItems?.map((item, idx) => {
-              let basicMainType: any = ''
-              if (idx === 0) {
-                basicMainType = html` <td type bold rowspan="${mainTypeCount}">${CHECKLIST_MAIN_TYPE_LIST[item.mainType]}</td>`
-              }
-
-              let nonBasicMainType: any = ''
-              if (idx === mainTypeCount) {
-                nonBasicMainType = html` <td type bold rowspan="${this.checklist?.checklistItems?.length - mainTypeCount}">
-                  ${CHECKLIST_MAIN_TYPE_LIST[item.mainType]}
-                </td>`
-              }
-
+            ${processedItems.map(({ item, showMainTypeCell, mainTypeRowspan, showDetailTypeCell, detailTypeRowspan }, idx) => {
               return html` <tr>
-                ${basicMainType} ${nonBasicMainType}
-                <td bold>${item.detailType}</td>
+                ${showMainTypeCell
+                  ? html`<td main-type bold rowspan="${mainTypeRowspan}">${CHECKLIST_MAIN_TYPE_LIST[item.mainType]}</td>`
+                  : ''}
+                ${showDetailTypeCell ? html` <td bold rowspan="${detailTypeRowspan}">${item.detailType}</td> ` : ''}
+
                 <td bold>${idx + 1}. ${item.name}</td>
                 <td>${item.inspctionCriteria}</td>
                 <td radio>
@@ -393,6 +395,49 @@ class ChecklistView extends LitElement {
       year: 'numeric',
       month: 'long',
       day: 'numeric'
+    })
+  }
+
+  private processChecklistItems(checklistItems) {
+    const mainTypeRowspans = {}
+    const detailTypeRowspans = {}
+    let previousMainType = null
+    let previousDetailType = null
+
+    return checklistItems.map((item, index) => {
+      const mainType = item.mainType
+      const detailType = item.detailType
+
+      // mainType이 변경되면 rowspan을 계산
+      if (mainType !== previousMainType) {
+        mainTypeRowspans[mainType] = checklistItems.filter(i => i.mainType === mainType).length
+        previousDetailType = null // detailType 초기화
+      }
+
+      // detailType이 변경되면 rowspan을 계산
+      if (detailType !== previousDetailType) {
+        detailTypeRowspans[`${mainType}-${detailType}`] = checklistItems.filter(
+          i => i.mainType === mainType && i.detailType === detailType
+        ).length
+      }
+
+      const showMainTypeCell = mainType !== previousMainType
+      const showDetailTypeCell = detailType !== previousDetailType
+
+      const mainTypeRowspan = mainTypeRowspans[mainType]
+      const detailTypeRowspan = detailTypeRowspans[`${mainType}-${detailType}`]
+
+      // 이전 값을 업데이트
+      previousMainType = mainType
+      previousDetailType = detailType
+
+      return {
+        item,
+        showMainTypeCell,
+        mainTypeRowspan,
+        showDetailTypeCell,
+        detailTypeRowspan
+      }
     })
   }
 }

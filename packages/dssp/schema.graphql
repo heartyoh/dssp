@@ -694,6 +694,7 @@ type ChecklistItem {
 
 input ChecklistItemInputType {
   detailType: String!
+  inspctionCriteria: String
   mainType: String!
   name: String!
 }

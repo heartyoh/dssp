@@ -121,6 +121,7 @@ export class buildingInspectionDetailChecklist extends ScopedElementsMixin(PageV
                 sequence
                 mainType
                 detailType
+                inspctionCriteria
                 constructionConfirmStatus
                 supervisoryConfirmStatus
                 comment

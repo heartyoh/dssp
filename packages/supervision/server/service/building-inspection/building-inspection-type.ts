@@ -32,6 +32,9 @@ class ChecklistItemInputType {
 
   @Field({ nullable: false })
   detailType: string
+
+  @Field({ nullable: true })
+  inspctionCriteria: string
 }
 
 @InputType()

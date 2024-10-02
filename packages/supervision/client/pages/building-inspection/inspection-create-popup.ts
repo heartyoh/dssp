@@ -644,7 +644,8 @@ class InspectionCreatePopup extends LitElement {
       return {
         name: item.name,
         mainType: item.mainType,
-        detailType: item.detailType
+        detailType: item.detailType,
+        inspctionCriteria: item.inspctionCriteria
       }
     })
 

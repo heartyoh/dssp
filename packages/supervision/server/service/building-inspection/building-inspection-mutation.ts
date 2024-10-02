@@ -42,6 +42,7 @@ export class BuildingInspectionMutation {
       name: item.name,
       mainType: item.mainType,
       detailType: item.detailType,
+      inspctionCriteria: item.inspctionCriteria,
       sequence: idx,
       checklist: savedChecklist,
       creator: user,
