@@ -640,7 +640,7 @@ class InspectionCreatePopup extends LitElement {
       inspectionDrawingType: this.selectedInspectionDrawingType.name,
       inspectionParts: this.checklist.inspectionParts
     }
-    patch.checklistItem = this.checklist.checklistItems.map(item => {
+    patch.checklistItem = this.checklist.checklistItems?.map(item => {
       return {
         name: item.name,
         mainType: item.mainType,

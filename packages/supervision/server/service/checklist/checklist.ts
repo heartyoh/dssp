@@ -21,6 +21,7 @@ import { BuildingInspection } from '../building-inspection/building-inspection'
 
 @Entity({ comment: '체크리스트' })
 @Index('ix_checklist_0', (checklist: Checklist) => [checklist.task], { where: '"deleted_at" IS NULL' })
+@Index('ix_checklist_1', (checklist: Checklist) => [checklist.documentNo, checklist.createdAt], { where: '"deleted_at" IS NULL' })
 @ObjectType()
 export class Checklist {
   @PrimaryGeneratedColumn('uuid')
@@ -31,7 +32,7 @@ export class Checklist {
   @Field({ nullable: true })
   name?: string
 
-  @Column({ nullable: true, comment: '문서 번호' })
+  @Column({ nullable: true, comment: '문서 번호 동(4자리)-층(3자리)-시퀀스(6자리)' })
   @Field({ nullable: true })
   documentNo?: string
 

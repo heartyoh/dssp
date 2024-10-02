@@ -5,6 +5,8 @@ import { NewBuildingInspection } from './building-inspection-type'
 import { BuildingInspectionStatus } from './building-inspection'
 import { Checklist } from '../checklist/checklist'
 import { ChecklistItem } from '../checklist-item/checklist-item'
+import { getRepository } from '@things-factory/shell'
+import { BuildingLevel } from '@dssp/building-complex'
 
 @Resolver(BuildingInspection)
 export class BuildingInspectionMutation {
@@ -15,10 +17,10 @@ export class BuildingInspectionMutation {
     @Ctx() context: ResolverContext
   ): Promise<BuildingInspection> {
     const { user, tx } = context.state
+    const { buildingLevelId, checklist, checklistItem } = patch
     const buildingInspectionRepository = tx.getRepository(BuildingInspection)
     const checklistRepository = tx.getRepository(Checklist)
     const checklistItemRepository = tx.getRepository(ChecklistItem)
-    const { buildingLevelId, checklist, checklistItem } = patch
 
     // 1. 벨리데이션
     if (!buildingLevelId) throw new Error('층 아이디가 없습니다.')
@@ -31,8 +33,10 @@ export class BuildingInspectionMutation {
     if (checklistItem.length === 0) throw new Error('체크리스트 아이템이 없습니다.')
 
     // 2. checklist 저장
+    const documentNo = await this.getRecentDocumentNoByBuildingLevelId(buildingLevelId)
     const savedChecklist = await checklistRepository.save({
       ...checklist,
+      documentNo,
       creator: user,
       updater: user
     })
@@ -94,5 +98,28 @@ export class BuildingInspectionMutation {
       .execute()
 
     return true
+  }
+
+  async getRecentDocumentNoByBuildingLevelId(buildingLevelId: string): Promise<string> {
+    const buildingLevel = await getRepository(BuildingLevel).findOne({
+      where: { id: buildingLevelId },
+      relations: ['building']
+    })
+
+    const buildingName = buildingLevel.building.name.match(/\d+/g).join('').padStart(4, '0')
+    const floorName = buildingLevel.floor.toString().padStart(3, '0')
+    const latestChecklist = await getRepository(Checklist)
+      .createQueryBuilder('c')
+      .where('c.document_no LIKE :pattern', { pattern: `${buildingName}-${floorName}-%` })
+      .orderBy('c.created_at', 'DESC')
+      .getOne()
+
+    let documentNo = '000001'
+    if (latestChecklist) {
+      const lastNo = latestChecklist.documentNo.split('-')[2]
+      documentNo = (Number(lastNo) + 1).toString().padStart(6, '0')
+    }
+
+    return `${buildingName}-${floorName}-${documentNo}`
   }
 }
