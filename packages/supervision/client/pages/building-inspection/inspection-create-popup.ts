@@ -5,7 +5,6 @@ import gql from 'graphql-tag'
 import { css, html, LitElement } from 'lit'
 import { customElement, property, query, state } from 'lit/decorators.js'
 import { DataGrist } from '@operato/data-grist/ox-grist.js'
-
 import { client } from '@operato/graphql'
 import { ButtonContainerStyles, ScrollbarStyles } from '@operato/styles'
 import { notify } from '@operato/layout'

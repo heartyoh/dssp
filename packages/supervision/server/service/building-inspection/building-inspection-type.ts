@@ -50,6 +50,15 @@ export class NewBuildingInspection {
 }
 
 @InputType()
+export class UpdateBuildingInspection {
+  @Field({ nullable: false })
+  id: string
+
+  @Field(type => String, { nullable: true })
+  drawingMarker?: string
+}
+
+@InputType()
 export class BuildingInspectionsOfProject {
   @Field({ nullable: false })
   projectId: string

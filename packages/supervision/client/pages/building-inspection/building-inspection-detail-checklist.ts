@@ -17,7 +17,7 @@ import '../checklist/checklist-view'
 import { ChecklistMode } from '../checklist/checklist-view'
 
 @customElement('building-inspection-detail-checklist')
-export class buildingInspectionDetailChecklist extends ScopedElementsMixin(PageView) {
+export class BuildingInspectionDetailChecklist extends ScopedElementsMixin(PageView) {
   static styles = [
     ScrollbarStyles,
     CommonGristStyles,

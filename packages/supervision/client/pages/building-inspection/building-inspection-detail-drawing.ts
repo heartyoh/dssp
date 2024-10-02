@@ -1,22 +1,18 @@
 import '@material/web/icon/icon.js'
-import '@operato/data-grist'
-
-import { CommonGristStyles, CommonButtonStyles, ScrollbarStyles } from '@operato/styles'
+import { CommonGristStyles, ScrollbarStyles } from '@operato/styles'
 import { PageView } from '@operato/shell'
 import { css, html } from 'lit'
 import { PageLifecycle } from '@operato/shell/dist/src/app/pages/page-view'
 import { customElement, query, state } from 'lit/decorators.js'
 import { ScopedElementsMixin } from '@open-wc/scoped-elements'
-import { DataGrist, FetchOption } from '@operato/data-grist'
 import { client } from '@operato/graphql'
 import { notify } from '@operato/layout'
 import gql from 'graphql-tag'
-import { openPopup } from '@operato/layout'
-
 import './component/building-inspection-detail-header'
+import '@operato/image-marker/ox-image-marker.js'
 
 @customElement('building-inspection-detail-drawing')
-export class buildingInspectionDetailDrawing extends ScopedElementsMixin(PageView) {
+export class BuildingInspectionDetailDrawing extends ScopedElementsMixin(PageView) {
   static styles = [
     ScrollbarStyles,
     CommonGristStyles,
@@ -43,6 +39,7 @@ export class buildingInspectionDetailDrawing extends ScopedElementsMixin(PageVie
 
   @state() project: any = {}
   @state() buildingInspection: any = {}
+  @state() buildingInspectionId: string = ''
 
   get context() {
     return {
@@ -61,15 +58,19 @@ export class buildingInspectionDetailDrawing extends ScopedElementsMixin(PageVie
       ></building-inspection-detail-header>
 
       <div body>
-        <img src=${this.buildingInspection?.buildingLevel?.mainDrawingImage || '/assets/images/img-drawing-default.png'} />
+        <ox-image-marker
+          .imageUrl=${this.buildingInspection?.buildingLevel?.mainDrawingImage || '/assets/images/img-drawing-default.png'}
+          .shapes=${JSON.parse(this.buildingInspection?.drawingMarker || [])}
+          @shapes-changed=${this.onClickMarkerSave}
+        ></ox-image-marker>
       </div>
     `
   }
 
   async pageUpdated(changes: any, lifecycle: PageLifecycle) {
     if (this.active) {
-      const buildingInspectionId = lifecycle.resourceId || ''
-      await this.initBuildingInspection(buildingInspectionId)
+      this.buildingInspectionId = lifecycle.resourceId || ''
+      await this.initBuildingInspection(this.buildingInspectionId)
     }
   }
 
@@ -81,6 +82,7 @@ export class buildingInspectionDetailDrawing extends ScopedElementsMixin(PageVie
             id
             status
             requestDate
+            drawingMarker
             buildingLevel {
               id
               floor
@@ -131,5 +133,28 @@ export class buildingInspectionDetailDrawing extends ScopedElementsMixin(PageVie
     if (response.errors) return
 
     this.project = response.data.project
+  }
+
+  private async onClickMarkerSave(e) {
+    const response = await client.query({
+      query: gql`
+        mutation UpdateBuildingInspection($patch: UpdateBuildingInspection!) {
+          updateBuildingInspection(patch: $patch) {
+            id
+            drawingMarker
+          }
+        }
+      `,
+      variables: {
+        patch: {
+          id: this.buildingInspectionId,
+          drawingMarker: JSON.stringify(e.detail)
+        }
+      }
+    })
+
+    if (response.errors) return
+
+    notify({ message: '저장되었습니다.' })
   }
 }

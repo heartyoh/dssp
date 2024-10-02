@@ -48,7 +48,7 @@ export class BuildingInspection {
   @Column({
     nullable: false,
     comment: '상태(WAIT: 검측 대기, REQUEST: 검측 요청, PASS: 합격, FAIL: 불합격)',
-    default: 'REQUEST'
+    default: 'WAIT'
   })
   @Field({ nullable: true })
   status?: BuildingInspectionStatus
@@ -56,6 +56,10 @@ export class BuildingInspection {
   @Column({ nullable: false, comment: '검측 요청일' })
   @Field({ nullable: true })
   requestDate?: Date
+
+  @Column({ type: 'simple-json', nullable: true, comment: '도면 마커' })
+  @Field(type => String, { nullable: true })
+  drawingMarker?: string
 
   // 층 정보 (1:1 상위 테이블 참조)
   @ManyToOne(type => BuildingLevel)

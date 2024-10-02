@@ -561,6 +561,7 @@ type BuildingInspection {
   createdAt: DateTimeISO
   creator: User
   deletedAt: DateTimeISO
+  drawingMarker: String
   id: ID!
   requestDate: DateTimeISO
   status: String
@@ -2811,6 +2812,9 @@ type Mutation {
 
   """To modify BuildingComplex information"""
   updateBuildingComplex(id: String!, patch: BuildingComplexPatch!): BuildingComplex!
+
+  """To update Building Inspection information"""
+  updateBuildingInspection(patch: UpdateBuildingInspection!): BuildingInspection!
 
   """To modify Checklist information"""
   updateChecklist(id: String!, patch: ChecklistPatch!): Checklist!
@@ -5549,6 +5553,11 @@ input ThemePatch {
   name: String
   type: String
   value: Object
+}
+
+input UpdateBuildingInspection {
+  drawingMarker: String
+  id: String!
 }
 
 """The `Upload` scalar type represents a file upload."""

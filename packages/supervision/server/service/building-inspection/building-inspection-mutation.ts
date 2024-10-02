@@ -1,7 +1,7 @@
 import { Resolver, Mutation, Arg, Ctx, Directive } from 'type-graphql'
 import { In } from 'typeorm'
 import { BuildingInspection } from './building-inspection'
-import { NewBuildingInspection } from './building-inspection-type'
+import { NewBuildingInspection, UpdateBuildingInspection } from './building-inspection-type'
 import { BuildingInspectionStatus } from './building-inspection'
 import { Checklist } from '../checklist/checklist'
 import { ChecklistItem } from '../checklist-item/checklist-item'
@@ -61,6 +61,28 @@ export class BuildingInspectionMutation {
       requestDate: new Date(),
       checklist: savedChecklist,
       creator: user,
+      updater: user
+    })
+
+    return result
+  }
+
+  @Directive('@transaction')
+  @Mutation(returns => BuildingInspection, { description: 'To update Building Inspection information' })
+  async updateBuildingInspection(
+    @Arg('patch') patch: UpdateBuildingInspection,
+    @Ctx() context: ResolverContext
+  ): Promise<BuildingInspection> {
+    const { user, tx } = context.state
+    const buildingInspectionRepo = tx.getRepository(BuildingInspection)
+
+    // 벨리데이션
+    if (!patch.id) throw new Error('검측 아이디가 없습니다.')
+
+    const buildingInspection = await buildingInspectionRepo.findOneBy({ id: patch.id })
+    const result = await buildingInspectionRepo.save({
+      ...buildingInspection,
+      ...patch,
       updater: user
     })
 
