@@ -2,6 +2,7 @@ import '@material/web/icon/icon.js'
 import '@material/web/button/elevated-button.js'
 import '@material/web/textfield/outlined-text-field.js'
 import '@material/web/button/outlined-button.js'
+import '@operato/input/ox-select-floor.js'
 
 import { PageView } from '@operato/shell'
 import { PageLifecycle } from '@operato/shell/dist/src/app/pages/page-view'
@@ -9,7 +10,6 @@ import { css, html } from 'lit'
 import { customElement, state } from 'lit/decorators.js'
 import { ScopedElementsMixin } from '@open-wc/scoped-elements'
 import { client } from '@operato/graphql'
-// import { Project, Building } from '@dssp/project'
 import gql from 'graphql-tag'
 
 @customElement('building-complex-detail')
@@ -141,89 +141,67 @@ export class BuildingComplexDetail extends ScopedElementsMixin(PageView) {
           flex-direction: column-reverse;
           position: relative;
 
-          div[row] {
+          ox-select-floor {
             width: 100%;
+
+            --ox-select-floor-rotate-x: 60deg;
+            --ox-select-floor-rotate-x-active: 40deg;
+            --ox-select-floor-perspective: 1200px;
+          }
+
+          div[status] {
+            display: flex;
             position: absolute;
+            right: 0px;
+            bottom: 0px;
+            align-items: center;
+            z-index: 2;
+            right: 3%;
 
-            div[drawing] {
-              padding-right: 10%;
-
-              & > div {
-                display: flex;
-                padding: 8px;
-                justify-content: center;
-              }
-
-              [floor-drawing] {
-                width: 90%;
-                aspect-ratio: 4 / 1;
-                transform: perspective(320px) rotateX(52deg);
-                opacity: 0.5;
-              }
-            }
-
-            div[status] {
+            div[content] {
               display: flex;
-              position: absolute;
-              right: 0px;
-              bottom: 0px;
-              align-items: center;
-              z-index: 2;
-              right: 3%;
+              background-color: #4e5055;
+              color: #fff;
+              padding: 5px 7px;
+              border-radius: 7px;
+              gap: 10px;
+              font-size: 14px;
 
-              div[content] {
+              span {
                 display: flex;
-                background-color: #4e5055;
-                color: #fff;
-                padding: 5px 7px;
-                border-radius: 7px;
-                gap: 10px;
-                font-size: 14px;
+                align-items: center;
+                width: 48px;
 
-                span {
-                  display: flex;
-                  align-items: center;
-                  width: 48px;
-
-                  md-icon {
-                    width: 20px;
-                    height: 20px;
-                    margin-right: 4px;
-                    border-radius: 5px;
-                    font-size: 21px;
-                    font-weight: 700;
-                  }
-                  md-icon[request] {
-                    background-color: #f7f7f7;
-                    color: #4e5055;
-                  }
-                  md-icon[pass] {
-                    background-color: #4bbb4a;
-                  }
-                  md-icon[fail] {
-                    background-color: #ff4444;
-                  }
+                md-icon {
+                  width: 20px;
+                  height: 20px;
+                  margin-right: 4px;
+                  border-radius: 5px;
+                  font-size: 21px;
+                  font-weight: 700;
                 }
-              }
-              span[name] {
-                color: #4e5055;
-                margin-left: 6px;
+                md-icon[request] {
+                  background-color: #f7f7f7;
+                  color: #4e5055;
+                }
+                md-icon[pass] {
+                  background-color: #4bbb4a;
+                }
+                md-icon[fail] {
+                  background-color: #ff4444;
+                }
               }
             }
-
-            &:hover {
-              z-index: 1;
-
-              div[drawing] {
-                & > div [floor-drawing] {
-                  opacity: 1;
-                  width: calc(90% - 20px);
-                  border: 7px solid #ff6a5d;
-                }
-              }
-              span[name] {
-                font-weight: bold;
-              }
+            span[name] {
+              width: 40px;
+              color: #4e5055;
+              margin-left: 6px;
+              text-align: center;
+            }
+            span[name][active] {
+              color: var(--md-sys-color-on-error);
+              background-color: var(--md-sys-color-error);
+              border-radius: 999px;
             }
           }
         }
@@ -246,8 +224,16 @@ export class BuildingComplexDetail extends ScopedElementsMixin(PageView) {
   @state() project: any = { ...this.defaultProject }
   @state() selectedBuilding: any = {}
   @state() building: any = {}
+  @state() currentFloor: number = -1
 
   render() {
+    const cards = this.building?.buildingLevels?.map(({ mainDrawingImage, floor }) => {
+      return {
+        image: mainDrawingImage || '/assets/images/img-drawing-default.png',
+        name: floor
+      }
+    })
+
     return html`
       <div header>
         <h2>${this.project.name} ${this.selectedBuilding.name}</h2>
@@ -286,29 +272,30 @@ export class BuildingComplexDetail extends ScopedElementsMixin(PageView) {
         </div>
 
         <div right>
-          ${this.building?.buildingLevels?.map((buildingLevel, idx) => {
-            const bottom = idx * 50
-
-            return html`
-              <div row .style="bottom:${bottom}px">
-                <a href=${`building-inspection-list/${buildingLevel.id}`}>
-                  <div drawing>
-                    <div>
-                      <img floor-drawing src=${buildingLevel?.mainDrawingImage || '/assets/images/img-drawing-default.png'} />
+          <ox-select-floor
+            .cards=${cards}
+            .bottomLimit=${70}
+            @change=${(e: CustomEvent) => {
+              this.currentFloor = e.detail
+              console.log('currentFloor', this.currentFloor)
+            }}
+          >
+            ${this.building?.buildingLevels?.map(
+              ({ id, floor }, idx) => html`
+                  <a href=${`building-inspection-list/${id}`} slot="template-${idx}">
+                    <div status>
+                      <div content>
+                        <span><md-icon request slot="icon">exclamation</md-icon>100</span>
+                        <span><md-icon pass slot="icon">check</md-icon>50</span>
+                        <span><md-icon fail slot="icon">close</md-icon>5</span>
+                      </div>
+                      <span name ?active=${this.currentFloor == floor}>${floor}층</span>
                     </div>
-                  </div>
-                  <div status>
-                    <div content>
-                      <span><md-icon request slot="icon">exclamation</md-icon>100</span>
-                      <span><md-icon pass slot="icon">check</md-icon>50</span>
-                      <span><md-icon fail slot="icon">close</md-icon>5</span>
-                    </div>
-                    <span name>${buildingLevel.floor}층</span>
-                  </div>
-                </a>
-              </div>
-            `
-          })}
+                  </a>
+                </div>
+              `
+            )}
+          </ox-select-floor>
         </div>
       </div>
     `
