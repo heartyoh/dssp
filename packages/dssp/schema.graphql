@@ -645,7 +645,7 @@ type Checklist {
   buildingInspection: BuildingInspection!
   checklistItems: [ChecklistItem!]!
   constructionDetailType: String
-  constructionInsprctionDate: DateTimeISO
+  constructionInspectionDate: DateTimeISO
   constructionType: String
   createdAt: DateTimeISO
   creator: User
@@ -658,7 +658,7 @@ type Checklist {
   name: String
   overallConstructorSignature: String
   overallSupervisorySignature: String
-  supervisorInsprctionDate: DateTimeISO
+  supervisorInspectionDate: DateTimeISO
   task: Task!
   taskConstructorSignature: String
   taskSupervisorySignature: String
@@ -705,6 +705,12 @@ type ChecklistItemList {
   total: Int!
 }
 
+input ChecklistItemSubmitInputType {
+  constructionConfirmStatus: String
+  id: String!
+  supervisoryConfirmStatus: String
+}
+
 type ChecklistList {
   items: [Checklist!]!
   total: Int!
@@ -716,6 +722,14 @@ input ChecklistPatch {
   description: String
   id: ID
   name: String
+}
+
+input ChecklistSubmitInputType {
+  id: String!
+  overallConstructorSignature: String
+  overallSupervisorySignature: String
+  taskConstructorSignature: String
+  taskSupervisorySignature: String
 }
 
 type ChecklistTemplate {
@@ -2814,7 +2828,10 @@ type Mutation {
   updateBuildingComplex(id: String!, patch: BuildingComplexPatch!): BuildingComplex!
 
   """To update Building Inspection information"""
-  updateBuildingInspection(patch: UpdateBuildingInspection!): BuildingInspection!
+  updateBuildingInspection(patch: UpdateBuildingInspectionDrawingMarker!): BuildingInspection!
+
+  """To create Building Inspection And Checklist information"""
+  updateBuildingInspectionChecklist(buildingInspection: UpdateBuildingInspectionSubmitType!): Boolean!
 
   """To modify Checklist information"""
   updateChecklist(id: String!, patch: ChecklistPatch!): Checklist!
@@ -5555,8 +5572,14 @@ input ThemePatch {
   value: Object
 }
 
-input UpdateBuildingInspection {
+input UpdateBuildingInspectionDrawingMarker {
   drawingMarker: String
+  id: String!
+}
+
+input UpdateBuildingInspectionSubmitType {
+  checklist: ChecklistSubmitInputType!
+  checklistItem: [ChecklistItemSubmitInputType!]!
   id: String!
 }
 

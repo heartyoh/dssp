@@ -1,5 +1,5 @@
 import { ObjectType, Field, InputType, Int, ID } from 'type-graphql'
-import { BuildingInspection } from './building-inspection'
+import { BuildingInspection, BuildingInspectionStatus } from './building-inspection'
 
 @InputType()
 class ChecklistInputType {
@@ -50,7 +50,48 @@ export class NewBuildingInspection {
 }
 
 @InputType()
-export class UpdateBuildingInspection {
+class ChecklistSubmitInputType {
+  @Field({ nullable: false })
+  id: string
+
+  @Field({ nullable: true })
+  overallConstructorSignature?: string
+
+  @Field({ nullable: true })
+  taskConstructorSignature?: string
+
+  @Field({ nullable: true })
+  overallSupervisorySignature?: string
+
+  @Field({ nullable: true })
+  taskSupervisorySignature?: string
+}
+
+@InputType()
+class ChecklistItemSubmitInputType {
+  @Field({ nullable: false })
+  id: string
+
+  @Field({ nullable: true })
+  constructionConfirmStatus?: string
+
+  @Field({ nullable: true })
+  supervisoryConfirmStatus?: string
+}
+
+@InputType()
+export class UpdateBuildingInspectionSubmitType {
+  @Field({ nullable: false })
+  id: string
+
+  @Field(type => ChecklistSubmitInputType, { nullable: false })
+  checklist: ChecklistSubmitInputType
+
+  @Field(type => [ChecklistItemSubmitInputType], { nullable: false })
+  checklistItem: ChecklistItemSubmitInputType[]
+}
+@InputType()
+export class UpdateBuildingInspectionDrawingMarker {
   @Field({ nullable: false })
   id: string
 

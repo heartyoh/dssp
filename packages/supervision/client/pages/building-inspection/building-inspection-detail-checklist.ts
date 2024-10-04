@@ -87,7 +87,6 @@ export class BuildingInspectionDetailChecklist extends ScopedElementsMixin(PageV
           <md-elevated-button @click=${this._onClickModifyChecklist}>
             <md-icon slot="icon">assignment</md-icon>등록
           </md-elevated-button>
-          <md-elevated-button> <md-icon slot="icon">assignment</md-icon>취소 </md-elevated-button>
         </div>
       </div>
     `
@@ -116,6 +115,12 @@ export class BuildingInspectionDetailChecklist extends ScopedElementsMixin(PageV
               location
               inspectionParts
               documentNo
+              constructionInspectionDate
+              supervisorInspectionDate
+              overallConstructorSignature
+              taskConstructorSignature
+              overallSupervisorySignature
+              taskSupervisorySignature
               checklistItems {
                 id
                 name
@@ -182,5 +187,40 @@ export class BuildingInspectionDetailChecklist extends ScopedElementsMixin(PageV
 
   private _onClickModifyChecklist() {
     console.log('checklist : ', this.buildingInspection.checklist)
+
+    this.validateChecklist(this.buildingInspection.checklist)
+  }
+
+  private async validateChecklist(checklist: any) {
+    const response = await client.mutate({
+      mutation: gql`
+        mutation UpdateBuildingInspectionChecklist($buildingInspection: UpdateBuildingInspectionSubmitType!) {
+          updateBuildingInspectionChecklist(buildingInspection: $buildingInspection)
+        }
+      `,
+      variables: {
+        buildingInspection: {
+          id: this.buildingInspection.id,
+          checklist: {
+            id: checklist.id,
+            overallConstructorSignature: checklist.overallConstructorSignature,
+            taskConstructorSignature: checklist.taskConstructorSignature,
+            overallSupervisorySignature: checklist.overallSupervisorySignature,
+            taskSupervisorySignature: checklist.taskSupervisorySignature
+          },
+          checklistItem: checklist.checklistItems.map(item => ({
+            id: item.id,
+            constructionConfirmStatus: item.constructionConfirmStatus,
+            supervisoryConfirmStatus: item.supervisoryConfirmStatus
+          }))
+        }
+      }
+    })
+
+    if (!response.errors) {
+      notify({ message: '검측요청서를 등록하였습니다.' })
+    } else {
+      notify({ message: response.errors?.[0]?.message || '검측 요청서 등록에 실패하였습니다.', level: 'error' })
+    }
   }
 }

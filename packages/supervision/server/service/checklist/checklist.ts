@@ -58,11 +58,11 @@ export class Checklist {
 
   @Column({ nullable: true, comment: '시공자 점검일' })
   @Field({ nullable: true })
-  constructionInsprctionDate?: Date
+  constructionInspectionDate?: Date
 
   @Column({ nullable: true, comment: '감리자 점검일' })
   @Field({ nullable: true })
-  supervisorInsprctionDate?: Date
+  supervisorInspectionDate?: Date
 
   @Column({ nullable: true, comment: '총괄 시공 책임자 사인' })
   @Field({ nullable: true })

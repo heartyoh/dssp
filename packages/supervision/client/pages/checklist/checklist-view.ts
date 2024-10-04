@@ -1,12 +1,8 @@
 import '@material/web/icon/icon.js'
-import { css, html, LitElement } from 'lit'
-import { customElement, property } from 'lit/decorators.js'
+import { css, html, LitElement, PropertyValues } from 'lit'
+import { customElement, property, query } from 'lit/decorators.js'
 import { ButtonContainerStyles, ScrollbarStyles } from '@operato/styles'
-import {
-  ChecklistTypeMainType,
-  CHECKLIST_MAIN_TYPE_LIST,
-  BuildingInspectionStatus
-} from '../building-inspection/building-inspection-list'
+import { CHECKLIST_MAIN_TYPE_LIST, BuildingInspectionStatus } from '../building-inspection/building-inspection-list'
 import '@operato/input/ox-input-signature.js'
 
 export const enum ChecklistMode {
@@ -169,6 +165,11 @@ class ChecklistView extends LitElement {
   @property({ type: Object }) checklist: any = {}
   @property({ type: String }) status: BuildingInspectionStatus = BuildingInspectionStatus.WAIT
 
+  @query('ox-input-signature[name="overallConstructorSignature"]') private elOverallConstructorSignature
+  @query('ox-input-signature[name="taskConstructorSignature"]') private elTaskConstructorSignature
+  @query('ox-input-signature[name="overallSupervisorySignature"]') private elOverallSupervisorySignature
+  @query('ox-input-signature[name="taskSupervisorySignature"]') private elTaskSupervisorySignature
+
   render() {
     const today = this._getDate(new Date())
     const isConstructorStep = this.status == BuildingInspectionStatus.WAIT || this.status == BuildingInspectionStatus.FAIL
@@ -188,7 +189,9 @@ class ChecklistView extends LitElement {
       return a.sequence - b.sequence
     })
 
-    const processedItems = this.processChecklistItems(this.checklist?.checklistItems || [])
+    const processedItems = this.drawChecklistItems(this.checklist?.checklistItems || [])
+
+    console.log('this.checklist :', this.checklist)
 
     return html`
       <div wrapper>
@@ -252,6 +255,7 @@ class ChecklistView extends LitElement {
                     item-name="constructionConfirmStatus"
                     name=${'radio-construction-' + item.id}
                     value="T"
+                    .checked=${item.constructionConfirmStatus === 'T'}
                     ?disabled=${!isConstructorStep}
                     @change=${this._onChangeConfirmStatus}
                   ></md-radio>
@@ -262,6 +266,7 @@ class ChecklistView extends LitElement {
                     item-name="constructionConfirmStatus"
                     name=${'radio-construction-' + item.id}
                     value="F"
+                    .checked=${item.constructionConfirmStatus === 'F'}
                     ?disabled=${!isConstructorStep}
                     @change=${this._onChangeConfirmStatus}
                   ></md-radio>
@@ -272,6 +277,7 @@ class ChecklistView extends LitElement {
                     item-name="supervisoryConfirmStatus"
                     name=${'radio-supervisory-' + item.id}
                     value="T"
+                    .checked=${item.supervisoryConfirmStatus === 'T'}
                     ?disabled=${!isSupervisoryStep}
                     @change=${this._onChangeConfirmStatus}
                   ></md-radio>
@@ -282,6 +288,7 @@ class ChecklistView extends LitElement {
                     item-name="supervisoryConfirmStatus"
                     name=${'radio-supervisory-' + item.id}
                     value="F"
+                    .checked=${item.supervisoryConfirmStatus === 'F'}
                     ?disabled=${!isSupervisoryStep}
                     @change=${this._onChangeConfirmStatus}
                   ></md-radio>
@@ -298,7 +305,7 @@ class ChecklistView extends LitElement {
             <tr first>
               <th rowspan="2">시공자점검일</th>
               <td rowspan="2">
-                ${this.mode == ChecklistMode.VIEWER ? today : this._getDate(this.checklist.constructionInsprctionDate)}
+                ${this.mode == ChecklistMode.VIEWER ? today : this._getDate(this.checklist.constructionInspectionDate)}
               </td>
               <th>총괄 시공책임자</th>
               <td>
@@ -328,7 +335,7 @@ class ChecklistView extends LitElement {
             <tr>
               <th rowspan="2">감리자점검일</th>
               <td rowspan="2">
-                ${this.mode == ChecklistMode.VIEWER ? today : this._getDate(this.checklist.supervisorInsprctionDate)}
+                ${this.mode == ChecklistMode.VIEWER ? today : this._getDate(this.checklist.supervisorInspectionDate)}
               </td>
               <th>총괄 감리책임자</th>
               <td>
@@ -369,6 +376,19 @@ class ChecklistView extends LitElement {
     `
   }
 
+  updated(_changed: PropertyValues): void {
+    if (_changed.has('checklist')) {
+      if (this.checklist?.overallConstructorSignature)
+        this.elOverallConstructorSignature.loadSignature(this.checklist?.overallConstructorSignature)
+      if (this.checklist?.taskConstructorSignature)
+        this.elTaskConstructorSignature.loadSignature(this.checklist?.taskConstructorSignature)
+      if (this.checklist?.overallSupervisorySignature)
+        this.elOverallSupervisorySignature.loadSignature(this.checklist?.overallSupervisorySignature)
+      if (this.checklist?.taskSupervisorySignature)
+        this.elTaskSupervisorySignature.loadSignature(this.checklist?.taskSupervisorySignature)
+    }
+  }
+
   private _onChangeConfirmStatus(e: Event) {
     const target = e.target as HTMLInputElement
     const itemId = target.getAttribute('item-id')
@@ -389,7 +409,7 @@ class ChecklistView extends LitElement {
   private _getDate(date) {
     if (!date) return ' 년 월 일'
 
-    const _date = date || new Date()
+    const _date = new Date(date) || new Date()
     return _date.toLocaleDateString('ko-KR', {
       timeZone: 'Asia/Seoul',
       year: 'numeric',
@@ -398,7 +418,7 @@ class ChecklistView extends LitElement {
     })
   }
 
-  private processChecklistItems(checklistItems) {
+  private drawChecklistItems(checklistItems) {
     const mainTypeRowspans = {}
     const detailTypeRowspans = {}
     let previousMainType = null

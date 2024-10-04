@@ -60,7 +60,7 @@ export class BuildingInspectionDetailDrawing extends ScopedElementsMixin(PageVie
       <div body>
         <ox-image-marker
           .imageUrl=${this.buildingInspection?.buildingLevel?.mainDrawingImage || '/assets/images/img-drawing-default.png'}
-          .shapes=${JSON.parse(this.buildingInspection?.drawingMarker || [])}
+          .shapes=${JSON.parse(this.buildingInspection?.drawingMarker || null) || []}
           @shapes-changed=${this.onClickMarkerSave}
         ></ox-image-marker>
       </div>
@@ -138,7 +138,7 @@ export class BuildingInspectionDetailDrawing extends ScopedElementsMixin(PageVie
   private async onClickMarkerSave(e) {
     const response = await client.query({
       query: gql`
-        mutation UpdateBuildingInspection($patch: UpdateBuildingInspection!) {
+        mutation UpdateBuildingInspection($patch: UpdateBuildingInspectionDrawingMarker!) {
           updateBuildingInspection(patch: $patch) {
             id
             drawingMarker

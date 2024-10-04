@@ -1,7 +1,11 @@
 import { Resolver, Mutation, Arg, Ctx, Directive } from 'type-graphql'
 import { In } from 'typeorm'
 import { BuildingInspection } from './building-inspection'
-import { NewBuildingInspection, UpdateBuildingInspection } from './building-inspection-type'
+import {
+  NewBuildingInspection,
+  UpdateBuildingInspectionDrawingMarker,
+  UpdateBuildingInspectionSubmitType
+} from './building-inspection-type'
 import { BuildingInspectionStatus } from './building-inspection'
 import { Checklist } from '../checklist/checklist'
 import { ChecklistItem } from '../checklist-item/checklist-item'
@@ -67,10 +71,88 @@ export class BuildingInspectionMutation {
     return result
   }
 
+  // 검측 상태 변경 & 체크리스트 갱신
+  @Directive('@transaction')
+  @Mutation(returns => Boolean, { description: 'To create Building Inspection And Checklist information' })
+  async updateBuildingInspectionChecklist(
+    @Arg('buildingInspection') buildingInspection: UpdateBuildingInspectionSubmitType,
+    @Ctx() context: ResolverContext
+  ): Promise<boolean> {
+    const { user, tx } = context.state
+    const { id: buildingInspectionId, checklist, checklistItem } = buildingInspection
+    const buildingInspectionRepo = tx.getRepository(BuildingInspection)
+    const checklistRepo = tx.getRepository(Checklist)
+    const checklistItemRepo = tx.getRepository(ChecklistItem)
+    const oldBuildingInspection = await buildingInspectionRepo.findOneBy({ id: buildingInspectionId })
+    const status = oldBuildingInspection.status
+    const isConstructor: boolean = status == BuildingInspectionStatus.WAIT || status == BuildingInspectionStatus.FAIL
+    let inspectionStatus = null
+
+    // 1. 벨리데이션
+    if (!buildingInspectionId) throw new Error('검측 아이디가 없습니다.')
+    if (!status) throw new Error('검측 상태가 없습니다.')
+    if (status == BuildingInspectionStatus.PASS) throw new Error('검측 상태가 수정할 수 있는 상태가 아닙니다.')
+
+    if (isConstructor) {
+      // 타입별 밸리데이션
+      if (checklistItem.length !== checklistItem.filter(v => v.constructionConfirmStatus).length) {
+        throw new Error('아이템을 모두 체크해야 합니다.')
+      }
+      if (!checklist.overallConstructorSignature) throw new Error('총괄 시공책임자 사인이 없습니다.')
+      if (!checklist.taskConstructorSignature) throw new Error('공종별 시공관리자	사인이 없습니다.')
+
+      // 상태 데이터
+      const isPassed = checklistItem.length === checklistItem.filter(v => v.constructionConfirmStatus === 'T').length
+      inspectionStatus = isPassed ? BuildingInspectionStatus.REQUEST : BuildingInspectionStatus.FAIL
+    } else {
+      // 타입별 밸리데이션
+      if (checklistItem.length !== checklistItem.filter(v => v.supervisoryConfirmStatus).length) {
+        throw new Error('아이템을 모두 체크해야 합니다.')
+      }
+      if (!checklist.overallSupervisorySignature) throw new Error('총괄 감리책임자 사인이 없습니다.')
+      if (!checklist.taskSupervisorySignature) throw new Error('공종별 감리 책임자 사인이 없습니다.')
+
+      // 상태 데이터
+      const isPassed = checklistItem.length === checklistItem.filter(v => v.supervisoryConfirmStatus === 'T').length
+      inspectionStatus = isPassed ? BuildingInspectionStatus.PASS : BuildingInspectionStatus.FAIL
+    }
+
+    // 2. buildingInspection 저장
+    await buildingInspectionRepo.save({
+      ...oldBuildingInspection,
+      status: inspectionStatus,
+      updater: user
+    })
+
+    // 3. checklist 저장
+    const oldChecklist = await checklistRepo.findOneBy({ id: checklist.id })
+    const inspectionDateField = isConstructor ? 'constructionInspectionDate' : 'supervisorInspectionDate'
+    await checklistRepo.save({
+      ...oldChecklist,
+      [inspectionDateField]: new Date(),
+      overallConstructorSignature: checklist.overallConstructorSignature,
+      taskConstructorSignature: checklist.taskConstructorSignature,
+      overallSupervisorySignature: checklist.overallSupervisorySignature,
+      taskSupervisorySignature: checklist.taskSupervisorySignature,
+      updater: user
+    })
+
+    // 4. checklistItem 저장
+    for (let item of checklistItem) {
+      const confirmStatusField = isConstructor ? 'constructionConfirmStatus' : 'supervisoryConfirmStatus'
+      await checklistItemRepo.update(item.id, {
+        [confirmStatusField]: item[confirmStatusField],
+        updater: user
+      })
+    }
+
+    return true
+  }
+
   @Directive('@transaction')
   @Mutation(returns => BuildingInspection, { description: 'To update Building Inspection information' })
   async updateBuildingInspection(
-    @Arg('patch') patch: UpdateBuildingInspection,
+    @Arg('patch') patch: UpdateBuildingInspectionDrawingMarker,
     @Ctx() context: ResolverContext
   ): Promise<BuildingInspection> {
     const { user, tx } = context.state
@@ -95,7 +177,7 @@ export class BuildingInspectionMutation {
     @Arg('ids', type => [String]) ids: string[],
     @Ctx() context: ResolverContext
   ): Promise<boolean> {
-    const { domain, tx } = context.state
+    const { tx } = context.state
     const buildingInspectionRepository = tx.getRepository(BuildingInspection)
     const checklistRepository = tx.getRepository(Checklist)
     const checklistItemRepository = tx.getRepository(ChecklistItem)
