@@ -1,6 +1,6 @@
 {
   "name": "@dssp/supervision",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "main": "dist-server/index.js",
   "browser": "dist-client/index.js",
   "things-factory": true,
@@ -27,13 +27,13 @@
     "migration:create": "node ../../node_modules/typeorm/cli.js migration:create -d ./server/migrations"
   },
   "dependencies": {
-    "@dssp/project": "^0.0.9",
-    "@dssp/building-complex": "^0.0.9",
-    "@operato/graphql": "^8.0.0-alpha",
-    "@operato/shell": "^8.0.0-alpha",
-    "@operato/input": "^8.0.0-alpha",
+    "@dssp/building-complex": "^0.0.10",
+    "@dssp/project": "^0.0.10",
     "@operato/event-view": "^8.0.0-alpha",
+    "@operato/graphql": "^8.0.0-alpha",
     "@operato/image-marker": "^8.0.0-alpha",
+    "@operato/input": "^8.0.0-alpha",
+    "@operato/shell": "^8.0.0-alpha",
     "@things-factory/auth-base": "^8.0.0-alpha",
     "@things-factory/shell": "^8.0.0-alpha"
   }
