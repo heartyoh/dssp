@@ -85,6 +85,15 @@ export default async function bootstrap() {
     }
   })
 
+  // store.dispatch({
+  //   type: APPEND_APP_TOOL,
+  //   tool: {
+  //     name: 'user-circle',
+  //     template: html` <user-circle> </user-circle> `,
+  //     position: TOOL_POSITION.REAR
+  //   }
+  // })
+
   store.dispatch({
     type: APPEND_APP_TOOL,
     tool: {
@@ -111,15 +120,6 @@ export default async function bootstrap() {
       template: html` <notification-list style="min-width: 300px;"></notification-list> `
     },
     position: VIEWPART_POSITION.ASIDEBAR
-  })
-
-  store.dispatch({
-    type: APPEND_APP_TOOL,
-    tool: {
-      name: 'user-circle',
-      template: html` <user-circle> </user-circle> `,
-      position: TOOL_POSITION.REAR
-    }
   })
 
   /* add setting morenda */
