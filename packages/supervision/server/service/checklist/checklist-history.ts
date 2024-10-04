@@ -76,7 +76,7 @@ export class ChecklistHistory implements HistoryEntityInterface<Checklist> {
   @Field(type => User, { nullable: true })
   creator?: User
 
-  @RelationId((checklist: Checklist) => checklist.creator)
+  @RelationId((checklistHistory: ChecklistHistory) => checklistHistory.creator)
   creatorId?: string
 
   @HistoryOriginalIdColumn()

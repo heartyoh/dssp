@@ -27,7 +27,7 @@ import {
   resolvers as SupervisorResolvers,
   subscribers as SupervisorSubscribers
 } from './supervisor'
-import { entities as ChecklistEntities, resolvers as ChecklistResolvers } from './checklist'
+import { entities as ChecklistEntities, resolvers as ChecklistResolvers, subscribers as ChecklistSubscribers } from './checklist'
 import { entities as ChecklistItemEntities, resolvers as ChecklistItemResolvers } from './checklist-item'
 import { entities as ChecklistTypeEntities, resolvers as ChecklistTypeResolvers } from './checklist-type'
 import { entities as ChecklistTemplateEntities, resolvers as ChecklistTemplateResolvers } from './checklist-template'
@@ -58,7 +58,8 @@ export const subscribers = [
   ...IssueSubscribers,
   ...ProjectReportSubscribers,
   ...SupervisorSubscribers,
-  ...BuildingInspectionSubscribers
+  ...BuildingInspectionSubscribers,
+  ...ChecklistSubscribers
 ]
 
 export const schema = {

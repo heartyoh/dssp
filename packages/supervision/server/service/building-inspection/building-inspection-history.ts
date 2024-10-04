@@ -21,6 +21,9 @@ export class BuildingInspectionHistory implements HistoryEntityInterface<Buildin
   @Field(type => ID)
   readonly id: string
 
+  @HistoryOriginalIdColumn()
+  public originalId!: string
+
   @Column({ nullable: false, comment: '상태(REQUEST: 요청, PASS: 합격, FAIL: 불합격)' })
   @Field({ nullable: true })
   status?: BuildingInspectionStatus
@@ -30,7 +33,7 @@ export class BuildingInspectionHistory implements HistoryEntityInterface<Buildin
   @Field({ nullable: true })
   buildingLevel?: BuildingLevel
 
-  @RelationId((buildingInspection: BuildingInspection) => buildingInspection.buildingLevel)
+  @RelationId((buildingInspectionHistory: BuildingInspectionHistory) => buildingInspectionHistory.buildingLevel)
   buildingLevelId?: string
 
   @Column({ nullable: false, comment: '검측 요청일' })
@@ -50,11 +53,8 @@ export class BuildingInspectionHistory implements HistoryEntityInterface<Buildin
   @Field(type => User, { nullable: true })
   creator?: User
 
-  @RelationId((buildingInspection: BuildingInspection) => buildingInspection.creator)
+  @RelationId((buildingInspectionHistory: BuildingInspectionHistory) => buildingInspectionHistory.creator)
   creatorId?: string
-
-  @HistoryOriginalIdColumn()
-  public originalId!: string
 
   @HistoryActionColumn({
     nullable: false,

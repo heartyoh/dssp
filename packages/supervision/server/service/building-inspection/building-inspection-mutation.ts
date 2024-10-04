@@ -94,27 +94,37 @@ export class BuildingInspectionMutation {
     if (status == BuildingInspectionStatus.PASS) throw new Error('검측 상태가 수정할 수 있는 상태가 아닙니다.')
 
     if (isConstructor) {
-      // 타입별 밸리데이션
+      // 시공자 타입별 밸리데이션
       if (checklistItem.length !== checklistItem.filter(v => v.constructionConfirmStatus).length) {
         throw new Error('아이템을 모두 체크해야 합니다.')
       }
       if (!checklist.overallConstructorSignature) throw new Error('총괄 시공책임자 사인이 없습니다.')
       if (!checklist.taskConstructorSignature) throw new Error('공종별 시공관리자	사인이 없습니다.')
 
-      // 상태 데이터
+      // 시공자 상태 데이터
       const isPassed = checklistItem.length === checklistItem.filter(v => v.constructionConfirmStatus === 'T').length
       inspectionStatus = isPassed ? BuildingInspectionStatus.REQUEST : BuildingInspectionStatus.FAIL
+      // 시공자가 검측 요청시 검측자 사인은 초기화
+      if (inspectionStatus === BuildingInspectionStatus.REQUEST) {
+        checklist.overallSupervisorySignature = null
+        checklist.taskSupervisorySignature = null
+      }
     } else {
-      // 타입별 밸리데이션
+      // 감리자 타입별 밸리데이션
       if (checklistItem.length !== checklistItem.filter(v => v.supervisoryConfirmStatus).length) {
         throw new Error('아이템을 모두 체크해야 합니다.')
       }
       if (!checklist.overallSupervisorySignature) throw new Error('총괄 감리책임자 사인이 없습니다.')
       if (!checklist.taskSupervisorySignature) throw new Error('공종별 감리 책임자 사인이 없습니다.')
 
-      // 상태 데이터
+      // 감리자 상태 데이터
       const isPassed = checklistItem.length === checklistItem.filter(v => v.supervisoryConfirmStatus === 'T').length
       inspectionStatus = isPassed ? BuildingInspectionStatus.PASS : BuildingInspectionStatus.FAIL
+      // 감리사가 검측 불합격으로 재검측 요청시 시공자 사인은 초기화
+      if (inspectionStatus === BuildingInspectionStatus.FAIL) {
+        checklist.overallConstructorSignature = null
+        checklist.taskConstructorSignature = null
+      }
     }
 
     // 2. buildingInspection 저장
