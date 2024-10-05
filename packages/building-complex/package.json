@@ -1,6 +1,6 @@
 {
   "name": "@dssp/building-complex",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "main": "dist-server/index.js",
   "browser": "dist-client/index.js",
   "things-factory": true,
