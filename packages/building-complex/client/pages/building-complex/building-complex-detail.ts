@@ -150,7 +150,7 @@ export class BuildingComplexDetail extends ScopedElementsMixin(PageView) {
         width: 100%;
 
         --ox-select-floor-rotate-x: 60deg;
-        --ox-select-floor-rotate-x-active: 40deg;
+        --ox-select-floor-rotate-x-active: 30deg;
         --ox-select-floor-perspective: 1200px;
       }
 
