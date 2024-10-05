@@ -35,6 +35,7 @@ export class BuildingComplexDetail extends ScopedElementsMixin(PageView) {
         --md-filled-button-trailing-space: 15px;
         --md-filled-button-leading-space: 15px;
       }
+
       md-outlined-button {
         --md-outlined-button-container-height: 30px;
         --md-outlined-button-trailing-space: 15px;
@@ -48,35 +49,35 @@ export class BuildingComplexDetail extends ScopedElementsMixin(PageView) {
       div[header] {
         display: flex;
         margin: 0px 20px;
+      }
 
-        h2 {
-          flex: 0.5;
-          color: #3f71a0;
-        }
+      div[header] h2 {
+        flex: 0.5;
+        color: #3f71a0;
+      }
 
-        div[button-container] {
-          display: flex;
-          align-items: center;
-          justify-content: end;
-          flex: 0.5;
+      div[header] div[button-container] {
+        display: flex;
+        align-items: center;
+        justify-content: end;
+        flex: 0.5;
+      }
 
-          md-elevated-button {
-            margin: 0px 3px;
+      md-elevated-button {
+        margin: 0px 3px;
 
-            --md-elevated-button-container-height: 35px;
-            --md-elevated-button-label-text-size: 16px;
-            --md-elevated-button-container-color: #0595e5;
+        --md-elevated-button-container-height: 35px;
+        --md-elevated-button-label-text-size: 16px;
+        --md-elevated-button-container-color: #0595e5;
 
-            --md-elevated-button-label-text-color: #fff;
-            --md-elevated-button-hover-label-text-color: #fff;
-            --md-elevated-button-pressed-label-text-color: #fff;
-            --md-elevated-button-focus-label-text-color: #fff;
-            --md-elevated-button-icon-color: #fff;
-            --md-elevated-button-hover-icon-color: #fff;
-            --md-elevated-button-pressed-icon-color: #fff;
-            --md-elevated-button-focus-icon-color: #fff;
-          }
-        }
+        --md-elevated-button-label-text-color: #fff;
+        --md-elevated-button-hover-label-text-color: #fff;
+        --md-elevated-button-pressed-label-text-color: #fff;
+        --md-elevated-button-focus-label-text-color: #fff;
+        --md-elevated-button-icon-color: #fff;
+        --md-elevated-button-hover-icon-color: #fff;
+        --md-elevated-button-pressed-icon-color: #fff;
+        --md-elevated-button-focus-icon-color: #fff;
       }
 
       div[body] {
@@ -85,126 +86,130 @@ export class BuildingComplexDetail extends ScopedElementsMixin(PageView) {
         margin: 0px 25px 25px 25px;
         gap: 10px;
         min-height: fit-content;
+      }
 
-        h3 {
-          color: #2e79be;
-          font-size: 18px;
-          margin: 0px;
+      h3 {
+        color: #2e79be;
+        font-size: 18px;
+        margin: 0px;
+      }
+
+      div[body] > div {
+        display: flex;
+        gap: 10px;
+        padding: 15px;
+        border-radius: 5px;
+      }
+
+      div[left] {
+        flex-direction: column;
+        background-color: #ffffff;
+        border: 1px solid #cccccc80;
+      }
+
+      div[drawing] {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      [building-img] {
+        width: 70%;
+        height: auto;
+      }
+
+      div[drawing] img[building-img] {
+        opacity: 0.5;
+      }
+
+      div[subject] {
+        margin-bottom: 7px;
+      }
+
+      div[building-container] {
+        display: block;
+        height: 40px;
+        overflow-y: auto;
+
+        & > * {
+          margin-right: 2px;
+          margin-bottom: 7px;
         }
+      }
 
-        & > div {
-          display: flex;
-          gap: 10px;
-          padding: 15px;
-          border-radius: 5px;
-        }
+      div[right] {
+        height: auto;
+        overflow-x: hidden;
+        overflow-y: auto;
+        flex-direction: column-reverse;
+        position: relative;
+      }
 
-        div[left] {
-          flex-direction: column;
-          background-color: #ffffff;
-          border: 1px solid #cccccc80;
+      ox-select-floor {
+        width: 100%;
 
-          div[drawing] {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        --ox-select-floor-rotate-x: 60deg;
+        --ox-select-floor-rotate-x-active: 40deg;
+        --ox-select-floor-perspective: 1200px;
+      }
 
-            [building-img] {
-              width: 70%;
-              height: auto;
-            }
-            img[building-img] {
-              opacity: 0.5;
-            }
-          }
+      div[status] {
+        display: flex;
+        position: absolute;
+        right: 0px;
+        bottom: 0px;
+        align-items: center;
+        z-index: 2;
+        right: 3%;
+      }
 
-          div[subject] {
-            margin-bottom: 7px;
-          }
-          div[building-container] {
-            display: block;
-            height: 40px;
-            overflow-y: auto;
+      div[status] > div[content] {
+        display: flex;
+        background-color: #4e5055;
+        color: #fff;
+        padding: 5px 7px;
+        border-radius: 7px;
+        gap: 10px;
+        font-size: 14px;
+      }
 
-            & > * {
-              margin-right: 2px;
-              margin-bottom: 7px;
-            }
-          }
-        }
+      div[status] span {
+        display: flex;
+        align-items: center;
+        width: 48px;
+      }
 
-        div[right] {
-          height: auto;
-          overflow-x: hidden;
-          overflow-y: auto;
-          flex-direction: column-reverse;
-          position: relative;
+      div[status] md-icon {
+        width: 20px;
+        height: 20px;
+        margin-right: 4px;
+        border-radius: 5px;
+        font-size: 21px;
+        font-weight: 700;
+      }
+      div[status] md-icon[request] {
+        background-color: #f7f7f7;
+        color: #4e5055;
+      }
+      div[status] md-icon[pass] {
+        background-color: #4bbb4a;
+      }
+      div[status] md-icon[fail] {
+        background-color: #ff4444;
+      }
 
-          ox-select-floor {
-            width: 100%;
+      span[name] {
+        width: 40px;
+        color: #4e5055;
+        margin-left: 6px;
+        text-align: center;
+      }
 
-            --ox-select-floor-rotate-x: 60deg;
-            --ox-select-floor-rotate-x-active: 40deg;
-            --ox-select-floor-perspective: 1200px;
-          }
-
-          div[status] {
-            display: flex;
-            position: absolute;
-            right: 0px;
-            bottom: 0px;
-            align-items: center;
-            z-index: 2;
-            right: 3%;
-
-            div[content] {
-              display: flex;
-              background-color: #4e5055;
-              color: #fff;
-              padding: 5px 7px;
-              border-radius: 7px;
-              gap: 10px;
-              font-size: 14px;
-
-              span {
-                display: flex;
-                align-items: center;
-                width: 48px;
-
-                md-icon {
-                  width: 20px;
-                  height: 20px;
-                  margin-right: 4px;
-                  border-radius: 5px;
-                  font-size: 21px;
-                  font-weight: 700;
-                }
-                md-icon[request] {
-                  background-color: #f7f7f7;
-                  color: #4e5055;
-                }
-                md-icon[pass] {
-                  background-color: #4bbb4a;
-                }
-                md-icon[fail] {
-                  background-color: #ff4444;
-                }
-              }
-            }
-            span[name] {
-              width: 40px;
-              color: #4e5055;
-              margin-left: 6px;
-              text-align: center;
-            }
-            span[name][active] {
-              color: var(--md-sys-color-on-error);
-              background-color: var(--md-sys-color-error);
-              border-radius: 999px;
-            }
-          }
-        }
+      span[name][active] {
+        color: var(--md-sys-color-on-error);
+        background-color: var(--md-sys-color-error);
+        border-radius: 999px;
       }
     `
   ]
