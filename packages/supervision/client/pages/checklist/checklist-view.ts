@@ -376,18 +376,18 @@ class ChecklistView extends LitElement {
     `
   }
 
-  updated(_changed: PropertyValues): void {
-    if (_changed.has('checklist')) {
-      if (this.checklist?.overallConstructorSignature)
-        this.elOverallConstructorSignature.loadSignature(this.checklist?.overallConstructorSignature)
-      if (this.checklist?.taskConstructorSignature)
-        this.elTaskConstructorSignature.loadSignature(this.checklist?.taskConstructorSignature)
-      if (this.checklist?.overallSupervisorySignature)
-        this.elOverallSupervisorySignature.loadSignature(this.checklist?.overallSupervisorySignature)
-      if (this.checklist?.taskSupervisorySignature)
-        this.elTaskSupervisorySignature.loadSignature(this.checklist?.taskSupervisorySignature)
-    }
-  }
+  // updated(_changed: PropertyValues): void {
+  //   if (_changed.has('checklist')) {
+  //     if (this.checklist?.overallConstructorSignature)
+  //       this.elOverallConstructorSignature.loadSignature(this.checklist?.overallConstructorSignature)
+  //     if (this.checklist?.taskConstructorSignature)
+  //       this.elTaskConstructorSignature.loadSignature(this.checklist?.taskConstructorSignature)
+  //     if (this.checklist?.overallSupervisorySignature)
+  //       this.elOverallSupervisorySignature.loadSignature(this.checklist?.overallSupervisorySignature)
+  //     if (this.checklist?.taskSupervisorySignature)
+  //       this.elTaskSupervisorySignature.loadSignature(this.checklist?.taskSupervisorySignature)
+  //   }
+  // }
 
   private _onChangeConfirmStatus(e: Event) {
     const target = e.target as HTMLInputElement
