@@ -1,15 +1,17 @@
 import '@material/web/icon/icon.js'
+import '@operato/context/ox-context-page-toolbar.js'
 import '@operato/data-grist'
 
-import { CommonGristStyles, CommonButtonStyles, ScrollbarStyles } from '@operato/styles'
-import { PageView } from '@operato/shell'
+import gql from 'graphql-tag'
 import { css, html } from 'lit'
+import { CommonGristStyles, CommonButtonStyles, CommonHeaderStyles, ScrollbarStyles } from '@operato/styles'
+import { PageView } from '@operato/shell'
 import { customElement, query, state } from 'lit/decorators.js'
-import { ScopedElementsMixin } from '@open-wc/scoped-elements'
 import { DataGrist, FetchOption } from '@operato/data-grist'
 import { client } from '@operato/graphql'
 import { notify } from '@operato/layout'
-import gql from 'graphql-tag'
+import { i18next, localize } from '@operato/i18n'
+import { p13n } from '@operato/p13n'
 
 export enum ChecklistTypeMainType {
   BASIC = '10',
@@ -21,19 +23,27 @@ export const CHECKLIST_MAIN_TYPE_LIST = {
 }
 
 @customElement('checklist-type-management')
-export class ChecklistTypeManagement extends ScopedElementsMixin(PageView) {
+export class ChecklistTypeManagement extends p13n(localize(i18next)(PageView)) {
   static styles = [
     ScrollbarStyles,
     CommonGristStyles,
+    CommonHeaderStyles,
     css`
       :host {
         display: flex;
         flex-direction: column;
 
-        width: 100%;
-
         --grid-record-emphasized-background-color: red;
         --grid-record-emphasized-color: yellow;
+      }
+
+      ox-grist {
+        overflow-y: auto;
+        flex: 1;
+      }
+
+      .header {
+        grid-template-areas: 'filters actions';
       }
     `
   ]
@@ -48,7 +58,7 @@ export class ChecklistTypeManagement extends ScopedElementsMixin(PageView) {
         handler: (search: string) => {
           this.grist.searchText = search
         },
-        value: this.grist.searchText
+        value: this.grist?.searchText
       },
       filter: {
         handler: () => {
@@ -66,18 +76,28 @@ export class ChecklistTypeManagement extends ScopedElementsMixin(PageView) {
           action: this._deleteChecklistType.bind(this),
           ...CommonButtonStyles.delete
         }
-      ]
+      ],
+      toolbar: false
     }
   }
 
   render() {
     return html`
-      <ox-grist .mode=${'GRID'} .config=${this.gristConfig} .fetchHandler=${this.fetchHandler.bind(this)}>
-        <div slot="headroom">
-          <div id="filters">
-            <ox-filters-form autofocus></ox-filters-form>
+      <ox-grist
+        .mode=${'GRID'}
+        .config=${this.gristConfig}
+        .fetchHandler=${this.fetchHandler.bind(this)}
+        .personalConfigProvider=${this.getPagePreferenceProvider('ox-grist')!}
+      >
+        <div slot="headroom" class="header">
+          <div class="filters">
+            <ox-filters-form autofocus without-search></ox-filters-form>
           </div>
+
+          <ox-context-page-toolbar class="actions" .context=${this.context}> </ox-context-page-toolbar>
         </div>
+
+        <ox-grist-personalizer slot="setting"></ox-grist-personalizer>
       </ox-grist>
     `
   }
@@ -97,7 +117,7 @@ export class ChecklistTypeManagement extends ScopedElementsMixin(PageView) {
               Object.keys(CHECKLIST_MAIN_TYPE_LIST).map(key => ({ display: CHECKLIST_MAIN_TYPE_LIST[key], value: key }))
             )
           },
-          filter: 'search',
+          filter: true,
           sortable: true,
           width: 150
         },

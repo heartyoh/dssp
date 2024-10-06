@@ -1,8 +1,9 @@
 import '@material/web/icon/icon.js'
+import '@operato/context/ox-context-page-toolbar.js'
 import '@operato/data-grist'
 import './checklist-template-item'
 
-import { CommonGristStyles, CommonButtonStyles, ScrollbarStyles } from '@operato/styles'
+import { CommonGristStyles, CommonButtonStyles, CommonHeaderStyles, ScrollbarStyles } from '@operato/styles'
 import { PageView } from '@operato/shell'
 import { css, html } from 'lit'
 import { customElement, query, state } from 'lit/decorators.js'
@@ -10,14 +11,17 @@ import { ScopedElementsMixin } from '@open-wc/scoped-elements'
 import { DataGrist, FetchOption } from '@operato/data-grist'
 import { client } from '@operato/graphql'
 import { notify, openPopup } from '@operato/layout'
+import { i18next, localize } from '@operato/i18n'
+import { p13n } from '@operato/p13n'
 
 import gql from 'graphql-tag'
 
 @customElement('checklist-template-list')
-export class ChecklistTemplateListPage extends ScopedElementsMixin(PageView) {
+export class ChecklistTemplateListPage extends p13n(localize(i18next)(PageView)) {
   static styles = [
     ScrollbarStyles,
     CommonGristStyles,
+    CommonHeaderStyles,
     css`
       :host {
         display: flex;
@@ -27,6 +31,15 @@ export class ChecklistTemplateListPage extends ScopedElementsMixin(PageView) {
 
         --grid-record-emphasized-background-color: red;
         --grid-record-emphasized-color: yellow;
+      }
+
+      ox-grist {
+        overflow-y: auto;
+        flex: 1;
+      }
+
+      .header {
+        grid-template-areas: 'filters actions';
       }
     `
   ]
@@ -42,7 +55,7 @@ export class ChecklistTemplateListPage extends ScopedElementsMixin(PageView) {
         handler: (search: string) => {
           this.grist.searchText = search
         },
-        value: this.grist.searchText
+        value: this.grist?.searchText
       },
       filter: {
         handler: () => {
@@ -60,18 +73,28 @@ export class ChecklistTemplateListPage extends ScopedElementsMixin(PageView) {
           action: this.deleteChecklistTemplate.bind(this),
           ...CommonButtonStyles.delete
         }
-      ]
+      ],
+      toolbar: false
     }
   }
 
   render() {
     return html`
-      <ox-grist .mode=${'GRID'} .config=${this.gristConfig} .fetchHandler=${this.fetchHandler.bind(this)}>
-        <div slot="headroom">
-          <div id="filters">
-            <ox-filters-form autofocus></ox-filters-form>
+      <ox-grist
+        .mode=${'GRID'}
+        .config=${this.gristConfig}
+        .fetchHandler=${this.fetchHandler.bind(this)}
+        .personalConfigProvider=${this.getPagePreferenceProvider('ox-grist')!}
+      >
+        <div slot="headroom" class="header">
+          <div class="filters">
+            <ox-filters-form autofocus without-search></ox-filters-form>
           </div>
+
+          <ox-context-page-toolbar class="actions" .context=${this.context}> </ox-context-page-toolbar>
         </div>
+
+        <ox-grist-personalizer slot="setting"></ox-grist-personalizer>
       </ox-grist>
     `
   }

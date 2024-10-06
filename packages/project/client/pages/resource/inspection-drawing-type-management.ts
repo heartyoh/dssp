@@ -1,30 +1,41 @@
-import '@operato/data-grist'
+import '@material/web/icon/icon.js'
 import '@operato/context/ox-context-page-toolbar.js'
+import '@operato/data-grist'
 
-import { CommonGristStyles, CommonButtonStyles, ScrollbarStyles } from '@operato/styles'
+import { CommonGristStyles, CommonButtonStyles, CommonHeaderStyles, ScrollbarStyles } from '@operato/styles'
 import { PageView } from '@operato/shell'
 import { css, html } from 'lit'
 import { customElement, property, query } from 'lit/decorators.js'
-import { DataGrist } from '@operato/data-grist'
+import { DataGrist, FetchOption } from '@operato/data-grist'
 import { client } from '@operato/graphql'
 import { notify, openPopup } from '@operato/layout'
 import gql from 'graphql-tag'
+import { p13n } from '@operato/p13n'
+import { i18next, localize } from '@operato/i18n'
 import './inspection-part-popup'
 
 @customElement('inspection-drawing-type-management')
-export class InspectionDrawingTypeManagement extends PageView {
+export class InspectionDrawingTypeManagement extends p13n(localize(i18next)(PageView)) {
   static styles = [
     ScrollbarStyles,
     CommonGristStyles,
+    CommonHeaderStyles,
     css`
       :host {
         display: flex;
         flex-direction: column;
 
-        width: 100%;
-
         --grid-record-emphasized-background-color: red;
         --grid-record-emphasized-color: yellow;
+      }
+
+      ox-grist {
+        overflow-y: auto;
+        flex: 1;
+      }
+
+      .header {
+        grid-template-areas: 'filters actions';
       }
     `
   ]
@@ -35,6 +46,17 @@ export class InspectionDrawingTypeManagement extends PageView {
   get context() {
     return {
       title: '도면 타입 관리',
+      search: {
+        handler: (search: string) => {
+          this.grist.searchText = search
+        },
+        value: this.grist?.searchText
+      },
+      filter: {
+        handler: () => {
+          this.grist.toggleHeadroom()
+        }
+      },
       actions: [
         {
           title: '저장',
@@ -46,13 +68,29 @@ export class InspectionDrawingTypeManagement extends PageView {
           action: this._deleteInspectionDrawingTypes.bind(this),
           ...CommonButtonStyles.delete
         }
-      ]
+      ],
+      toolbar: false
     }
   }
 
   render() {
     return html`
-      <ox-grist .mode=${'GRID'} .config=${this.gristConfig} .fetchHandler=${this.fetchHandler.bind(this)}> </ox-grist>
+      <ox-grist
+        .mode=${'GRID'}
+        .config=${this.gristConfig}
+        .fetchHandler=${this.fetchHandler.bind(this)}
+        .personalConfigProvider=${this.getPagePreferenceProvider('ox-grist')!}
+      >
+        <div slot="headroom" class="header">
+          <div class="filters">
+            <ox-filters-form autofocus without-search></ox-filters-form>
+          </div>
+
+          <ox-context-page-toolbar class="actions" .context=${this.context}> </ox-context-page-toolbar>
+        </div>
+
+        <ox-grist-personalizer slot="setting"></ox-grist-personalizer>
+      </ox-grist>
     `
   }
 
@@ -92,6 +130,7 @@ export class InspectionDrawingTypeManagement extends PageView {
           record: {
             editable: true
           },
+          filter: 'search',
           width: 150
         },
         {
@@ -112,16 +151,16 @@ export class InspectionDrawingTypeManagement extends PageView {
           multiple: true
         }
       },
-      sorters: [{ name: 'updatedAt', desc: true }],
+      sorters: [{ name: 'name', desc: true }],
       pagination: { infinite: true }
     }
   }
 
-  async fetchHandler() {
+  async fetchHandler({ page = 1, limit = 100, sortings = [], filters = [] }: FetchOption) {
     const response = await client.query({
       query: gql`
-        query InspectionDrawingTypes($sortings: [Sorting!]) {
-          inspectionDrawingTypes(sortings: $sortings) {
+        query ($filters: [Filter!], $pagination: Pagination, $sortings: [Sorting!]) {
+          inspectionDrawingTypes(filters: $filters, pagination: $pagination, sortings: $sortings) {
             items {
               id
               name
@@ -133,15 +172,11 @@ export class InspectionDrawingTypeManagement extends PageView {
         }
       `,
       variables: {
-        sortings: [
-          {
-            name: 'name'
-          }
-        ]
+        filters,
+        pagination: { page, limit },
+        sortings
       }
     })
-
-    if (response.errors) return {}
 
     return {
       total: response.data.inspectionDrawingTypes.total || 0,

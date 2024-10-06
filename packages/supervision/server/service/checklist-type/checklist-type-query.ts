@@ -14,7 +14,7 @@ export class ChecklistTypeQuery {
       domain,
       params,
       repository: await getRepository(ChecklistType),
-      searchables: ['name']
+      searchables: ['mainType', 'detailType']
     })
 
     const [items, total] = await queryBuilder.getManyAndCount()
