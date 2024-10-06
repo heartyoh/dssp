@@ -9,9 +9,6 @@ class buildingInspectionDetailHeader extends LitElement {
     ButtonContainerStyles,
     ScrollbarStyles,
     css`
-      :host {
-      }
-
       md-filled-button {
         --md-filled-button-container-color: #0595e5;
         --md-filled-button-container-height: 30px;
@@ -31,35 +28,35 @@ class buildingInspectionDetailHeader extends LitElement {
       div[header] {
         display: flex;
         margin: 0px 20px;
+      }
 
-        h2 {
-          flex: 0.5;
-          color: #3f71a0;
-        }
+      h2 {
+        flex: 0.5;
+        color: #3f71a0;
+      }
 
-        div[button-container] {
-          display: flex;
-          align-items: center;
-          justify-content: end;
-          flex: 0.5;
+      div[button-container] {
+        display: flex;
+        align-items: center;
+        justify-content: end;
+        flex: 0.5;
+      }
 
-          md-elevated-button {
-            margin: 0px 3px;
+      md-elevated-button {
+        margin: 0px 3px;
 
-            --md-elevated-button-container-height: 35px;
-            --md-elevated-button-label-text-size: 16px;
-            --md-elevated-button-container-color: #0595e5;
+        --md-elevated-button-container-height: 35px;
+        --md-elevated-button-label-text-size: 16px;
+        --md-elevated-button-container-color: #0595e5;
 
-            --md-elevated-button-label-text-color: #fff;
-            --md-elevated-button-hover-label-text-color: #fff;
-            --md-elevated-button-pressed-label-text-color: #fff;
-            --md-elevated-button-focus-label-text-color: #fff;
-            --md-elevated-button-icon-color: #fff;
-            --md-elevated-button-hover-icon-color: #fff;
-            --md-elevated-button-pressed-icon-color: #fff;
-            --md-elevated-button-focus-icon-color: #fff;
-          }
-        }
+        --md-elevated-button-label-text-color: #fff;
+        --md-elevated-button-hover-label-text-color: #fff;
+        --md-elevated-button-pressed-label-text-color: #fff;
+        --md-elevated-button-focus-label-text-color: #fff;
+        --md-elevated-button-icon-color: #fff;
+        --md-elevated-button-hover-icon-color: #fff;
+        --md-elevated-button-pressed-icon-color: #fff;
+        --md-elevated-button-focus-icon-color: #fff;
       }
     `
   ]

@@ -62,6 +62,7 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
         --md-filled-button-trailing-space: 15px;
         --md-filled-button-leading-space: 15px;
       }
+
       md-outlined-button {
         --md-outlined-button-container-height: 30px;
         --md-outlined-button-trailing-space: 15px;
@@ -75,53 +76,79 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
       div[header] {
         display: flex;
         margin: 0px 20px;
+      }
 
-        h2 {
-          flex: 0.5;
-          color: #3f71a0;
-        }
+      div[header] h2 {
+        flex: 0.5;
+        color: #3f71a0;
       }
 
       div[body] {
         display: flex;
         flex-direction: column;
-        margin: 0px 25px 25px 25px;
+        margin: 0px 25px 0px 25px;
         gap: 10px;
         min-height: fit-content;
+      }
 
-        h3 {
-          color: #2e79be;
-          font-size: 18px;
-          margin: 0px;
-        }
+      div[body] h3 {
+        color: #2e79be;
+        font-size: 18px;
+        margin: 0px;
+      }
 
-        & > div {
-          display: flex;
-          gap: 10px;
-          padding: 15px;
-          border-radius: 5px;
-        }
+      div[body] > div {
+        display: flex;
+        gap: 10px;
+        padding: 15px;
+        border-radius: 5px;
+      }
 
-        div[top] {
-          background-color: #ffffff;
-          border: 1px solid #cccccc80;
+      div[top] {
+        flex: 1;
 
-          img[drawing] {
-            width: 400px;
-            height: 400px;
-          }
+        display: flex;
+        background-color: #ffffff;
+        border: 1px solid #cccccc80;
+      }
 
-          div[inspection-data] {
-            display: flex;
-          }
-        }
+      img[drawing] {
+        width: 400px;
 
-        div[bottom] {
-          height: auto;
-          overflow-y: auto;
-          display: flex;
-          flex-direction: column;
-        }
+        display: block;
+        object-fit: contain; /* 이미지 비율 유지하고 컨테이너에 맞춰서 축소/확대 */
+        object-position: center; /* 이미지를 중앙에 배치 */
+      }
+
+      div[status] {
+        flex: 1;
+
+        display: flex;
+        flex-direction: column;
+      }
+
+      div[inspection-data] {
+        flex: 1;
+
+        display: flex;
+        gap: 10px;
+      }
+
+      ox-event-view {
+        flex: 1;
+      }
+
+      div[bottom] {
+        flex: 1;
+
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      ox-grist {
+        overflow-y: auto;
+        flex: 1;
       }
     `
   ]
@@ -171,7 +198,7 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
       <div body>
         <div top>
           <img drawing src=${this.drawingImage || '/assets/images/img-drawing-default.png'} />
-          <div>
+          <div status>
             <h3>${this.location} 검측 현황</h3>
             <div inspection-data>
               <div>
