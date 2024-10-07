@@ -10,6 +10,8 @@ import { notify } from '@operato/layout'
 import gql from 'graphql-tag'
 import './component/building-inspection-detail-header'
 import '@operato/image-marker/ox-image-marker.js'
+import '@operato/image-marker/ox-image-marker-view.js'
+import { BuildingInspectionStatus } from './building-inspection-list'
 
 @customElement('building-inspection-detail-drawing')
 export class BuildingInspectionDetailDrawing extends ScopedElementsMixin(PageView) {
@@ -33,6 +35,10 @@ export class BuildingInspectionDetailDrawing extends ScopedElementsMixin(PageVie
       div[body] {
         display: flex;
         justify-content: center;
+
+        ox-image-marker-view {
+          width: 100%;
+        }
       }
     `
   ]
@@ -48,6 +54,9 @@ export class BuildingInspectionDetailDrawing extends ScopedElementsMixin(PageVie
   }
 
   render() {
+    const imageUrl = this.buildingInspection?.buildingLevel?.mainDrawingImage || '/assets/images/img-drawing-default.png'
+    const shapes = JSON.parse(this.buildingInspection?.drawingMarker || null) || []
+
     return html`
       <building-inspection-detail-header
         .buildingInspectionId=${this.buildingInspection?.id}
@@ -58,11 +67,14 @@ export class BuildingInspectionDetailDrawing extends ScopedElementsMixin(PageVie
       ></building-inspection-detail-header>
 
       <div body>
-        <ox-image-marker
-          .imageUrl=${this.buildingInspection?.buildingLevel?.mainDrawingImage || '/assets/images/img-drawing-default.png'}
-          .shapes=${JSON.parse(this.buildingInspection?.drawingMarker || null) || []}
-          @shapes-changed=${this.onClickMarkerSave}
-        ></ox-image-marker>
+        ${this.buildingInspection?.status == BuildingInspectionStatus.PASS
+          ? html`<ox-image-marker-view .imageUrl=${imageUrl} .shapes=${shapes}></ox-image-marker-view>`
+          : html` <ox-image-marker
+              .imageUrl=${imageUrl}
+              .shapes=${shapes}
+              @shapes-changed=${this.onClickMarkerSave}
+              .currentMode=${'view'}
+            ></ox-image-marker>`}
       </div>
     `
   }

@@ -182,7 +182,7 @@ export class ProjectScheduleListPage extends ScopedElementsMixin(PageView) {
                 <span project-info>
                   <div name>${project.name}</div>
                   <div content>${project.buildingComplex.address}</div>
-                  <div content>면적: ${project.buildingComplex.area}㎡</div>
+                  <div content>면적: ${project.buildingComplex?.area?.toLocaleString() || ''}㎡</div>
                   <div content>착공~준공: ${project.startDate}~${project.endDate}</div>
                   <div content>발주처: <strong>${project.buildingComplex.clientCompany}</strong></div>
                 </span>
