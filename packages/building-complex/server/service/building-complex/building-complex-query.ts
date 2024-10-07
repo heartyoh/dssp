@@ -21,7 +21,8 @@ export class BuildingComplexQuery {
     const attachment: Attachment = await getRepository(Attachment).findOne({
       where: {
         domain: { id: buildingComplex.domainId },
-        refBy: buildingComplex.id
+        refBy: buildingComplex.id,
+        refType: BuildingComplex.name + '_bim'
       }
     })
 

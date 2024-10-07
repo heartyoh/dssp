@@ -2648,9 +2648,6 @@ type Mutation {
   """To import some Boards"""
   importBoards(files: [Upload!]!, groupId: String!, overwrite: Boolean!): [Board!]!
 
-  """To import multiple BuildingComplexes"""
-  importBuildingComplexes(buildingComplexes: [BuildingComplexPatch!]!): Boolean!
-
   """To import multiple Buildings"""
   importBuildings(buildings: [BuildingPatch!]!): Boolean!
 
@@ -2925,9 +2922,6 @@ type Mutation {
 
   """To modify multiple Buildings' information"""
   updateMultipleBuilding(patches: [BuildingPatch!]!): [Building!]!
-
-  """To modify multiple BuildingComplexes' information"""
-  updateMultipleBuildingComplex(patches: [BuildingComplexPatch!]!): [BuildingComplex!]!
 
   """To modify multiple Checklists' information"""
   updateMultipleChecklist(patches: [ChecklistPatch!]!): [Checklist!]!
@@ -4298,6 +4292,7 @@ input ProfileInput {
 
 """프로젝트"""
 type Project {
+  bim: Attachment!
   buildingComplex: BuildingComplex
   createdAt: DateTimeISO
   creator: User

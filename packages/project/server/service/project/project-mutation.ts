@@ -54,7 +54,7 @@ export class ProjectMutation {
     await createAttachmentAfterDelete(context, project?.mainPhotoUpload, project.id, Project.name)
 
     // 2-2. 단지 BIM 이미지 첨부파일 나머지 삭제 후 저장
-    await createAttachmentAfterDelete(context, buildingComplex?.drawingUpload, buildingComplex.id, BuildingComplex.name)
+    await createAttachmentAfterDelete(context, buildingComplex?.drawingUpload, buildingComplex.id, BuildingComplex.name + '_bim')
 
     // 3. 동의 층 정보가 바뀌었으면 층 초기화 후 다시 생성
     const originBuilding = await buildingRepo.findBy({ buildingComplex: { id: buildingComplex.id } }) // 이전 동 정보 가져오기

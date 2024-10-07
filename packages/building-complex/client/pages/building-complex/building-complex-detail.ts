@@ -236,12 +236,13 @@ export class BuildingComplexDetail extends ScopedElementsMixin(PageView) {
   @state() currentFloor: number = -1
 
   render() {
-    const cards = this.building?.buildingLevels?.map(({ mainDrawingImage, floor }) => {
-      return {
-        image: mainDrawingImage || '/assets/images/img-drawing-default.png',
-        name: floor
-      }
-    })
+    const cards =
+      this.building?.buildingLevels?.map(({ mainDrawingImage, floor }) => {
+        return {
+          image: mainDrawingImage || '/assets/images/img-drawing-default.png',
+          name: floor
+        }
+      }) || []
 
     return html`
       <div header>
@@ -397,7 +398,6 @@ export class BuildingComplexDetail extends ScopedElementsMixin(PageView) {
     if (response.errors) return
 
     this.building = response.data?.building
-    console.log('this.building :', this.building)
   }
 
   private _onClickBuilding(building) {

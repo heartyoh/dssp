@@ -432,8 +432,6 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
       }
     }
 
-    console.log('upload project :', this.project)
-
     const response = await client.mutate({
       mutation: gql`
         mutation UpdateProjectPlan($project: ProjectPatch!) {

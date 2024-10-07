@@ -186,8 +186,6 @@ export class BuildingInspectionDetailChecklist extends ScopedElementsMixin(PageV
   }
 
   private _onClickModifyChecklist() {
-    console.log('checklist : ', this.buildingInspection.checklist)
-
     this.validateChecklist(this.buildingInspection.checklist)
   }
 

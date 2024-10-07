@@ -81,8 +81,11 @@ class buildingInspectionDetailHeader extends LitElement {
           <md-elevated-button href=${`building-inspection-detail-checklist/${this.buildingInspectionId}`}>
             <md-icon slot="icon">description</md-icon>검측 체크리스트
           </md-elevated-button>
-          <md-elevated-button href=${`building-inspection-detail-photo/${this.buildingInspectionId}`}>
+          <md-elevated-button href=${`building-inspection-detail-photo/${this.buildingInspectionId}`} disabled>
             <md-icon slot="icon">description</md-icon>사진촬영
+          </md-elevated-button>
+          <md-elevated-button href=${`building-inspection-detail-history/${this.buildingInspectionId}`} disabled>
+            <md-icon slot="icon">description</md-icon>감리이력
           </md-elevated-button>
         </div>
       </div>
