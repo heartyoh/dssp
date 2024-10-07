@@ -70,7 +70,7 @@ export class BuildingComplex {
   @Field({ nullable: true })
   constructionType?: string
 
-  @Column({ nullable: true, comment: '공사 금액' })
+  @Column({ type: 'bigint', nullable: true, comment: '공사 금액' })
   @Field({ nullable: true })
   constructionCost?: number
 

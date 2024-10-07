@@ -8,6 +8,10 @@ export default function route(page: string) {
       import('./pages/project/project-detail')
       return page
 
+    case 'project-completed-list':
+      import('./pages/project/project-completed-list')
+      return page
+
     case 'project-schedule-list':
       import('./pages/project/project-schedule-list')
       return page

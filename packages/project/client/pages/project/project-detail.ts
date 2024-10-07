@@ -574,7 +574,7 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
                       <td>${inspection.checklist?.inspectionParts?.join(', ') || ''}</td>
                       <td>${this._formatDate(inspection.requestDate)}</td>
                       <td bold>${inspection.status && BUILDING_INSPECTION_STATUS[inspection.status]}</td>
-                      <td>ㅁㅁㅁㅁㅁㅁ</td>
+                      <td></td>
                     </tr>`
                   })}
                 </tbody>

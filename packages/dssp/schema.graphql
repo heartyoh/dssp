@@ -4292,7 +4292,6 @@ input ProfileInput {
 
 """프로젝트"""
 type Project {
-  bim: Attachment!
   buildingComplex: BuildingComplex
   createdAt: DateTimeISO
   creator: User

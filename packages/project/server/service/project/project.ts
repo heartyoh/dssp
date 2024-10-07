@@ -20,7 +20,7 @@ import { Task } from '../task/task'
 import { BuildingComplex } from '@dssp/building-complex'
 import { Attachment } from '@things-factory/attachment-base'
 
-export enum ProjectStatus {
+export enum ProjectState {
   'ONGOING' = '10',
   'COMPLETED' = '20'
 }
@@ -44,9 +44,9 @@ export class Project {
   @Field({ nullable: false })
   name?: string
 
-  @Column({ nullable: false, default: ProjectStatus.ONGOING, comment: '프로젝트 상태 (10: 진행중, 20: 완료)' })
+  @Column({ nullable: false, default: ProjectState.ONGOING, comment: '프로젝트 상태 (10: 진행중, 20: 완료)' })
   @Field({ nullable: false })
-  state?: ProjectStatus
+  state?: ProjectState
 
   @Column({ type: 'date', nullable: true, comment: '착공일정' })
   @Field({ nullable: true })

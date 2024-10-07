@@ -1,7 +1,7 @@
 import { Resolver, Mutation, Arg, Ctx, Directive } from 'type-graphql'
 import { In } from 'typeorm'
 import { createAttachment, deleteAttachmentsByRef, ATTACHMENT_PATH } from '@things-factory/attachment-base'
-import { Project } from './project'
+import { Project, ProjectState } from './project'
 import { NewProject, ProjectPatch } from './project-type'
 import { BuildingComplex, Building, BuildingLevel } from '@dssp/building-complex'
 import { pdfToImage } from '@things-factory/board-service/dist-server/controllers/headless-pdf-to-image'
@@ -45,7 +45,8 @@ export class ProjectMutation {
     const buildings = project.buildingComplex?.buildings || []
 
     // 1. 프로젝트 수정
-    const projectResult = await projectRepo.save({ ...project, updater: user })
+    const projectState = project.totalProgress == 100 ? ProjectState.COMPLETED : ProjectState.ONGOING
+    const projectResult = await projectRepo.save({ ...project, state: projectState, updater: user })
 
     // 2. 단지 정보 수정
     await buildingComplexRepo.save({ ...buildingComplex, updater: user })

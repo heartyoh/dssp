@@ -4,7 +4,7 @@ import { logger } from '@things-factory/env'
 import { Domain, getRepository } from '@things-factory/shell'
 import { User } from '@things-factory/auth-base'
 import { BuildingComplex } from '@dssp/building-complex'
-import { Project, ProjectStatus } from '../service/project/project'
+import { Project, ProjectState } from '../service/project/project'
 
 const SEED_SAMPLE_BUILDING_COMPLEX = {
   address: '서울시 마포구 공덕동 아파트 17번지',
@@ -26,7 +26,7 @@ const SEED_SAMPLE_BUILDING_COMPLEX = {
 
 const SEED_SAMPLE_PROJECT = {
   name: '서울시 마포구 공덕동 아파트 신축공사',
-  state: ProjectStatus.ONGOING,
+  state: ProjectState.ONGOING,
   startDate: '2024-01-01',
   endDate: '2025-12-31',
   totalProgress: 40,

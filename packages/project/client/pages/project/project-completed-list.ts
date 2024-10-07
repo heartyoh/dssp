@@ -6,121 +6,10 @@ import { customElement, state } from 'lit/decorators.js'
 import { ScopedElementsMixin } from '@open-wc/scoped-elements'
 import { client } from '@operato/graphql'
 import gql from 'graphql-tag'
-import { Attachment } from '@things-factory/attachment-base'
-import type { FileUpload } from 'graphql-upload/GraphQLUpload.js'
+import { Project, ProjectState } from './project-list'
 
-export enum ProjectState {
-  'ONGOING' = '10',
-  'COMPLETED' = '20'
-}
-export enum BuildingInspectionStatus {
-  WAIT = 'WAIT',
-  REQUEST = 'REQUEST',
-  PASS = 'PASS',
-  FAIL = 'FAIL'
-}
-export const BUILDING_INSPECTION_STATUS = {
-  [BuildingInspectionStatus.WAIT]: '검측 대기',
-  [BuildingInspectionStatus.REQUEST]: '검측 요청',
-  [BuildingInspectionStatus.PASS]: '합격',
-  [BuildingInspectionStatus.FAIL]: '불합격'
-}
-
-export interface Project {
-  id?: string
-  name: string
-  startDate?: string
-  endDate?: string
-  mainPhoto?: Attachment
-  mainPhotoUpload?: FileUpload
-  totalProgress?: number
-  weeklyProgress?: number
-  kpi?: number
-  inspPassRate?: number
-  robotProgressRate?: number
-  structuralSafetyRate?: number
-  buildingComplex: BuildingComplex
-}
-export interface BuildingComplex {
-  id?: string
-  address?: string
-  latitude?: number
-  longitude?: number
-  area?: number
-  constructionCompany?: string
-  clientCompany?: string
-  designCompany?: string
-  supervisoryCompany?: string
-  drawing?: Attachment
-  drawingUpload?: FileUpload
-  constructionType?: string
-  constructionCost?: number
-  etc?: string
-  householdCount?: number
-  buildingCount?: number
-  notice?: string
-  planXScale?: number
-  planYScale?: number
-  buildings?: Building[]
-}
-export interface Building {
-  id?: string
-  name: string | undefined
-  floorCount: number | undefined
-  drawing?: Attachment
-  drawingUpload?: FileUpload
-  buildingLevels?: BuildingLevel[]
-}
-
-export interface BuildingLevel {
-  id?: string
-  floor?: number
-  mainDrawing?: Attachment
-  mainDrawingImage?: string
-  mainDrawingThumbnail?: string
-  mainDrawingUpload?: FileUpload
-  elevationDrawing?: Attachment
-  elevationDrawingThumbnail?: string
-  elevationDrawingUpload?: FileUpload
-  rebarDistributionDrawing?: Attachment
-  rebarDistributionDrawingThumbnail?: string
-  rebarDistributionDrawingUpload?: FileUpload
-  building?: Building
-  buildingInspections?: BuildingInspection[]
-}
-
-export interface BuildingInspection {
-  id?: string
-  attatchments?: Attachment[]
-  // buildingInspectionAttachments?: BuildingInspectionAttachment[]
-  status?: BuildingInspectionStatus
-  requestDate?: Date
-  buildingLevel?: BuildingLevel
-  checklist?: Checklist
-  createdAt?: Date
-  updatedAt?: Date
-  deletedAt?: Date
-}
-
-export interface Checklist {
-  id: string
-  name?: string
-  documentNo?: string
-  constructionType?: string
-  constructionDetailType?: string
-  location?: string
-  constructionInspectorDate?: Date
-  supervisorInspectorDate?: Date
-  overallConstructorSignature?: string
-  taskConstructorSignature?: string
-  overallSupervisorySignature?: string
-  taskSupervisorySignature?: string
-  inspectionParts?: string[]
-  // checklistItems?: ChecklistItem[]
-}
-
-@customElement('project-list')
-export class ProjectListPage extends ScopedElementsMixin(PageView) {
+@customElement('project-completed-list')
+export class ProjectCompletedListPage extends ScopedElementsMixin(PageView) {
   static styles = [
     css`
       :host {
@@ -227,8 +116,9 @@ export class ProjectListPage extends ScopedElementsMixin(PageView) {
                 --md-linear-progress-track-height: 18px;
                 --md-linear-progress-active-indicator-height: 18px;
                 --md-linear-progress-track-shape: 5px;
-                --md-sys-color-primary: #0595e51a;
+                --md-sys-color-primary: #1bb40133;
                 --md-sys-color-surface-container-highest: #0595e533;
+                --md-linear-progress-track-color: #1bb4011a;
               }
 
               span {
@@ -237,7 +127,7 @@ export class ProjectListPage extends ScopedElementsMixin(PageView) {
                 left: 12px;
                 font-size: 12px;
                 font-weight: bold;
-                color: #2e79be;
+                color: #1bb401;
 
                 &:last-child {
                   left: unset;
@@ -253,7 +143,7 @@ export class ProjectListPage extends ScopedElementsMixin(PageView) {
 
   get context() {
     return {
-      title: '진행중 프로젝트'
+      title: '완료 프로젝트'
     }
   }
 
@@ -304,31 +194,10 @@ export class ProjectListPage extends ScopedElementsMixin(PageView) {
                     <span>전체</span>
                     <span>${project.totalProgress || 0}%</span>
                   </div>
-                  <div progress>
-                    <md-linear-progress buffer="100" max="100" value=${project.weeklyProgress || 0}> </md-linear-progress>
-                    <span>주간</span>
-                    <span>${project.weeklyProgress || 0}%</span>
-                  </div>
-                  <div progress>
-                    <md-linear-progress buffer="100" max="100" value=${project.kpi || 0}> </md-linear-progress>
-                    <span>KPI</span>
-                    <span>${project.kpi || 0}%</span>
-                  </div>
-                  <div progress>
-                    <md-linear-progress buffer="100" max="100" value=${project.inspPassRate || 0}> </md-linear-progress>
-                    <span>Inspection Passing Rate</span>
-                    <span>${project.inspPassRate || 0}%</span>
-                  </div>
-                  <div progress>
-                    <md-linear-progress buffer="100" max="100" value=${project.robotProgressRate || 0}> </md-linear-progress>
-                    <span>Robot Progress</span>
-                    <span>${project.robotProgressRate || 0}%</span>
-                  </div>
-                  <div progress>
-                    <md-linear-progress buffer="100" max="100" value=${project.structuralSafetyRate || 0}> </md-linear-progress>
-                    <span>Structural safety</span>
-                    <span>${project.structuralSafetyRate || 0}%</span>
-                  </div>
+                  <div>시공사: ${project.buildingComplex.constructionCompany}</div>
+                  <div>건설구분: ${project.buildingComplex.constructionType}</div>
+                  <div>세대수: ${project.buildingComplex?.householdCount?.toLocaleString() || ''}세대</div>
+                  <div>기타: ${project.buildingComplex.etc}</div>
                 </span>
               </a>
             </div>
@@ -367,6 +236,10 @@ export class ProjectListPage extends ScopedElementsMixin(PageView) {
                 address
                 area
                 clientCompany
+                constructionCompany
+                constructionType
+                householdCount
+                etc
               }
             }
             total
@@ -383,7 +256,7 @@ export class ProjectListPage extends ScopedElementsMixin(PageView) {
           {
             name: 'state',
             operator: 'eq',
-            value: ProjectState.ONGOING
+            value: ProjectState.COMPLETED
           }
         ]
       }

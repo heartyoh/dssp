@@ -362,7 +362,6 @@ export class BuildingComplexDetail extends ScopedElementsMixin(PageView) {
 
     // 좌측 빌딩 도면 불러오기
     this._getBuilding(this.selectedBuilding.id)
-    console.log('init project : ', this.project)
   }
 
   async _getBuilding(buildingId: string = '') {

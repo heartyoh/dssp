@@ -27,7 +27,7 @@ export class ProjectQuery {
       domain,
       params,
       repository: await getRepository(Project),
-      searchables: ['name', 'description']
+      searchables: ['name', 'description', 'state']
     })
 
     const [items, total] = await queryBuilder.getManyAndCount()
