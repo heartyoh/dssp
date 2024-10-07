@@ -227,11 +227,11 @@ export class ProjectScheduleListPage extends ScopedElementsMixin(PageView) {
     `
   }
 
-  async pageInitialized(lifecycle: any) {
-    this.getProjectList()
+  async pageUpdated(changes: any, lifecycle: any) {
+    if (this.active) {
+      this.getProjectList()
+    }
   }
-
-  async pageUpdated(changes: any, lifecycle: any) {}
 
   async getProjectList() {
     const response = await client.query({
