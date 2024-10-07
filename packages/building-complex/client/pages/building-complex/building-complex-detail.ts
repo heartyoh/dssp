@@ -188,6 +188,10 @@ export class BuildingComplexDetail extends ScopedElementsMixin(PageView) {
         font-size: 21px;
         font-weight: 700;
       }
+      div[status] md-icon[wait] {
+        background-color: #f7f7f7;
+        color: #4e5055;
+      }
       div[status] md-icon[request] {
         background-color: #f7f7f7;
         color: #4e5055;
@@ -286,13 +290,14 @@ export class BuildingComplexDetail extends ScopedElementsMixin(PageView) {
             }}
           >
             ${this.building?.buildingLevels?.map(
-              ({ id, floor }, idx) => html`
+              ({ id, floor, inspectionSummary }, idx) => html`
                   <a href=${`building-inspection-list/${id}`} slot="template-${idx}">
                     <div status>
                       <div content>
-                        <span><md-icon request slot="icon">exclamation</md-icon>100</span>
-                        <span><md-icon pass slot="icon">check</md-icon>50</span>
-                        <span><md-icon fail slot="icon">close</md-icon>5</span>
+                        <span><md-icon wait slot="icon">hourglass_empty</md-icon>${inspectionSummary.wait}</span>
+                        <span><md-icon request slot="icon">exclamation</md-icon>${inspectionSummary.request}</span>
+                        <span><md-icon pass slot="icon">check</md-icon>${inspectionSummary.pass}</span>
+                        <span><md-icon fail slot="icon">close</md-icon>${inspectionSummary.fail}</span>
                       </div>
                       <span name ?active=${this.currentFloor == floor}>${floor}층</span>
                     </div>
@@ -374,6 +379,12 @@ export class BuildingComplexDetail extends ScopedElementsMixin(PageView) {
                 fullpath
               }
               mainDrawingImage
+              inspectionSummary {
+                wait
+                request
+                pass
+                fail
+              }
             }
           }
         }

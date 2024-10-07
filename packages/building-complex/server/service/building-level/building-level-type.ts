@@ -29,3 +29,25 @@ export class BuildingLevelList {
   @Field(type => Int)
   total: number
 }
+
+@ObjectType()
+export class BuildingInspectionSummaryOfLevel {
+  @Field(type => Int, { description: '검측 대기 수' })
+  wait: number
+
+  @Field(type => Int, { description: '검측 요청 수' })
+  request: number
+
+  @Field(type => Int, { description: '검측 통과 수' })
+  pass: number
+
+  @Field(type => Int, { description: '검측 실패 수' })
+  fail: number
+}
+
+export enum BuildingInspectionStatus {
+  WAIT = 'WAIT',
+  REQUEST = 'REQUEST',
+  PASS = 'PASS',
+  FAIL = 'FAIL'
+}

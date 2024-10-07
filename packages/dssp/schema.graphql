@@ -588,6 +588,20 @@ type BuildingInspectionSummary {
   wait: Int!
 }
 
+type BuildingInspectionSummaryOfLevel {
+  """검측 실패 수"""
+  fail: Int!
+
+  """검측 통과 수"""
+  pass: Int!
+
+  """검측 요청 수"""
+  request: Int!
+
+  """검측 대기 수"""
+  wait: Int!
+}
+
 input BuildingInspectionsOfBuildingLevel {
   buildingLevelId: String!
   limit: Float
@@ -608,6 +622,7 @@ type BuildingLevel {
   elevationDrawingThumbnail: String
   floor: Float!
   id: ID!
+  inspectionSummary: BuildingInspectionSummaryOfLevel!
   mainDrawing: Attachment
   mainDrawingImage: String
   mainDrawingThumbnail: String

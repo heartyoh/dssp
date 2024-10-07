@@ -74,11 +74,6 @@ export class BuildingLevel {
   @RelationId((buildingLevel: BuildingLevel) => buildingLevel.building)
   buildingId?: string
 
-  // 시공 검측 정보 (하위 테이블 참조)
-  // @OneToMany(() => Inspection, inspection => inspection.buildingLevel)
-  // @Field(() => [Inspection], { nullable: true })
-  // inspections?: Inspection[]
-
   @CreateDateColumn()
   @Field({ nullable: true })
   createdAt?: Date
