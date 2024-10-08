@@ -2,7 +2,11 @@ import '@material/web/icon/icon.js'
 import { css, html, LitElement, PropertyValues } from 'lit'
 import { customElement, property, query } from 'lit/decorators.js'
 import { ButtonContainerStyles, ScrollbarStyles } from '@operato/styles'
-import { CHECKLIST_MAIN_TYPE_LIST, BuildingInspectionStatus } from '../building-inspection/building-inspection-list'
+import {
+  CHECKLIST_MAIN_TYPE_LIST,
+  BuildingInspectionStatus,
+  BUILDING_INSPECTION_STATUS
+} from '../building-inspection/building-inspection-list'
 import '@operato/input/ox-input-signature.js'
 
 export const enum ChecklistMode {
@@ -191,8 +195,6 @@ class ChecklistView extends LitElement {
 
     const processedItems = this.drawChecklistItems(this.checklist?.checklistItems || [])
 
-    console.log('this.checklist :', this.checklist)
-
     return html`
       <div wrapper>
         <div name>${this.checklist.name}</div>
@@ -213,8 +215,8 @@ class ChecklistView extends LitElement {
           <tr>
             <th>검측 부위</th>
             <td>${this.checklist?.inspectionParts?.join(', ') || ''}</td>
-            <th></th>
-            <td></td>
+            <th>검측 상태</th>
+            <td>${BUILDING_INSPECTION_STATUS[this.checklist?.buildingInspection?.status]}</td>
           </tr>
         </table>
 

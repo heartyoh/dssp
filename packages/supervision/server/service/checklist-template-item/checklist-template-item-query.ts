@@ -1,9 +1,9 @@
-import { Resolver, Query, FieldResolver, Root, Args, Arg, Ctx, Directive } from 'type-graphql'
-import { Attachment } from '@things-factory/attachment-base'
-import { Domain, getQueryBuilderFromListParams, getRepository, ListParam } from '@things-factory/shell'
+import { Resolver, Query, FieldResolver, Root, Args, Arg, Ctx } from 'type-graphql'
+import { getQueryBuilderFromListParams, getRepository, ListParam } from '@things-factory/shell'
 import { User } from '@things-factory/auth-base'
 import { ChecklistTemplateItem } from './checklist-template-item'
 import { ChecklistTemplateItemList } from './checklist-template-item-type'
+import { ChecklistType } from '../checklist-type/checklist-type'
 
 @Resolver(ChecklistTemplateItem)
 export class ChecklistTemplateItemQuery {
@@ -25,6 +25,11 @@ export class ChecklistTemplateItemQuery {
     const [items, total] = await queryBuilder.getManyAndCount()
 
     return { items, total }
+  }
+
+  @FieldResolver(type => String)
+  async detailTypeName(@Root() checklistTemplateItem: ChecklistTemplateItem): Promise<string> {
+    return (await getRepository(ChecklistType).findOneBy({ id: checklistTemplateItem.detailType }))?.detailType || ''
   }
 
   @FieldResolver(type => User)

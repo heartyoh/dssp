@@ -2,6 +2,7 @@ import '@material/web/icon/icon.js'
 import '@operato/context/ox-context-page-toolbar.js'
 import '@operato/data-grist'
 import './checklist-template-item'
+import '../checklist/checklist-view'
 
 import { CommonGristStyles, CommonButtonStyles, CommonHeaderStyles, ScrollbarStyles } from '@operato/styles'
 import { PageView } from '@operato/shell'
@@ -15,6 +16,8 @@ import { i18next, localize } from '@operato/i18n'
 import { p13n } from '@operato/p13n'
 
 import gql from 'graphql-tag'
+import { ChecklistMode } from '../checklist/checklist-view'
+import { BuildingInspectionStatus } from '../building-inspection/building-inspection-list'
 
 @customElement('checklist-template-list')
 export class ChecklistTemplateListPage extends p13n(localize(i18next)(PageView)) {
@@ -130,6 +133,49 @@ export class ChecklistTemplateListPage extends p13n(localize(i18next)(PageView))
                   backdrop: true,
                   size: 'large',
                   title: '체크 리스트 아이템 템플릿'
+                }
+              )
+            }
+          }
+        },
+        {
+          type: 'gutter',
+          gutterName: 'button',
+          fixed: true,
+          icon: 'preview',
+          handlers: {
+            click: async (columns, data, column, record, rowIndex) => {
+              if (!record.id) return
+
+              const checklistItems = await this._getChecklistTemplateItems(record.id)
+
+              const checklist = {
+                name: record.name,
+                constructionType: '공종',
+                constructionDetailType: '세부 공종',
+                location: `xxx동 xxx층`,
+                documentNo: '0000-000-000000',
+                inspectionParts: ['창, 바닥, 천장'],
+                buildingInspection: {
+                  status: BuildingInspectionStatus.WAIT
+                },
+                checklistItems: checklistItems
+              }
+
+              openPopup(
+                html`
+                  <div style="overflow-y: auto;">
+                    <checklist-view
+                      .mode=${ChecklistMode.VIEWER}
+                      .checklist=${checklist}
+                      style="pointer-events: none;"
+                    ></checklist-view>
+                  </div>
+                `,
+                {
+                  backdrop: true,
+                  size: 'large',
+                  title: '체크 리스트 미리보기'
                 }
               )
             }
@@ -290,5 +336,34 @@ export class ChecklistTemplateListPage extends p13n(localize(i18next)(PageView))
         notify({ message: '저장에 실패하였습니다.', level: 'error' })
       }
     }
+  }
+
+  private async _getChecklistTemplateItems(checklistTemplateId) {
+    const response = await client.query({
+      query: gql`
+        query ($filters: [Filter!], $pagination: Pagination, $sortings: [Sorting!]) {
+          checklistTemplateItems(filters: $filters, pagination: $pagination, sortings: $sortings) {
+            items {
+              id
+              sequence
+              name
+              inspctionCriteria
+              mainType
+              detailType: detailTypeName
+            }
+          }
+        }
+      `,
+      variables: {
+        filters: {
+          name: 'checklistTemplateId',
+          value: checklistTemplateId,
+          operator: 'eq'
+        },
+        sortings: [{ name: 'mainType' }, { name: 'sequence' }]
+      }
+    })
+
+    return response.data.checklistTemplateItems.items || []
   }
 }

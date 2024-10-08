@@ -4,6 +4,7 @@ import { User } from '@things-factory/auth-base'
 import { Checklist } from './checklist'
 import { ChecklistList } from './checklist-type'
 import { ChecklistItem } from '../checklist-item/checklist-item'
+import { BuildingInspection } from '../building-inspection/building-inspection'
 
 @Resolver(Checklist)
 export class ChecklistQuery {
@@ -38,6 +39,11 @@ export class ChecklistQuery {
       .where('ci.checklist_id = :checklistId', { checklistId: checklist.id })
       .orderBy('ci.sequence', 'ASC')
       .getMany()
+  }
+
+  @FieldResolver(type => BuildingInspection)
+  async buildingInspection(@Root() checklist: Checklist): Promise<BuildingInspection> {
+    return await getRepository(BuildingInspection).findOneBy({ checklistId: checklist.id })
   }
 
   @FieldResolver(type => User)

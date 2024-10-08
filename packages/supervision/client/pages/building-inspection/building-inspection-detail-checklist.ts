@@ -121,6 +121,9 @@ export class BuildingInspectionDetailChecklist extends ScopedElementsMixin(PageV
               taskConstructorSignature
               overallSupervisorySignature
               taskSupervisorySignature
+              buildingInspection {
+                status
+              }
               checklistItems {
                 id
                 name

@@ -764,6 +764,7 @@ type ChecklistTemplateItem {
   createdAt: DateTimeISO
   creator: User
   detailType: String!
+  detailTypeName: String!
   id: ID!
   inspctionCriteria: String
   mainType: String!

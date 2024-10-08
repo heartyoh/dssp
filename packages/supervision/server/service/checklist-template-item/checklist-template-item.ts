@@ -9,6 +9,7 @@ import { ChecklistTypeMainType } from '../checklist-type/checklist-type'
 @Index('ix_checklist_template_item_0', (checklistTemplateItem: ChecklistTemplateItem) => [checklistTemplateItem.name], {
   unique: true
 })
+@Index('ix_checklist_template_item_1', (checklistTemplateItem: ChecklistTemplateItem) => [checklistTemplateItem.detailType])
 @ObjectType()
 export class ChecklistTemplateItem {
   @PrimaryGeneratedColumn('uuid')
@@ -31,7 +32,7 @@ export class ChecklistTemplateItem {
   @Field({ nullable: false })
   mainType: ChecklistTypeMainType
 
-  @Column({ nullable: false, comment: '상세 구분' })
+  @Column({ nullable: false, comment: '상세 구분 ID (F.K)' })
   @Field({ nullable: false })
   detailType: string
 

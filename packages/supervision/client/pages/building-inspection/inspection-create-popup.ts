@@ -8,7 +8,7 @@ import { DataGrist } from '@operato/data-grist/ox-grist.js'
 import { client } from '@operato/graphql'
 import { ButtonContainerStyles, ScrollbarStyles } from '@operato/styles'
 import { notify } from '@operato/layout'
-import { CHECKLIST_MAIN_TYPE_LIST } from './building-inspection-list'
+import { BuildingInspectionStatus, CHECKLIST_MAIN_TYPE_LIST } from './building-inspection-list'
 import '../checklist/checklist-view'
 import { ChecklistMode } from '../checklist/checklist-view'
 
@@ -347,7 +347,10 @@ class InspectionCreatePopup extends LitElement {
       constructionType: this.selectedConstructionType?.name,
       constructionDetailType: this.selectedConstructionDetailType?.name,
       location: `${this.selectedBuilding?.name || ''} ${this.selectedLevel.floor || ''}층`,
-      documentNo: '0000-000-000000'
+      documentNo: '0000-000-000000',
+      buildingInspection: {
+        status: BuildingInspectionStatus.WAIT
+      }
     }
 
     // 그리드 셋팅
