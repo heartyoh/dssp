@@ -36,7 +36,7 @@ export class BuildingInspectionHistory implements HistoryEntityInterface<Buildin
   @RelationId((buildingInspectionHistory: BuildingInspectionHistory) => buildingInspectionHistory.buildingLevel)
   buildingLevelId?: string
 
-  @Column({ nullable: false, comment: '검측 요청일' })
+  @Column({ nullable: true, comment: '검측 요청일' })
   @Field({ nullable: true })
   requestDate?: Date
 

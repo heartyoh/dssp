@@ -53,7 +53,7 @@ export class BuildingInspection {
   @Field({ nullable: true })
   status?: BuildingInspectionStatus
 
-  @Column({ nullable: false, comment: '검측 요청일' })
+  @Column({ nullable: false, default: () => 'CURRENT_TIMESTAMP', comment: '검측 요청일' })
   @Field({ nullable: true })
   requestDate?: Date
 
