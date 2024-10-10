@@ -309,6 +309,7 @@ class ChecklistView extends LitElement {
                 <span sign-text>(인)</span>
                 <ox-input-signature
                   .value=${this.checklist.overallConstructorSignature || ''}
+                  .value=${this.checklist.overallConstructorSignature}
                   name="overallConstructorSignature"
                   @change=${this._onChangeSignature}
                   ?disabled=${!isConstructorStep}
@@ -322,6 +323,7 @@ class ChecklistView extends LitElement {
                 <span sign-text>(인)</span>
                 <ox-input-signature
                   .value=${this.checklist.taskConstructorSignature || ''}
+                  .value=${this.checklist.taskConstructorSignature}
                   name="taskConstructorSignature"
                   @change=${this._onChangeSignature}
                   ?disabled=${!isConstructorStep}
@@ -338,7 +340,7 @@ class ChecklistView extends LitElement {
               <td>
                 <span sign-text>(인)</span>
                 <ox-input-signature
-                  .value=${this.checklist.overallSupervisorySignature || ''}
+                  .value=${this.checklist.overallSupervisorySignature}
                   name="overallSupervisorySignature"
                   @change=${this._onChangeSignature}
                   ?disabled=${!isSupervisoryStep}
@@ -351,7 +353,7 @@ class ChecklistView extends LitElement {
               <td>
                 <span sign-text>(인)</span>
                 <ox-input-signature
-                  .value=${this.checklist.taskSupervisorySignature || ''}
+                  .value=${this.checklist.taskSupervisorySignature}
                   name="taskSupervisorySignature"
                   @change=${this._onChangeSignature}
                   ?disabled=${!isSupervisoryStep}

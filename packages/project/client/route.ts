@@ -32,10 +32,6 @@ export default function route(page: string) {
       import('./pages/project/project-plan-management')
       return page
 
-    case 'manager-management':
-      import('./pages/resource/manager-management')
-      return page
-
     case 'worker-type-management':
       import('./pages/resource/worker-type-management')
       return page

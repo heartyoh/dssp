@@ -32,6 +32,45 @@ export class ProjectSettingList extends ScopedElementsMixin(PageView) {
         --grid-record-emphasized-color: yellow;
       }
 
+      div[management-header-container] {
+        display: flex;
+        margin: 15px 23px 0px 23px;
+        gap: 13px;
+        overflow-x: auto;
+
+        a {
+          min-width: 140px;
+          text-align: center;
+          padding: 12px 15px;
+          background-color: #fff;
+          color: #586878;
+          font-weight: 700;
+          border-radius: 7px;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          gap: 5px;
+          border: solid 1px #0000004d;
+          text-decoration: none;
+          cursor: pointer;
+
+          md-icon {
+            font-size: 40px;
+            width: auto;
+            height: auto;
+          }
+          div[label] {
+            font-size: 15px;
+          }
+        }
+
+        a[green] {
+          background-color: #24be7b;
+          color: #fff;
+        }
+      }
+
       div[header] {
         display: flex;
         height: 100px;
@@ -184,6 +223,35 @@ export class ProjectSettingList extends ScopedElementsMixin(PageView) {
 
   render() {
     return html`
+      <div management-header>
+        <div management-header-container>
+          <a @click=${this._openCreateProjectPopup} green>
+            <md-icon slot="leading-icon">add</md-icon>
+            <div label>신규 프로젝트 생성</div>
+          </a>
+          <a href="employee-list">
+            <md-icon slot="leading-icon">badge</md-icon>
+            <div label>인력 관리</div>
+          </a>
+          <a href="construction-type-management">
+            <md-icon slot="leading-icon">construction</md-icon>
+            <div label>공종 관리</div>
+          </a>
+          <a href="inspection-drawing-type-management">
+            <md-icon slot="leading-icon">stacks</md-icon>
+            <div label>도면타입/검측부위 관리</div>
+          </a>
+          <a href="checklist-type-management">
+            <md-icon slot="leading-icon">rule</md-icon>
+            <div label>체크리스트 구분 관리</div>
+          </a>
+          <a href="checklist-template-list">
+            <md-icon slot="leading-icon">fact_check</md-icon>
+            <div label>체크리스트 템플릿 관리</div>
+          </a>
+        </div>
+      </div>
+
       <div header>
         <label>프로젝트 이름</label>
         <md-filled-text-field
@@ -198,7 +266,6 @@ export class ProjectSettingList extends ScopedElementsMixin(PageView) {
         </md-filled-text-field>
 
         <strong>총 ${this.projectCount}개</strong>
-        <md-elevated-button add-project @click=${this._openCreateProjectPopup}>+ 신규 프로젝트 추가</md-elevated-button>
       </div>
 
       <div body>
