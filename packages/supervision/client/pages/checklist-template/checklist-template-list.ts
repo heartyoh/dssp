@@ -8,7 +8,6 @@ import { CommonGristStyles, CommonButtonStyles, CommonHeaderStyles, ScrollbarSty
 import { PageView } from '@operato/shell'
 import { css, html } from 'lit'
 import { customElement, query, state } from 'lit/decorators.js'
-import { ScopedElementsMixin } from '@open-wc/scoped-elements'
 import { DataGrist, FetchOption } from '@operato/data-grist'
 import { client } from '@operato/graphql'
 import { notify, openPopup } from '@operato/layout'

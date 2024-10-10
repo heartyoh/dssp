@@ -43,7 +43,7 @@ export class ChecklistQuery {
 
   @FieldResolver(type => BuildingInspection)
   async buildingInspection(@Root() checklist: Checklist): Promise<BuildingInspection> {
-    return await getRepository(BuildingInspection).findOneBy({ checklistId: checklist.id })
+    return await getRepository(BuildingInspection).findOneBy({ checklist: { id: checklist.id } })
   }
 
   @FieldResolver(type => User)

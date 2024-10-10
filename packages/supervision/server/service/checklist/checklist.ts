@@ -22,7 +22,6 @@ import { BuildingInspection } from '../building-inspection/building-inspection'
 @Entity({ comment: '체크리스트' })
 @Index('ix_checklist_0', (checklist: Checklist) => [checklist.task], { where: '"deleted_at" IS NULL' })
 @Index('ix_checklist_1', (checklist: Checklist) => [checklist.documentNo, checklist.createdAt], { where: '"deleted_at" IS NULL' })
-@Index('ix_checklist_2', (checklist: Checklist) => [checklist.buildingInspection])
 @ObjectType()
 export class Checklist {
   @PrimaryGeneratedColumn('uuid')

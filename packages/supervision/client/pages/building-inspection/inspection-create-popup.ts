@@ -609,6 +609,9 @@ class InspectionCreatePopup extends LitElement {
       }
     })
 
+    // 체크리스트 아이템 데이터 갱신
+    this.onChangeGird()
+
     return {
       records: response.data.checklistTemplateItems.items || []
     }
@@ -617,17 +620,14 @@ class InspectionCreatePopup extends LitElement {
   private _onSelectChecklistTemplate(e) {
     const checklistTemplateId = e.target.value
 
+    // 체크 리스트 이름 셋팅
+    this.checklist = { ...this.checklist, name: e.target.displayText }
+
     // 그리드 아이템 셋팅
     if (checklistTemplateId) {
       this.checklistTemplateId = checklistTemplateId
       this.grist.fetch()
     }
-
-    // 체크 리스트 이름 셋팅
-    this.checklist = { ...this.checklist, name: e.target.displayText }
-
-    // 체크리스트 아이템 데이터 갱신
-    this.onChangeGird()
   }
 
   async _createInspection() {

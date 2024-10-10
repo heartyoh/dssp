@@ -1,6 +1,6 @@
 import '@material/web/icon/icon.js'
-import { css, html, LitElement, PropertyValues } from 'lit'
-import { customElement, property, query } from 'lit/decorators.js'
+import { css, html, LitElement } from 'lit'
+import { customElement, property } from 'lit/decorators.js'
 import { ButtonContainerStyles, ScrollbarStyles } from '@operato/styles'
 import {
   CHECKLIST_MAIN_TYPE_LIST,
@@ -168,11 +168,6 @@ class ChecklistView extends LitElement {
   @property({ type: String }) mode: ChecklistMode = ChecklistMode.VIEWER
   @property({ type: Object }) checklist: any = {}
   @property({ type: String }) status: BuildingInspectionStatus = BuildingInspectionStatus.WAIT
-
-  @query('ox-input-signature[name="overallConstructorSignature"]') private elOverallConstructorSignature
-  @query('ox-input-signature[name="taskConstructorSignature"]') private elTaskConstructorSignature
-  @query('ox-input-signature[name="overallSupervisorySignature"]') private elOverallSupervisorySignature
-  @query('ox-input-signature[name="taskSupervisorySignature"]') private elTaskSupervisorySignature
 
   render() {
     const today = this._getDate(new Date())
