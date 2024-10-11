@@ -410,7 +410,7 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
               <div>
                 <div row>
                   <span>- 면적 : </span>
-                  <span>${this.project.buildingComplex?.area?.toLocaleString()}</span>
+                  <span>${this.project.buildingComplex?.area?.toLocaleString()} ㎡</span>
                 </div>
                 <div row>
                   <span>- 착공 ~ 준공 : </span>
@@ -534,19 +534,19 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
               </span>
               <span>
                 <div>검측요청</div>
-                <div bold>${this.inspectionSummary.wait}</div>
+                <div bold>${this.inspectionSummary?.wait || 0}</div>
               </span>
               <span>
                 <div>검측대기</div>
-                <div bold>${this.inspectionSummary.request}</div>
+                <div bold>${this.inspectionSummary?.request || 0}</div>
               </span>
               <span>
                 <div>합격</div>
-                <div bold pass>${this.inspectionSummary.pass}</div>
+                <div bold pass>${this.inspectionSummary?.pass || 0}</div>
               </span>
               <span>
                 <div>불합격</div>
-                <div bold fail>${this.inspectionSummary.fail}</div>
+                <div bold fail>${this.inspectionSummary?.fail || 0}</div>
               </span>
             </div>
             <div notice>

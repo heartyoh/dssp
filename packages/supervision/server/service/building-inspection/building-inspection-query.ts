@@ -130,7 +130,7 @@ export class BuildingInspectionQuery {
 
   // 층 별로 검수 개수 써머리
   @Query(returns => [BuildingInspectionSummary]!, { nullable: true, description: 'To fetch a BuildingInspection Summary' })
-  async buildingInspectionDateSummaryOfBuildingLevelAndMonth(
+  async buildingInspectionDateSummaryOfLevelAndMonth(
     @Arg('buildingLevelId') buildingLevelId: string,
     @Arg('yearMonth') yearMonth: string,
     @Ctx() context: ResolverContext
@@ -139,9 +139,9 @@ export class BuildingInspectionQuery {
     const startDate = `${year}-${month}-01`
     const endDate = new Date(Number(year), Number(month), 0).toISOString().split('T')[0] // 해당 월의 마지막 날짜 계산
 
-    const rawResults = await getRepository(BuildingInspection)
+    const buildingInspectionSummary = await getRepository(BuildingInspection)
       .createQueryBuilder('bi')
-      .select('bi.request_date AS requestDate')
+      .select(`TO_CHAR(bi.request_date, 'YYYY-MM-DD') AS "requestDate"`)
       .addSelect(`COUNT(CASE WHEN bi.status='${BuildingInspectionStatus.WAIT}' THEN 1 ELSE NULL END) AS wait`)
       .addSelect(`COUNT(CASE WHEN bi.status='${BuildingInspectionStatus.REQUEST}' THEN 1 ELSE NULL END) AS request`)
       .addSelect(`COUNT(CASE WHEN bi.status='${BuildingInspectionStatus.PASS}' THEN 1 ELSE NULL END) AS pass`)
@@ -151,17 +151,6 @@ export class BuildingInspectionQuery {
       .groupBy('bi.building_level_id')
       .addGroupBy('bi.request_date')
       .getRawMany()
-
-    const buildingInspectionSummary = rawResults.map(result => ({
-      requestDate: result.requestDate,
-      wait: result.wait,
-      request: result.request,
-      pass: result.pass,
-      fail: result.fail
-    }))
-
-    console.log('rawResults :', rawResults)
-    console.log('buildingInspectionSummary :', buildingInspectionSummary)
 
     return buildingInspectionSummary
   }
@@ -210,10 +199,10 @@ export class BuildingInspectionQuery {
       .getRawOne()
 
     return {
-      wait: result.wait || 0,
-      request: result.request || 0,
-      pass: result.pass || 0,
-      fail: result.fail || 0
+      wait: result?.wait || 0,
+      request: result?.request || 0,
+      pass: result?.pass || 0,
+      fail: result?.fail || 0
     }
   }
 

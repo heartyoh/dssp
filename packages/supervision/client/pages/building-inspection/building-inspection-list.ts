@@ -14,6 +14,7 @@ import gql from 'graphql-tag'
 import { openPopup } from '@operato/layout'
 import './inspection-create-popup'
 import '@operato/event-view/ox-event-view.js'
+import { InspectionEventProvider } from './component/inspection-event-provider'
 
 export enum ChecklistTypeMainType {
   BASIC = '10',
@@ -126,7 +127,7 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
         }
       }
 
-      div[status] {
+      div[inspection-container] {
         flex: 0.6;
         gap: 5px;
 
@@ -158,6 +159,9 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
             }
             div[status='fail'] {
               color: #ff4444;
+            }
+            span[dot] {
+              font-size: 1.3em;
             }
           }
           & > span[name] {
@@ -210,6 +214,7 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
   @state() building: any = {}
   @state() drawingImage: string = ''
   @state() buildingInspectionSummary: any = {}
+  @state() calendarData
 
   @query('ox-grist') private grist!: DataGrist
   @query('ox-event-view') private eventView!: HTMLElement
@@ -245,7 +250,7 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
             <img src=${this.drawingImage || '/assets/images/img-drawing-default.png'} />
           </div>
 
-          <div status>
+          <div inspection-container>
             <div inspection>
               <span name bold>
                 <md-icon slot="icon">fact_check</md-icon>
@@ -259,13 +264,13 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
                 return html`
                   <span>
                     <div>${displayName}</div>
-                    <div bold status=${status}>● ${this.buildingInspectionSummary[status]}</div>
+                    <div bold status=${status}><span dot>●</span> ${this.buildingInspectionSummary[status]}</div>
                   </span>
                 `
               })}
             </div>
 
-            <ox-event-view mode=${'monthly'}> </ox-event-view>
+            <ox-event-view .mode=${'monthly'} .eventProvider=${this.calendarData}> </ox-event-view>
           </div>
         </div>
 
@@ -279,10 +284,6 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
   async pageUpdated(changes: any, lifecycle: PageLifecycle) {
     if (this.active) {
       this.buildingLevelId = lifecycle.resourceId || ''
-
-      const eventView = this.eventView
-
-      console.log('eventView : ', eventView)
 
       await this.initProject(this.buildingLevelId)
       this.grist.fetch()
@@ -320,7 +321,7 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
             fail
           }
 
-          buildingInspectionDateSummaryOfBuildingLevelAndMonth(buildingLevelId: $buildingLevelId, yearMonth: $yearMonth) {
+          buildingInspectionDateSummaryOfLevelAndMonth(buildingLevelId: $buildingLevelId, yearMonth: $yearMonth) {
             requestDate
             wait
             request
@@ -339,6 +340,9 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
 
     this.project = response.data?.projectByBuildingLevelId
     this.buildingInspectionSummary = response.data?.buildingInspectionSummaryOfBuildingLevel
+
+    const calendarData = this.getCalendarTemplate(response.data?.buildingInspectionDateSummaryOfLevelAndMonth)
+    this.calendarData = new InspectionEventProvider(calendarData)
 
     // 캘린더 최소 높이 속성 수정
     this.eventView.style.setProperty('--calendar-monthly-date-min-height', '50px')
@@ -524,5 +528,22 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
           day: '2-digit'
         }).format(new Date(date))
       : ''
+  }
+
+  // 검측 개수가 있는 데이터들만 날짜별로 템플릿 만들기
+  private getCalendarTemplate(inspectionData: any[] = []) {
+    const template = {}
+    for (let date of inspectionData) {
+      template[date.requestDate] = html`
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); padding-inline: 7px;">
+          ${date.wait !== 0 ? html`<div><span style="font-size: 1.3em; color: #4e5055">●</span> ${date.wait}</div>` : ''}
+          ${date.request !== 0 ? html`<div><span style="font-size: 1.3em; color: #3395f1">●</span> ${date.request}</div>` : ''}
+          ${date.pass !== 0 ? html`<div><span style="font-size: 1.3em; color: #1bb401">●</span> ${date.pass}</div>` : ''}
+          ${date.fail !== 0 ? html`<div><span style="font-size: 1.3em; color: #ff4444">●</span> ${date.fail}</div>` : ''}
+        </div>
+      `
+    }
+
+    return template
   }
 }
