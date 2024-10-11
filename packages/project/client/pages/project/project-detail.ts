@@ -534,19 +534,19 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
               </span>
               <span>
                 <div>검측요청</div>
-                <div bold>${this.inspectionSummary?.wait || 0}</div>
+                <div bold>${this.inspectionSummary.wait}</div>
               </span>
               <span>
                 <div>검측대기</div>
-                <div bold>${this.inspectionSummary?.request || 0}</div>
+                <div bold>${this.inspectionSummary.request}</div>
               </span>
               <span>
                 <div>합격</div>
-                <div bold pass>${this.inspectionSummary?.pass || 0}</div>
+                <div bold pass>${this.inspectionSummary.pass}</div>
               </span>
               <span>
                 <div>불합격</div>
-                <div bold fail>${this.inspectionSummary?.fail || 0}</div>
+                <div bold fail>${this.inspectionSummary.fail}</div>
               </span>
             </div>
             <div notice>

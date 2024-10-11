@@ -421,25 +421,12 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
 
     const response = await client.query({
       query: gql`
-        query BuildingInspectionsOfBuildingLevel($params: BuildingInspectionsOfBuildingLevel!) {
+        query BuildingInspectionsOfBuildingLevel($params: BuildingInspectionsOfBuildingLevel!, $buildingLevelId: String!) {
           buildingInspectionsOfBuildingLevel(params: $params) {
             items {
               id
               status
               requestDate
-              buildingLevel {
-                floor
-                building {
-                  id
-                  name
-                }
-                mainDrawing {
-                  id
-                  name
-                  fullpath
-                }
-                mainDrawingImage
-              }
               checklist {
                 checklistId: id
                 name
@@ -451,13 +438,29 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
             }
             total
           }
+
+          buildingLevel(id: $buildingLevelId) {
+            id
+            floor
+            building {
+              id
+              name
+            }
+            mainDrawing {
+              id
+              name
+              fullpath
+            }
+            mainDrawingImage
+          }
         }
       `,
       variables: {
         params: {
           buildingLevelId: this.buildingLevelId,
           limit: 0
-        }
+        },
+        buildingLevelId: this.buildingLevelId
       }
     })
 
@@ -467,10 +470,11 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
       ...item.checklist,
       requestDate: this._formatDate(item.requestDate)
     }))
+    const buildingLevel = response.data?.buildingLevel
 
-    this.location = items[0]?.checklist?.location || ''
-    this.drawingImage = items[0]?.buildingLevel?.mainDrawingImage || ''
-    this.building = items[0]?.buildingLevel?.building || {}
+    this.location = `${buildingLevel.building.name} ${buildingLevel.floor}층` || ''
+    this.drawingImage = buildingLevel?.mainDrawingImage || ''
+    this.building = buildingLevel?.building || {}
 
     return {
       total: response.data?.buildingInspectionsOfBuildingLevel?.total || 0,

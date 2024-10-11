@@ -1,4 +1,4 @@
-import { Resolver, FieldResolver, Root } from 'type-graphql'
+import { Resolver, Query, FieldResolver, Root, Arg, Ctx } from 'type-graphql'
 import { Attachment } from '@things-factory/attachment-base'
 import { getRepository } from '@things-factory/shell'
 import { User } from '@things-factory/auth-base'
@@ -8,6 +8,13 @@ import { BuildingInspectionStatus, BuildingInspectionSummaryOfLevel } from './bu
 
 @Resolver(BuildingLevel)
 export class BuildingLevelQuery {
+  @Query(returns => BuildingLevel!, { nullable: true, description: 'To fetch a building level' })
+  async buildingLevel(@Arg('id') id: string, @Ctx() context: ResolverContext): Promise<BuildingLevel> {
+    return await getRepository(BuildingLevel).findOne({
+      where: { id }
+    })
+  }
+
   @FieldResolver(type => Building)
   async building(@Root() buildingLevel: BuildingLevel): Promise<Building> {
     return await getRepository(Building).findOneBy({ id: buildingLevel.buildingId })

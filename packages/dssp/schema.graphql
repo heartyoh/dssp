@@ -4523,6 +4523,9 @@ type Query {
 
   """To fetch multiple BuildingInspections"""
   buildingInspectionsOfProject(params: BuildingInspectionsOfProject!): BuildingInspectionList!
+
+  """To fetch a building level"""
+  buildingLevel(id: String!): BuildingLevel
   chatCompletion(input: ChatCompletionInput!): ChatCompletionOutput!
 
   """
