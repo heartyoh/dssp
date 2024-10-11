@@ -4,9 +4,9 @@ import '@operato/data-grist'
 import { CommonGristStyles, CommonButtonStyles, ScrollbarStyles } from '@operato/styles'
 import { PageView } from '@operato/shell'
 import { css, html } from 'lit'
+import { customElement, state } from 'lit/decorators.js'
+import { keyed } from 'lit/directives/keyed.js'
 import { PageLifecycle } from '@operato/shell/dist/src/app/pages/page-view'
-import { customElement, query, state } from 'lit/decorators.js'
-import { ScopedElementsMixin } from '@open-wc/scoped-elements'
 import { client } from '@operato/graphql'
 import { notify } from '@operato/layout'
 import gql from 'graphql-tag'
@@ -17,7 +17,7 @@ import '../checklist/checklist-view'
 import { ChecklistMode } from '../checklist/checklist-view'
 
 @customElement('building-inspection-detail-checklist')
-export class BuildingInspectionDetailChecklist extends ScopedElementsMixin(PageView) {
+export class BuildingInspectionDetailChecklist extends PageView {
   static styles = [
     ScrollbarStyles,
     CommonGristStyles,
@@ -77,11 +77,16 @@ export class BuildingInspectionDetailChecklist extends ScopedElementsMixin(PageV
       ></building-inspection-detail-header>
 
       <div body>
-        <checklist-view
-          .mode=${ChecklistMode.EDITOR}
-          status=${this.buildingInspection.status}
-          .checklist=${this.buildingInspection.checklist || {}}
-        ></checklist-view>
+        ${keyed(
+          this.buildingInspection.id,
+          html`
+            <checklist-view
+              .mode=${ChecklistMode.EDITOR}
+              status=${this.buildingInspection.status}
+              .checklist=${this.buildingInspection.checklist || {}}
+            ></checklist-view>
+          `
+        )}
 
         <div button-container>
           <md-elevated-button @click=${this._onClickModifyChecklist}>

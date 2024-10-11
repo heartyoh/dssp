@@ -3,7 +3,7 @@ import '@operato/data-grist'
 
 import { CommonGristStyles, CommonButtonStyles, ScrollbarStyles } from '@operato/styles'
 import { PageView, navigate } from '@operato/shell'
-import { css, html } from 'lit'
+import { css, html, TemplateResult } from 'lit'
 import { PageLifecycle } from '@operato/shell/dist/src/app/pages/page-view'
 import { customElement, query, state } from 'lit/decorators.js'
 import { ScopedElementsMixin } from '@open-wc/scoped-elements'
@@ -15,6 +15,7 @@ import { openPopup } from '@operato/layout'
 import './inspection-create-popup'
 import '@operato/event-view/ox-event-view.js'
 import { InspectionEventProvider } from './component/inspection-event-provider'
+import { EventProvider } from '@operato/event-view'
 
 export enum ChecklistTypeMainType {
   BASIC = '10',
@@ -214,7 +215,7 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
   @state() building: any = {}
   @state() drawingImage: string = ''
   @state() buildingInspectionSummary: any = {}
-  @state() calendarData
+  @state() calendarData?: EventProvider
 
   @query('ox-grist') private grist!: DataGrist
   @query('ox-event-view') private eventView!: HTMLElement
@@ -270,7 +271,14 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
               })}
             </div>
 
-            <ox-event-view .mode=${'monthly'} .eventProvider=${this.calendarData}> </ox-event-view>
+            <ox-event-view
+              .mode=${'monthly'}
+              .eventProvider=${this.calendarData}
+              @select-date=${(e: CustomEvent) => {
+                console.log('select-date', e.detail)
+              }}
+            >
+            </ox-event-view>
           </div>
         </div>
 
@@ -535,7 +543,7 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
   }
 
   // 검측 개수가 있는 데이터들만 날짜별로 템플릿 만들기
-  private getCalendarTemplate(inspectionData: any[] = []) {
+  private getCalendarTemplate(inspectionData: any[] = []): { [date: string]: TemplateResult } {
     const template = {}
     for (let date of inspectionData) {
       template[date.requestDate] = html`
