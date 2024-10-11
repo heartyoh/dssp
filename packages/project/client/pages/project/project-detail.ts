@@ -228,6 +228,12 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
                 align-items: center;
                 justify-content: center;
 
+                div[wait] {
+                  color: #4e5055;
+                }
+                div[request] {
+                  color: #2e79be;
+                }
                 div[pass] {
                   color: #1bb401;
                 }

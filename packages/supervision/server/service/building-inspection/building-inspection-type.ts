@@ -119,6 +119,9 @@ export class BuildingInspectionsOfBuildingLevel {
 
 @ObjectType()
 export class BuildingInspectionSummary {
+  @Field(type => String, { nullable: true, description: '요청일자' })
+  requestDate?: string
+
   @Field(type => Int, { description: '검측 대기 수' })
   wait: number
 

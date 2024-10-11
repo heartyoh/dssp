@@ -563,7 +563,7 @@ type BuildingInspection {
   deletedAt: DateTimeISO
   drawingMarker: String
   id: ID!
-  requestDate: DateTimeISO
+  requestDate: String
   status: String
   updatedAt: DateTimeISO
   updater: User
@@ -583,6 +583,9 @@ type BuildingInspectionSummary {
 
   """검측 요청 수"""
   request: Int!
+
+  """요청일자"""
+  requestDate: String
 
   """검측 대기 수"""
   wait: Int!
@@ -4502,6 +4505,9 @@ type Query {
 
   """To fetch a BuildingInspection"""
   buildingInspection(id: String!): BuildingInspection
+
+  """To fetch a BuildingInspection Summary"""
+  buildingInspectionDateSummaryOfBuildingLevelAndMonth(buildingLevelId: String!, yearMonth: String!): [BuildingInspectionSummary!]
 
   """To fetch a BuildingInspection Summary"""
   buildingInspectionSummaryOfBuildingLevel(buildingLevelId: String!): BuildingInspectionSummary

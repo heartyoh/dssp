@@ -1,10 +1,8 @@
 import { Field, ID, ObjectType } from 'type-graphql'
 import { Column, Entity, Index, ManyToOne, PrimaryGeneratedColumn, RelationId } from 'typeorm'
-
 import { HistoryActionColumn, HistoryActionType, HistoryEntityInterface, HistoryOriginalIdColumn } from '@operato/typeorm-history'
 import { User } from '@things-factory/auth-base'
 import { config } from '@things-factory/env'
-
 import { BuildingInspection, BuildingInspectionStatus } from './building-inspection'
 import { BuildingLevel } from '@dssp/building-complex'
 
@@ -36,9 +34,9 @@ export class BuildingInspectionHistory implements HistoryEntityInterface<Buildin
   @RelationId((buildingInspectionHistory: BuildingInspectionHistory) => buildingInspectionHistory.buildingLevel)
   buildingLevelId?: string
 
-  @Column({ nullable: true, comment: '검측 요청일' })
-  @Field({ nullable: true })
-  requestDate?: Date
+  @Column({ type: 'date', nullable: true, comment: '검측 요청일' })
+  @Field(type => String, { nullable: true })
+  requestDate?: string
 
   // 체크리스트 ID (1:1 테이블 참조)
   @Field({ nullable: true })

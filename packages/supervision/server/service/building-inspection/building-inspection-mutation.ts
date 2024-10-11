@@ -62,7 +62,6 @@ export class BuildingInspectionMutation {
     const result = await buildingInspectionRepository.save({
       status: BuildingInspectionStatus.WAIT,
       buildingLevel: { id: buildingLevelId },
-      requestDate: new Date(),
       checklist: savedChecklist,
       creator: user,
       updater: user

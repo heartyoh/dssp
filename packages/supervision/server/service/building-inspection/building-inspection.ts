@@ -12,7 +12,6 @@ import {
   JoinColumn
 } from 'typeorm'
 import { ObjectType, Field, ID, registerEnumType } from 'type-graphql'
-
 import { User } from '@things-factory/auth-base'
 import { BuildingLevel } from '@dssp/building-complex'
 import { Checklist } from '../checklist/checklist'
@@ -53,9 +52,9 @@ export class BuildingInspection {
   @Field({ nullable: true })
   status?: BuildingInspectionStatus
 
-  @Column({ nullable: false, default: () => 'CURRENT_TIMESTAMP', comment: '검측 요청일' })
-  @Field({ nullable: true })
-  requestDate?: Date
+  @Column({ type: 'date', default: () => 'CURRENT_DATE', nullable: true, comment: '검측 요청일' })
+  @Field(type => String, { nullable: true })
+  requestDate?: string
 
   @Column({ type: 'simple-json', nullable: true, comment: '도면 마커' })
   @Field(type => String, { nullable: true })

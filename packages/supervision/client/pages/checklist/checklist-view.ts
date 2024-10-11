@@ -308,7 +308,6 @@ class ChecklistView extends LitElement {
               <td>
                 <span sign-text>(인)</span>
                 <ox-input-signature
-                  .value=${this.checklist.overallConstructorSignature || ''}
                   .value=${this.checklist.overallConstructorSignature}
                   name="overallConstructorSignature"
                   @change=${this._onChangeSignature}
@@ -322,7 +321,6 @@ class ChecklistView extends LitElement {
               <td>
                 <span sign-text>(인)</span>
                 <ox-input-signature
-                  .value=${this.checklist.taskConstructorSignature || ''}
                   .value=${this.checklist.taskConstructorSignature}
                   name="taskConstructorSignature"
                   @change=${this._onChangeSignature}

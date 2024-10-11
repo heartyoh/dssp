@@ -100,7 +100,6 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
       div[body] > div {
         display: flex;
         gap: 10px;
-        padding: 15px;
         border-radius: 5px;
       }
 
@@ -108,30 +107,74 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
         flex: 1;
 
         display: flex;
-        background-color: #ffffff;
-        border: 1px solid #cccccc80;
+        background-color: #f7f7f7;
       }
 
-      img[drawing] {
-        width: 400px;
+      div[drawing] {
+        flex: 0.4;
+        border: 1px solid #cccccc80;
+        background-color: #fff;
+        padding: 10px;
+        border-radius: 5px;
 
-        display: block;
-        object-fit: contain; /* 이미지 비율 유지하고 컨테이너에 맞춰서 축소/확대 */
-        object-position: center; /* 이미지를 중앙에 배치 */
+        img {
+          width: 100%;
+
+          display: block;
+          object-fit: contain;
+          object-position: center;
+        }
       }
 
       div[status] {
-        flex: 1;
+        flex: 0.6;
+        gap: 5px;
 
         display: flex;
         flex-direction: column;
-      }
 
-      div[inspection-data] {
-        flex: 1;
+        div[inspection] {
+          display: grid;
+          grid-template-columns: 120px 0.9fr 0.9fr 0.9fr 0.9fr;
+          margin-top: 5px;
+          background: #ebc8321a;
+          border-radius: 7px;
+          padding: 7px 0px;
 
-        display: flex;
-        gap: 10px;
+          & > span {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+
+            div[status='wait'] {
+              color: #4e5055;
+            }
+            div[status='request'] {
+              color: #3395f1;
+            }
+            div[status='pass'] {
+              color: #1bb401;
+            }
+            div[status='fail'] {
+              color: #ff4444;
+            }
+          }
+          & > span[name] {
+            flex-direction: row;
+            text-align: right;
+            gap: 10px;
+            border-right: 2px dotted #ccc;
+
+            md-icon {
+              width: 40px;
+              height: 40px;
+              border-radius: 7px;
+              color: #fff;
+              background: #f16154;
+            }
+          }
+        }
       }
 
       ox-event-view {
@@ -192,22 +235,37 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
   render() {
     return html`
       <div header>
-        <h2>${this.project.name} ${this.location}</h2>
+        <h2>${this.project.name}</h2>
       </div>
 
       <div body>
         <div top>
-          <img drawing src=${this.drawingImage || '/assets/images/img-drawing-default.png'} />
+          <div drawing>
+            <h3>도면: ${this.location}</h3>
+            <img src=${this.drawingImage || '/assets/images/img-drawing-default.png'} />
+          </div>
+
           <div status>
-            <h3>${this.location} 검측 현황</h3>
-            <div inspection-data>
-              <div>
-                ${Object.entries(BUILDING_INSPECTION_STATUS).map(
-                  status => html` <div>${status[1]} ${this.buildingInspectionSummary[status[0].toLowerCase()]}건</div> `
-                )}
-              </div>
-              <ox-event-view mode=${'monthly'}> </ox-event-view>
+            <div inspection>
+              <span name bold>
+                <md-icon slot="icon">fact_check</md-icon>
+                검측<br />현황
+              </span>
+
+              ${Object.entries(BUILDING_INSPECTION_STATUS).map(inspectionStatus => {
+                const displayName = inspectionStatus[1]
+                const status = inspectionStatus[0].toLowerCase()
+
+                return html`
+                  <span>
+                    <div>${displayName}</div>
+                    <div bold status=${status}>● ${this.buildingInspectionSummary[status]}</div>
+                  </span>
+                `
+              })}
             </div>
+
+            <ox-event-view mode=${'monthly'}> </ox-event-view>
           </div>
         </div>
 
@@ -222,6 +280,10 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
     if (this.active) {
       this.buildingLevelId = lifecycle.resourceId || ''
 
+      const eventView = this.eventView
+
+      console.log('eventView : ', eventView)
+
       await this.initProject(this.buildingLevelId)
       this.grist.fetch()
     }
@@ -230,7 +292,7 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
   async initProject(buildingLevelId: string = '') {
     const response = await client.query({
       query: gql`
-        query ProjectByBuildingLevelId($buildingLevelId: String!) {
+        query ProjectByBuildingLevelId($buildingLevelId: String!, $yearMonth: String!) {
           projectByBuildingLevelId(buildingLevelId: $buildingLevelId) {
             id
             name
@@ -257,10 +319,19 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
             pass
             fail
           }
+
+          buildingInspectionDateSummaryOfBuildingLevelAndMonth(buildingLevelId: $buildingLevelId, yearMonth: $yearMonth) {
+            requestDate
+            wait
+            request
+            pass
+            fail
+          }
         }
       `,
       variables: {
-        buildingLevelId
+        buildingLevelId,
+        yearMonth: '2024-10'
       }
     })
 
