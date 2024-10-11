@@ -21,6 +21,7 @@ class InspectionCreatePopup extends LitElement {
       :host {
         display: flex;
         flex-direction: column;
+        padding: 15px 20px;
 
         background-color: var(--md-sys-color-surface);
       }
@@ -45,37 +46,78 @@ class InspectionCreatePopup extends LitElement {
       }
 
       div[body] {
-        display: flex;
         height: 100%;
-        gap: 15px;
-        justify-content: flex-start;
         overflow-y: auto;
 
-        div[left] {
-          width: 60%;
+        div[tab-container][inactive] {
+          display: none !important;
+        }
 
-          div[block-name] {
+        div[edit] {
+          width: 100%;
+
+          div[detail] {
+            margin-bottom: 30px;
+          }
+
+          h3 {
             position: relative;
+            color: #0595e5;
+            font-size: 17px;
+            font-weight: 700;
+            background-color: var(--md-sys-color-surface);
+            margin-top: 0;
+            margin-bottom: 5px;
+          }
 
-            hr {
-              position: absolute;
-              width: 100%;
-              margin-block: 0;
-              top: 50%;
-            }
-            span {
-              position: relative;
-              background-color: var(--md-sys-color-surface);
-              margin-left: 1rem;
+          div[data-row] {
+            display: grid;
+            grid-template-columns: 100px 1fr 0.3fr 100px 1fr;
+            gap: 15px;
+            margin-bottom: 11px;
+
+            label {
+              display: flex;
+              justify-content: flex-end;
+              align-items: center;
+              font-size: 15px;
             }
           }
         }
 
-        div[right] {
+        div[preview] {
           display: flex;
           overflow-y: auto;
           overflow-x: hidden;
           max-width: calc(40% - 15px);
+        }
+      }
+
+      div[tabs] {
+        display: flex;
+
+        button {
+          background-color: #fff;
+          padding: 6px 14px;
+          color: #999;
+          border: solid 1px #999;
+          border-top: none;
+          border-radius: 0px 0px 8px 8px;
+          margin-right: -2px;
+
+          &[active] {
+            color: var(--button-color, var(--md-sys-color-on-secondary-container));
+            font-weight: 600;
+          }
+        }
+      }
+
+      div[button-container] {
+        display: flex;
+        justify-content: flex-end;
+
+        md-elevated-button {
+          --md-filled-button-container-color: #0595e5;
         }
       }
     `
@@ -103,6 +145,8 @@ class InspectionCreatePopup extends LitElement {
   @state() checklistTemplates: any = []
   @state() checklist: any = {}
 
+  @state() activeTab: 'edit' | 'preview' = 'edit'
+
   @query('md-filled-select[building]') htmlSelectBuilding
   @query('md-filled-select[level]') htmlSelectLevel
   @query('md-filled-select[constructionType]') htmlSelectConstructionType
@@ -117,100 +161,110 @@ class InspectionCreatePopup extends LitElement {
   render() {
     return html`
       <div body>
-        <div left>
-          <div block-name>
-            <hr />
-            <span>세부 정보</span>
+        <div tab-container ?inactive=${this.activeTab !== 'edit'} edit>
+          <div detail>
+            <h3>세부 정보</h3>
+
+            <div data-row>
+              <label>공종</label>
+              <md-filled-select label="공종" constructionType @change=${this._onSelectConstructionType}>
+                ${this.constructionTypes?.map(constructionType => {
+                  const selected = constructionType.id === this.selectedConstructionType?.id
+                  return html`<md-select-option ?selected=${selected} .value=${constructionType.id}>
+                    <div slot="headline">${constructionType.name}</div>
+                  </md-select-option>`
+                })}
+              </md-filled-select>
+
+              <div partition></div>
+
+              <label>세부 공종</label>
+              <md-filled-select label="세부 공종" constructionDetailType @change=${this._onSelectConstructionDetailType}>
+                ${this.selectedConstructionType?.constructionDetailTypes?.map(constructionDetailType => {
+                  const selected = constructionDetailType.id === this.selectedConstructionDetailType.id
+                  return html`<md-select-option ?selected=${selected} .value=${constructionDetailType.id}>
+                    <div slot="headline">${constructionDetailType.name}</div>
+                  </md-select-option>`
+                })}
+              </md-filled-select>
+            </div>
+
+            <div data-row>
+              <label>동</label>
+              <md-filled-select label="동" building @change=${this._onSelectBuilding}>
+                ${this.buildings?.map(building => {
+                  return html` <md-select-option .value=${building.id}>
+                    <div slot="headline">${building.name}</div>
+                  </md-select-option>`
+                })}
+              </md-filled-select>
+
+              <div partition></div>
+
+              <label>층</label>
+              <md-filled-select label="층" level @change=${this._onSelectBuildingLevel}>
+                ${this.selectedBuilding?.buildingLevels?.map(level => {
+                  return html`<md-select-option .value=${level.id}>
+                    <div slot="headline">${level.floor}</div>
+                  </md-select-option>`
+                })}
+              </md-filled-select>
+            </div>
+
+            <div data-row>
+              <label>검측 도면</label>
+              <md-filled-select label="검측 도면" inspectionDrawingType @change=${this._onSelectInspectionDrawingType}>
+                ${this.inspectionDrawingTypes?.map(inspectionDrawingType => {
+                  return html` <md-select-option .value=${inspectionDrawingType.id}>
+                    <div slot="headline">${inspectionDrawingType.name}</div>
+                  </md-select-option>`
+                })}
+              </md-filled-select>
+
+              <div partition></div>
+
+              <label>검측 부위</label>
+              <md-filled-select label="검측 부위" inspectionParts>
+                <div slot="label">${this.selectedInspectionParts?.join(', ') || ''}</div>
+
+                ${this.selectedInspectionDrawingType?.inspectionParts?.map(inspectionPart => {
+                  return html`
+                    <md-list-option @click=${() => this._onSelectInspectionPart(inspectionPart)}>
+                      <md-checkbox ?checked="${this.isSelected(inspectionPart)}"></md-checkbox>
+                      ${inspectionPart.name}
+                    </md-list-option>
+                  `
+                })}
+              </md-filled-select>
+            </div>
           </div>
 
-          <div>
-            <md-filled-select label="공종" constructionType @change=${this._onSelectConstructionType}>
-              ${this.constructionTypes?.map(constructionType => {
-                const selected = constructionType.id === this.selectedConstructionType?.id
-                return html`<md-select-option ?selected=${selected} .value=${constructionType.id}>
-                  <div slot="headline">${constructionType.name}</div>
-                </md-select-option>`
-              })}
-            </md-filled-select>
+          <div checklist>
+            <h3>체크리스트</h3>
 
-            <md-filled-select label="세부 공종" constructionDetailType @change=${this._onSelectConstructionDetailType}>
-              ${this.selectedConstructionType?.constructionDetailTypes?.map(constructionDetailType => {
-                const selected = constructionDetailType.id === this.selectedConstructionDetailType.id
-                return html`<md-select-option ?selected=${selected} .value=${constructionDetailType.id}>
-                  <div slot="headline">${constructionDetailType.name}</div>
-                </md-select-option>`
-              })}
-            </md-filled-select>
-          </div>
+            <div data-row>
+              <label>이름</label>
+              <md-filled-text-field
+                name="checklistName"
+                type="text"
+                label="체크리스트 이름"
+                .value=${this.checklist?.name || ''}
+                @input=${this._onInputChange}
+              >
+              </md-filled-text-field>
 
-          <div>
-            <md-filled-select label="동" building @change=${this._onSelectBuilding}>
-              ${this.buildings?.map(building => {
-                return html` <md-select-option .value=${building.id}>
-                  <div slot="headline">${building.name}</div>
-                </md-select-option>`
-              })}
-            </md-filled-select>
+              <div partition></div>
 
-            <md-filled-select label="층" level @change=${this._onSelectBuildingLevel}>
-              ${this.selectedBuilding?.buildingLevels?.map(level => {
-                return html`<md-select-option .value=${level.id}>
-                  <div slot="headline">${level.floor}</div>
-                </md-select-option>`
-              })}
-            </md-filled-select>
-          </div>
-
-          <div>
-            <md-filled-select label="검측 도면" inspectionDrawingType @change=${this._onSelectInspectionDrawingType}>
-              ${this.inspectionDrawingTypes?.map(inspectionDrawingType => {
-                return html` <md-select-option .value=${inspectionDrawingType.id}>
-                  <div slot="headline">${inspectionDrawingType.name}</div>
-                </md-select-option>`
-              })}
-            </md-filled-select>
-
-            <md-filled-select label="검측 부위" inspectionParts>
-              <div slot="label">${this.selectedInspectionParts?.join(', ') || ''}</div>
-
-              ${this.selectedInspectionDrawingType?.inspectionParts?.map(inspectionPart => {
-                return html`
-                  <md-list-option @click=${() => this._onSelectInspectionPart(inspectionPart)}>
-                    <md-checkbox ?checked="${this.isSelected(inspectionPart)}"></md-checkbox>
-                    ${inspectionPart.name}
-                  </md-list-option>
-                `
-              })}
-            </md-filled-select>
-          </div>
-
-          <div block-name>
-            <hr />
-            <span>체크리스트</span>
-          </div>
-
-          <div>
-            <label>체크리스트 템플릿 불러오기</label>
-
-            <md-filled-select label="템플릿" checklistTemplate @change=${this._onSelectChecklistTemplate}>
-              <md-select-option></md-select-option>
-              ${this.checklistTemplates?.map((checklistTemplate, idx) => {
-                return html` <md-select-option .value=${checklistTemplate.id}>
-                  <div slot="headline">${checklistTemplate.name}</div>
-                </md-select-option>`
-              })}
-            </md-filled-select>
-          </div>
-
-          <div>
-            <md-filled-text-field
-              name="checklistName"
-              type="text"
-              label="체크리스트 이름"
-              .value=${this.checklist?.name || ''}
-              @input=${this._onInputChange}
-            >
-            </md-filled-text-field>
+              <label>템플릿</label>
+              <md-filled-select label="템플릿" checklistTemplate @change=${this._onSelectChecklistTemplate}>
+                <md-select-option></md-select-option>
+                ${this.checklistTemplates?.map((checklistTemplate, idx) => {
+                  return html` <md-select-option .value=${checklistTemplate.id}>
+                    <div slot="headline">${checklistTemplate.name}</div>
+                  </md-select-option>`
+                })}
+              </md-filled-select>
+            </div>
           </div>
 
           <ox-grist
@@ -220,17 +274,22 @@ class InspectionCreatePopup extends LitElement {
             @field-change=${this.onChangeGird}
           >
           </ox-grist>
-
-          <div button-container>
-            <md-elevated-button @click=${this._createInspection}>
-              <md-icon slot="icon">add</md-icon>검측 요청서 등록
-            </md-elevated-button>
-          </div>
         </div>
 
-        <div right>
+        <div tab-container ?inactive=${this.activeTab !== 'preview'} preview>
           <checklist-view .mode=${ChecklistMode.VIEWER} .checklist=${this.checklist}></checklist-view>
         </div>
+      </div>
+
+      <div tabs>
+        <button ?active=${this.activeTab === 'edit'} @click=${() => (this.activeTab = 'edit')}>검측 요청 정보</button>
+        <button ?active=${this.activeTab === 'preview'} @click=${() => (this.activeTab = 'preview')}>미리보기</button>
+      </div>
+
+      <div button-container>
+        <md-elevated-button @click=${this._createInspection}>
+          <md-icon slot="icon">add</md-icon>검측 요청서 등록
+        </md-elevated-button>
       </div>
     `
   }
