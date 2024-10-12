@@ -151,10 +151,16 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
           }
 
           div[left-bottom] {
+            flex: 1;
+
+            display: flex;
+            flex-direction: column;
+
             [building-complex-img] {
-              width: 100%;
+              flex: 1;
               aspect-ratio: 2 / 1;
             }
+
             img {
               opacity: 0.5;
             }
@@ -162,9 +168,9 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
             div[subject] {
               margin-bottom: 7px;
             }
+
             div[building-container] {
               display: block;
-              height: 40px;
               overflow-y: auto;
 
               & > * {
@@ -272,9 +278,14 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
           }
 
           div[right-bottom] {
+            flex: 1;
+
+            display: flex;
+            flex-direction: column;
+
             div[table-container] {
-              width: 100%;
-              height: 15rem;
+              flex: 1;
+
               overflow-y: auto;
               overflow-x: hidden;
               position: relative;
@@ -282,14 +293,12 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
 
             hr {
               position: sticky;
-              width: 100%;
               margin: 0;
               top: 0px;
               border: 1px solid #3295f1;
             }
 
             table {
-              width: 100%;
               border-collapse: collapse;
               table-layout: fixed;
             }
@@ -562,13 +571,13 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
               <table>
                 <thead>
                   <tr>
-                    <th width="5%">순번</th>
+                    <th width="5%"></th>
                     <th width="10%">검측 위치</th>
                     <th width="10%">공종</th>
                     <th width="20%">내용</th>
                     <th width="15%">검측 요청일</th>
                     <th width="10%">검측 결과</th>
-                    <th width="15%">검측 결과 데이터</th>
+                    <th width="15%">결과 데이터</th>
                   </tr>
                 </thead>
                 <tbody>

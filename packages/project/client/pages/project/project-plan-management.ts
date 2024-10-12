@@ -26,8 +26,8 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
         grid-template-rows: 75px auto;
         color: #4e5055;
 
-        width: 100%;
         background-color: #f7f7f7;
+        overflow: hidden;
         overflow-y: auto;
 
         --grid-record-emphasized-background-color: red;
@@ -93,7 +93,7 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
 
       div[body] {
         display: grid;
-        grid-template-rows: 240px 400px 60px;
+        grid-template-rows: 240px 1fr 60px;
         margin: 0px 25px 25px 25px;
         gap: 8px;
 
@@ -110,6 +110,7 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
             color: #2e79be;
             font-size: 18px;
             margin: 0px;
+            text-wrap: nowrap;
           }
         }
 
@@ -122,6 +123,7 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
           ox-input-file {
             height: 120px;
           }
+
           span[building] {
             width: 125px;
             text-align: center;
@@ -138,10 +140,12 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
             display: flex;
             justify-content: space-between;
             height: fit-content;
+            gap: 50px;
+            overflow: hidden;
 
             span[building-button] {
               display: flex;
-              max-width: 500px;
+              margin-left: auto;
               gap: 10px;
               overflow-x: auto;
               overflow-y: hidden;
