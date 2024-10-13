@@ -12,6 +12,8 @@ import { notify } from '@operato/layout'
 import gql from 'graphql-tag'
 import { openPopup } from '@operato/layout'
 
+import { verifyBiometric } from '@things-factory/auth-base/client'
+
 import './component/building-inspection-detail-header'
 import '../checklist/checklist-view'
 import { ChecklistMode } from '../checklist/checklist-view'
@@ -198,6 +200,19 @@ export class BuildingInspectionDetailChecklist extends PageView {
   }
 
   private async validateChecklist(checklist: any) {
+    try {
+      const result = await verifyBiometric()
+      if (result.verified) {
+        console.log('Verification successful. Proceeding with sensitive action.')
+      } else {
+        notify({ message: 'Verification failed:' + result.message })
+        return
+      }
+    } catch (error) {
+      notify({ message: 'Error during biometric verification:' + error })
+      return
+    }
+
     const response = await client.mutate({
       mutation: gql`
         mutation UpdateBuildingInspectionChecklist($buildingInspection: UpdateBuildingInspectionSubmitType!) {
