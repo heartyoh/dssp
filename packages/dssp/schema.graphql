@@ -4507,7 +4507,7 @@ type Query {
   buildingInspection(id: String!): BuildingInspection
 
   """To fetch a BuildingInspection Summary"""
-  buildingInspectionDateSummaryOfLevelAndMonth(buildingLevelId: String!, yearMonth: String!): [BuildingInspectionSummary!]
+  buildingInspectionDateSummaryOfLevelAndMonth(buildingLevelId: String!, endDate: String!, startDate: String!): [BuildingInspectionSummary!]
 
   """To fetch a BuildingInspection Summary"""
   buildingInspectionSummaryOfBuildingLevel(buildingLevelId: String!): BuildingInspectionSummary

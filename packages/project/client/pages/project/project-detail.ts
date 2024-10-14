@@ -157,6 +157,7 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
             flex-direction: column;
 
             [building-complex-img] {
+              width: 100%;
               flex: 1;
               aspect-ratio: 2 / 1;
             }
@@ -171,7 +172,6 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
 
             div[building-container] {
               display: block;
-              overflow-y: auto;
 
               & > * {
                 margin-right: 10px;
@@ -299,6 +299,7 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
             }
 
             table {
+              width: 100%;
               border-collapse: collapse;
               table-layout: fixed;
             }
@@ -577,7 +578,6 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
                     <th width="20%">내용</th>
                     <th width="15%">검측 요청일</th>
                     <th width="10%">검측 결과</th>
-                    <th width="15%">결과 데이터</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -589,7 +589,6 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
                       <td>${inspection.checklist?.inspectionParts?.join(', ') || ''}</td>
                       <td>${this._formatDate(inspection.requestDate)}</td>
                       <td bold>${inspection.status && BUILDING_INSPECTION_STATUS[inspection.status]}</td>
-                      <td></td>
                     </tr>`
                   })}
                 </tbody>
@@ -691,7 +690,7 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
         projectId,
         params: {
           projectId,
-          limit: 20
+          limit: 10
         }
       }
     })

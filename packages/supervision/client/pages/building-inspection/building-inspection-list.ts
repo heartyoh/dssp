@@ -301,7 +301,7 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
   async initProject(buildingLevelId: string = '') {
     const response = await client.query({
       query: gql`
-        query ProjectByBuildingLevelId($buildingLevelId: String!, $yearMonth: String!) {
+        query ProjectByBuildingLevelId($buildingLevelId: String!) {
           projectByBuildingLevelId(buildingLevelId: $buildingLevelId) {
             id
             name
@@ -328,19 +328,10 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
             pass
             fail
           }
-
-          buildingInspectionDateSummaryOfLevelAndMonth(buildingLevelId: $buildingLevelId, yearMonth: $yearMonth) {
-            requestDate
-            wait
-            request
-            pass
-            fail
-          }
         }
       `,
       variables: {
-        buildingLevelId,
-        yearMonth: '2024-10'
+        buildingLevelId
       }
     })
 
@@ -349,8 +340,7 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
     this.project = response.data?.projectByBuildingLevelId
     this.buildingInspectionSummary = response.data?.buildingInspectionSummaryOfBuildingLevel
 
-    const calendarData = this.getCalendarTemplate(response.data?.buildingInspectionDateSummaryOfLevelAndMonth)
-    this.calendarData = new InspectionEventProvider(calendarData)
+    this.calendarData = new InspectionEventProvider(buildingLevelId)
 
     // 캘린더 최소 높이 속성 수정
     this.eventView.style.setProperty('--calendar-monthly-date-min-height', '50px')
@@ -540,22 +530,5 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
           day: '2-digit'
         }).format(new Date(date))
       : ''
-  }
-
-  // 검측 개수가 있는 데이터들만 날짜별로 템플릿 만들기
-  private getCalendarTemplate(inspectionData: any[] = []): { [date: string]: TemplateResult } {
-    const template = {}
-    for (let date of inspectionData) {
-      template[date.requestDate] = html`
-        <div style="display: grid; grid-template-columns: repeat(2, 1fr); padding-inline: 7px;">
-          ${date.wait !== 0 ? html`<div><span style="font-size: 1.3em; color: #4e5055">●</span> ${date.wait}</div>` : ''}
-          ${date.request !== 0 ? html`<div><span style="font-size: 1.3em; color: #3395f1">●</span> ${date.request}</div>` : ''}
-          ${date.pass !== 0 ? html`<div><span style="font-size: 1.3em; color: #1bb401">●</span> ${date.pass}</div>` : ''}
-          ${date.fail !== 0 ? html`<div><span style="font-size: 1.3em; color: #ff4444">●</span> ${date.fail}</div>` : ''}
-        </div>
-      `
-    }
-
-    return template
   }
 }

@@ -132,13 +132,10 @@ export class BuildingInspectionQuery {
   @Query(returns => [BuildingInspectionSummary]!, { nullable: true, description: 'To fetch a BuildingInspection Summary' })
   async buildingInspectionDateSummaryOfLevelAndMonth(
     @Arg('buildingLevelId') buildingLevelId: string,
-    @Arg('yearMonth') yearMonth: string,
+    @Arg('startDate') startDate: string,
+    @Arg('endDate') endDate: string,
     @Ctx() context: ResolverContext
   ): Promise<BuildingInspectionSummary[]> {
-    const [year, month] = yearMonth.split('-') // 'YYYY-MM' 형식에서 연도와 월 추출
-    const startDate = `${year}-${month}-01`
-    const endDate = new Date(Number(year), Number(month), 0).toISOString().split('T')[0] // 해당 월의 마지막 날짜 계산
-
     const buildingInspectionSummary = await getRepository(BuildingInspection)
       .createQueryBuilder('bi')
       .select(`TO_CHAR(bi.request_date, 'YYYY-MM-DD') AS "requestDate"`)

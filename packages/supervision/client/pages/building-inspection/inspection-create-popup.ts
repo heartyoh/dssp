@@ -76,11 +76,26 @@ class InspectionCreatePopup extends LitElement {
             gap: 15px;
             margin-bottom: 11px;
 
-            label {
+            & > label {
               display: flex;
               justify-content: flex-end;
               align-items: center;
               font-size: 15px;
+            }
+
+            div[inspection-parts] {
+              display: block;
+              margin-top: 7px;
+
+              & > span {
+                display: inline-block;
+                margin-right: 5px;
+                margin-bottom: 5px;
+
+                & > md-checkbox {
+                  margin-top: 2px;
+                }
+              }
             }
           }
         }
@@ -89,7 +104,6 @@ class InspectionCreatePopup extends LitElement {
           display: flex;
           overflow-y: auto;
           overflow-x: hidden;
-          max-width: calc(40% - 15px);
         }
       }
 
@@ -104,6 +118,7 @@ class InspectionCreatePopup extends LitElement {
           border-top: none;
           border-radius: 0px 0px 8px 8px;
           margin-right: -2px;
+          cursor: pointer;
 
           &[active] {
             color: var(--button-color, var(--md-sys-color-on-secondary-container));
@@ -115,9 +130,19 @@ class InspectionCreatePopup extends LitElement {
       div[button-container] {
         display: flex;
         justify-content: flex-end;
+        gap: 10px;
 
-        md-elevated-button {
-          --md-filled-button-container-color: #0595e5;
+        md-elevated-button[blue] {
+          --md-elevated-button-container-color: #0595e5;
+
+          --md-elevated-button-label-text-color: #fff;
+          --md-elevated-button-hover-label-text-color: #fff;
+          --md-elevated-button-pressed-label-text-color: #fff;
+          --md-elevated-button-focus-label-text-color: #fff;
+          --md-elevated-button-icon-color: #fff;
+          --md-elevated-button-hover-icon-color: #fff;
+          --md-elevated-button-pressed-icon-color: #fff;
+          --md-elevated-button-focus-icon-color: #fff;
         }
       }
     `
@@ -155,7 +180,7 @@ class InspectionCreatePopup extends LitElement {
   @query('md-filled-select[inspectionPart]') htmlSelectInspectionPart
   @query('md-filled-select[checklistTemplate]') htmlSelectChecklistTemplate
   @query('ox-grist') grist!: DataGrist
-  @query('div[right]') checklistViewContainer!: HTMLDivElement
+  @query('div[preview]') checklistViewContainer!: HTMLDivElement
   @query('checklist-view') checklistView!: HTMLElement
 
   render() {
@@ -167,7 +192,7 @@ class InspectionCreatePopup extends LitElement {
 
             <div data-row>
               <label>공종</label>
-              <md-filled-select label="공종" constructionType @change=${this._onSelectConstructionType}>
+              <md-filled-select constructionType @change=${this._onSelectConstructionType}>
                 ${this.constructionTypes?.map(constructionType => {
                   const selected = constructionType.id === this.selectedConstructionType?.id
                   return html`<md-select-option ?selected=${selected} .value=${constructionType.id}>
@@ -179,7 +204,7 @@ class InspectionCreatePopup extends LitElement {
               <div partition></div>
 
               <label>세부 공종</label>
-              <md-filled-select label="세부 공종" constructionDetailType @change=${this._onSelectConstructionDetailType}>
+              <md-filled-select constructionDetailType @change=${this._onSelectConstructionDetailType}>
                 ${this.selectedConstructionType?.constructionDetailTypes?.map(constructionDetailType => {
                   const selected = constructionDetailType.id === this.selectedConstructionDetailType.id
                   return html`<md-select-option ?selected=${selected} .value=${constructionDetailType.id}>
@@ -191,7 +216,7 @@ class InspectionCreatePopup extends LitElement {
 
             <div data-row>
               <label>동</label>
-              <md-filled-select label="동" building @change=${this._onSelectBuilding}>
+              <md-filled-select building @change=${this._onSelectBuilding}>
                 ${this.buildings?.map(building => {
                   return html` <md-select-option .value=${building.id}>
                     <div slot="headline">${building.name}</div>
@@ -202,7 +227,7 @@ class InspectionCreatePopup extends LitElement {
               <div partition></div>
 
               <label>층</label>
-              <md-filled-select label="층" level @change=${this._onSelectBuildingLevel}>
+              <md-filled-select level @change=${this._onSelectBuildingLevel}>
                 ${this.selectedBuilding?.buildingLevels?.map(level => {
                   return html`<md-select-option .value=${level.id}>
                     <div slot="headline">${level.floor}</div>
@@ -213,7 +238,7 @@ class InspectionCreatePopup extends LitElement {
 
             <div data-row>
               <label>검측 도면</label>
-              <md-filled-select label="검측 도면" inspectionDrawingType @change=${this._onSelectInspectionDrawingType}>
+              <md-filled-select inspectionDrawingType @change=${this._onSelectInspectionDrawingType}>
                 ${this.inspectionDrawingTypes?.map(inspectionDrawingType => {
                   return html` <md-select-option .value=${inspectionDrawingType.id}>
                     <div slot="headline">${inspectionDrawingType.name}</div>
@@ -224,18 +249,20 @@ class InspectionCreatePopup extends LitElement {
               <div partition></div>
 
               <label>검측 부위</label>
-              <md-filled-select label="검측 부위" inspectionParts>
-                <div slot="label">${this.selectedInspectionParts?.join(', ') || ''}</div>
-
+              <div inspection-parts>
                 ${this.selectedInspectionDrawingType?.inspectionParts?.map(inspectionPart => {
                   return html`
-                    <md-list-option @click=${() => this._onSelectInspectionPart(inspectionPart)}>
-                      <md-checkbox ?checked="${this.isSelected(inspectionPart)}"></md-checkbox>
-                      ${inspectionPart.name}
-                    </md-list-option>
+                    <span>
+                      <md-checkbox
+                        id=${'check_' + inspectionPart.id}
+                        ?checked="${this.isSelected(inspectionPart)}"
+                        @click=${() => this._onSelectInspectionPart(inspectionPart)}
+                      ></md-checkbox>
+                      <label>${inspectionPart.name}</label>
+                    </span>
                   `
                 })}
-              </md-filled-select>
+              </div>
             </div>
           </div>
 
@@ -247,7 +274,6 @@ class InspectionCreatePopup extends LitElement {
               <md-filled-text-field
                 name="checklistName"
                 type="text"
-                label="체크리스트 이름"
                 .value=${this.checklist?.name || ''}
                 @input=${this._onInputChange}
               >
@@ -256,7 +282,7 @@ class InspectionCreatePopup extends LitElement {
               <div partition></div>
 
               <label>템플릿</label>
-              <md-filled-select label="템플릿" checklistTemplate @change=${this._onSelectChecklistTemplate}>
+              <md-filled-select checklistTemplate @change=${this._onSelectChecklistTemplate}>
                 <md-select-option></md-select-option>
                 ${this.checklistTemplates?.map((checklistTemplate, idx) => {
                   return html` <md-select-option .value=${checklistTemplate.id}>
@@ -287,9 +313,10 @@ class InspectionCreatePopup extends LitElement {
       </div>
 
       <div button-container>
-        <md-elevated-button @click=${this._createInspection}>
-          <md-icon slot="icon">add</md-icon>검측 요청서 등록
+        <md-elevated-button blue @click=${this._createInspection}>
+          <md-icon slot="icon">task</md-icon>검측 요청서 등록
         </md-elevated-button>
+        <md-elevated-button @click=${this._close}> <md-icon slot="icon">cancel</md-icon>취소</md-elevated-button>
       </div>
     `
   }

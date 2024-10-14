@@ -129,7 +129,6 @@ export class BuildingComplexDetail extends ScopedElementsMixin(PageView) {
 
       div[building-container] {
         display: block;
-        overflow-y: auto;
 
         & > * {
           margin-right: 2px;
