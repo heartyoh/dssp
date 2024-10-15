@@ -17,6 +17,46 @@ type AccessToken {
   refreshToken: String!
 }
 
+"""Entity for ActionPlan"""
+type ActionPlan {
+  active: Boolean
+  content: String
+  createdAt: DateTimeISO
+  creator: User
+  deletedAt: DateTimeISO
+  description: String
+  domain: Domain
+  id: ID!
+  issue: Issue!
+  name: String
+  params: String
+  state: String
+  thumbnail: String
+  updatedAt: DateTimeISO
+  updater: User
+}
+
+type ActionPlanList {
+  items: [ActionPlan!]!
+  total: Int!
+}
+
+input ActionPlanPatch {
+  active: Boolean
+  cuFlag: String
+  description: String
+  id: ID
+  name: String
+  state: ActionPlanStatus
+  thumbnail: Upload
+}
+
+"""state enumeration of a actionPlan"""
+enum ActionPlanStatus {
+  STATUS_A
+  STATUS_B
+}
+
 """Any Scalar type (String, Boolean, Int, Float, Object, List)"""
 scalar Any
 
@@ -29,7 +69,7 @@ type AppBinding {
   email: EmailAddress!
   id: ID!
   locale: String
-  name: String!
+  name: String
   owner: Boolean
   reference: String
   refreshToken: String
@@ -133,7 +173,7 @@ type ApprovalLine {
   createdAt: DateTimeISO
   creator: User
   description: String
-  domain: Domain
+  domain: Domain!
   id: ID!
   model: [ApprovalLineItem!]
   name: String
@@ -201,6 +241,7 @@ type Attachment {
   refBy: String
   refType: String
   size: String!
+  tags: Object
   updatedAt: DateTimeISO!
   updater: User
 }
@@ -219,6 +260,7 @@ input AttachmentPatch {
   name: String
   refBy: String
   refType: String
+  tags: Object
 }
 
 """Entity for AttributeSet"""
@@ -283,11 +325,10 @@ type AuthProvider {
   clientSecret: String
   createdAt: DateTimeISO
   creator: User
-  domain: Domain
+  domain: Domain!
   id: ID!
   params: Object
   privateKey: String
-  state: String
   tenantId: String
   type: String
   updatedAt: DateTimeISO
@@ -305,6 +346,7 @@ type AuthProviderParameterSpec {
   name: String!
   placeholder: String
   property: Object
+  styles: Object
   type: String!
 }
 
@@ -418,7 +460,7 @@ type BoardTemplate {
   createdAt: DateTimeISO
   creator: User
   description: String
-  domain: Domain
+  domain: Domain!
   id: ID!
   mine: Boolean!
   model: String
@@ -445,12 +487,344 @@ input BoardTemplatePatch {
   visibility: String
 }
 
+"""동 정보"""
+type Building {
+  buildingComplex: BuildingComplex
+  buildingLevels: [BuildingLevel!]
+  createdAt: DateTimeISO
+  creator: User
+  deletedAt: DateTimeISO
+  drawing: Attachment
+  floorCount: Float
+  id: ID!
+  name: String
+  updatedAt: DateTimeISO
+  updater: User
+}
+
+"""단지 정보"""
+type BuildingComplex {
+  address: String
+  area: Float
+  buildingCount: Float
+  buildings: [Building!]
+  clientCompany: String
+  constructionCompany: String
+  constructionCost: Float
+  constructionType: String
+  createdAt: DateTimeISO
+  creator: User
+  deletedAt: DateTimeISO
+  designCompany: String
+  domain: Domain
+  drawing: Attachment
+  etc: String
+  householdCount: Float
+  id: ID!
+  latitude: Float
+  longitude: Float
+  notice: String
+  planXScale: Float
+  planYScale: Float
+  supervisoryCompany: String
+  updatedAt: DateTimeISO
+  updater: User
+}
+
+input BuildingComplexPatch {
+  address: String
+  area: Float
+  buildingCount: Float
+  buildings: [BuildingPatch!]
+  clientCompany: String
+  constructionCompany: String
+  constructionCost: Float
+  constructionType: String
+  designCompany: String
+  drawingUpload: Upload
+  etc: String
+  householdCount: Float
+  id: String
+  latitude: Float
+  longitude: Float
+  notice: String
+  planXScale: Float
+  planYScale: Float
+  supervisoryCompany: String
+}
+
+type BuildingInspection {
+  attatchments: [Attachment!]!
+  buildingInspectionSummary: BuildingInspectionSummary!
+  buildingLevel: BuildingLevel
+  checklist: Checklist
+  createdAt: DateTimeISO
+  creator: User
+  deletedAt: DateTimeISO
+  drawingMarker: String
+  id: ID!
+  requestDate: String
+  status: String
+  updatedAt: DateTimeISO
+  updater: User
+}
+
+type BuildingInspectionList {
+  items: [BuildingInspection!]!
+  total: Int!
+}
+
+type BuildingInspectionSummary {
+  """검측 실패 수"""
+  fail: Int!
+
+  """검측 통과 수"""
+  pass: Int!
+
+  """검측 요청 수"""
+  request: Int!
+
+  """요청일자"""
+  requestDate: String
+
+  """검측 대기 수"""
+  wait: Int!
+}
+
+type BuildingInspectionSummaryOfLevel {
+  """검측 실패 수"""
+  fail: Int!
+
+  """검측 통과 수"""
+  pass: Int!
+
+  """검측 요청 수"""
+  request: Int!
+
+  """검측 대기 수"""
+  wait: Int!
+}
+
+input BuildingInspectionsOfBuildingLevel {
+  buildingLevelId: String!
+  limit: Float
+}
+
+input BuildingInspectionsOfProject {
+  limit: Float
+  projectId: String!
+}
+
+"""층 정보"""
+type BuildingLevel {
+  building: Building!
+  createdAt: DateTimeISO
+  creator: User
+  deletedAt: DateTimeISO
+  elevationDrawing: Attachment
+  elevationDrawingThumbnail: String
+  floor: Float!
+  id: ID!
+  inspectionSummary: BuildingInspectionSummaryOfLevel!
+  mainDrawing: Attachment
+  mainDrawingImage: String
+  mainDrawingThumbnail: String
+  rebarDistributionDrawing: Attachment
+  rebarDistributionDrawingThumbnail: String
+  updatedAt: DateTimeISO
+  updater: User
+}
+
+input BuildingLevelPatch {
+  elevationDrawingUpload: Upload
+  floor: Float!
+  id: ID
+  mainDrawingUpload: Upload
+  rebarDistributionDrawingUpload: Upload
+}
+
+input BuildingPatch {
+  buildingLevels: [BuildingLevelPatch!]
+  drawingUpload: Upload
+  floorCount: Float
+  id: ID
+  name: String
+}
+
 input ChatCompletionInput {
   content: String!
 }
 
 type ChatCompletionOutput {
   message: String
+}
+
+type Checklist {
+  buildingInspection: BuildingInspection!
+  checklistItems: [ChecklistItem!]!
+  constructionDetailType: String
+  constructionInspectionDate: DateTimeISO
+  constructionType: String
+  createdAt: DateTimeISO
+  creator: User
+  deletedAt: DateTimeISO
+  documentNo: String
+  id: ID!
+  inspectionDrawingType: String
+  inspectionParts: [String!]
+  location: String
+  name: String
+  overallConstructorSignature: String
+  overallSupervisorySignature: String
+  supervisorInspectionDate: DateTimeISO
+  task: Task!
+  taskConstructorSignature: String
+  taskSupervisorySignature: String
+  updatedAt: DateTimeISO
+  updater: User
+}
+
+input ChecklistInputType {
+  constructionDetailType: String!
+  constructionType: String!
+  inspectionDrawingType: String!
+  inspectionParts: [String!]!
+  location: String!
+  name: String!
+}
+
+type ChecklistItem {
+  checklist: Checklist
+  comment: String
+  constructionConfirmStatus: String
+  createdAt: DateTimeISO
+  creator: User
+  deletedAt: DateTimeISO
+  detailType: String!
+  id: ID!
+  inspctionCriteria: String
+  mainType: String!
+  name: String
+  sequence: Int
+  supervisoryConfirmStatus: String
+  updatedAt: DateTimeISO
+  updater: User
+}
+
+input ChecklistItemInputType {
+  detailType: String!
+  inspctionCriteria: String
+  mainType: String!
+  name: String!
+}
+
+type ChecklistItemList {
+  items: [ChecklistItem!]!
+  total: Int!
+}
+
+input ChecklistItemSubmitInputType {
+  constructionConfirmStatus: String
+  id: String!
+  supervisoryConfirmStatus: String
+}
+
+type ChecklistList {
+  items: [Checklist!]!
+  total: Int!
+}
+
+input ChecklistPatch {
+  active: Boolean
+  cuFlag: String
+  description: String
+  id: ID
+  name: String
+}
+
+input ChecklistSubmitInputType {
+  id: String!
+  overallConstructorSignature: String
+  overallSupervisorySignature: String
+  taskConstructorSignature: String
+  taskSupervisorySignature: String
+}
+
+type ChecklistTemplate {
+  checklistTemplateItems: [ChecklistTemplateItem!]!
+  createdAt: DateTimeISO
+  creator: User
+  deletedAt: DateTimeISO
+  domain: Domain
+  id: ID!
+  name: String
+  updatedAt: DateTimeISO
+  updater: User
+}
+
+type ChecklistTemplateItem {
+  checklistTemplate: ChecklistTemplate
+  createdAt: DateTimeISO
+  creator: User
+  detailType: String!
+  detailTypeName: String!
+  id: ID!
+  inspctionCriteria: String
+  mainType: String!
+  name: String!
+  sequence: Int
+  updatedAt: DateTimeISO
+  updater: User
+}
+
+type ChecklistTemplateItemList {
+  items: [ChecklistTemplateItem!]!
+  total: Int!
+}
+
+input ChecklistTemplateItemPatch {
+  checklistTemplateId: String
+  cuFlag: String
+  detailType: String
+  id: ID
+  inspctionCriteria: String
+  mainType: String
+  name: String
+  sequence: Int
+}
+
+type ChecklistTemplateList {
+  items: [ChecklistTemplate!]!
+  total: Int!
+}
+
+input ChecklistTemplatePatch {
+  cuFlag: String
+  id: ID
+  name: String
+}
+
+type ChecklistType {
+  createdAt: DateTimeISO
+  creator: User
+  detailType: String!
+  domain: Domain
+  id: ID!
+  mainType: String!
+  updatedAt: DateTimeISO
+  updater: User
+}
+
+type ChecklistTypeList {
+  items: [ChecklistType!]!
+  total: Int!
+}
+
+input ChecklistTypePatch {
+  cuFlag: String
+  detailType: String
+  id: ID
+  mainType: String
 }
 
 input CodeDecipherInput {
@@ -469,7 +843,7 @@ type CommonCode {
   creator: User
   description: String
   details: [CommonCodeDetail!]!
-  domain: Domain
+  domain: Domain!
   id: ID!
   name: String!
   updatedAt: DateTimeISO
@@ -482,7 +856,7 @@ type CommonCodeDetail {
   createdAt: DateTimeISO
   creator: User
   description: String
-  domain: Domain
+  domain: Domain!
   id: ID!
   labels: Object
   name: String!
@@ -555,7 +929,7 @@ input ConnectionPatch {
 
 type ConnectionState {
   description: String
-  domain: Domain
+  domain: Domain!
   edge: Appliance
   id: String
   name: String
@@ -577,6 +951,56 @@ type ConnectorType {
   taskPrefixes: [String!]
 }
 
+"""세부 공종 타입"""
+type ConstructionDetailType {
+  constructionType: ConstructionType
+  createdAt: DateTimeISO
+  creator: User
+  id: ID!
+  name: String
+  sequence: Int
+  updatedAt: DateTimeISO
+  updater: User
+}
+
+type ConstructionDetailTypeList {
+  items: [ConstructionDetailType!]!
+  total: Int!
+}
+
+input ConstructionDetailTypePatch {
+  cuFlag: String
+  id: ID
+  name: String
+  sequence: Int
+}
+
+"""공종 타입"""
+type ConstructionType {
+  constructionDetailTypes: [ConstructionDetailType!]
+  createdAt: DateTimeISO
+  creator: User
+  deletedAt: DateTimeISO
+  description: String
+  domain: Domain
+  id: ID!
+  name: String
+  updatedAt: DateTimeISO
+  updater: User
+}
+
+type ConstructionTypeList {
+  items: [ConstructionType!]!
+  total: Int!
+}
+
+input ConstructionTypePatch {
+  cuFlag: String
+  description: String
+  id: ID
+  name: String
+}
+
 """Entity for Contact"""
 type Contact {
   address: String
@@ -585,7 +1009,7 @@ type Contact {
   creator: User
   deletedAt: DateTimeISO
   department: String
-  domain: Domain
+  domain: Domain!
   email: EmailAddress
   id: ID!
   items: [ContactItem!]
@@ -656,7 +1080,7 @@ type Department {
   creator: User
   deletedAt: DateTimeISO
   description: String
-  domain: Domain
+  domain: Domain!
   extension: String
   id: ID!
   manager: Employee
@@ -684,6 +1108,14 @@ input DepartmentPatch {
   name: String
   parent: ObjectRef
   picture: Upload
+}
+
+type DigestedResource {
+  """할당량"""
+  allocated: Float
+
+  """자원 유형"""
+  type: String
 }
 
 type Domain {
@@ -754,19 +1186,23 @@ scalar EmailAddress @specifiedBy(url: "https://html.spec.whatwg.org/multipage/in
 """Entity for Employee"""
 type Employee {
   active: Boolean
-  address: String!
+  address: String
   alias: String
   approvalLines: [ApprovalLine!]!
+  bankAccount: String
+  bankName: String
   contact: Contact
   controlNo: String!
   createdAt: DateTimeISO
   creator: User
   deletedAt: DateTimeISO
   department: Department
-  domain: Domain
+  domain: Domain!
   email: EmailAddress
+  emergencyContact: String
+  emergencyContactPhone: String
   extension: String
-  hiredOn: String
+  hiredOn: DateTimeISO
   id: ID!
   jobPosition: String
   jobResponsibility: String
@@ -776,7 +1212,7 @@ type Employee {
   phone: String
   photo: String
   profile: Profile
-  retiredAt: String
+  retiredOn: DateTimeISO
   supervises: [Employee!]!
   supervisor: Employee
   type: String
@@ -794,17 +1230,22 @@ type EmployeeList {
 input EmployeePatch {
   active: Boolean
   alias: String
+  bankAccount: String
+  bankName: String
+  contact: ObjectRefForContact
   controlNo: String
   cuFlag: String
-  department: ObjectRef
-  hiredOn: String
+  department: ObjectRefForDepartment
+  emergencyContact: String
+  emergencyContactPhone: String
+  hiredOn: DateTimeISO
   id: ID
   jobPosition: String
   jobResponsibility: String
   name: String
   note: String
   photo: Upload
-  retiredAt: String
+  retiredOn: DateTimeISO
   supervisor: ObjectRefForEmployee
   type: EmployeeType
   user: ObjectRefForUser
@@ -829,7 +1270,7 @@ type Entity {
   dataProp: String
   delStrategy: String
   description: String
-  domain: Domain
+  domain: Domain!
   extEntity: Boolean
   fixedColumns: Float
   id: ID!
@@ -854,7 +1295,7 @@ type EntityColumn {
   creator: User
   defVal: String
   description: String
-  domain: Domain
+  domain: Domain!
   entity: Entity!
   formEditor: String
   formFormat: String
@@ -1027,7 +1468,7 @@ type Font {
   active: Boolean!
   createdAt: DateTimeISO
   creator: User
-  domain: Domain
+  domain: Domain!
   files: [Attachment!]
   id: ID!
   name: String!
@@ -1097,6 +1538,53 @@ enum InheritedValueType {
   Only
 }
 
+"""Entity for InspectionDrawingType"""
+type InspectionDrawingType {
+  createdAt: DateTimeISO
+  creator: User
+  domain: Domain
+  id: ID!
+  inspectionParts: [InspectionPart!]
+  name: String
+  updatedAt: DateTimeISO
+  updater: User
+}
+
+type InspectionDrawingTypeList {
+  items: [InspectionDrawingType!]!
+  total: Int!
+}
+
+input InspectionDrawingTypePatch {
+  cuFlag: String
+  id: ID
+  name: String
+}
+
+"""Entity for InspectionPart"""
+type InspectionPart {
+  createdAt: DateTimeISO
+  creator: User
+  id: ID!
+  inspectionDrawingType: InspectionDrawingType
+  name: String
+  sequence: Int
+  updatedAt: DateTimeISO
+  updater: User
+}
+
+type InspectionPartList {
+  items: [InspectionPart!]!
+  total: Int!
+}
+
+input InspectionPartPatch {
+  cuFlag: String
+  id: ID
+  name: String
+  sequence: Int
+}
+
 type Invitation {
   createdAt: DateTimeISO
   creator: User
@@ -1114,6 +1602,45 @@ type InvitationList {
   total: Int
 }
 
+"""Entity for Issue"""
+type Issue {
+  actionPlans: [ActionPlan!]!
+  active: Boolean
+  createdAt: DateTimeISO
+  creator: User
+  deletedAt: DateTimeISO
+  description: String
+  domain: Domain
+  id: ID!
+  name: String
+  params: String
+  state: String
+  thumbnail: String
+  updatedAt: DateTimeISO
+  updater: User
+}
+
+type IssueList {
+  items: [Issue!]!
+  total: Int!
+}
+
+input IssuePatch {
+  active: Boolean
+  cuFlag: String
+  description: String
+  id: ID
+  name: String
+  state: IssueStatus
+  thumbnail: Upload
+}
+
+"""state enumeration of a issue"""
+enum IssueStatus {
+  STATUS_A
+  STATUS_B
+}
+
 """
 A field whose value is a JSON Web Token (JWT): https://jwt.io/introduction.
 """
@@ -1127,13 +1654,15 @@ type LiteMenu {
   createdAt: DateTimeISO
   creator: User
   description: String
-  domain: Domain
+  domain: Domain!
   icon: String
   id: ID!
+  label: String!
+  labels: Object
   name: String!
   parent: String
-  privilege: PrivilegeObject
   rank: Int
+  role: Role
   type: String
   updatedAt: DateTimeISO
   updater: User
@@ -1150,10 +1679,11 @@ input LiteMenuPatch {
   appName: String
   description: String
   icon: String
+  labels: Object
   name: String
   parent: String
-  privilege: PrivilegeInput
   rank: Int
+  role: ObjectRef
   type: String
   value: String
 }
@@ -1185,18 +1715,43 @@ type LoginHistoryList {
   total: Int!
 }
 
+"""담당자 관리"""
+type Manager {
+  id: ID!
+  phone: String
+  position: String
+  user: User
+}
+
+type ManagerOutput {
+  id: ID
+  name: String
+  phone: String
+  position: String
+  updatedAt: String
+  userId: ID!
+}
+
+input ManagerPatch {
+  id: ID
+  name: String
+  phone: String
+  position: String
+  userId: ID
+}
+
 """Entity for Menu"""
 type Menu {
   buttons: [MenuButton!]!
   category: String
-  children: [Menu!]!
+  children(permittedOnly: Boolean! = false): [Menu!]!
   columns: [MenuColumn!]!
   createdAt: DateTimeISO
   creator: User
   description: String
   detailFormId: String
   detailLayout: String
-  domain: Domain
+  domain: Domain!
   fixedColumns: Float
   gridSaveUrl: String
   hiddenFlag: Boolean
@@ -1229,7 +1784,7 @@ type MenuButton {
   auth: String
   createdAt: DateTimeISO
   creator: User
-  domain: Domain
+  domain: Domain!
   icon: String
   id: ID!
   logic: String
@@ -1264,7 +1819,7 @@ type MenuColumn {
   creator: User
   defVal: String
   description: String
-  domain: Domain
+  domain: Domain!
   extField: Boolean
   formEditor: String
   formFormat: String
@@ -1353,7 +1908,7 @@ type MenuDetail {
   creator: User
   customView: String
   dataProp: String
-  domain: Domain
+  domain: Domain!
   entityId: String
   id: ID!
   masterField: String
@@ -1370,7 +1925,7 @@ type MenuDetail {
 type MenuDetailButton {
   createdAt: DateTimeISO
   creator: User
-  domain: Domain
+  domain: Domain!
   icon: String
   id: ID!
   logic: String
@@ -1404,7 +1959,7 @@ type MenuDetailColumn {
   creator: User
   defVal: String
   description: String
-  domain: Domain
+  domain: Domain!
   extField: Boolean
   formEditor: String
   formFormat: String
@@ -1546,9 +2101,14 @@ type Mutation {
   """To activate user"""
   activateUser(userId: String!): Boolean!
 
-  """To attach a contact on Employee"""
+  """
+  Attaches an existing contact to an employee. The contact is identified by its ID and the employee is identified by their ID.
+  """
   attachContact(contactId: String!, id: String!): Employee!
   cancelInvitation(email: EmailAddress!, reference: String!, type: String!): Boolean!
+
+  """To clear translations cache"""
+  clearTranslationsCache: Boolean!
 
   """To clone a Board from existing Board"""
   cloneBoard(id: String!, patch: BoardPatch!, targetGroupId: String, targetSubdomain: String!): Board!
@@ -1558,6 +2118,9 @@ type Mutation {
 
   """To import multiple scenarios"""
   copyScenarios(ids: [String!]!): [Scenario!]!
+
+  """To create new ActionPlan"""
+  createActionPlan(actionPlan: NewActionPlan!): ActionPlan!
 
   """To create new appliance"""
   createAppliance(appliance: NewAppliance!): Appliance!
@@ -1582,6 +2145,12 @@ type Mutation {
   """To create new BoardTemplate"""
   createBoardTemplate(boardTemplate: NewBoardTemplate!): BoardTemplate!
 
+  """To create Building Inspection information"""
+  createBuildingInspection(patch: NewBuildingInspection!): BuildingInspection!
+
+  """To create new Checklist"""
+  createChecklist(checklist: NewChecklist!): Checklist!
+
   """To create new CommonCode"""
   createCommonCode(commonCode: NewCommonCode!): CommonCode!
 
@@ -1600,7 +2169,9 @@ type Mutation {
   """To create domain (Only superuser is granted this privilege.)"""
   createDomain(domainInput: DomainPatch!): Domain!
 
-  """To create new Employee"""
+  """
+  Creates a new employee record with the provided details. Optionally associates the employee with a supervisor, department, and system user. If a photo is provided, it will be attached to the employee record.
+  """
   createEmployee(employee: NewEmployee!): Employee!
 
   """To create new Entity"""
@@ -1617,6 +2188,9 @@ type Mutation {
 
   """To create new Group"""
   createGroup(group: NewGroup!): Group
+
+  """To create new Issue"""
+  createIssue(issue: NewIssue!): Issue!
 
   """To create new LiteMenu"""
   createLiteMenu(liteMenu: NewLiteMenu!): LiteMenu!
@@ -1642,6 +2216,9 @@ type Mutation {
   """To create new ApprovalLine for current user"""
   createMyApprovalLine(approvalLine: NewApprovalLine!): ApprovalLine!
 
+  """To create my new PagePreference"""
+  createMyPagePreference(pagePreference: NewPagePreference!): PagePreference!
+
   """To create new Notification"""
   createNotification(notification: NewNotification!): Notification!
 
@@ -1663,8 +2240,14 @@ type Mutation {
   """To create new privilege"""
   createPrivilege(privilege: NewPrivilege!): Privilege!
 
-  """To create new Project"""
+  """프로젝트 생성"""
   createProject(project: NewProject!): Project!
+
+  """To create new ProjectReport"""
+  createProjectReport(projectReport: NewProjectReport!): ProjectReport!
+
+  """To create new Resource"""
+  createResource(resource: NewResource!): Resource!
 
   """To create new user"""
   createRole(role: NewRole!): User!
@@ -1678,8 +2261,14 @@ type Mutation {
   """To create new StateRegister"""
   createStateRegister(stateRegister: NewStateRegister!): StateRegister!
 
+  """To create new Supervisor"""
+  createSupervisor(supervisor: NewSupervisor!): Supervisor!
+
   """To create new Task"""
   createTask(task: NewTask!): Task!
+
+  """To create new TaskResource"""
+  createTaskResource(taskResource: NewTaskResource!): TaskResource!
 
   """To create new Terminology"""
   createTerminology(terminology: NewTerminology!): Terminology!
@@ -1689,6 +2278,15 @@ type Mutation {
 
   """To create new user"""
   createUser(user: NewUser!): User!
+
+  """To create new UserPreference"""
+  createUserPreference(preference: NewUserPreference!): UserPreference!
+
+  """To delete ActionPlan"""
+  deleteActionPlan(id: String!): Boolean!
+
+  """To delete multiple ActionPlans"""
+  deleteActionPlans(ids: [String!]!): Boolean!
   deleteAppBinding(id: String!): Boolean!
 
   """To delete appliance"""
@@ -1703,7 +2301,7 @@ type Mutation {
   """To delete multiple ApprovalLines"""
   deleteApprovalLines(ids: [String!]!): Boolean!
   deleteAttachment(id: String!): Boolean!
-  deleteAttachmentsByRef(refBys: [String!]!): Boolean!
+  deleteAttachmentsByRef(refBys: [String!]!, refType: String): Boolean!
 
   """To delete AttributeSet"""
   deleteAttributeSet(id: String!): Boolean!
@@ -1720,6 +2318,36 @@ type Mutation {
 
   """To delete BoardTemplate"""
   deleteBoardTemplate(id: String!): Boolean!
+
+  """To delete Building"""
+  deleteBuilding(id: String!): Boolean!
+
+  """To delete BuildingComplex"""
+  deleteBuildingComplex(id: String!): Boolean!
+
+  """To delete multiple BuildingComplexes"""
+  deleteBuildingComplexes(ids: [String!]!): Boolean!
+
+  """To delete multiple Checklists"""
+  deleteBuildingInspections(ids: [String!]!): Boolean!
+
+  """To delete multiple Buildings"""
+  deleteBuildings(ids: [String!]!): Boolean!
+
+  """To delete ChecklistTemplateItem"""
+  deleteChecklistTemplateItem(id: String!): Boolean!
+
+  """To delete multiple ChecklistTemplateItems"""
+  deleteChecklistTemplateItems(ids: [String!]!): Boolean!
+
+  """To delete multiple ChecklistTemplates"""
+  deleteChecklistTemplates(ids: [String!]!): Boolean!
+
+  """To delete multiple ChecklistTypes"""
+  deleteChecklistTypes(ids: [String!]!): Boolean!
+
+  """To delete multiple Checklists"""
+  deleteChecklists(ids: [String!]!): Boolean!
 
   """To delete CommonCode"""
   deleteCommonCode(id: String!): Boolean!
@@ -1738,6 +2366,12 @@ type Mutation {
 
   """To delete multiple connections"""
   deleteConnections(names: [String!]!): Boolean!
+
+  """To delete multiple ConstructionDetailTypes"""
+  deleteConstructionDetailTypes(ids: [String!]!): Boolean!
+
+  """To delete multiple ConstructionTypes"""
+  deleteConstructionTypes(ids: [String!]!): Boolean!
 
   """To delete Contact"""
   deleteContact(id: String!): Boolean!
@@ -1760,10 +2394,14 @@ type Mutation {
   """To delete multiple domains (Only superuser is granted this privilege.)"""
   deleteDomains(names: [String!]!): Boolean!
 
-  """To delete Employee"""
+  """
+  Deletes an employee record identified by the given ID. Also deletes any attachments associated with the employee.
+  """
   deleteEmployee(id: String!): Boolean!
 
-  """To delete multiple Employees"""
+  """
+  Deletes multiple employee records identified by the given IDs. Also deletes any attachments associated with each employee.
+  """
   deleteEmployees(ids: [String!]!): Boolean!
 
   """To delete multiple Entities"""
@@ -1786,6 +2424,18 @@ type Mutation {
 
   """To delete Group"""
   deleteGroup(id: String!): Boolean!
+
+  """To delete multiple InspectionDrawingTypes"""
+  deleteInspectionDrawingTypes(ids: [String!]!): Boolean!
+
+  """To delete multiple InspectionParts"""
+  deleteInspectionParts(ids: [String!]!): Boolean!
+
+  """To delete Issue"""
+  deleteIssue(id: String!): Boolean!
+
+  """To delete multiple Issues"""
+  deleteIssues(ids: [String!]!): Boolean!
 
   """To delete LiteMenu"""
   deleteLiteMenu(id: String!): Boolean!
@@ -1832,6 +2482,12 @@ type Mutation {
   """To delete multiple ApprovalLines for current user"""
   deleteMyApprovalLines(ids: [String!]!): Boolean!
 
+  """To delete my PagePreference"""
+  deleteMyPagePreference(element: String!, page: String!): Boolean!
+
+  """To delete my preference"""
+  deleteMyUserPreference(element: String!, key: String!): Boolean!
+
   """To delete Notification"""
   deleteNotification(id: String!): Boolean!
 
@@ -1849,6 +2505,12 @@ type Mutation {
 
   """To delete multiple Oauth2Clients"""
   deleteOauth2Clients(ids: [String!]!): Boolean!
+
+  """To delete PagePreference"""
+  deletePagePreference(id: String!): Boolean!
+
+  """To delete multiple PagePreferences"""
+  deletePagePreferences(ids: [String!]!): Boolean!
 
   """To delete multiple partnerSettings"""
   deletePartnerSettings(ids: [String!]!): Boolean!
@@ -1874,8 +2536,17 @@ type Mutation {
   """To delete Project"""
   deleteProject(id: String!): Boolean!
 
-  """To delete multiple Projects"""
-  deleteProjects(ids: [String!]!): Boolean!
+  """To delete ProjectReport"""
+  deleteProjectReport(id: String!): Boolean!
+
+  """To delete multiple ProjectReports"""
+  deleteProjectReports(ids: [String!]!): Boolean!
+
+  """To delete Resource"""
+  deleteResource(id: String!): Boolean!
+
+  """To delete multiple Resources"""
+  deleteResources(ids: [String!]!): Boolean!
 
   """To delete role"""
   deleteRole(id: String!): Boolean!
@@ -1904,8 +2575,20 @@ type Mutation {
   """To delete multiple steps"""
   deleteSteps(ids: [String!]!): Boolean!
 
+  """To delete Supervisor"""
+  deleteSupervisor(id: String!): Boolean!
+
+  """To delete multiple Supervisors"""
+  deleteSupervisors(ids: [String!]!): Boolean!
+
   """To delete Task"""
   deleteTask(id: String!): Boolean!
+
+  """To delete TaskResource"""
+  deleteTaskResource(id: String!): Boolean!
+
+  """To delete multiple TaskResources"""
+  deleteTaskResources(ids: [String!]!): Boolean!
 
   """To delete multiple Tasks"""
   deleteTasks(ids: [String!]!): Boolean!
@@ -1925,10 +2608,21 @@ type Mutation {
   """To delete a user"""
   deleteUser(email: EmailAddress!): Boolean!
 
+  """To delete UserPreference"""
+  deleteUserPreference(id: String!): Boolean!
+
+  """To delete multiple UserPreferences"""
+  deleteUserPreferences(ids: [String!]!): Boolean!
+
   """To delete some users"""
   deleteUsers(emails: [String!]!): Boolean!
 
-  """To detach a contact from Employee"""
+  """To delete multiple WorkerTypes"""
+  deleteWorkerTypes(ids: [String!]!): Boolean!
+
+  """
+  Detaches an existing contact from an employee. The employee is identified by their ID.
+  """
   detachContact(id: String!): Employee!
 
   """To disconnect a connection"""
@@ -1943,6 +2637,9 @@ type Mutation {
   getOauth2AuthUrl(id: String!): String!
   grantRoles(customerId: String!, roles: [RolePatch!]!): Boolean!
 
+  """To import multiple ActionPlans"""
+  importActionPlans(actionPlans: [ActionPlanPatch!]!): Boolean!
+
   """To import multiple ApprovalLines"""
   importApprovalLines(approvalLines: [ApprovalLinePatch!]!): Boolean!
 
@@ -1954,6 +2651,9 @@ type Mutation {
 
   """To import some Boards"""
   importBoards(files: [Upload!]!, groupId: String!, overwrite: Boolean!): [Board!]!
+
+  """To import multiple Buildings"""
+  importBuildings(buildings: [BuildingPatch!]!): Boolean!
 
   """To import multiple CommonCodeDetails"""
   importCommonCodeDetails(commonCodeDetails: [CommonCodeDetailPatch!]!): Boolean!
@@ -1970,8 +2670,13 @@ type Mutation {
   """To import multiple Departments"""
   importDepartments(departments: [DepartmentPatch!]!): Boolean!
 
-  """To import multiple Employees"""
+  """
+  Imports multiple employee records into the system. Each employee record must be provided in the EmployeePatch format.
+  """
   importEmployees(employees: [EmployeePatch!]!): Boolean!
+
+  """To import multiple Issues"""
+  importIssues(issues: [IssuePatch!]!): Boolean!
 
   """To import multiple MenuButtons"""
   importMenuButtons(menuButtons: [MenuButtonPatch!]!): Boolean!
@@ -1997,14 +2702,23 @@ type Mutation {
   """To import multiple Oauth2Clients"""
   importOauth2Clients(oauth2Clients: [Oauth2ClientPatch!]!): Boolean!
 
-  """To import multiple Projects"""
-  importProjects(projects: [ProjectPatch!]!): Boolean!
+  """To import multiple ProjectReports"""
+  importProjectReports(projectReports: [ProjectReportPatch!]!): Boolean!
+
+  """To import multiple Resources"""
+  importResources(resources: [ResourcePatch!]!): Boolean!
 
   """To import multiple scenarios"""
   importScenarios(scenarios: [ScenarioPatch!]!): Boolean!
 
   """To import multiple StateRegisters"""
   importStateRegisters(stateRegisters: [StateRegisterPatch!]!): Boolean!
+
+  """To import multiple Supervisors"""
+  importSupervisors(supervisors: [SupervisorPatch!]!): Boolean!
+
+  """To import multiple TaskResources"""
+  importTaskResources(taskResources: [TaskResourcePatch!]!): Boolean!
 
   """To import multiple Tasks"""
   importTasks(tasks: [TaskPatch!]!): Boolean!
@@ -2050,6 +2764,14 @@ type Mutation {
     visibility: String!
   ): BoardTemplate!
 
+  """
+  Registers an existing employee as a system user, granting them access to the system. The employee is identified by their ID.
+  """
+  registerEmployeeAsSystemUser(
+    """Employee Id"""
+    employeeId: String!
+  ): Boolean!
+
   """To release a Board"""
   releaseBoard(id: String!): Board!
   renewApplicationAccessToken(id: String!, scope: String!): AccessToken!
@@ -2066,7 +2788,7 @@ type Mutation {
   """
   To run new scenario instance and will return the result after the scenario stop.
   """
-  runScenario(instanceName: String, scenarioName: String!, variables: Object): ScenarioInstance!
+  runScenario(instanceName: String, scenarioName: String!, variables: Object): ScenarioInstanceRunResult!
   sendInvitation(email: EmailAddress!, reference: String!, type: String!): Invitation!
   singleUpload(file: Upload!): Attachment!
 
@@ -2093,6 +2815,9 @@ type Mutation {
 
   """To transfer owner of domain"""
   transferOwner(email: EmailAddress!): Boolean!
+
+  """To modify ActionPlan information"""
+  updateActionPlan(id: String!, patch: ActionPlanPatch!): ActionPlan!
   updateAppliance(id: String!, patch: AppliancePatch!): Appliance!
   updateApplication(id: String!, patch: ApplicationPatch!): Application!
 
@@ -2111,6 +2836,21 @@ type Mutation {
 
   """To modify BoardTemplate information"""
   updateBoardTemplate(id: String!, patch: BoardTemplatePatch!): BoardTemplate!
+
+  """To modify Building information"""
+  updateBuilding(id: String!, patch: BuildingPatch!): Building!
+
+  """To modify BuildingComplex information"""
+  updateBuildingComplex(id: String!, patch: BuildingComplexPatch!): BuildingComplex!
+
+  """To update Building Inspection information"""
+  updateBuildingInspection(patch: UpdateBuildingInspectionDrawingMarker!): BuildingInspection!
+
+  """To create Building Inspection And Checklist information"""
+  updateBuildingInspectionChecklist(buildingInspection: UpdateBuildingInspectionSubmitType!): Boolean!
+
+  """To modify Checklist information"""
+  updateChecklist(id: String!, patch: ChecklistPatch!): Checklist!
 
   """To modify CommonCode information"""
   updateCommonCode(name: String!, patch: CommonCodePatch!): CommonCode!
@@ -2133,7 +2873,9 @@ type Mutation {
   """To update multiple domains (Only superuser is granted this privilege.)"""
   updateDomains(patches: [DomainPatch!]!): Boolean!
 
-  """To modify Employee information"""
+  """
+  Updates the details of an existing employee identified by the given ID. Optionally updates the supervisor, department, system user, and photo associated with the employee.
+  """
   updateEmployee(id: String!, patch: EmployeePatch!): Employee!
 
   """To modify Entity' information"""
@@ -2147,6 +2889,9 @@ type Mutation {
 
   """To modify Group information"""
   updateGroup(id: String!, patch: GroupPatch!): Group!
+
+  """To modify Issue information"""
+  updateIssue(id: String!, patch: IssuePatch!): Issue!
 
   """To modify LiteMenu information"""
   updateLiteMenu(id: String!, patch: LiteMenuPatch!): LiteMenu!
@@ -2169,12 +2914,30 @@ type Mutation {
   """To modify MenuDetailColumn information"""
   updateMenuDetailColumn(id: String!, patch: MenuDetailColumnPatch!): MenuDetailColumn!
 
+  """To modify multiple ActionPlans' information"""
+  updateMultipleActionPlan(patches: [ActionPlanPatch!]!): [ActionPlan!]!
+
   """To modify multiple ApprovalLines' information"""
   updateMultipleApprovalLine(patches: [ApprovalLinePatch!]!): [ApprovalLine!]!
 
   """To modify multiple AttributeSets' information"""
   updateMultipleAttributeSet(patches: [AttributeSetPatch!]!): [AttributeSet!]!
   updateMultipleAuthProvider(patches: [AuthProviderPatch!]!): [AuthProvider!]!
+
+  """To modify multiple Buildings' information"""
+  updateMultipleBuilding(patches: [BuildingPatch!]!): [Building!]!
+
+  """To modify multiple Checklists' information"""
+  updateMultipleChecklist(patches: [ChecklistPatch!]!): [Checklist!]!
+
+  """To modify multiple ChecklistTemplates' information"""
+  updateMultipleChecklistTemplate(patches: [ChecklistTemplatePatch!]!): [ChecklistTemplate!]!
+
+  """To modify multiple ChecklistTemplateItems' information"""
+  updateMultipleChecklistTemplateItems(checklistTemplateId: String!, patches: [ChecklistTemplateItemPatch!]!): [ChecklistTemplateItem!]!
+
+  """To modify multiple ChecklistTypes' information"""
+  updateMultipleChecklistType(patches: [ChecklistTypePatch!]!): [ChecklistType!]!
 
   """To modify multiple CommonCodes' information"""
   updateMultipleCommonCode(patches: [CommonCodePatch!]!): [CommonCode!]!
@@ -2185,13 +2948,21 @@ type Mutation {
   """To modify multiple connections' information"""
   updateMultipleConnection(patches: [ConnectionPatch!]!): [Connection!]!
 
+  """To modify multiple ConstructionDetailTypes' information"""
+  updateMultipleConstructionDetailType(constructionTypeId: String!, patches: [ConstructionDetailTypePatch!]!): [ConstructionDetailType!]!
+
+  """To modify multiple ConstructionTypes' information"""
+  updateMultipleConstructionType(patches: [ConstructionTypePatch!]!): [ConstructionType!]!
+
   """To modify multiple Contacts' information"""
   updateMultipleContact(patches: [ContactPatch!]!): [Contact!]!
 
   """To modify multiple Departments' information"""
   updateMultipleDepartment(patches: [DepartmentPatch!]!): [Department!]!
 
-  """To modify multiple Employees' information"""
+  """
+  Updates or creates multiple employee records based on the provided patches. New employees are created if the "cuFlag" is "+", and existing employees are updated if the "cuFlag" is "M".
+  """
   updateMultipleEmployee(patches: [EmployeePatch!]!): [Employee!]!
 
   """To modify multiple Entitys' information"""
@@ -2199,6 +2970,18 @@ type Mutation {
 
   """To modify multiple Entitys' information"""
   updateMultipleEntityColumn(patches: [EntityColumnPatch!]!): [EntityColumn!]!
+
+  """To modify multiple InspectionDrawingTypes' information"""
+  updateMultipleInspectionDrawingType(patches: [InspectionDrawingTypePatch!]!): [InspectionDrawingType!]!
+
+  """To modify multiple InspectionParts' information"""
+  updateMultipleInspectionPart(inspectionDrawingTypeId: String!, patches: [InspectionPartPatch!]!): [InspectionPart!]!
+
+  """To modify multiple Issues' information"""
+  updateMultipleIssue(patches: [IssuePatch!]!): [Issue!]!
+
+  """To modify multiple Managers' information"""
+  updateMultipleManager(patches: [ManagerPatch!]!): [Manager!]!
 
   """To modify multiple Menus' information"""
   updateMultipleMenu(patches: [MenuPatch!]!): [Menu!]!
@@ -2221,8 +3004,11 @@ type Mutation {
   """To modify multiple PrinterDevices' information"""
   updateMultiplePrinterDevice(patches: [PrinterDevicePatch!]!): [PrinterDevice!]!
 
-  """To modify multiple Projects' information"""
-  updateMultipleProject(patches: [ProjectPatch!]!): [Project!]!
+  """To modify multiple ProjectReports' information"""
+  updateMultipleProjectReport(patches: [ProjectReportPatch!]!): [ProjectReport!]!
+
+  """To modify multiple Resources' information"""
+  updateMultipleResource(patches: [ResourcePatch!]!): [Resource!]!
 
   """To modify multiple scenarios' information"""
   updateMultipleScenario(patches: [ScenarioPatch!]!): [Scenario!]!
@@ -2236,8 +3022,14 @@ type Mutation {
   """To modify multiple steps' in a scenario"""
   updateMultipleStep(patches: [StepPatch!]!, scenarioId: String!): [Step!]!
 
+  """To modify multiple Supervisors' information"""
+  updateMultipleSupervisor(patches: [SupervisorPatch!]!): [Supervisor!]!
+
   """To modify multiple Tasks' information"""
   updateMultipleTask(patches: [TaskPatch!]!): [Task!]!
+
+  """To modify multiple TaskResources' information"""
+  updateMultipleTaskResource(patches: [TaskResourcePatch!]!): [TaskResource!]!
 
   """To modify multiple Terminologies' information"""
   updateMultipleTerminologies(patches: [TerminologyPatch!]!): [Terminology!]!
@@ -2248,8 +3040,17 @@ type Mutation {
   """To modify multiple users information"""
   updateMultipleUser(patches: [UserPatch!]!): [User!]!
 
+  """To modify multiple WorkerTypes' information"""
+  updateMultipleWorkerType(patches: [WorkerTypePatch!]!): [WorkerType!]!
+
   """To modify ApprovalLine information for current user"""
   updateMyApprovalLine(id: String!, patch: ApprovalLinePatch!): ApprovalLine!
+
+  """To create or update my PagePreference"""
+  updateMyPagePreference(element: String!, page: String!, preference: Object!): PagePreference!
+
+  """To create or update my preference"""
+  updateMyUserPreference(key: String!, preference: Object!): UserPreference!
 
   """To modify Notification information"""
   updateNotification(id: String!, patch: NotificationPatch!): Notification!
@@ -2272,8 +3073,17 @@ type Mutation {
   """To modify privilege information"""
   updatePrivilege(category: String!, name: String!, patch: PrivilegePatch!): Privilege!
 
-  """To modify Project information"""
-  updateProject(id: String!, patch: ProjectPatch!): Project!
+  """프로젝트 업데이트"""
+  updateProject(project: ProjectPatch!): Project!
+
+  """프로젝트 도면 업데이트"""
+  updateProjectPlan(project: ProjectPatch!): Project!
+
+  """To modify ProjectReport information"""
+  updateProjectReport(id: String!, patch: ProjectReportPatch!): ProjectReport!
+
+  """To modify Resource information"""
+  updateResource(id: String!, patch: ResourcePatch!): Resource!
 
   """To modify role information"""
   updateRole(id: String!, patch: RolePatch!): Role!
@@ -2299,8 +3109,14 @@ type Mutation {
   """To update state of StateRegister by name"""
   updateStateRegisterByName(name: String!, state: Object!): StateRegister!
 
+  """To modify Supervisor information"""
+  updateSupervisor(id: String!, patch: SupervisorPatch!): Supervisor!
+
   """To modify Task information"""
   updateTask(id: String!, patch: TaskPatch!): Task!
+
+  """To modify TaskResource information"""
+  updateTaskResource(id: String!, patch: TaskResourcePatch!): TaskResource!
 
   """To modify Terminology information"""
   updateTerminology(id: String!, patch: TerminologyPatch!): Terminology!
@@ -2311,8 +3127,20 @@ type Mutation {
   """To modify user information"""
   updateUser(email: EmailAddress!, patch: UserPatch!): User!
 
+  """To modify UserPreference information"""
+  updateUserPreference(id: String!, patch: UserPreferencePatch!): UserPreference!
+
   """To update roles for a user"""
   updateUserRoles(availableRoles: [ObjectRef!]!, selectedRoles: [ObjectRef!]!, userId: String!): User!
+}
+
+input NewActionPlan {
+  active: Boolean
+  description: String
+  name: String!
+  params: String
+  state: ActionPlanStatus
+  thumbnail: Upload
 }
 
 input NewAppliance {
@@ -2349,6 +3177,7 @@ input NewAttachment {
   file: Upload!
   refBy: String
   refType: String
+  tags: Object
 }
 
 input NewAttributeSet {
@@ -2382,6 +3211,19 @@ input NewBoardTemplate {
   name: String!
   thumbnail: String
   visibility: String!
+}
+
+input NewBuildingInspection {
+  buildingLevelId: String!
+  checklist: ChecklistInputType!
+  checklistItem: [ChecklistItemInputType!]!
+}
+
+input NewChecklist {
+  active: Boolean
+  description: String
+  name: String!
+  params: String
 }
 
 input NewCommonCode {
@@ -2433,16 +3275,21 @@ input NewDepartment {
 input NewEmployee {
   active: Boolean
   alias: String
+  bankAccount: String
+  bankName: String
+  contact: ObjectRefForContact
   controlNo: String!
-  department: ObjectRef
+  department: ObjectRefForDepartment
+  emergencyContact: String
+  emergencyContactPhone: String
   extension: String
-  hiredOn: String
+  hiredOn: DateTimeISO
   jobPosition: String
   jobResponsibility: String
   name: String!
   note: String
   photo: Upload
-  retiredAt: String
+  retiredOn: DateTimeISO
   supervisor: ObjectRefForEmployee
   type: EmployeeType
   user: ObjectRefForUser
@@ -2524,15 +3371,25 @@ input NewGroup {
   name: String!
 }
 
+input NewIssue {
+  active: Boolean
+  description: String
+  name: String!
+  params: String
+  state: IssueStatus
+  thumbnail: Upload
+}
+
 input NewLiteMenu {
   active: Boolean
   appName: String
   description: String
   icon: String
+  labels: Object
   name: String!
   parent: String
-  privilege: PrivilegeInput
   rank: Int
+  role: ObjectRef
   type: String
   value: String
 }
@@ -2722,6 +3579,13 @@ input NewOauth2Client {
   webhook: String
 }
 
+input NewPagePreference {
+  element: String
+  page: String
+  preference: Object!
+  user: ObjectRef!
+}
+
 input NewPayloadLog {
   description: String
   name: String!
@@ -2758,12 +3622,26 @@ input NewPrivilege {
 }
 
 input NewProject {
+  """연관된 건물 복합체 정보 (선택 사항)"""
+  buildingComplex: ObjectRef
+
+  """프로젝트 이름"""
+  name: String!
+}
+
+input NewProjectReport {
   active: Boolean
   description: String
   name: String!
   params: String
-  state: ProjectStatus
+  state: ProjectReportStatus
   thumbnail: Upload
+}
+
+input NewResource {
+  name: String!
+  type: ResourceType!
+  unit: String!
 }
 
 input NewRole {
@@ -2777,9 +3655,10 @@ input NewScenario {
   active: Boolean
   description: String
   name: String!
-  privilege: PrivilegeInput
+  role: ObjectRef
   schedule: String
   timezone: String
+  ttl: Float
   type: String
 }
 
@@ -2791,21 +3670,72 @@ input NewSetting {
 }
 
 input NewStateRegister {
+  """Description of the state register"""
   description: String
+
+  """Group name for the state register"""
+  group: String
+
+  """Name of the state register"""
   name: String!
+
+  """Number of decimal places if the state is a number type"""
+  place: String
+
+  """
+  Reference to an external entity or data, used as a flexible foreign key
+  """
   refBy: String
+
+  """Current state value"""
   state: Object
+
+  """Time to live for the state value in seconds"""
   ttl: Int
+
+  """Type of the state"""
   type: String
+
+  """Unit of the state value"""
+  unit: String
 }
 
-input NewTask {
+input NewSupervisor {
   active: Boolean
   description: String
   name: String!
   params: String
-  state: TaskStatus
+  state: SupervisorStatus
   thumbnail: Upload
+}
+
+input NewTask {
+  """작업이 활성 상태인지 여부 (선택 사항)"""
+  active: Boolean
+
+  """프로젝트 내에서 유니크한 작업 코드"""
+  code: String!
+
+  """작업에 대한 설명 (선택 사항)"""
+  description: String
+
+  """작업의 이름"""
+  name: String!
+
+  """작업에 대한 추가 파라미터, JSON 형식으로 저장 (선택 사항)"""
+  params: String
+
+  """부모 작업, 해당 작업이 하위 작업인 경우 (선택 사항)"""
+  parent: ObjectRefForTask
+
+  """작업이 속한 프로젝트 (선택 사항)"""
+  project: ObjectRefForProject
+}
+
+input NewTaskResource {
+  quantity: Float!
+  resourceId: ID!
+  taskId: ID!
 }
 
 input NewTerminology {
@@ -2842,12 +3772,18 @@ input NewUserByDomainWizardInput {
   roles: [NewRole!]!
 }
 
+input NewUserPreference {
+  key: String!
+  preference: Object!
+  user: ObjectRef!
+}
+
 """Entity for Notification"""
 type Notification {
   body: String
   createdAt: DateTimeISO
   creator: User
-  domain: Domain
+  domain: Domain!
   id: ID!
   image: String
   owner: User
@@ -2881,7 +3817,7 @@ type NotificationRule {
   creator: User
   deletedAt: DateTimeISO
   description: String
-  domain: Domain
+  domain: Domain!
   id: ID!
   name: String
 
@@ -2938,7 +3874,7 @@ type Oauth2Client {
   createdAt: DateTimeISO
   creator: User
   description: String
-  domain: Domain
+  domain: Domain!
   expires: DateTimeISO
   grantType: String
   icon: String
@@ -3009,6 +3945,34 @@ input ObjectRefApprovalLineOwnerType {
   name: String
 }
 
+input ObjectRefForContact {
+  address: String
+
+  """Field description"""
+  description: String
+  email: EmailAddress
+
+  """Field id"""
+  id: ID!
+
+  """Field name"""
+  name: String
+  phone: String
+}
+
+input ObjectRefForDepartment {
+  controlNo: String
+
+  """Field description"""
+  description: String
+
+  """Field id"""
+  id: ID!
+
+  """Field name"""
+  name: String
+}
+
 input ObjectRefForEmployee {
   active: Boolean
   alias: String
@@ -3017,7 +3981,7 @@ input ObjectRefForEmployee {
   """Field description"""
   description: String
   email: EmailAddress
-  hiredOn: String
+  hiredOn: DateTimeISO
 
   """Field id"""
   id: ID!
@@ -3028,6 +3992,31 @@ input ObjectRefForEmployee {
   name: String
   photo: String
   type: EmployeeType
+}
+
+input ObjectRefForProject {
+  """Field description"""
+  description: String
+
+  """Field id"""
+  id: ID!
+
+  """프로젝트 이름 (선택 사항)"""
+  name: String
+}
+
+input ObjectRefForTask {
+  """작업 코드 (선택 사항)"""
+  code: String
+
+  """Field description"""
+  description: String
+
+  """Field id"""
+  id: ID!
+
+  """Field name"""
+  name: String
 }
 
 input ObjectRefForUser {
@@ -3065,18 +4054,37 @@ enum OrgMemberTargetType {
   Role
 }
 
+"""Entity for PagePreference"""
+type PagePreference {
+  createdAt: DateTimeISO
+  creator: User
+  domain: Domain!
+  element: String
+  id: ID!
+  page: String
+  preference: Object
+  updatedAt: DateTimeISO
+  updater: User
+  user: User!
+}
+
+type PagePreferenceList {
+  items: [PagePreference!]!
+  total: Int!
+}
+
 input Pagination {
   limit: Int
   page: Int
 }
 
 type Partner {
-  approvedAt: DateTimeISO!
+  approvedAt: DateTimeISO
   approver: User
   domain: Domain!
   id: ID!
   partnerDomain: Domain!
-  requestedAt: DateTimeISO!
+  requestedAt: DateTimeISO
   requester: User
 }
 
@@ -3091,7 +4099,7 @@ type PartnerSetting {
   createdAt: DateTimeISO
   creator: User
   description: String
-  domain: Domain
+  domain: Domain!
   id: ID!
   name: String
   partnerDomain: Domain
@@ -3116,11 +4124,23 @@ input PartnerSettingPatch {
   value: String
 }
 
+type PasswordRule {
+  allowRepeat: Boolean
+  digit: Boolean
+  looseCharacterLength: Float
+  lowerCase: Boolean
+  specialCharacter: Boolean
+  tightCharacterLength: Float
+  upperCase: Boolean
+  useLoosePattern: Boolean
+  useTightPattern: Boolean
+}
+
 """Entity for PayloadLog"""
 type PayloadLog {
   createdAt: DateTimeISO
   creator: User
-  domain: Domain
+  domain: Domain!
   endpoint: String!
   id: ID!
   name: String!
@@ -3237,13 +4257,6 @@ type Privilege {
   updater: User
 }
 
-input PrivilegeInput {
-  category: String
-  owner: Boolean
-  privilege: String
-  super: Boolean
-}
-
 type PrivilegeList {
   items: [Privilege!]
   total: Int
@@ -3281,43 +4294,114 @@ input ProfileInput {
   zoom: Float
 }
 
-"""Entity for Project"""
+"""프로젝트"""
 type Project {
-  active: Boolean
+  buildingComplex: BuildingComplex
   createdAt: DateTimeISO
   creator: User
   deletedAt: DateTimeISO
+  domain: Domain
+  endDate: String
+  id: ID!
+  inspPassRate: Float
+  kpi: Float
+  mainPhoto: Attachment
+  name: String!
+  robotProgressRate: Float
+  rootTasks: [Task!]
+  startDate: String
+  state: String!
+  structuralSafetyRate: Float
+  tasks: [Task!]
+  totalProgress: Float
+  updatedAt: DateTimeISO
+  updater: User
+  weeklyProgress: Float
+}
+
+type ProjectList {
+  """프로젝트 리스트 항목들"""
+  items: [Project!]!
+
+  """전체 프로젝트 수"""
+  total: Int!
+}
+
+input ProjectPatch {
+  buildingComplex: BuildingComplexPatch
+
+  """프로젝트 준공일정"""
+  endDate: String
+
+  """수정할 프로젝트의 ID"""
+  id: String!
+
+  """검측/통과 비율 (%)"""
+  inspPassRate: Float
+
+  """프로젝트 KPI"""
+  kpi: Float
+
+  """프로젝트 대표 사진 업로드"""
+  mainPhotoUpload: Upload
+
+  """프로젝트 이름"""
+  name: String!
+
+  """로봇 작업 진행율 (%)"""
+  robotProgressRate: Float
+
+  """프로젝트 착공일정"""
+  startDate: String
+
+  """구조 안전도 (%)"""
+  structuralSafetyRate: Float
+
+  """프로젝트 전체 진행현황 (%)"""
+  totalProgress: Float
+
+  """프로젝트 주간 진행현황 (%)"""
+  weeklyProgress: Float
+}
+
+"""Entity for ProjectReport"""
+type ProjectReport {
+  active: Boolean
+  content: String
+  createdAt: DateTimeISO
+  creator: User
+  date: DateTimeISO
+  deletedAt: DateTimeISO
   description: String
   domain: Domain
-  endDate: DateTimeISO
   id: ID!
   name: String
   params: String
-  startDate: DateTimeISO
+  project: Project!
   state: String
-  tasks: [Task!]
+  supervisor: Supervisor!
   thumbnail: String
   updatedAt: DateTimeISO
   updater: User
 }
 
-type ProjectList {
-  items: [Project!]!
+type ProjectReportList {
+  items: [ProjectReport!]!
   total: Int!
 }
 
-input ProjectPatch {
+input ProjectReportPatch {
   active: Boolean
   cuFlag: String
   description: String
   id: ID
   name: String
-  state: ProjectStatus
+  state: ProjectReportStatus
   thumbnail: Upload
 }
 
-"""state enumeration of a project"""
-enum ProjectStatus {
+"""state enumeration of a projectReport"""
+enum ProjectReportStatus {
   STATUS_A
   STATUS_B
 }
@@ -3327,11 +4411,18 @@ type PropertySpec {
   name: String!
   placeholder: String
   property: Object
+  styles: Object
   type: String!
 }
 
 type Query {
   APIDocCompletion(input: APIDocCompletionInput!): APIDocCompletionOutput!
+
+  """To fetch a ActionPlan"""
+  actionPlan(id: String!): ActionPlan
+
+  """To fetch multiple ActionPlans"""
+  actionPlans(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): ActionPlanList!
   appBinding(id: String!): AppBinding!
   appBindings(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): AppBindingList!
 
@@ -3405,22 +4496,82 @@ type Query {
 
   """To fetch Boards created by me"""
   boardsCreatedByMe(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): BoardList!
+
+  """To fetch a building"""
+  building(id: String!): Building
+
+  """To fetch a BuildingComplex"""
+  buildingBuildingComplex(id: String!): BuildingComplex
+
+  """To fetch a BuildingInspection"""
+  buildingInspection(id: String!): BuildingInspection
+
+  """To fetch a BuildingInspection Summary"""
+  buildingInspectionDateSummaryOfLevelAndMonth(buildingLevelId: String!, endDate: String!, startDate: String!): [BuildingInspectionSummary!]
+
+  """To fetch a BuildingInspection Summary"""
+  buildingInspectionSummaryOfBuildingLevel(buildingLevelId: String!): BuildingInspectionSummary
+
+  """프로젝트의 검측상태 별 카운트"""
+  buildingInspectionSummaryOfProject(projectId: String!): BuildingInspectionSummary!
+
+  """To fetch multiple BuildingInspections"""
+  buildingInspections(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): BuildingInspectionList!
+
+  """To fetch multiple BuildingInspections"""
+  buildingInspectionsOfBuildingLevel(params: BuildingInspectionsOfBuildingLevel!): BuildingInspectionList!
+
+  """To fetch multiple BuildingInspections"""
+  buildingInspectionsOfProject(params: BuildingInspectionsOfProject!): BuildingInspectionList!
+
+  """To fetch a building level"""
+  buildingLevel(id: String!): BuildingLevel
   chatCompletion(input: ChatCompletionInput!): ChatCompletionOutput!
 
-  """To check if system would provide default password to create new user"""
+  """
+  Checks if the system is configured to provide a default password for new users.
+  """
   checkDefaultPassword: Boolean!
 
-  """To check if system would provide default password to create new user"""
+  """
+  Determines whether the system provides a default password when creating a new user.
+  """
   checkResettablePasswordToDefault: Boolean!
 
   """To fetch the preset of role for new user"""
   checkRolePreset: [Role!]!
 
-  """To check if current user is belongs to current domain"""
+  """
+  Checks if the current authenticated user belongs to the current domain.
+  """
   checkUserBelongsDomain: Boolean!
 
-  """..."""
+  """Checks if a user with the given email address exists in the system."""
   checkUserExistence(email: EmailAddress!): Boolean!
+
+  """To fetch a Checklist"""
+  checklist(id: String!): Checklist
+
+  """To fetch a ChecklistItem"""
+  checklistItem(id: String!): ChecklistItem
+
+  """To fetch multiple ChecklistItems"""
+  checklistItems(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): ChecklistItemList!
+
+  """To fetch a ChecklistTemplateItem"""
+  checklistTemplateItem(id: String!): ChecklistTemplateItem
+
+  """To fetch multiple ChecklistTemplateItems"""
+  checklistTemplateItems(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): ChecklistTemplateItemList!
+
+  """To fetch multiple ChecklistTemplates"""
+  checklistTemplates(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): ChecklistTemplateList!
+
+  """To fetch multiple ChecklistTypes"""
+  checklistTypes(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): ChecklistTypeList!
+
+  """To fetch multiple Checklists"""
+  checklists(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): ChecklistList!
 
   """To fetch common approval lines"""
   commonApprovalLines(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): ApprovalLineList!
@@ -3448,6 +4599,15 @@ type Query {
 
   """To fetch multiple connector"""
   connectors: ConnectorList!
+
+  """To fetch multiple ConstructionDetailTypes"""
+  constructionDetailTypes(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): ConstructionDetailTypeList!
+
+  """To fetch a ConstructionType"""
+  constructionType(id: String!): ConstructionType
+
+  """To fetch multiple ConstructionTypes"""
+  constructionTypes(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): ConstructionTypeList!
 
   """To fetch a Contact"""
   contact(id: String!): Contact
@@ -3479,10 +4639,14 @@ type Query {
   """To fetch multiple appliance"""
   edges(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): ApplianceList!
 
-  """To fetch a Employee"""
+  """
+  Fetches a specific employee by their unique ID. Returns the employee object if found, or null if not found.
+  """
   employee(id: String!): Employee
 
-  """To fetch multiple Employees"""
+  """
+  Fetches a list of employees based on provided query parameters. Supports searching by name, control number, and alias.
+  """
   employees(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): EmployeeList!
 
   """To fetch multiple Entities"""
@@ -3531,10 +4695,28 @@ type Query {
   i18nCompletion(input: i18nCompletionInput!): i18nCompletionOutput!
   imageCompletion(input: ImageCompletionInput!): ImageCompletionOutput!
 
+  """To fetch a InspectionDrawingType"""
+  inspectionDrawingType(id: String!): InspectionDrawingType
+
+  """To fetch multiple InspectionDrawingTypes"""
+  inspectionDrawingTypes(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): InspectionDrawingTypeList!
+
+  """To fetch a InspectionPart"""
+  inspectionPart(id: String!): InspectionPart
+
+  """To fetch multiple InspectionParts"""
+  inspectionParts(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): InspectionPartList!
+
   """To fetch integration Analyses"""
   integrationAnalysis: Object!
   invitation(email: EmailAddress!, reference: String!, type: String!): Invitation!
   invitations(reference: String!, type: String!): InvitationList!
+
+  """To fetch a Issue"""
+  issue(id: String!): Issue
+
+  """To fetch multiple Issues"""
+  issues(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): IssueList!
 
   """To fetch a LiteMenu"""
   liteMenu(id: String!): LiteMenu!
@@ -3544,6 +4726,9 @@ type Query {
 
   """To fetch multiple LoginHistories"""
   loginHistories(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): LoginHistoryList!
+
+  """담당자 리스트"""
+  managers: [ManagerOutput!]!
 
   """To fetch a Menu"""
   menu(id: String!): Menu!
@@ -3594,11 +4779,29 @@ type Query {
   myLiteMenus(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): LiteMenuList!
   myLoginHistories(limit: Float!): [LoginHistory!]!
 
+  """To fetch my own Menus"""
+  myMenus(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): MenuList!
+
   """To fetch my notifications"""
   myNotifications(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): NotificationList!
 
+  """To fetch a User's own PagePreference"""
+  myPageAllPreferences(page: String!): [PagePreference!]
+
+  """To fetch a User's own PagePreference"""
+  myPagePreference(element: String!, page: String!): PagePreference
+
+  """To fetch multiple PagePreferences"""
+  myPagePreferences(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): PagePreferenceList!
+
   """To fetch roles of current user"""
   myRoles: [Role!]!
+
+  """To fetch a User's own UserPreference"""
+  myUserPreference(element: String!, key: String!): UserPreference
+
+  """To fetch multiple UserPreferences"""
+  myUserPreferences(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): UserPreferenceList!
 
   """To fetch a Notification"""
   notification(id: String!): Notification
@@ -3618,6 +4821,9 @@ type Query {
   """To fetch multiple Oauth2Clients"""
   oauth2Clients(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): Oauth2ClientList!
 
+  """To fetch a PagePreference"""
+  pagePreference(id: String!): PagePreference
+
   """To fetch specific domain's CommonCodes by given name"""
   partnerCommonCode(name: String!, partnerDomainId: String!): CommonCode!
 
@@ -3627,6 +4833,11 @@ type Query {
   """To fetch multiple PartnerSettings"""
   partnerSettings(filters: [Filter!]!, pagination: Pagination!, partnerDomain: ObjectRef!, sortings: [Sorting!]!): PartnerSettingList!
   partners(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): PartnerList!
+
+  """
+  Retrieves the current password rule configuration for the system, such as required character types and minimum length.
+  """
+  passwordRule: PasswordRule!
 
   """To fetch a PayloadLog"""
   payloadLog(id: String!): PayloadLog!
@@ -3643,6 +4854,9 @@ type Query {
   """To fetch multiple PlayGroups"""
   playGroups(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): PlayGroupList!
 
+  """To fetch a UserPreference"""
+  preference(id: String!): UserPreference
+
   """To fetch a PrinterDevice"""
   printerDevice(id: String!): PrinterDevice!
 
@@ -3655,8 +4869,26 @@ type Query {
   """To fetch a Project"""
   project(id: String!): Project
 
-  """To fetch multiple Projects"""
+  """To fetch a Project"""
+  projectByBuildingComplexId(buildingComplexId: String!): Project
+
+  """To fetch Project"""
+  projectByBuildingLevelId(buildingLevelId: String!): Project!
+
+  """To fetch a ProjectReport"""
+  projectReport(id: String!): ProjectReport
+
+  """To fetch multiple ProjectReports"""
+  projectReports(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): ProjectReportList!
+
+  """프로젝트 리스트"""
   projects(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): ProjectList!
+
+  """To fetch a Resource"""
+  resource(id: String!): Resource
+
+  """To fetch multiple Resources"""
+  resources(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): ResourceList!
 
   """To fetch role"""
   role(name: String!): Role!
@@ -3707,8 +4939,20 @@ type Query {
   """To fetch multiple steps"""
   steps(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): StepList!
 
-  """To fetch a Task"""
+  """To fetch a Supervisor"""
+  supervisor(id: String!): Supervisor
+
+  """To fetch multiple Supervisors"""
+  supervisors(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): SupervisorList!
+
+  """Fetch a single Task by its ID"""
   task(id: String!): Task
+
+  """To fetch a TaskResource"""
+  taskResource(id: String!): TaskResource
+
+  """To fetch multiple TaskResources"""
+  taskResources(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): TaskResourceList!
 
   """To fetch a task-type"""
   taskType(name: String!): TaskType!
@@ -3719,7 +4963,7 @@ type Query {
   """To fetch the connector from a task-type"""
   taskTypesByConnection(connectionName: String!): TaskTypeList!
 
-  """To fetch multiple Tasks"""
+  """Fetch multiple Tasks based on list parameters"""
   tasks(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): TaskList!
 
   """To fetch multiple Terminologies"""
@@ -3734,7 +4978,7 @@ type Query {
   """To fetch multiple Themes"""
   themes(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): ThemeList!
 
-  """To fetch user"""
+  """Fetches a user by their email address within the current domain."""
   user(email: EmailAddress!): User!
 
   """To fetch Menus by role"""
@@ -3743,9 +4987,17 @@ type Query {
   """To fetch roles of a user"""
   userRoles(userId: String!): [UserRole!]!
 
-  """To fetch multiple users"""
+  """
+  Fetches a list of users based on provided search parameters within the current domain.
+  """
   users(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): UserList!
   vendors: [Domain!]!
+
+  """To fetch a WorkerType"""
+  workerType(id: String!): WorkerType
+
+  """To fetch multiple WorkerTypes"""
+  workerTypes(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): WorkerTypeList!
 }
 
 type RecipientItem {
@@ -3754,13 +5006,47 @@ type RecipientItem {
   value: String
 }
 
+"""자원"""
+type Resource {
+  createdAt: DateTimeISO
+  creator: User
+  deletedAt: DateTimeISO
+  domain: Domain
+  id: ID!
+  name: String!
+  type: String!
+  unit: String!
+  updatedAt: DateTimeISO
+  updater: User
+}
+
+type ResourceList {
+  items: [Resource!]!
+  total: Int!
+}
+
+input ResourcePatch {
+  cuFlag: String
+  id: ID
+  name: String
+  type: ResourceType
+  unit: String
+}
+
+"""자원 유형"""
+enum ResourceType {
+  EQUIPMENT
+  HUMAN
+  MATERIAL
+}
+
 type Role {
   createdAt: DateTimeISO
   creator: User
   description: String
   domain: Domain!
   id: ID!
-  name: String!
+  name: String
   privileges: [Privilege!]
   updatedAt: DateTimeISO
   updater: User
@@ -3796,7 +5082,7 @@ type Scenario {
   createdAt: DateTimeISO
   creator: User
   description: String
-  domain: Domain
+  domain: Domain!
   id: ID!
   instances: [ScenarioInstance!]
   name: String!
@@ -3805,11 +5091,13 @@ type Scenario {
   """accessible and executable system-wide"""
   public: Boolean
   publishTags: [Connection!]!
+  role: Role
   schedule: String
   scheduleId: String
   state: String
   steps: [Step!]
   timezone: String
+  ttl: Float
   type: String
   updatedAt: DateTimeISO
   updater: User
@@ -3840,6 +5128,17 @@ type ScenarioInstanceProgress {
   rounds: Int!
   step: Int!
   steps: Int!
+}
+
+type ScenarioInstanceRunResult {
+  data: Object
+  instanceName: String
+  message: String
+  result: Object
+  scenarioName: String
+  state: String
+  timestamp: DateTimeISO
+  variables: Object
 }
 
 type ScenarioInstanceState {
@@ -3874,10 +5173,11 @@ input ScenarioPatch {
   description: String
   id: ID
   name: String
-  privilege: PrivilegeInput
+  role: ObjectRef
   schedule: String
   steps: [StepPatch!]
   timezone: String
+  ttl: Float
   type: String
 }
 
@@ -3892,7 +5192,7 @@ type Setting {
   createdAt: DateTimeISO
   creator: User
   description: String
-  domain: Domain
+  domain: Domain!
   id: ID!
   name: String!
   updatedAt: DateTimeISO
@@ -3926,36 +5226,113 @@ input Sorting {
 
 """Entity for StateRegister"""
 type StateRegister {
+  """Creation time of the state register"""
   createdAt: DateTimeISO
+
+  """User who created the state register"""
   creator: User
+
+  """ID of the user who created the state register"""
+  creatorId: String
+
+  """Description of the state register"""
   description: String
-  domain: Domain
+
+  """Associated domain for the state register"""
+  domain: Domain!
+
+  """ID of the associated domain"""
+  domainId: String!
+
+  """Group name for the state register"""
+  group: String
   id: ID!
+
+  """Name of the state register"""
   name: String
+
+  """Number of decimal places if the state is a number type"""
+  place: String
+
+  """
+  Reference to an external entity or data, used as a flexible foreign key
+  """
   refBy: String
+
+  """Current state value"""
   state: Object
+
+  """Time to live for the state value in seconds"""
   ttl: Int
+
+  """Type of the state"""
   type: String
+
+  """Unit of the state value"""
+  unit: String
+
+  """Last update time of the state register"""
   updatedAt: DateTimeISO
+
+  """User who last updated the state register"""
   updater: User
+
+  """ID of the user who last updated the state register"""
+  updaterId: String
+
+  """User who wrote the state"""
   writer: User
+
+  """ID of the user who wrote the state"""
+  writerId: String
+
+  """Time when the state was recorded"""
   wroteAt: DateTimeISO
 }
 
 type StateRegisterList {
+  """List of state registers"""
   items: [StateRegister!]!
+
+  """Total number of state registers"""
   total: Int!
 }
 
 input StateRegisterPatch {
+  """Flag indicating create/update operations"""
   cuFlag: String
+
+  """Description of the state register"""
   description: String
+
+  """Group name for the state register"""
+  group: String
+
+  """ID of the state register"""
   id: ID
+
+  """Name of the state register"""
   name: String
+
+  """Number of decimal places if the state is a number type"""
+  place: String
+
+  """
+  Reference to an external entity or data, used as a flexible foreign key
+  """
   refBy: String
+
+  """Current state value"""
   state: Object
+
+  """Time to live for the state value in seconds"""
   ttl: Int
+
+  """Type of the state"""
   type: String
+
+  """Unit of the state value"""
+  unit: String
 }
 
 type Step {
@@ -4012,46 +5389,132 @@ type Subscription {
   scenarioQueueState: ScenarioQueueState!
 }
 
-"""Entity for Task"""
-type Task {
+"""Entity for Supervisor"""
+type Supervisor {
   active: Boolean
   createdAt: DateTimeISO
   creator: User
   deletedAt: DateTimeISO
-  dependencies: [Task!]
   description: String
   domain: Domain
-  endDate: DateTimeISO
+  email: String
   id: ID!
   name: String
   params: String
-  project: Project!
-  startDate: DateTimeISO
+  phoneNumber: String
+  reports: [ProjectReport!]!
   state: String
   thumbnail: String
   updatedAt: DateTimeISO
   updater: User
 }
 
-type TaskList {
-  items: [Task!]!
+type SupervisorList {
+  items: [Supervisor!]!
   total: Int!
 }
 
-input TaskPatch {
+input SupervisorPatch {
   active: Boolean
   cuFlag: String
   description: String
   id: ID
   name: String
-  state: TaskStatus
+  state: SupervisorStatus
   thumbnail: Upload
 }
 
-"""state enumeration of a task"""
-enum TaskStatus {
+"""state enumeration of a supervisor"""
+enum SupervisorStatus {
   STATUS_A
   STATUS_B
+}
+
+"""공정표 작업 정보"""
+type Task {
+  children(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): [Task!]
+  code: String!
+  createdAt: DateTimeISO
+  creator: User
+  deletedAt: DateTimeISO
+  dependsOn: String
+  duration: Float
+  endDate: DateTimeISO
+  id: ID!
+
+  """Calculate the duration of the task in days"""
+  length: String
+  name: String
+  parent: Task
+  progress: Float
+  project: Project!
+
+  """Return the simple list of resources allocated to the task"""
+  resources: [DigestedResource!]!
+  startDate: DateTimeISO
+  tags: Object
+  taskResources: [TaskResource!]
+  type: String
+  updatedAt: DateTimeISO
+  updater: User
+}
+
+type TaskList {
+  """작업 리스트 항목들"""
+  items: [Task!]!
+
+  """전체 작업 수"""
+  total: Int!
+}
+
+input TaskPatch {
+  """작업이 활성 상태인지 여부 (선택 사항)"""
+  active: Boolean
+
+  """프로젝트 내에서 유니크한 작업 코드 (선택 사항)"""
+  code: String
+
+  """생성('+') 또는 수정('M') 플래그 (선택 사항)"""
+  cuFlag: String
+
+  """작업에 대한 설명 (선택 사항)"""
+  description: String
+
+  """수정할 작업의 ID (선택 사항)"""
+  id: ID
+
+  """작업의 이름 (선택 사항)"""
+  name: String
+
+  """부모 작업, 해당 작업이 하위 작업인 경우 (선택 사항)"""
+  parent: ObjectRefForTask
+
+  """작업이 속한 프로젝트 (선택 사항)"""
+  project: ObjectRefForProject
+}
+
+"""작업에 소요되는 자원"""
+type TaskResource {
+  createdAt: DateTimeISO
+  deletedAt: DateTimeISO
+  id: ID!
+  quantity: Float!
+  resource: Resource!
+  task: Task!
+  updatedAt: DateTimeISO
+}
+
+type TaskResourceList {
+  items: [TaskResource!]!
+  total: Int!
+}
+
+input TaskResourcePatch {
+  cuFlag: String
+  id: ID
+  quantity: Float
+  resourceId: ID
+  taskId: ID
 }
 
 type TaskType {
@@ -4071,13 +5534,15 @@ type TaskTypeList {
 type Terminology {
   category: String!
   createdAt: DateTimeISO
+  creator: User
   description: String
   display: String!
-  domain: Domain
+  domain: Domain!
   id: ID!
   locale: String!
   name: String!
   updatedAt: DateTimeISO
+  updater: User
 }
 
 type TerminologyList {
@@ -4086,12 +5551,12 @@ type TerminologyList {
 }
 
 input TerminologyPatch {
-  category: String!
+  category: String
   cuFlag: String
   description: String
-  display: String!
+  display: String
   id: ID
-  locale: String!
+  locale: String
   name: String
 }
 
@@ -4102,7 +5567,7 @@ type Theme {
   creator: User
   deletedAt: DateTimeISO
   description: String
-  domain: Domain
+  domain: Domain!
   id: ID!
   name: String
   type: String
@@ -4126,6 +5591,17 @@ input ThemePatch {
   value: Object
 }
 
+input UpdateBuildingInspectionDrawingMarker {
+  drawingMarker: String
+  id: String!
+}
+
+input UpdateBuildingInspectionSubmitType {
+  checklist: ChecklistSubmitInputType!
+  checklistItem: [ChecklistItemSubmitInputType!]!
+  id: String!
+}
+
 """The `Upload` scalar type represents a file upload."""
 scalar Upload
 
@@ -4142,7 +5618,7 @@ type User {
   email: EmailAddress!
   id: ID!
   locale: String
-  name: String!
+  name: String
   owner: Boolean
   reference: String
   roles: [Role!]!
@@ -4172,6 +5648,32 @@ input UserPatch {
   userType: String
 }
 
+"""Entity for UserPreference"""
+type UserPreference {
+  createdAt: DateTimeISO
+  creator: User
+  domain: Domain
+  id: ID!
+  key: String
+  preference: Object
+  updatedAt: DateTimeISO
+  updater: User
+  user: User!
+}
+
+type UserPreferenceList {
+  items: [UserPreference!]!
+  total: Int!
+}
+
+input UserPreferencePatch {
+  cuFlag: String
+  id: ID
+  key: String!
+  preference: Object!
+  user: ObjectRef!
+}
+
 type UserRole {
   assigned: Boolean
   description: String
@@ -4183,11 +5685,36 @@ type UserRole {
 type UsersAuthProviders {
   authProvider: AuthProvider
   createdAt: DateTimeISO
-  domain: Domain
+  domain: Domain!
   id: ID!
   ssoId: String
   updatedAt: DateTimeISO
   user: User
+}
+
+"""작업자 타입"""
+type WorkerType {
+  createdAt: DateTimeISO
+  creator: User
+  deletedAt: DateTimeISO
+  description: String
+  domain: Domain
+  id: ID!
+  name: String!
+  updatedAt: DateTimeISO
+  updater: User
+}
+
+type WorkerTypeList {
+  items: [WorkerType!]!
+  total: Int!
+}
+
+input WorkerTypePatch {
+  cuFlag: String!
+  description: String
+  id: ID
+  name: String
 }
 
 input i18nCompletionInput {

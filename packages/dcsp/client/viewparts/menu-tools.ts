@@ -128,16 +128,16 @@ export class MenuTools extends connect(store)(LitElement) {
         path: 'project-completed-list',
         icons: ICONS_COMPLETED
       },
-      {
-        name: 'status',
-        path: 'dssp-status',
-        icons: ICONS_STATUS
-      },
-      {
-        name: '공정표',
-        path: 'project-schedule-list',
-        icons: ICONS_OPERATING
-      },
+      // {
+      //   name: '검측현황',
+      //   path: 'dssp-status',
+      //   icons: ICONS_STATUS
+      // },
+      // {
+      //   name: '공정표',
+      //   path: 'project-schedule-list',
+      //   icons: ICONS_OPERATING
+      // },
       {
         name: '셋팅',
         path: 'project-setting-list',
