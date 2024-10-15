@@ -17,8 +17,8 @@ export class InspectionEventProvider implements EventProvider {
 
     const response = await client.query({
       query: gql`
-        query BuildingInspectionDateSummaryOfLevelAndMonth($buildingLevelId: String!, $startDate: String!, $endDate: String!) {
-          buildingInspectionDateSummaryOfLevelAndMonth(
+        query BuildingInspectionDateSummaryOfLevelAndPeriod($buildingLevelId: String!, $startDate: String!, $endDate: String!) {
+          buildingInspectionDateSummaryOfLevelAndPeriod(
             buildingLevelId: $buildingLevelId
             startDate: $startDate
             endDate: $endDate
@@ -40,7 +40,7 @@ export class InspectionEventProvider implements EventProvider {
 
     // if (response.errors) return null
 
-    const calendarData = this.getCalendarTemplate(response.data?.buildingInspectionDateSummaryOfLevelAndMonth)
+    const calendarData = this.getCalendarTemplate(response.data?.buildingInspectionDateSummaryOfLevelAndPeriod)
 
     calendar.forEach(({ date }) => {
       const formattedDate = date.toISOString().split('T')[0]

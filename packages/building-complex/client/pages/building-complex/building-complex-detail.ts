@@ -4,6 +4,7 @@ import '@material/web/textfield/outlined-text-field.js'
 import '@material/web/button/outlined-button.js'
 import '@operato/input/ox-select-floor.js'
 
+import { ScrollbarStyles } from '@operato/styles'
 import { PageView } from '@operato/shell'
 import { PageLifecycle } from '@operato/shell/dist/src/app/pages/page-view'
 import { css, html } from 'lit'
@@ -15,6 +16,7 @@ import gql from 'graphql-tag'
 @customElement('building-complex-detail')
 export class BuildingComplexDetail extends ScopedElementsMixin(PageView) {
   static styles = [
+    ScrollbarStyles,
     css`
       :host {
         display: grid;
@@ -152,6 +154,7 @@ export class BuildingComplexDetail extends ScopedElementsMixin(PageView) {
         --ox-select-floor-perspective: 1200px;
 
         user-select: none;
+        overflow-y: auto;
       }
 
       div[status] {
@@ -285,6 +288,7 @@ export class BuildingComplexDetail extends ScopedElementsMixin(PageView) {
           <ox-select-floor
             .cards=${cards}
             .bottomLimit=${70}
+            .interval=${50}
             @change=${(e: CustomEvent) => {
               this.currentFloor = e.detail
               console.log('currentFloor', this.currentFloor)

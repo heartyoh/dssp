@@ -130,7 +130,7 @@ export class BuildingInspectionQuery {
 
   // 층 별로 검수 개수 써머리
   @Query(returns => [BuildingInspectionSummary]!, { nullable: true, description: 'To fetch a BuildingInspection Summary' })
-  async buildingInspectionDateSummaryOfLevelAndMonth(
+  async buildingInspectionDateSummaryOfLevelAndPeriod(
     @Arg('buildingLevelId') buildingLevelId: string,
     @Arg('startDate') startDate: string,
     @Arg('endDate') endDate: string,
