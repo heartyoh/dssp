@@ -88,6 +88,7 @@ export class BuildingComplexDetail extends ScopedElementsMixin(PageView) {
         margin: 0px 25px 25px 25px;
         gap: 10px;
         min-height: fit-content;
+        overflow-x: hidden;
       }
 
       h3 {

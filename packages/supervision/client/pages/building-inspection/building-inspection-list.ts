@@ -91,6 +91,7 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
         margin: 0px 25px 0px 25px;
         gap: 10px;
         min-height: fit-content;
+        overflow-x: hidden;
       }
 
       div[body] h3 {
