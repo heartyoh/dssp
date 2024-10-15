@@ -1,5 +1,5 @@
 module.exports = {
-  subdomain: null,
+  subdomain: 'system',
   publicHomeRoute: '/auth/signin',
   applianceJwtExpiresIn: '10y',
   /* database field encryption key : 32 bytes - must be changed by every installation */
