@@ -8,8 +8,8 @@ services:
       - app
   app:
     build: .
-    container_name: dssp
-    image: hatiolab/dssp:latest
+    container_name: dcsp
+    image: hatiolab/dcsp:latest
     privileged: true
     volumes:
       - ./logs:/app/logs
@@ -21,7 +21,7 @@ services:
       - mosquitto
   postgres:
     image: postgres:13.2
-    container_name: db-dssp
+    container_name: db-dcsp
     environment:
       POSTGRES_PASSWORD: abcd1234
       POSTGRES_USER: postgres
