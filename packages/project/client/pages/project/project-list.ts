@@ -65,10 +65,10 @@ export interface BuildingComplex {
   notice?: string
   planXScale?: number
   planYScale?: number
-  overallConstructorIds?: string[]
-  taskConstructorIds?: string[]
-  overallSupervisoryIds?: string[]
-  taskSupervisoryIds?: string[]
+  overallConstructorEmails?: string[]
+  taskConstructorEmails?: string[]
+  overallSupervisoryEmails?: string[]
+  taskSupervisoryEmails?: string[]
   buildings?: Building[]
 }
 export interface Building {

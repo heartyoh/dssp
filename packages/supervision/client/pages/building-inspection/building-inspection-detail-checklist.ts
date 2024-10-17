@@ -86,6 +86,7 @@ export class BuildingInspectionDetailChecklist extends PageView {
               .mode=${ChecklistMode.EDITOR}
               status=${this.buildingInspection.status}
               .checklist=${this.buildingInspection.checklist || {}}
+              .buildingComplex=${this.buildingInspection?.buildingLevel?.building?.buildingComplex || {}}
             ></checklist-view>
           `
         )}
@@ -157,6 +158,10 @@ export class BuildingInspectionDetailChecklist extends PageView {
                 name
                 buildingComplex {
                   id
+                  overallConstructorEmails
+                  taskConstructorEmails
+                  overallSupervisoryEmails
+                  taskSupervisoryEmails
                 }
               }
             }

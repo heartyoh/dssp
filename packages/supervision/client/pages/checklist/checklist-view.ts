@@ -5,9 +5,12 @@ import { ButtonContainerStyles, ScrollbarStyles } from '@operato/styles'
 import {
   CHECKLIST_MAIN_TYPE_LIST,
   BuildingInspectionStatus,
-  BUILDING_INSPECTION_STATUS
+  BUILDING_INSPECTION_STATUS_DISPLAY
 } from '../building-inspection/building-inspection-list'
 import '@operato/input/ox-input-signature.js'
+import { BuildingComplex } from '@dssp/building-complex'
+import { store } from '@operato/shell'
+import { connect } from 'pwa-helpers/connect-mixin.js'
 
 export const enum ChecklistMode {
   VIEWER = 'VIEWER',
@@ -15,7 +18,7 @@ export const enum ChecklistMode {
 }
 
 @customElement('checklist-view')
-class ChecklistView extends LitElement {
+class ChecklistView extends connect(store)(LitElement) {
   static styles = [
     ButtonContainerStyles,
     ScrollbarStyles,
@@ -167,12 +170,50 @@ class ChecklistView extends LitElement {
 
   @property({ type: String }) mode: ChecklistMode = ChecklistMode.VIEWER
   @property({ type: Object }) checklist: any = {}
+  @property({ type: Object }) buildingComplex: BuildingComplex = {
+    id: '',
+    taskConstructorEmails: [],
+    overallConstructorEmails: [],
+    taskSupervisoryEmails: [],
+    overallSupervisoryEmails: []
+  }
   @property({ type: String }) status: BuildingInspectionStatus = BuildingInspectionStatus.WAIT
 
   render() {
     const today = this._getDate(new Date())
-    const isConstructorStep = this.status == BuildingInspectionStatus.WAIT || this.status == BuildingInspectionStatus.FAIL
-    const isSupervisoryStep = this.status == BuildingInspectionStatus.REQUEST
+
+    // 시공자 스탭 여부
+    const isConstructorStep =
+      this.status == BuildingInspectionStatus.WAIT ||
+      this.status == BuildingInspectionStatus.OVERALL_WAIT ||
+      this.status == BuildingInspectionStatus.FAIL
+
+    // 감리자 스탭 여부
+    const isSupervisoryStep =
+      this.status == BuildingInspectionStatus.REQUEST || this.status == BuildingInspectionStatus.OVERALL_REQUEST
+
+    // 현재 스탭에 해당하는 계정인지 체크 (편집모드만)
+    let havePermissionByStatus: boolean = false
+    let isTaskConstructor: boolean = false
+    let isOverallConstructor: boolean = false
+    let isTaskSupervisory: boolean = false
+    let isOverallSupervisory: boolean = false
+
+    if (this.mode == ChecklistMode.EDITOR && this.status) {
+      const email = (store.getState() as any).auth?.user?.email
+      // 현재 유저가 "공종별 시공 관리자" 인지 체크
+      isTaskConstructor = this.buildingComplex.taskConstructorEmails?.includes(email) || false
+      // 현재 유저가 "총괄 시공 책임자" 인지 체크
+      isOverallConstructor = this.buildingComplex.overallConstructorEmails?.includes(email) || false
+      // 현재 유저가 "공종별 감리 책임자" 인지 체크
+      isTaskSupervisory = this.buildingComplex.taskSupervisoryEmails?.includes(email) || false
+      // 현재 유저가 "총괄 감리 책임자" 인지 체크
+      isOverallSupervisory = this.buildingComplex.overallSupervisoryEmails?.includes(email) || false
+      // 스탭이 시공자 스탭일때에 내가 시공자 권한이 있는지 체크
+      havePermissionByStatus = isConstructorStep
+        ? isTaskConstructor || isOverallConstructor
+        : isTaskSupervisory || isOverallSupervisory
+    }
 
     // 체크리스트 아이템 정렬
     this.checklist?.checklistItems?.sort((a, b) => {
@@ -211,7 +252,7 @@ class ChecklistView extends LitElement {
             <th>검측 부위</th>
             <td>${this.checklist?.inspectionParts?.join(', ') || ''}</td>
             <th>검측 상태</th>
-            <td>${BUILDING_INSPECTION_STATUS[this.checklist?.buildingInspection?.status]}</td>
+            <td>${BUILDING_INSPECTION_STATUS_DISPLAY[this.checklist?.buildingInspection?.status]}</td>
           </tr>
         </table>
 
@@ -253,7 +294,7 @@ class ChecklistView extends LitElement {
                     name=${'radio-construction-' + item.id}
                     value="T"
                     .checked=${item.constructionConfirmStatus === 'T'}
-                    ?disabled=${!isConstructorStep}
+                    ?disabled=${!isConstructorStep || !havePermissionByStatus}
                     @change=${this._onChangeConfirmStatus}
                   ></md-radio>
                 </td>
@@ -264,7 +305,7 @@ class ChecklistView extends LitElement {
                     name=${'radio-construction-' + item.id}
                     value="F"
                     .checked=${item.constructionConfirmStatus === 'F'}
-                    ?disabled=${!isConstructorStep}
+                    ?disabled=${!isConstructorStep || !havePermissionByStatus}
                     @change=${this._onChangeConfirmStatus}
                   ></md-radio>
                 </td>
@@ -275,7 +316,7 @@ class ChecklistView extends LitElement {
                     name=${'radio-supervisory-' + item.id}
                     value="T"
                     .checked=${item.supervisoryConfirmStatus === 'T'}
-                    ?disabled=${!isSupervisoryStep}
+                    ?disabled=${!isSupervisoryStep || !havePermissionByStatus}
                     @change=${this._onChangeConfirmStatus}
                   ></md-radio>
                 </td>
@@ -286,7 +327,7 @@ class ChecklistView extends LitElement {
                     name=${'radio-supervisory-' + item.id}
                     value="F"
                     .checked=${item.supervisoryConfirmStatus === 'F'}
-                    ?disabled=${!isSupervisoryStep}
+                    ?disabled=${!isSupervisoryStep || !havePermissionByStatus}
                     @change=${this._onChangeConfirmStatus}
                   ></md-radio>
                 </td>
@@ -300,7 +341,7 @@ class ChecklistView extends LitElement {
         <table tail>
           <tbody>
             <tr first>
-              <th rowspan="2">시공자점검일</th>
+              <th rowspan="2">시공자 점검일</th>
               <td rowspan="2">
                 ${this.mode == ChecklistMode.VIEWER ? today : this._getDate(this.checklist.constructionInspectionDate)}
               </td>
@@ -311,7 +352,8 @@ class ChecklistView extends LitElement {
                   .value=${this.checklist.taskConstructorSignature}
                   name="taskConstructorSignature"
                   @change=${this._onChangeSignature}
-                  ?disabled=${!isConstructorStep}
+                  ?disabled=${(this.status != BuildingInspectionStatus.WAIT && this.status != BuildingInspectionStatus.FAIL) ||
+                  !isTaskConstructor}
                 >
                 </ox-input-signature>
               </td>
@@ -324,13 +366,13 @@ class ChecklistView extends LitElement {
                   .value=${this.checklist.overallConstructorSignature}
                   name="overallConstructorSignature"
                   @change=${this._onChangeSignature}
-                  ?disabled=${!isConstructorStep}
+                  ?disabled=${this.status != BuildingInspectionStatus.OVERALL_WAIT || !isOverallConstructor}
                 >
                 </ox-input-signature>
               </td>
             </tr>
             <tr>
-              <th rowspan="2">감리자점검일</th>
+              <th rowspan="2">감리자 점검일</th>
               <td rowspan="2">
                 ${this.mode == ChecklistMode.VIEWER ? today : this._getDate(this.checklist.supervisorInspectionDate)}
               </td>
@@ -341,7 +383,7 @@ class ChecklistView extends LitElement {
                   .value=${this.checklist.taskSupervisorySignature}
                   name="taskSupervisorySignature"
                   @change=${this._onChangeSignature}
-                  ?disabled=${!isSupervisoryStep}
+                  ?disabled=${this.status != BuildingInspectionStatus.REQUEST || !isTaskSupervisory}
                 >
                 </ox-input-signature>
               </td>
@@ -354,7 +396,7 @@ class ChecklistView extends LitElement {
                   .value=${this.checklist.overallSupervisorySignature}
                   name="overallSupervisorySignature"
                   @change=${this._onChangeSignature}
-                  ?disabled=${!isSupervisoryStep}
+                  ?disabled=${this.status != BuildingInspectionStatus.OVERALL_REQUEST || !isOverallSupervisory}
                 >
                 </ox-input-signature>
               </td>

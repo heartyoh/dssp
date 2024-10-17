@@ -481,9 +481,9 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
             <span>
               <select2-component
                 placeholder="총괄 시공 관리자 리스트"
-                name="overallConstructorIds"
+                name="overallConstructorEmails"
                 .options=${this.taskConstructorList}
-                .selectedValues=${this.project?.buildingComplex?.overallConstructorIds || []}
+                .selectedValues=${this.project?.buildingComplex?.overallConstructorEmails || []}
                 @selection-changed=${this._handleSelectionChange}
               ></select2-component>
             </span>
@@ -493,9 +493,9 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
             <span>
               <select2-component
                 placeholder="공종별 시공 관리자 리스트"
-                name="taskConstructorIds"
+                name="taskConstructorEmails"
                 .options=${this.overallConstructorList}
-                .selectedValues=${this.project?.buildingComplex?.taskConstructorIds || []}
+                .selectedValues=${this.project?.buildingComplex?.taskConstructorEmails || []}
                 @selection-changed=${this._handleSelectionChange}
               ></select2-component>
             </span>
@@ -505,9 +505,9 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
             <span>
               <select2-component
                 placeholder="총괄 감리 책임자 리스트"
-                name="overallSupervisoryIds"
+                name="overallSupervisoryEmails"
                 .options=${this.overallSupervisoryList}
-                .selectedValues=${this.project?.buildingComplex?.overallSupervisoryIds || []}
+                .selectedValues=${this.project?.buildingComplex?.overallSupervisoryEmails || []}
                 @selection-changed=${this._handleSelectionChange}
               ></select2-component>
             </span>
@@ -517,9 +517,9 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
             <span>
               <select2-component
                 placeholder="공종별 감리 책임자 리스트"
-                name="taskSupervisoryIds"
+                name="taskSupervisoryEmails"
                 .options=${this.taskSupervisoryList}
-                .selectedValues=${this.project?.buildingComplex?.taskSupervisoryIds || []}
+                .selectedValues=${this.project?.buildingComplex?.taskSupervisoryEmails || []}
                 @selection-changed=${this._handleSelectionChange}
               ></select2-component
             ></span>
@@ -751,10 +751,10 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
               notice
               householdCount
               buildingCount
-              overallConstructorIds
-              taskConstructorIds
-              overallSupervisoryIds
-              taskSupervisoryIds
+              overallConstructorEmails
+              taskConstructorEmails
+              overallSupervisoryEmails
+              taskSupervisoryEmails
               buildings {
                 id
                 name
@@ -772,6 +772,7 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
               user {
                 id
                 name
+                email
               }
             }
           }
@@ -806,7 +807,7 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
   private _filterUserByPermission(userList, permission: string) {
     return userList
       .filter(v => v.jobResponsibility == permission || v.jobResponsibility == 'ADMIN')
-      .map(v => ({ name: v.name, value: v.user.id }))
+      .map(v => ({ name: v.name, value: v.user.email }))
   }
 
   private async _saveProject() {

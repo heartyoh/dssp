@@ -67,44 +67,43 @@ class buildingInspectionDetailHeader extends LitElement {
   @property({ type: String }) buildingName: string = ''
   @property({ type: String }) buildingLevelFloor: string = ''
 
-  firstUpdated() {
-    // 현재 URL을 가져와 사용
-    const currentUrl = window.location.href
-    console.log('Current URL:', currentUrl)
-
-    // URL의 다른 정보들
-    const pathname = window.location.pathname
-    const queryString = window.location.search
-    const hash = window.location.hash
-
-    console.log('Pathname:', pathname)
-    console.log('Query string:', queryString)
-    console.log('Hash:', hash)
-
-    // 필요한 경우, URL 파라미터 분석
-    const urlParams = new URLSearchParams(queryString)
-    const someParam = urlParams.get('someParam')
-    console.log('Some param:', someParam)
-  }
-
   render() {
+    const path = window.location.pathname
+
     return html`
       <div header>
         <h2>${this.projectName || ''} ${this.buildingName || ''} ${this.buildingLevelFloor || ''}층</h2>
         <div button-container>
-          <md-elevated-button href=${`building-inspection-list/${this.buildingLevelId}`}>
+          <md-elevated-button
+            ?disabled=${path.includes('building-inspection-list/')}
+            href=${`building-inspection-list/${this.buildingLevelId}`}
+          >
             <md-icon slot="icon">assignment</md-icon>검측 리스트
           </md-elevated-button>
-          <md-elevated-button href=${`building-inspection-detail-drawing/${this.buildingInspectionId}`}>
+          <md-elevated-button
+            ?disabled=${path.includes('building-inspection-detail-drawing/')}
+            href=${`building-inspection-detail-drawing/${this.buildingInspectionId}`}
+          >
             <md-icon slot="icon">assignment</md-icon>검측도면
           </md-elevated-button>
-          <md-elevated-button href=${`building-inspection-detail-checklist/${this.buildingInspectionId}`}>
+          <md-elevated-button
+            ?disabled=${path.includes('building-inspection-detail-checklist/')}
+            href=${`building-inspection-detail-checklist/${this.buildingInspectionId}`}
+          >
             <md-icon slot="icon">description</md-icon>검측 체크리스트
           </md-elevated-button>
-          <md-elevated-button href=${`building-inspection-detail-photo/${this.buildingInspectionId}`} disabled>
+          <md-elevated-button
+            ?disabled=${path.includes('building-inspection-detail-photo/')}
+            href=${`building-inspection-detail-photo/${this.buildingInspectionId}`}
+            disabled
+          >
             <md-icon slot="icon">description</md-icon>사진촬영
           </md-elevated-button>
-          <md-elevated-button href=${`building-inspection-detail-history/${this.buildingInspectionId}`} disabled>
+          <md-elevated-button
+            ?disabled=${path.includes('building-inspection-detail-history/')}
+            href=${`building-inspection-detail-history/${this.buildingInspectionId}`}
+            disabled
+          >
             <md-icon slot="icon">description</md-icon>감리이력
           </md-elevated-button>
         </div>

@@ -34,11 +34,9 @@ export enum BuildingInspectionStatus {
   PASS = 'PASS',
   FAIL = 'FAIL'
 }
-export const BUILDING_INSPECTION_STATUS = {
+export const BUILDING_INSPECTION_STATUS_DISPLAY = {
   [BuildingInspectionStatus.WAIT]: '검측 대기',
-  [BuildingInspectionStatus.OVERALL_WAIT]: '검측 대기',
   [BuildingInspectionStatus.REQUEST]: '검측 요청',
-  [BuildingInspectionStatus.OVERALL_REQUEST]: '검측 요청',
   [BuildingInspectionStatus.PASS]: '합격',
   [BuildingInspectionStatus.FAIL]: '불합격'
 }
@@ -264,7 +262,7 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
                 검측<br />현황
               </span>
 
-              ${Object.entries(BUILDING_INSPECTION_STATUS).map(inspectionStatus => {
+              ${Object.entries(BUILDING_INSPECTION_STATUS_DISPLAY).map(inspectionStatus => {
                 const displayName = inspectionStatus[1]
                 const status = inspectionStatus[0].toLowerCase()
 
@@ -394,7 +392,7 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
           name: 'status',
           header: '검측 결과',
           record: {
-            renderer: value => BUILDING_INSPECTION_STATUS[value]
+            renderer: value => BUILDING_INSPECTION_STATUS_DISPLAY[value]
           },
           width: 120
         },

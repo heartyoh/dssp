@@ -524,13 +524,13 @@ type BuildingComplex {
   latitude: Float
   longitude: Float
   notice: String
-  overallConstructorIds: [String!]
-  overallSupervisoryIds: [String!]
+  overallConstructorEmails: [String!]
+  overallSupervisoryEmails: [String!]
   planXScale: Float
   planYScale: Float
   supervisoryCompany: String
-  taskConstructorIds: [String!]
-  taskSupervisoryIds: [String!]
+  taskConstructorEmails: [String!]
+  taskSupervisoryEmails: [String!]
   updatedAt: DateTimeISO
   updater: User
 }
@@ -552,13 +552,13 @@ input BuildingComplexPatch {
   latitude: Float
   longitude: Float
   notice: String
-  overallConstructorIds: [String!]
-  overallSupervisoryIds: [String!]
+  overallConstructorEmails: [String!]
+  overallSupervisoryEmails: [String!]
   planXScale: Float
   planYScale: Float
   supervisoryCompany: String
-  taskConstructorIds: [String!]
-  taskSupervisoryIds: [String!]
+  taskConstructorEmails: [String!]
+  taskSupervisoryEmails: [String!]
 }
 
 type BuildingInspection {
