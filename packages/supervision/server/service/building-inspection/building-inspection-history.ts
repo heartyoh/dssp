@@ -22,7 +22,11 @@ export class BuildingInspectionHistory implements HistoryEntityInterface<Buildin
   @HistoryOriginalIdColumn()
   public originalId!: string
 
-  @Column({ nullable: false, comment: '상태(REQUEST: 요청, PASS: 합격, FAIL: 불합격)' })
+  @Column({
+    nullable: false,
+    comment:
+      '상태(WAIT: 검측 대기, OVERALL_WAIT: 총괄자 검측 대기, REQUEST: 검측 요청, OVERALL_REQUEST: 총괄자 검측 요청, PASS: 합격, FAIL: 불합격)'
+  })
   @Field({ nullable: true })
   status?: BuildingInspectionStatus
 

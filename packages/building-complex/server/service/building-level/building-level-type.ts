@@ -47,7 +47,9 @@ export class BuildingInspectionSummaryOfLevel {
 
 export enum BuildingInspectionStatus {
   WAIT = 'WAIT',
+  OVERALL_WAIT = 'OVERALL_WAIT',
   REQUEST = 'REQUEST',
+  OVERALL_REQUEST = 'OVERALL_REQUEST',
   PASS = 'PASS',
   FAIL = 'FAIL'
 }

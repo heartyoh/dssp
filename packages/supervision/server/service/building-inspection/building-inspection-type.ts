@@ -1,5 +1,5 @@
-import { ObjectType, Field, InputType, Int, ID } from 'type-graphql'
-import { BuildingInspection, BuildingInspectionStatus } from './building-inspection'
+import { ObjectType, Field, InputType, Int } from 'type-graphql'
+import { BuildingInspection } from './building-inspection'
 
 @InputType()
 class ChecklistInputType {

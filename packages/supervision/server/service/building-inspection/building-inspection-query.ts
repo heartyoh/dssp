@@ -112,8 +112,12 @@ export class BuildingInspectionQuery {
   ): Promise<BuildingInspectionSummary> {
     const buildingInspectionSummary = await getRepository(BuildingInspection)
       .createQueryBuilder('bi')
-      .select(`COUNT(CASE WHEN bi.status='${BuildingInspectionStatus.WAIT}' THEN 1 ELSE NULL END) AS wait`)
-      .addSelect(`COUNT(CASE WHEN bi.status='${BuildingInspectionStatus.REQUEST}' THEN 1 ELSE NULL END) AS request`)
+      .select(
+        `COUNT(CASE WHEN bi.status='${BuildingInspectionStatus.WAIT}' OR bi.status='${BuildingInspectionStatus.OVERALL_WAIT}' THEN 1 ELSE NULL END) AS wait`
+      )
+      .addSelect(
+        `COUNT(CASE WHEN bi.status='${BuildingInspectionStatus.REQUEST}' OR bi.status='${BuildingInspectionStatus.OVERALL_REQUEST}' THEN 1 ELSE NULL END) AS request`
+      )
       .addSelect(`COUNT(CASE WHEN bi.status='${BuildingInspectionStatus.PASS}' THEN 1 ELSE NULL END) AS pass`)
       .addSelect(`COUNT(CASE WHEN bi.status='${BuildingInspectionStatus.FAIL}' THEN 1 ELSE NULL END) AS fail`)
       .where('bi.building_level_id = :buildingLevelId', { buildingLevelId })
@@ -139,8 +143,12 @@ export class BuildingInspectionQuery {
     const buildingInspectionSummary = await getRepository(BuildingInspection)
       .createQueryBuilder('bi')
       .select(`TO_CHAR(bi.request_date, 'YYYY-MM-DD') AS "requestDate"`)
-      .addSelect(`COUNT(CASE WHEN bi.status='${BuildingInspectionStatus.WAIT}' THEN 1 ELSE NULL END) AS wait`)
-      .addSelect(`COUNT(CASE WHEN bi.status='${BuildingInspectionStatus.REQUEST}' THEN 1 ELSE NULL END) AS request`)
+      .addSelect(
+        `COUNT(CASE WHEN bi.status='${BuildingInspectionStatus.WAIT}' OR bi.status='${BuildingInspectionStatus.OVERALL_WAIT}' THEN 1 ELSE NULL END) AS wait`
+      )
+      .addSelect(
+        `COUNT(CASE WHEN bi.status='${BuildingInspectionStatus.REQUEST}' OR bi.status='${BuildingInspectionStatus.OVERALL_REQUEST}' THEN 1 ELSE NULL END) AS request`
+      )
       .addSelect(`COUNT(CASE WHEN bi.status='${BuildingInspectionStatus.PASS}' THEN 1 ELSE NULL END) AS pass`)
       .addSelect(`COUNT(CASE WHEN bi.status='${BuildingInspectionStatus.FAIL}' THEN 1 ELSE NULL END) AS fail`)
       .where('bi.building_level_id = :buildingLevelId', { buildingLevelId })
@@ -157,8 +165,12 @@ export class BuildingInspectionQuery {
   async buildingInspectionSummary(@Root() buildingLevel: BuildingLevel): Promise<BuildingInspectionSummary> {
     const buildingInspectionSummary = await getRepository(BuildingInspection)
       .createQueryBuilder('bi')
-      .select(`COUNT(CASE WHEN bi.status='${BuildingInspectionStatus.WAIT}' THEN 1 ELSE NULL END) AS wait`)
-      .addSelect(`COUNT(CASE WHEN bi.status='${BuildingInspectionStatus.REQUEST}' THEN 1 ELSE NULL END) AS request`)
+      .select(
+        `COUNT(CASE WHEN bi.status='${BuildingInspectionStatus.WAIT}' OR bi.status='${BuildingInspectionStatus.OVERALL_WAIT}' THEN 1 ELSE NULL END) AS wait`
+      )
+      .addSelect(
+        `COUNT(CASE WHEN bi.status='${BuildingInspectionStatus.REQUEST}' OR bi.status='${BuildingInspectionStatus.OVERALL_REQUEST}' THEN 1 ELSE NULL END) AS request`
+      )
       .addSelect(`COUNT(CASE WHEN bi.status='${BuildingInspectionStatus.PASS}' THEN 1 ELSE NULL END) AS pass`)
       .addSelect(`COUNT(CASE WHEN bi.status='${BuildingInspectionStatus.FAIL}' THEN 1 ELSE NULL END) AS fail`)
       .where('bi.building_level_id = :buildingLevelId', { buildingLevelId: buildingLevel.id })
@@ -182,8 +194,12 @@ export class BuildingInspectionQuery {
 
     const result = await getRepository(Project)
       .createQueryBuilder('p')
-      .select(`COUNT(CASE WHEN bi.status = '${BuildingInspectionStatus.WAIT}' THEN 1 ELSE NULL END) AS wait`)
-      .addSelect(`COUNT(CASE WHEN bi.status = '${BuildingInspectionStatus.REQUEST}' THEN 1 ELSE NULL END) AS request`)
+      .select(
+        `COUNT(CASE WHEN bi.status='${BuildingInspectionStatus.WAIT}' OR bi.status='${BuildingInspectionStatus.OVERALL_WAIT}' THEN 1 ELSE NULL END) AS wait`
+      )
+      .addSelect(
+        `COUNT(CASE WHEN bi.status='${BuildingInspectionStatus.REQUEST}' OR bi.status='${BuildingInspectionStatus.OVERALL_REQUEST}' THEN 1 ELSE NULL END) AS request`
+      )
       .addSelect(`COUNT(CASE WHEN bi.status = '${BuildingInspectionStatus.PASS}' THEN 1 ELSE NULL END) AS pass`)
       .addSelect(`COUNT(CASE WHEN bi.status = '${BuildingInspectionStatus.FAIL}' THEN 1 ELSE NULL END) AS fail`)
       .innerJoin('p.buildingComplex', 'bc')

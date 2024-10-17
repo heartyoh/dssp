@@ -9,9 +9,9 @@ import { customElement, state } from 'lit/decorators.js'
 import { ScopedElementsMixin } from '@open-wc/scoped-elements'
 import { client } from '@operato/graphql'
 import { notify } from '@operato/layout'
-
 import gql from 'graphql-tag'
 import { Project } from './project-list'
+import '../lib/select2-component'
 
 @customElement('project-update')
 export class ProjectUpdate extends ScopedElementsMixin(PageView) {
@@ -258,6 +258,11 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
   }
   @state() projectId: string = ''
   @state() project: Project = { ...this.defaultProject }
+  @state() selectedValues: string[] = []
+  @state() overallConstructorList: Array<{ name: string; value: string }> = []
+  @state() taskConstructorList: Array<{ name: string; value: string }> = []
+  @state() taskSupervisoryList: Array<{ name: string; value: string }> = []
+  @state() overallSupervisoryList: Array<{ name: string; value: string }> = []
 
   render() {
     return html`
@@ -471,7 +476,56 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
               ></md-outlined-text-field>
             </span>
           </div>
+          <div row>
+            <span>총괄 시공 관리자 리스트</span>
+            <span>
+              <select2-component
+                placeholder="총괄 시공 관리자 리스트"
+                name="overallConstructorIds"
+                .options=${this.taskConstructorList}
+                .selectedValues=${this.project?.buildingComplex?.overallConstructorIds || []}
+                @selection-changed=${this._handleSelectionChange}
+              ></select2-component>
+            </span>
+          </div>
+          <div row>
+            <span>공종별 시공 관리자 리스트</span>
+            <span>
+              <select2-component
+                placeholder="공종별 시공 관리자 리스트"
+                name="taskConstructorIds"
+                .options=${this.overallConstructorList}
+                .selectedValues=${this.project?.buildingComplex?.taskConstructorIds || []}
+                @selection-changed=${this._handleSelectionChange}
+              ></select2-component>
+            </span>
+          </div>
+          <div row>
+            <span>총괄 감리 책임자 리스트</span>
+            <span>
+              <select2-component
+                placeholder="총괄 감리 책임자 리스트"
+                name="overallSupervisoryIds"
+                .options=${this.overallSupervisoryList}
+                .selectedValues=${this.project?.buildingComplex?.overallSupervisoryIds || []}
+                @selection-changed=${this._handleSelectionChange}
+              ></select2-component>
+            </span>
+          </div>
+          <div row>
+            <span>공종별 감리 책임자 리스트</span>
+            <span>
+              <select2-component
+                placeholder="공종별 감리 책임자 리스트"
+                name="taskSupervisoryIds"
+                .options=${this.taskSupervisoryList}
+                .selectedValues=${this.project?.buildingComplex?.taskSupervisoryIds || []}
+                @selection-changed=${this._handleSelectionChange}
+              ></select2-component
+            ></span>
+          </div>
         </div>
+
         <div detail-info>
           <div>
             <h3>건설구분 상세 정보</h3>
@@ -541,8 +595,8 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
             <div row separate-container>
               <div>
                 <span>전체 진행현황</span>
-                <span
-                  ><md-outlined-text-field
+                <span>
+                  <md-outlined-text-field
                     type="text"
                     numeric
                     project
@@ -555,8 +609,8 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
               </div>
               <div>
                 <span>검측/통과비율</span>
-                <span
-                  ><md-outlined-text-field
+                <span>
+                  <md-outlined-text-field
                     type="text"
                     numeric
                     project
@@ -571,8 +625,8 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
             <div row separate-container>
               <div>
                 <span>주간 진행현황</span>
-                <span
-                  ><md-outlined-text-field
+                <span>
+                  <md-outlined-text-field
                     type="text"
                     numeric
                     project
@@ -585,8 +639,8 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
               </div>
               <div>
                 <span>로봇작업진행율</span>
-                <span
-                  ><md-outlined-text-field
+                <span>
+                  <md-outlined-text-field
                     type="text"
                     numeric
                     project
@@ -662,7 +716,7 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
   async initProject(projectId: string = '') {
     const response = await client.query({
       query: gql`
-        query Project($id: String!) {
+        query Project($id: String!, $filters: [Filter!]) {
           project(id: $id) {
             id
             name
@@ -697,6 +751,10 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
               notice
               householdCount
               buildingCount
+              overallConstructorIds
+              taskConstructorIds
+              overallSupervisoryIds
+              taskSupervisoryIds
               buildings {
                 id
                 name
@@ -704,23 +762,57 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
               }
             }
           }
+
+          employees(filters: $filters) {
+            items {
+              id
+              name
+              jobResponsibility
+              active
+              user {
+                id
+                name
+              }
+            }
+          }
         }
       `,
       variables: {
-        id: projectId
+        id: projectId,
+        filters: [
+          {
+            name: 'active',
+            operator: 'eq',
+            value: true
+          },
+          {
+            name: 'userId',
+            operator: 'is_not_null',
+            value: ''
+          }
+        ]
       }
     })
 
     this.project = response.data?.project
-    console.log('init project : ', this.project)
+
+    const items = response.data?.employees?.items || []
+    this.overallConstructorList = this._filterUserByPermission(items, 'OVERALL_CONSTRUCTOR')
+    this.taskConstructorList = this._filterUserByPermission(items, 'TASK_CONSTRUCTOR')
+    this.overallSupervisoryList = this._filterUserByPermission(items, 'OVERALL_SUPERVISORY')
+    this.taskSupervisoryList = this._filterUserByPermission(items, 'TASK_SUPERVISORY')
+  }
+
+  private _filterUserByPermission(userList, permission: string) {
+    return userList
+      .filter(v => v.jobResponsibility == permission || v.jobResponsibility == 'ADMIN')
+      .map(v => ({ name: v.name, value: v.user.id }))
   }
 
   private async _saveProject() {
     // 첨부 파일 필드 제거 (첨부 파일은 {filename}Upload 로 전송)
     delete this.project.mainPhoto
     delete this.project.buildingComplex.drawing
-
-    console.log('this.project :', this.project)
 
     const response = await client.mutate({
       mutation: gql`
@@ -796,5 +888,12 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
     } else {
       this.project.buildingComplex.drawingUpload = file
     }
+  }
+
+  private _handleSelectionChange(e) {
+    const name = e.target.getAttribute('name')
+    const selectedValues = e.detail.selectedValues
+
+    this.project.buildingComplex[name] = selectedValues
   }
 }

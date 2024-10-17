@@ -53,28 +53,46 @@ const SEED_COMMON_CODES = [
     description: '직책',
     details: [
       {
-        name: '감리사',
-        description: '감리사',
+        name: 'ADMIN',
+        description: '관리자',
         labels: null,
         rank: 1
       },
       {
-        name: '설계사',
-        description: '설계사',
+        name: 'OVERALL_SUPERVISORY',
+        description: '총괄 감리 책임자',
         labels: null,
         rank: 2
       },
       {
-        name: '현장관리자',
-        description: '현장관리자',
+        name: 'TASK_SUPERVISORY',
+        description: '공종별 감리 책임자',
         labels: null,
         rank: 3
       },
       {
-        name: '시공자',
-        description: '시공자',
+        name: 'OVERALL_CONSTRUCTOR',
+        description: '총괄 시공 책임자',
         labels: null,
         rank: 4
+      },
+      {
+        name: 'TASK_CONSTRUCTOR',
+        description: '공종별 시공 관리자',
+        labels: null,
+        rank: 5
+      },
+      {
+        name: 'DESIGNER',
+        description: '설계사',
+        labels: null,
+        rank: 6
+      },
+      {
+        name: 'CONSTRUCTOR',
+        description: '시공자',
+        labels: null,
+        rank: 7
       }
     ]
   }

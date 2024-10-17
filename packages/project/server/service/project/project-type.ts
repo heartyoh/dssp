@@ -51,9 +51,6 @@ export class ProjectPatch {
 
   @Field({ nullable: true })
   buildingComplex?: BuildingComplexPatch
-
-  // @Field(type => ObjectRef, { nullable: true, description: '연관된 건물 복합체 정보 (선택 사항)' })
-  // buildingComplex?: ObjectRef
 }
 
 @ObjectType()

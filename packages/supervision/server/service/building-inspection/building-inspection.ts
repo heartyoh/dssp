@@ -18,7 +18,9 @@ import { Checklist } from '../checklist/checklist'
 
 export enum BuildingInspectionStatus {
   WAIT = 'WAIT',
+  OVERALL_WAIT = 'OVERALL_WAIT',
   REQUEST = 'REQUEST',
+  OVERALL_REQUEST = 'OVERALL_REQUEST',
   PASS = 'PASS',
   FAIL = 'FAIL'
 }
@@ -46,8 +48,9 @@ export class BuildingInspection {
 
   @Column({
     nullable: false,
-    comment: '상태(WAIT: 검측 대기, REQUEST: 검측 요청, PASS: 합격, FAIL: 불합격)',
-    default: 'WAIT'
+    comment:
+      '상태(WAIT: 검측 대기, OVERALL_WAIT: 총괄자 검측 대기, REQUEST: 검측 요청, OVERALL_REQUEST: 총괄자 검측 요청, PASS: 합격, FAIL: 불합격)',
+    default: BuildingInspectionStatus.WAIT
   })
   @Field({ nullable: true })
   status?: BuildingInspectionStatus

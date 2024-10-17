@@ -304,20 +304,7 @@ class ChecklistView extends LitElement {
               <td rowspan="2">
                 ${this.mode == ChecklistMode.VIEWER ? today : this._getDate(this.checklist.constructionInspectionDate)}
               </td>
-              <th>총괄 시공책임자</th>
-              <td>
-                <span sign-text>(인)</span>
-                <ox-input-signature
-                  .value=${this.checklist.overallConstructorSignature}
-                  name="overallConstructorSignature"
-                  @change=${this._onChangeSignature}
-                  ?disabled=${!isConstructorStep}
-                >
-                </ox-input-signature>
-              </td>
-            </tr>
-            <tr>
-              <th>공종별 시공관리자</th>
+              <th>공종별 시공 관리자</th>
               <td>
                 <span sign-text>(인)</span>
                 <ox-input-signature
@@ -330,16 +317,29 @@ class ChecklistView extends LitElement {
               </td>
             </tr>
             <tr>
+              <th>총괄 시공 책임자</th>
+              <td>
+                <span sign-text>(인)</span>
+                <ox-input-signature
+                  .value=${this.checklist.overallConstructorSignature}
+                  name="overallConstructorSignature"
+                  @change=${this._onChangeSignature}
+                  ?disabled=${!isConstructorStep}
+                >
+                </ox-input-signature>
+              </td>
+            </tr>
+            <tr>
               <th rowspan="2">감리자점검일</th>
               <td rowspan="2">
                 ${this.mode == ChecklistMode.VIEWER ? today : this._getDate(this.checklist.supervisorInspectionDate)}
               </td>
-              <th>총괄 감리책임자</th>
+              <th>공종별 감리 책임자</th>
               <td>
                 <span sign-text>(인)</span>
                 <ox-input-signature
-                  .value=${this.checklist.overallSupervisorySignature}
-                  name="overallSupervisorySignature"
+                  .value=${this.checklist.taskSupervisorySignature}
+                  name="taskSupervisorySignature"
                   @change=${this._onChangeSignature}
                   ?disabled=${!isSupervisoryStep}
                 >
@@ -347,12 +347,12 @@ class ChecklistView extends LitElement {
               </td>
             </tr>
             <tr>
-              <th>공종별 감리 책임자</th>
+              <th>총괄 감리 책임자</th>
               <td>
                 <span sign-text>(인)</span>
                 <ox-input-signature
-                  .value=${this.checklist.taskSupervisorySignature}
-                  name="taskSupervisorySignature"
+                  .value=${this.checklist.overallSupervisorySignature}
+                  name="overallSupervisorySignature"
                   @change=${this._onChangeSignature}
                   ?disabled=${!isSupervisoryStep}
                 >

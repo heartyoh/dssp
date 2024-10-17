@@ -24,8 +24,12 @@ export class BuildingLevelQuery {
   async inspectionSummary(@Root() buildingLevel: BuildingLevel): Promise<BuildingInspectionSummaryOfLevel> {
     const buildingInspectionSummary = await getRepository(BuildingLevel)
       .createQueryBuilder('bl')
-      .select(`COUNT(CASE WHEN bi.status='${BuildingInspectionStatus.WAIT}' THEN 1 ELSE NULL END) AS wait`)
-      .addSelect(`COUNT(CASE WHEN bi.status='${BuildingInspectionStatus.REQUEST}' THEN 1 ELSE NULL END) AS request`)
+      .select(
+        `COUNT(CASE WHEN bi.status='${BuildingInspectionStatus.WAIT}' OR bi.status='${BuildingInspectionStatus.OVERALL_WAIT}' THEN 1 ELSE NULL END) AS wait`
+      )
+      .addSelect(
+        `COUNT(CASE WHEN bi.status='${BuildingInspectionStatus.REQUEST}' OR bi.status='${BuildingInspectionStatus.OVERALL_REQUEST}' THEN 1 ELSE NULL END) AS request`
+      )
       .addSelect(`COUNT(CASE WHEN bi.status='${BuildingInspectionStatus.PASS}' THEN 1 ELSE NULL END) AS pass`)
       .addSelect(`COUNT(CASE WHEN bi.status='${BuildingInspectionStatus.FAIL}' THEN 1 ELSE NULL END) AS fail`)
       .leftJoin('building_inspections', 'bi', 'bi.building_level_id = bl.id')

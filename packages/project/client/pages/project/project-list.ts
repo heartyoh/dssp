@@ -15,13 +15,17 @@ export enum ProjectState {
 }
 export enum BuildingInspectionStatus {
   WAIT = 'WAIT',
+  OVERALL_WAIT = 'OVERALL_WAIT',
   REQUEST = 'REQUEST',
+  OVERALL_REQUEST = 'OVERALL_REQUEST',
   PASS = 'PASS',
   FAIL = 'FAIL'
 }
 export const BUILDING_INSPECTION_STATUS = {
   [BuildingInspectionStatus.WAIT]: '검측 대기',
+  [BuildingInspectionStatus.OVERALL_WAIT]: '검측 대기',
   [BuildingInspectionStatus.REQUEST]: '검측 요청',
+  [BuildingInspectionStatus.OVERALL_REQUEST]: '검측 요청',
   [BuildingInspectionStatus.PASS]: '합격',
   [BuildingInspectionStatus.FAIL]: '불합격'
 }
@@ -61,6 +65,10 @@ export interface BuildingComplex {
   notice?: string
   planXScale?: number
   planYScale?: number
+  overallConstructorIds?: string[]
+  taskConstructorIds?: string[]
+  overallSupervisoryIds?: string[]
+  taskSupervisoryIds?: string[]
   buildings?: Building[]
 }
 export interface Building {

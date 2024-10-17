@@ -60,6 +60,18 @@ export class BuildingComplexPatch {
   @Field({ nullable: true })
   planYScale?: number
 
+  @Field(() => [String], { nullable: true })
+  overallConstructorIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  taskConstructorIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  overallSupervisoryIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  taskSupervisoryIds?: string[]
+
   @Field(type => [BuildingPatch], { nullable: true })
   buildings?: BuildingPatch[]
 }

@@ -98,6 +98,22 @@ export class BuildingComplex {
   @Field({ nullable: true })
   planYScale?: number
 
+  @Column('simple-array', { nullable: true, comment: '총괄 시공 관리자 리스트' })
+  @Field(() => [String], { nullable: true })
+  overallConstructorIds?: string[]
+
+  @Column('simple-array', { nullable: true, comment: '공종별 시공 관리자 리스트' })
+  @Field(() => [String], { nullable: true })
+  taskConstructorIds?: string[]
+
+  @Column('simple-array', { nullable: true, comment: '총괄 감리 책임자 리스트' })
+  @Field(() => [String], { nullable: true })
+  overallSupervisoryIds?: string[]
+
+  @Column('simple-array', { nullable: true, comment: '공종별 감리 책임자 리스트' })
+  @Field(() => [String], { nullable: true })
+  taskSupervisoryIds?: string[]
+
   // 동 정보 (하위 테이블 참조)
   @OneToMany(() => Building, building => building.buildingComplex)
   @Field(() => [Building], { nullable: true })
