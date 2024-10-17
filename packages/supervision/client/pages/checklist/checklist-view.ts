@@ -8,7 +8,7 @@ import {
   BUILDING_INSPECTION_STATUS_DISPLAY
 } from '../building-inspection/building-inspection-list'
 import '@operato/input/ox-input-signature.js'
-import { BuildingComplex } from '@dssp/building-complex'
+// import { BuildingComplex } from '@dssp/building-complex'
 import { store } from '@operato/shell'
 import { connect } from 'pwa-helpers/connect-mixin.js'
 
@@ -170,12 +170,12 @@ class ChecklistView extends connect(store)(LitElement) {
 
   @property({ type: String }) mode: ChecklistMode = ChecklistMode.VIEWER
   @property({ type: Object }) checklist: any = {}
-  @property({ type: Object }) buildingComplex: BuildingComplex = {
+  @property({ type: Object }) buildingComplex = {
     id: '',
-    taskConstructorEmails: [],
-    overallConstructorEmails: [],
-    taskSupervisoryEmails: [],
-    overallSupervisoryEmails: []
+    taskConstructorEmails: [] as string[],
+    overallConstructorEmails: [] as string[],
+    taskSupervisoryEmails: [] as string[],
+    overallSupervisoryEmails: [] as string[]
   }
   @property({ type: String }) status: BuildingInspectionStatus = BuildingInspectionStatus.WAIT
 

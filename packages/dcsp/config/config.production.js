@@ -1,6 +1,5 @@
 module.exports = {
   subdomain: 'system',
-  publicHomeRoute: '/public/home',
   applianceJwtExpiresIn: '10y',
   /* database field encryption key : 32 bytes - must be changed by every installation */
   dataEncryptionKey: 'V6g5oHJZb7KcazJyL6cM95XvIDouon5b',
