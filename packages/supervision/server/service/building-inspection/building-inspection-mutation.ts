@@ -84,7 +84,10 @@ export class BuildingInspectionMutation {
     const checklistItemRepo = tx.getRepository(ChecklistItem)
     const oldBuildingInspection = await buildingInspectionRepo.findOneBy({ id: buildingInspectionId })
     const status = oldBuildingInspection.status
-    const isConstructor: boolean = status == BuildingInspectionStatus.WAIT || status == BuildingInspectionStatus.FAIL
+    const isConstructor: boolean =
+      status == BuildingInspectionStatus.WAIT ||
+      status == BuildingInspectionStatus.OVERALL_WAIT ||
+      status == BuildingInspectionStatus.FAIL
     let inspectionStatus = null
 
     // 1. 벨리데이션
@@ -97,14 +100,27 @@ export class BuildingInspectionMutation {
       if (checklistItem.length !== checklistItem.filter(v => v.constructionConfirmStatus).length) {
         throw new Error('아이템을 모두 체크해야 합니다.')
       }
-      if (!checklist.overallConstructorSignature) throw new Error('총괄 시공책임자 사인이 없습니다.')
-      if (!checklist.taskConstructorSignature) throw new Error('공종별 시공관리자	사인이 없습니다.')
+      if (status == BuildingInspectionStatus.OVERALL_WAIT && !checklist.overallConstructorSignature) {
+        throw new Error('총괄 시공책임자 사인이 없습니다.')
+      }
+      if (status == BuildingInspectionStatus.WAIT && !checklist.taskConstructorSignature) {
+        throw new Error('공종별 시공관리자 사인이 없습니다.')
+      }
 
       // 시공자 상태 데이터
       const isPassed = checklistItem.length === checklistItem.filter(v => v.constructionConfirmStatus === 'T').length
-      inspectionStatus = isPassed ? BuildingInspectionStatus.REQUEST : BuildingInspectionStatus.FAIL
-      // 시공자가 검측 요청시 검측자 사인은 초기화
-      if (inspectionStatus === BuildingInspectionStatus.REQUEST) {
+
+      if (!isPassed) {
+        // 1. 검측이 불햡격 = 상태는 불합격으로, 시공자 싸인은 모두 초기화
+        inspectionStatus = BuildingInspectionStatus.FAIL
+        checklist.overallConstructorSignature = null
+        checklist.taskConstructorSignature = null
+      } else if (isPassed && (status === BuildingInspectionStatus.WAIT || status === BuildingInspectionStatus.FAIL)) {
+        // 2. 검측이 합격이면서 공종 시공자 스탭 = 상태는 총괄 시공자 스탭으로
+        inspectionStatus = BuildingInspectionStatus.OVERALL_WAIT
+      } else if (isPassed && status === BuildingInspectionStatus.OVERALL_WAIT) {
+        // 3. 검측이 합격이면서 총괄 시공자 스탭 = 상태는 공종 감리자 스탭으로, 감리자 싸인은 모두 초기화
+        inspectionStatus = BuildingInspectionStatus.REQUEST
         checklist.overallSupervisorySignature = null
         checklist.taskSupervisorySignature = null
       }
@@ -113,16 +129,26 @@ export class BuildingInspectionMutation {
       if (checklistItem.length !== checklistItem.filter(v => v.supervisoryConfirmStatus).length) {
         throw new Error('아이템을 모두 체크해야 합니다.')
       }
-      if (!checklist.overallSupervisorySignature) throw new Error('총괄 감리책임자 사인이 없습니다.')
-      if (!checklist.taskSupervisorySignature) throw new Error('공종별 감리 책임자 사인이 없습니다.')
+      if (status == BuildingInspectionStatus.OVERALL_REQUEST && !checklist.overallSupervisorySignature) {
+        throw new Error('총괄 감리책임자 사인이 없습니다.')
+      }
+      if (status == BuildingInspectionStatus.REQUEST && !checklist.taskSupervisorySignature) {
+        throw new Error('공종별 감리 책임자 사인이 없습니다.')
+      }
 
       // 감리자 상태 데이터
       const isPassed = checklistItem.length === checklistItem.filter(v => v.supervisoryConfirmStatus === 'T').length
-      inspectionStatus = isPassed ? BuildingInspectionStatus.PASS : BuildingInspectionStatus.FAIL
-      // 감리사가 검측 불합격으로 재검측 요청시 시공자 사인은 초기화
-      if (inspectionStatus === BuildingInspectionStatus.FAIL) {
+      if (!isPassed) {
+        // 1. 검측이 불햡격 = 상태는 불합격으로, 시공자 싸인은 모두 초기화
+        inspectionStatus = BuildingInspectionStatus.FAIL
         checklist.overallConstructorSignature = null
         checklist.taskConstructorSignature = null
+      } else if (isPassed && status === BuildingInspectionStatus.REQUEST) {
+        // 2. 검측이 합격이면서 공종 감리자 스탭 = 상태는 총괄 감리자 스탭으로
+        inspectionStatus = BuildingInspectionStatus.OVERALL_REQUEST
+      } else if (isPassed && status === BuildingInspectionStatus.OVERALL_REQUEST) {
+        // 3. 검측이 합격이면서 총괄 감리자 스탭 = 상태는 합격으로
+        inspectionStatus = BuildingInspectionStatus.PASS
       }
     }
 

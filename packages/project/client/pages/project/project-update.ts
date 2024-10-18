@@ -482,7 +482,7 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
               <select2-component
                 placeholder="총괄 시공 관리자 리스트"
                 name="overallConstructorEmails"
-                .options=${this.taskConstructorList}
+                .options=${this.overallConstructorList}
                 .selectedValues=${this.project?.buildingComplex?.overallConstructorEmails || []}
                 @selection-changed=${this._handleSelectionChange}
               ></select2-component>
@@ -494,7 +494,7 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
               <select2-component
                 placeholder="공종별 시공 관리자 리스트"
                 name="taskConstructorEmails"
-                .options=${this.overallConstructorList}
+                .options=${this.taskConstructorList}
                 .selectedValues=${this.project?.buildingComplex?.taskConstructorEmails || []}
                 @selection-changed=${this._handleSelectionChange}
               ></select2-component>

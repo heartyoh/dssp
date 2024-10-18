@@ -36,7 +36,9 @@ export enum BuildingInspectionStatus {
 }
 export const BUILDING_INSPECTION_STATUS_DISPLAY = {
   [BuildingInspectionStatus.WAIT]: '검측 대기',
+  [BuildingInspectionStatus.OVERALL_WAIT]: '검측 대기',
   [BuildingInspectionStatus.REQUEST]: '검측 요청',
+  [BuildingInspectionStatus.OVERALL_REQUEST]: '검측 요청',
   [BuildingInspectionStatus.PASS]: '합격',
   [BuildingInspectionStatus.FAIL]: '불합격'
 }
@@ -262,17 +264,30 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
                 검측<br />현황
               </span>
 
-              ${Object.entries(BUILDING_INSPECTION_STATUS_DISPLAY).map(inspectionStatus => {
-                const displayName = inspectionStatus[1]
-                const status = inspectionStatus[0].toLowerCase()
-
-                return html`
-                  <span>
-                    <div>${displayName}</div>
-                    <div bold status=${status}><span dot>●</span> ${this.buildingInspectionSummary[status]}</div>
-                  </span>
-                `
-              })}
+              <span>
+                <div>${BUILDING_INSPECTION_STATUS_DISPLAY[BuildingInspectionStatus.WAIT]}</div>
+                <div bold status=${BuildingInspectionStatus.WAIT.toLowerCase()}>
+                  <span dot>●</span> ${this.buildingInspectionSummary[BuildingInspectionStatus.WAIT.toLowerCase()]}
+                </div>
+              </span>
+              <span>
+                <div>${BUILDING_INSPECTION_STATUS_DISPLAY[BuildingInspectionStatus.REQUEST]}</div>
+                <div bold status=${BuildingInspectionStatus.REQUEST.toLowerCase()}>
+                  <span dot>●</span> ${this.buildingInspectionSummary[BuildingInspectionStatus.REQUEST.toLowerCase()]}
+                </div>
+              </span>
+              <span>
+                <div>${BUILDING_INSPECTION_STATUS_DISPLAY[BuildingInspectionStatus.PASS]}</div>
+                <div bold status=${BuildingInspectionStatus.PASS.toLowerCase()}>
+                  <span dot>●</span> ${this.buildingInspectionSummary[BuildingInspectionStatus.PASS.toLowerCase()]}
+                </div>
+              </span>
+              <span>
+                <div>${BUILDING_INSPECTION_STATUS_DISPLAY[BuildingInspectionStatus.FAIL]}</div>
+                <div bold status=${BuildingInspectionStatus.FAIL.toLowerCase()}>
+                  <span dot>●</span> ${this.buildingInspectionSummary[BuildingInspectionStatus.FAIL.toLowerCase()]}
+                </div>
+              </span>
             </div>
 
             <ox-event-view
