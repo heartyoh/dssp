@@ -1,0 +1,58 @@
+import { LitElement, html, css } from 'lit'
+import { customElement, property } from 'lit/decorators.js'
+import { provide } from '@lit/context'
+import { DrawingManager } from './drawing-context'
+import { UserPreferencesService } from './user-preferences-service'
+
+@customElement('ox-user-preferences-provider')
+export class OxUserPreferencesProvider extends LitElement {
+  static styles = css`
+    :host {
+      display: flex;
+    }
+  `
+
+  @property({ type: Object })
+  @provide({ context: DrawingManager })
+  private drawingManager = new Map<string, any>()
+
+  @property({ type: Boolean, attribute: 'load-initial-preferences' }) loadInitialPreferences = false
+
+  private userPreferencesService = new UserPreferencesService()
+
+  connectedCallback() {
+    super.connectedCallback()
+    if (this.loadInitialPreferences) {
+      this.fetchInitialPreferences()
+    }
+  }
+
+  async fetchInitialPreferences() {
+    await this.userPreferencesService.fetchInitialPreferences()
+    this.userPreferences = this.userPreferencesService.userPreferences
+    this.requestUpdate()
+  }
+
+  async getPreference(key: string): Promise<any> {
+    const preference = await this.userPreferencesService.getPreference(key)
+    this.userPreferences = this.userPreferencesService.userPreferences
+
+    this.requestUpdate()
+    return preference
+  }
+
+  async updatePreference(key: string, newPreference: any) {
+    await this.userPreferencesService.updatePreference(key, newPreference)
+    this.userPreferences = this.userPreferencesService.userPreferences
+    this.requestUpdate()
+  }
+
+  handleUserPreferenceUpdate(event: CustomEvent) {
+    const { key, preference } = event.detail
+    this.updatePreference(key, preference)
+  }
+
+  render() {
+    return html` <slot @user-preference-update="${this.handleUserPreferenceUpdate}"></slot> `
+  }
+}

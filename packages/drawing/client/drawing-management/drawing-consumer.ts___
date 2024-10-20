@@ -1,0 +1,40 @@
+import { LitElement, html } from 'lit'
+import { customElement, property } from 'lit/decorators.js'
+import { consume } from '@lit/context'
+import { DrawingManager } from './drawing-context'
+
+@customElement('drawing-consumer')
+export class OxUserPreferenceConsumer extends LitElement {
+  @property({ type: String }) drawingId = ''
+  @property({ type: Object }) drawingContext: any = null
+
+  @consume({ context: DrawingManager, subscribe: true })
+  drawingManager!: Map<string, any>
+
+  async connectedCallback() {
+    super.connectedCallback()
+    this.drawingContext = this.drawingManager.get(this.drawingId)
+  }
+
+  updateDrawing(newPreference: any) {
+    if (this.contextUserPreferences) {
+      this.contextUserPreferences.set(this.userPreferenceKey, newPreference)
+    }
+
+    const event = new CustomEvent('user-preference-update', {
+      detail: { key: this.userPreferenceKey, preference: newPreference },
+      bubbles: true,
+      composed: true
+    })
+    this.dispatchEvent(event)
+  }
+
+  render() {
+    return html`
+      <div>
+        ${this.userPreferenceKey}: ${JSON.stringify(this.userPreference?.preference || {})}
+        <button @click="${() => this.updateUserPreference({ someKey: 'newValue' })}">Update</button>
+      </div>
+    `
+  }
+}

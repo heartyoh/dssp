@@ -1593,6 +1593,22 @@ input InspectionPartPatch {
   sequence: Int
 }
 
+type InsulationSection {
+  box: String
+  dwgId: String
+  id: String
+  symbol: String
+  type: String
+}
+
+type InternalWallPart {
+  box: String
+  dwgId: String
+  id: String
+  symbol: String
+  type: String
+}
+
 type Invitation {
   createdAt: DateTimeISO
   creator: User
@@ -4062,6 +4078,26 @@ enum OrgMemberTargetType {
   Role
 }
 
+type PDFDrawing {
+  drawingURL: String
+  dwgId: String
+  id: String
+  links: [PDFDrawingLink!]
+  title: String
+}
+
+type PDFDrawingLink {
+  box: String
+  code: String
+  finDetItems: [RoomFinishDetail!]
+  id: String
+  rmname: String
+  sn: String
+  story: String
+  symbol: String
+  type: String
+}
+
 """Entity for PagePreference"""
 type PagePreference {
   createdAt: DateTimeISO
@@ -4714,9 +4750,11 @@ type Query {
 
   """To fetch multiple InspectionParts"""
   inspectionParts(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): InspectionPartList!
+  insulationSection(symbol: String!): InsulationSection!
 
   """To fetch integration Analyses"""
   integrationAnalysis: Object!
+  internalWallPart(rmname: String!, symbol: String!): InternalWallPart!
   invitation(email: EmailAddress!, reference: String!, type: String!): Invitation!
   invitations(reference: String!, type: String!): InvitationList!
 
@@ -4853,6 +4891,12 @@ type Query {
   """To fetch multiple PayloadLogs"""
   payloadLogs(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): PayloadLogList!
 
+  """To fetch a PDFDrawing"""
+  pdfDrawing(dwgId: String!): PDFDrawing!
+
+  """To fetch multiple PDFDrawings"""
+  pdfDrawings: [PDFDrawing!]!
+
   """To fetch a PlayGroup"""
   playGroup(id: String!): PlayGroup
 
@@ -4909,6 +4953,7 @@ type Query {
 
   """To fetch multiple users"""
   roles(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): RoleList!
+  roomFinish(rmname: String!, symbol: String!): RoomFinish!
 
   """To fetch a scenario"""
   scenario(id: String!): Scenario!
@@ -5000,6 +5045,7 @@ type Query {
   """
   users(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): UserList!
   vendors: [Domain!]!
+  window(sn: String!, symbol: String!): WindowPart!
 
   """To fetch a WorkerType"""
   workerType(id: String!): WorkerType
@@ -5081,6 +5127,19 @@ type RolePrivilege {
   description: String
   id: String
   name: String
+}
+
+type RoomFinish {
+  code: String
+  finDetItems: [RoomFinishDetail!]!
+  name: String
+}
+
+type RoomFinishDetail {
+  box: String
+  dwgId: String
+  part: String
+  symbol: String
 }
 
 type Scenario {
@@ -5698,6 +5757,15 @@ type UsersAuthProviders {
   ssoId: String
   updatedAt: DateTimeISO
   user: User
+}
+
+type WindowPart {
+  box: String
+  dwgId: String
+  id: String
+  sn: String
+  symbol: String
+  type: String
 }
 
 """작업자 타입"""

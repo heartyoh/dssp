@@ -1,0 +1,37 @@
+{
+  "name": "@dssp/drawing",
+  "version": "0.0.27",
+  "main": "dist-server/index.js",
+  "browser": "dist-client/index.js",
+  "things-factory": true,
+  "license": "MIT",
+  "author": "heartyoh <heartyoh@hatiolab.com>",
+  "description": "Module for managing drawings",
+  "publishConfig": {
+    "access": "public",
+    "@dssp:registry": "https://registry.npmjs.org"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hatiolab/dssp.git",
+    "directory": "packages/drawing"
+  },
+  "scripts": {
+    "build": "npm run build:server && npm run build:client",
+    "copy:files": "copyfiles -e \"./client/**/*.{ts,js,json}\" -u 1 \"./client/**/*\" dist-client",
+    "build:client": "npm run copy:files && npx tsc --p ./client/tsconfig.json",
+    "build:server": "npx tsc --p ./server/tsconfig.json",
+    "clean:client": "npx rimraf dist-client",
+    "clean:server": "npx rimraf dist-server",
+    "clean": "npm run clean:server && npm run clean:client",
+    "migration:create": "node ../../node_modules/typeorm/cli.js migration:create -d ./server/migrations"
+  },
+  "dependencies": {
+    "@operato/graphql": "^8.0.0-alpha",
+    "@operato/image-marker": "^8.0.0-alpha",
+    "@operato/shell": "^8.0.0-alpha",
+    "@things-factory/auth-base": "^8.0.0-alpha",
+    "@things-factory/shell": "^8.0.0-alpha",
+    "pdfjs-dist": "^4.7.76"
+  }
+}

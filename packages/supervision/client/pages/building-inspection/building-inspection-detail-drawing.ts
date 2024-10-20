@@ -3,7 +3,7 @@ import '@operato/image-marker/ox-image-marker.js'
 import '@operato/image-marker/ox-image-marker-view.js'
 
 import gql from 'graphql-tag'
-import { css, html } from 'lit'
+import { css, html, PropertyValues } from 'lit'
 import { customElement, query, state } from 'lit/decorators.js'
 import { consume } from '@lit/context'
 import { ScopedElementsMixin } from '@open-wc/scoped-elements'
@@ -13,6 +13,9 @@ import { CommonGristStyles, ScrollbarStyles } from '@operato/styles'
 import { PageLifecycle } from '@operato/shell/dist/src/app/pages/page-view'
 import { client } from '@operato/graphql'
 import { notify } from '@operato/layout'
+import { ImageProvider, Shape } from '@operato/image-marker'
+
+import { DrawingImageProvider } from '@dssp/drawing/dist-client/drawing-management/drawing-image-provider.js'
 
 import './component/building-inspection-detail-header'
 import { BuildingInspectionStatus } from './building-inspection-list'
@@ -50,8 +53,13 @@ export class BuildingInspectionDetailDrawing extends ScopedElementsMixin(PageVie
   @state() project: any = {}
   @state() buildingInspection: any = {}
   @state() buildingInspectionId: string = ''
+  @state() imageUrl?: string
+  @state() shapes: Shape[] = []
 
+  @state() drawingImageProvider: DrawingImageProvider = new DrawingImageProvider()
   // @consume({ context: OxUserPreferencesContext, subscribe: true })
+
+  @query('ox-image-marker') imageMarker!: any
 
   get context() {
     return {
@@ -59,10 +67,21 @@ export class BuildingInspectionDetailDrawing extends ScopedElementsMixin(PageVie
     }
   }
 
-  render() {
-    const imageUrl = this.buildingInspection?.buildingLevel?.mainDrawingImage || '/assets/images/img-drawing-default.png'
-    const shapes = JSON.parse(this.buildingInspection?.drawingMarker || null) || []
+  connectedCallback(): void {
+    super.connectedCallback()
 
+    requestAnimationFrame(() => {
+      this.imageMarker.setImageProvider(this.drawingImageProvider)
+    })
+  }
+
+  disconnectedCallback(): void {
+    this.imageMarker?.setImageProvider(null)
+
+    super.disconnectedCallback()
+  }
+
+  render() {
     return html`
       <building-inspection-detail-header
         .buildingInspectionId=${this.buildingInspection?.id}
@@ -74,15 +93,27 @@ export class BuildingInspectionDetailDrawing extends ScopedElementsMixin(PageVie
 
       <div body>
         ${this.buildingInspection?.status == BuildingInspectionStatus.PASS
-          ? html`<ox-image-marker-view .imageUrl=${imageUrl} .shapes=${shapes}></ox-image-marker-view>`
+          ? html`<ox-image-marker-view .imageUrl=${this.imageUrl} .shapes=${this.shapes}></ox-image-marker-view>`
           : html` <ox-image-marker
-              .imageUrl=${imageUrl}
-              .shapes=${shapes}
+              .imageUrl=${this.imageUrl}
+              .shapes=${this.shapes}
               @shapes-changed=${this.onClickMarkerSave}
               .currentMode=${'view'}
             ></ox-image-marker>`}
       </div>
     `
+  }
+
+  protected async updated(changes: PropertyValues): Promise<void> {
+    if (changes.has('buildingInspection')) {
+      const dwgId = 'A-1006' // this.buildingInspection?.buildingLevel?.mainDrawingImage || '/assets/images/img-drawing-default.png'
+
+      const shapes = JSON.parse(this.buildingInspection?.drawingMarker || null) || []
+      const markers = await this.drawingImageProvider.getMarkers(dwgId)
+
+      this.imageUrl = dwgId
+      this.shapes = [...shapes, ...markers]
+    }
   }
 
   async pageUpdated(changes: any, lifecycle: PageLifecycle) {
