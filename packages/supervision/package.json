@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hatiolab/dssp-m.git",
+    "url": "git+https://github.com/hatiolab/dssp.git",
     "directory": "packages/supervision"
   },
   "scripts": {
@@ -28,6 +28,7 @@
   },
   "dependencies": {
     "@dssp/building-complex": "^0.0.27",
+    "@dssp/drawing": "^0.0.27",
     "@dssp/project": "^0.0.27",
     "@operato/event-view": "^8.0.0-alpha",
     "@operato/graphql": "^8.0.0-alpha",

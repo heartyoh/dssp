@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hatiolab/things-factory.git",
+    "url": "git+https://github.com/hatiolab/dssp.git",
     "directory": "packages/project"
   },
   "scripts": {

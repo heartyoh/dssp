@@ -1,16 +1,20 @@
 import '@material/web/icon/icon.js'
-import { CommonGristStyles, ScrollbarStyles } from '@operato/styles'
-import { PageView } from '@operato/shell'
-import { css, html } from 'lit'
-import { PageLifecycle } from '@operato/shell/dist/src/app/pages/page-view'
-import { customElement, query, state } from 'lit/decorators.js'
-import { ScopedElementsMixin } from '@open-wc/scoped-elements'
-import { client } from '@operato/graphql'
-import { notify } from '@operato/layout'
-import gql from 'graphql-tag'
-import './component/building-inspection-detail-header'
 import '@operato/image-marker/ox-image-marker.js'
 import '@operato/image-marker/ox-image-marker-view.js'
+
+import gql from 'graphql-tag'
+import { css, html } from 'lit'
+import { customElement, query, state } from 'lit/decorators.js'
+import { consume } from '@lit/context'
+import { ScopedElementsMixin } from '@open-wc/scoped-elements'
+
+import { PageView } from '@operato/shell'
+import { CommonGristStyles, ScrollbarStyles } from '@operato/styles'
+import { PageLifecycle } from '@operato/shell/dist/src/app/pages/page-view'
+import { client } from '@operato/graphql'
+import { notify } from '@operato/layout'
+
+import './component/building-inspection-detail-header'
 import { BuildingInspectionStatus } from './building-inspection-list'
 
 @customElement('building-inspection-detail-drawing')
@@ -46,6 +50,8 @@ export class BuildingInspectionDetailDrawing extends ScopedElementsMixin(PageVie
   @state() project: any = {}
   @state() buildingInspection: any = {}
   @state() buildingInspectionId: string = ''
+
+  // @consume({ context: OxUserPreferencesContext, subscribe: true })
 
   get context() {
     return {

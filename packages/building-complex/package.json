@@ -13,8 +13,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hatiolab/dssp-m.git",
-    "directory": "packages/complex"
+    "url": "git+https://github.com/hatiolab/dssp.git",
+    "directory": "packages/building-complex"
   },
   "scripts": {
     "build": "npm run build:server && npm run build:client",
