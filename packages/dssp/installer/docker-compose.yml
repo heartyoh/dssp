@@ -19,6 +19,11 @@ services:
     depends_on:
       - postgres
       - mosquitto
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '100m'
+        max-file: '3'
   postgres:
     image: postgres:13.2
     container_name: db-dssp
