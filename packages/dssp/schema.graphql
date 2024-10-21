@@ -4088,12 +4088,21 @@ type PDFDrawing {
 
 type PDFDrawingLink {
   box: String
+  data: PDFDrawingLinkData
+  id: String
+  story: String
+  symbol: String
+  type: String
+}
+
+type PDFDrawingLinkData {
+  box: String
   code: String
+  dwgId: String
   finDetItems: [RoomFinishDetail!]
   id: String
   rmname: String
   sn: String
-  story: String
   symbol: String
   type: String
 }

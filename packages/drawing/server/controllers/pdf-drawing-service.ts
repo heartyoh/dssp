@@ -2,6 +2,7 @@ import axios from 'axios'
 import {
   PDFDrawing,
   PDFDrawingLink,
+  PDFDrawingLinkData,
   InsulationSection,
   RoomFinish,
   RoomFinishDetail,
@@ -29,7 +30,7 @@ class PDFDrawingService {
   }
 
   // Fetch insulation section
-  async getDatas(type: string, symbol: string, rmname: string, sn: string): Promise<PDFDrawingLink> {
+  async getDatas(type: string, symbol: string, rmname?: string, sn?: string): Promise<PDFDrawingLinkData> {
     const response = await axios.get(`${API_BASE_URL}/api/datas`, {
       params: { type, symbol, rmname, sn }
     })

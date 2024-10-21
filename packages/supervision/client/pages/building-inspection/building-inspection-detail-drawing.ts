@@ -47,6 +47,11 @@ export class BuildingInspectionDetailDrawing extends ScopedElementsMixin(PageVie
           width: 100%;
         }
       }
+
+      dialog ox-image-marker-view {
+        width: 80vw;
+        height: 80vh;
+      }
     `
   ]
 
@@ -55,11 +60,15 @@ export class BuildingInspectionDetailDrawing extends ScopedElementsMixin(PageVie
   @state() buildingInspectionId: string = ''
   @state() imageUrl?: string
   @state() shapes: Shape[] = []
+  @state() linkUrl?: string
+  @state() linkShapes: Shape[] = []
 
   @state() drawingImageProvider: DrawingImageProvider = new DrawingImageProvider()
   // @consume({ context: OxUserPreferencesContext, subscribe: true })
 
-  @query('ox-image-marker') imageMarker!: any
+  @query('#image-marker') imageMarker!: any
+  @query('#link-viewer') linkViewer!: any
+  @query('dialog') dialog!: HTMLDialogElement
 
   get context() {
     return {
@@ -72,11 +81,24 @@ export class BuildingInspectionDetailDrawing extends ScopedElementsMixin(PageVie
 
     requestAnimationFrame(() => {
       this.imageMarker.setImageProvider(this.drawingImageProvider)
+      this.linkViewer.setImageProvider(this.drawingImageProvider)
+
+      this.dialog.addEventListener('click', event => {
+        const rect = this.dialog.getBoundingClientRect()
+        const isInDialog =
+          rect.top <= event.clientY && event.clientY <= rect.bottom && rect.left <= event.clientX && event.clientX <= rect.right
+
+        // 다이아로그 내부를 클릭한 것이 아니면 다이아로그 닫기
+        if (!isInDialog) {
+          this.dialog.close()
+        }
+      })
     })
   }
 
   disconnectedCallback(): void {
     this.imageMarker?.setImageProvider(null)
+    this.linkViewer?.setImageProvider(null)
 
     super.disconnectedCallback()
   }
@@ -91,22 +113,57 @@ export class BuildingInspectionDetailDrawing extends ScopedElementsMixin(PageVie
         .buildingLevelFloor=${this.buildingInspection?.buildingLevel?.floor}
       ></building-inspection-detail-header>
 
-      <div body>
+      <div
+        body
+        @link-clicked=${async (e: CustomEvent) => {
+          this.linkViewer.reset()
+
+          const { link } = e.detail
+          const { id, type, symbol, box, dwgId } = JSON.parse(link)
+          const [x, y, width, height] = box?.split(',').map(Number) || []
+
+          this.linkUrl = dwgId
+          this.linkShapes = [
+            {
+              id: id!,
+              type: 'link',
+              x,
+              y,
+              width,
+              height,
+              link: '{}'
+            }
+          ]
+
+          if (this.dialog) {
+            this.dialog.showModal()
+          }
+        }}
+      >
         ${this.buildingInspection?.status == BuildingInspectionStatus.PASS
-          ? html`<ox-image-marker-view .imageUrl=${this.imageUrl} .shapes=${this.shapes}></ox-image-marker-view>`
+          ? html`<ox-image-marker-view
+              id="image-marker"
+              .imageUrl=${this.imageUrl}
+              .shapes=${this.shapes}
+            ></ox-image-marker-view>`
           : html` <ox-image-marker
+              id="image-marker"
               .imageUrl=${this.imageUrl}
               .shapes=${this.shapes}
               @shapes-changed=${this.onClickMarkerSave}
               .currentMode=${'view'}
             ></ox-image-marker>`}
       </div>
+
+      <dialog>
+        <ox-image-marker-view id="link-viewer" .imageUrl=${this.linkUrl} .shapes=${this.linkShapes}></ox-image-marker-view>
+      </dialog>
     `
   }
 
   protected async updated(changes: PropertyValues): Promise<void> {
     if (changes.has('buildingInspection')) {
-      const dwgId = 'A-1006' // this.buildingInspection?.buildingLevel?.mainDrawingImage || '/assets/images/img-drawing-default.png'
+      const dwgId = 'GA-3006' // this.buildingInspection?.buildingLevel?.mainDrawingImage || '/assets/images/img-drawing-default.png'
 
       const shapes = JSON.parse(this.buildingInspection?.drawingMarker || null) || []
       const markers = await this.drawingImageProvider.getMarkers(dwgId)
@@ -120,6 +177,8 @@ export class BuildingInspectionDetailDrawing extends ScopedElementsMixin(PageVie
     if (this.active) {
       this.buildingInspectionId = lifecycle.resourceId || ''
       await this.initBuildingInspection(this.buildingInspectionId)
+
+      this.imageMarker.reset()
     }
   }
 

@@ -6,31 +6,40 @@ import { ImageProvider, ImageOptions, Shape } from '@operato/image-marker'
 
 GlobalWorkerOptions.workerSrc = '/assets/javascript/pdf.worker.min.mjs'
 
-export type PDFDrawing = {
+type RoomFinishDetail = {
+  part: string
+  symbol: string
+  dwgId: string
+  box: string
+}
+
+type PDFDrawingLinkData = {
+  id: string
+  dwgId: string
+  type: string
+  symbol: string
+  box: string
+  rmname: string
+  sn: string
+  code: string
+  finDetItems: RoomFinishDetail[]
+}
+
+type PDFDrawingLink = {
+  id: string
+  type: string
+  symbol: string
+  story: string
+  box: string
+  data?: PDFDrawingLinkData
+}
+
+type PDFDrawing = {
   id: string
   dwgId: string
   drawingURL?: string
   title?: string
   links?: PDFDrawingLink[]
-}
-
-export type PDFDrawingLink = {
-  id?: string
-  type?: string
-  symbol?: string
-  story?: string
-  box?: string
-  rmname?: string
-  sn?: string
-  code?: string
-  finDetItems?: RoomFinishDetail[]
-}
-
-export type RoomFinishDetail = {
-  part?: string
-  symbol?: string
-  dwgId?: string
-  box?: string
 }
 
 export class DrawingImageProvider implements ImageProvider {
@@ -74,14 +83,21 @@ export class DrawingImageProvider implements ImageProvider {
               symbol
               story
               box
-              rmname
-              code
-              sn
-              finDetItems {
-                part
+              data {
+                id
+                type
                 symbol
                 dwgId
                 box
+                rmname
+                code
+                sn
+                finDetItems {
+                  part
+                  symbol
+                  dwgId
+                  box
+                }
               }
             }
           }
@@ -105,7 +121,7 @@ export class DrawingImageProvider implements ImageProvider {
   async getImage(options: ImageOptions): Promise<string> {
     // 쿼리 데이터 가져오기
     const pdfDrawing = await this.getPdfDrawingData(options.id)
-    if (!pdfDrawing) {
+    if (!pdfDrawing?.drawingURL) {
       return ''
     }
 
@@ -170,16 +186,16 @@ export class DrawingImageProvider implements ImageProvider {
     const links = pdfDrawing.links
 
     return (links || []).map(link => {
-      const { id, box, type, symbol, story } = link
+      const { id, box, data } = link
       const [x, y, width, height] = box?.split(',').map(Number) || []
       return {
         id: id!,
-        type: 'rectangle',
+        type: 'link',
         x,
         y,
         width,
         height,
-        link: JSON.stringify({ type, symbol, story })
+        link: JSON.stringify(data)
       }
     })
   }

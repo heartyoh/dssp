@@ -4,7 +4,15 @@ import { Resolver, Query, Arg, FieldResolver, Ctx, Root } from 'type-graphql'
 import { getRepository } from '@things-factory/shell'
 import { Attachment } from '@things-factory/attachment-base'
 
-import { PDFDrawing, PDFDrawingLink, InsulationSection, InternalWallPart, RoomFinish, WindowPart } from './pdf-drawing'
+import {
+  PDFDrawing,
+  PDFDrawingLink,
+  PDFDrawingLinkData,
+  InsulationSection,
+  InternalWallPart,
+  RoomFinish,
+  WindowPart
+} from './pdf-drawing'
 
 import { pdfDrawingService } from '../../controllers/pdf-drawing-service'
 
@@ -17,24 +25,35 @@ export class PDFDrawingQuery {
 
   @Query(returns => PDFDrawing, { description: 'To fetch a PDFDrawing' })
   async pdfDrawing(@Arg('dwgId') dwgId: string): Promise<PDFDrawing> {
-    const pdfDrawing = await pdfDrawingService.getDrawing(dwgId)
-    return pdfDrawing
+    try {
+      const pdfDrawing = await pdfDrawingService.getDrawing(dwgId)
+      return pdfDrawing
+    } catch (error) {
+      return {
+        id: 'NOT FOUND',
+        dwgId
+      }
+    }
   }
 
   @FieldResolver(type => [PDFDrawingLink])
   async links(@Root() pdfDrawing: PDFDrawing): Promise<PDFDrawingLink[]> {
     const { dwgId } = pdfDrawing
-    const links = await pdfDrawingService.getDrawingLinks(dwgId)
+    try {
+      const links = await pdfDrawingService.getDrawingLinks(dwgId)
 
-    return Promise.all(
-      links.map(async link => {
-        const { type, symbol, rmname, sn } = link
-        return {
-          ...link,
-          ...(await pdfDrawingService.getDatas(type, symbol, rmname, sn))
-        }
-      })
-    )
+      return Promise.all(
+        links.map(async link => {
+          const { type, symbol } = link
+          return {
+            ...link,
+            data: await pdfDrawingService.getDatas(type, symbol)
+          }
+        })
+      )
+    } catch (error) {
+      return []
+    }
   }
 
   @FieldResolver(type => String)
