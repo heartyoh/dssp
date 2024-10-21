@@ -16,6 +16,7 @@ import { openPopup } from '@operato/layout'
 import gql from 'graphql-tag'
 import { Building, BuildingLevel, Project } from './project-list'
 import './popup/popup-plan-upload'
+import './component/project-update-header'
 
 @customElement('project-plan-management')
 export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
@@ -51,44 +52,6 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
 
       *[bold] {
         font-weight: bold;
-      }
-
-      div[header] {
-        display: flex;
-        margin: 0px 20px;
-
-        h2 {
-          flex: 0.5;
-          color: #3f71a0;
-        }
-
-        div[button-container] {
-          display: flex;
-          align-items: center;
-          justify-content: end;
-          flex: 0.5;
-
-          md-elevated-button {
-            margin: 0px 3px;
-
-            --md-elevated-button-container-height: 35px;
-            --md-elevated-button-label-text-size: 16px;
-            --md-elevated-button-container-color: #0595e5;
-
-            --md-elevated-button-label-text-color: #fff;
-            --md-elevated-button-hover-label-text-color: #fff;
-            --md-elevated-button-pressed-label-text-color: #fff;
-            --md-elevated-button-focus-label-text-color: #fff;
-            --md-elevated-button-icon-color: #fff;
-            --md-elevated-button-hover-icon-color: #fff;
-            --md-elevated-button-pressed-icon-color: #fff;
-            --md-elevated-button-focus-icon-color: #fff;
-
-            &[green] {
-              --md-elevated-button-container-color: #42b382;
-            }
-          }
-        }
       }
 
       div[body] {
@@ -247,20 +210,8 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
 
   render() {
     return html`
-      <div header>
-        <h2>도면 관리</h2>
-        <div button-container>
-          <md-elevated-button green @click=${this._saveProject}>
-            <md-icon slot="icon">save</md-icon>정보 저장
-          </md-elevated-button>
-          <md-elevated-button href=${`project-update/${this.project.id}`}>
-            <md-icon slot="icon">assignment</md-icon>프로젝트 정보 수정
-          </md-elevated-button>
-          <md-elevated-button href=${`project-task-update/${this.project.id}`}>
-            <md-icon slot="icon">event_note</md-icon>공정표 관리
-          </md-elevated-button>
-        </div>
-      </div>
+      <project-update-header .projectId=${this.project.id || ''} title="도면 관리" @custom-click=${this._saveProject}>
+      </project-update-header>
 
       <div body>
         <div building-container>
@@ -415,8 +366,6 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
     })
 
     this.project = response.data?.project
-
-    console.log('init project : ', this.project)
   }
 
   private async _saveProject() {

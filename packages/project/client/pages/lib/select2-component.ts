@@ -8,6 +8,10 @@ export class Select2Component extends LitElement {
       position: relative;
       width: 300px;
       border: 1px solid #000;
+      border-radius: 6px;
+      padding: 4px 16px;
+      font-size: 14px;
+      color: var(--md-sys-color-primary);
     }
 
     div[dropdown] {
@@ -18,6 +22,8 @@ export class Select2Component extends LitElement {
 
     div[options] {
       position: absolute;
+      left: 0;
+      top: 30px;
       width: 100%;
       border: 1px solid #ccc;
       background-color: white;
@@ -30,6 +36,10 @@ export class Select2Component extends LitElement {
     div[option] {
       padding: 10px;
       cursor: pointer;
+      border-bottom: 1px solid #ccc;
+    }
+    div[option]:last-child {
+      border-bottom: none;
     }
 
     div[option]:hover {
@@ -48,10 +58,11 @@ export class Select2Component extends LitElement {
     }
 
     div[tag] {
-      background-color: #007bff;
+      background-color: #2e79be;
       color: white;
       padding: 5px 10px;
       border-radius: 20px;
+      font-size: 13px;
       display: inline-flex;
       align-items: center;
       cursor: pointer;

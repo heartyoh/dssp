@@ -12,6 +12,7 @@ import { notify } from '@operato/layout'
 import gql from 'graphql-tag'
 import { Project } from './project-list'
 import '../lib/select2-component'
+import './component/project-update-header'
 
 @customElement('project-update')
 export class ProjectUpdate extends ScopedElementsMixin(PageView) {
@@ -53,44 +54,6 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
         width: 100px;
         height: 100px;
         padding: 0;
-      }
-
-      div[header] {
-        display: flex;
-        margin: 0px 20px;
-
-        h2 {
-          flex: 0.5;
-          color: #3f71a0;
-        }
-
-        div[button-container] {
-          display: flex;
-          align-items: center;
-          justify-content: end;
-          flex: 0.5;
-
-          md-elevated-button {
-            margin: 0px 3px;
-
-            --md-elevated-button-container-height: 35px;
-            --md-elevated-button-label-text-size: 16px;
-            --md-elevated-button-container-color: #0595e5;
-
-            --md-elevated-button-label-text-color: #fff;
-            --md-elevated-button-hover-label-text-color: #fff;
-            --md-elevated-button-pressed-label-text-color: #fff;
-            --md-elevated-button-focus-label-text-color: #fff;
-            --md-elevated-button-icon-color: #fff;
-            --md-elevated-button-hover-icon-color: #fff;
-            --md-elevated-button-pressed-icon-color: #fff;
-            --md-elevated-button-focus-icon-color: #fff;
-
-            &[green] {
-              --md-elevated-button-container-color: #42b382;
-            }
-          }
-        }
       }
 
       div[body] {
@@ -266,20 +229,9 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
 
   render() {
     return html`
-      <div header>
-        <h2>프로젝트 정보 관리</h2>
-        <div button-container>
-          <md-elevated-button green @click=${this._saveProject}>
-            <md-icon slot="icon">save</md-icon>정보 저장
-          </md-elevated-button>
-          <md-elevated-button href=${`project-plan-management/${this.project.id}`}>
-            <md-icon slot="icon">description</md-icon>도면 관리
-          </md-elevated-button>
-          <md-elevated-button href=${`project-task-update/${this.project.id}`}>
-            <md-icon slot="icon">event_note</md-icon>공정표 관리
-          </md-elevated-button>
-        </div>
-      </div>
+      <project-update-header .projectId=${this.project.id || ''} title="프로젝트 정보 관리" @custom-click=${this._saveProject}>
+      </project-update-header>
+
       <div body>
         <div project-info>
           <h3>기본 정보</h3>

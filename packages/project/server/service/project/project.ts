@@ -127,4 +127,8 @@ export class Project {
 
   @RelationId((project: Project) => project.updater)
   updaterId?: string
+
+  // 공정표 파일
+  @Field(type => Attachment, { nullable: true })
+  scheduleTable?: Attachment
 }

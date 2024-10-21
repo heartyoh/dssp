@@ -2,7 +2,7 @@ import { Resolver, Mutation, Arg, Ctx, Directive } from 'type-graphql'
 import { In } from 'typeorm'
 import { createAttachment, deleteAttachmentsByRef, ATTACHMENT_PATH } from '@things-factory/attachment-base'
 import { Project, ProjectState } from './project'
-import { NewProject, ProjectPatch } from './project-type'
+import { NewProject, ProjectPatch, UploadProjectScheduleTable } from './project-type'
 import { BuildingComplex, Building, BuildingLevel } from '@dssp/building-complex'
 import { pdfToImage } from '@things-factory/board-service/dist-server/controllers/headless-pdf-to-image'
 
@@ -192,6 +192,21 @@ export class ProjectMutation {
     }
 
     return projectResult
+  }
+
+  @Directive('@transaction')
+  @Mutation(returns => Boolean, { description: '프로젝트 공정표 업로드' })
+  async uploadProjectScheduleTable(
+    @Arg('param') param: UploadProjectScheduleTable,
+    @Ctx() context: ResolverContext
+  ): Promise<boolean> {
+    const { user, tx } = context.state
+    const { projectId, scheduleTable } = param
+
+    // 프로젝트 공정표 파일 업로드
+    await createAttachmentAfterDelete(context, scheduleTable, projectId, Project.name + '_schedule_table')
+
+    return true
   }
 
   @Directive('@transaction')

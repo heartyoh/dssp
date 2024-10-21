@@ -4,7 +4,7 @@ import { customElement, property, state } from 'lit/decorators.js'
 import { ButtonContainerStyles, ScrollbarStyles } from '@operato/styles'
 
 @customElement('building-inspection-detail-header')
-class buildingInspectionDetailHeader extends LitElement {
+class BuildingInspectionDetailHeader extends LitElement {
   static styles = [
     ButtonContainerStyles,
     ScrollbarStyles,

@@ -43,6 +43,7 @@ export interface Project {
   inspPassRate?: number
   robotProgressRate?: number
   structuralSafetyRate?: number
+  scheduleTable?: Attachment
   buildingComplex: BuildingComplex
 }
 export interface BuildingComplex {

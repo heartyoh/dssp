@@ -70,6 +70,19 @@ export class ProjectQuery {
     return attachment
   }
 
+  @FieldResolver(type => Attachment)
+  async scheduleTable(@Root() project: Project): Promise<Attachment | undefined> {
+    const attachment: Attachment = await getRepository(Attachment).findOne({
+      where: {
+        domain: { id: project.domainId },
+        refBy: project.id,
+        refType: Project.name + '_schedule_table'
+      }
+    })
+
+    return attachment
+  }
+
   @FieldResolver(type => BuildingComplex)
   async buildingComplex(@Root() project: Project): Promise<BuildingComplex> {
     return await getRepository(BuildingComplex).findOneBy({ id: project.buildingComplexId })

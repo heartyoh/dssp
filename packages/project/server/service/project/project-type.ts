@@ -53,6 +53,15 @@ export class ProjectPatch {
   buildingComplex?: BuildingComplexPatch
 }
 
+@InputType()
+export class UploadProjectScheduleTable {
+  @Field({ nullable: false, description: '수정할 프로젝트의 ID' })
+  projectId: string
+
+  @Field(type => GraphQLUpload, { nullable: true, description: '프로젝트 공정표 업로드' })
+  scheduleTable?: FileUpload
+}
+
 @ObjectType()
 export class ProjectList {
   @Field(type => [Project], { description: '프로젝트 리스트 항목들' })

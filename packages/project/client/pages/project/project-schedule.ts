@@ -11,10 +11,12 @@ import { customElement, query, state } from 'lit/decorators.js'
 import { ScopedElementsMixin } from '@open-wc/scoped-elements'
 import { client } from '@operato/graphql'
 import { i18next } from '@operato/i18n'
-
+import { openPopup } from '@operato/layout'
 import gql from 'graphql-tag'
 import { Project } from './project-list'
+import { keyed } from 'lit/directives/keyed.js'
 import '@operato/gantt/ox-gantt.js'
+import './popup/popup-schedule-upload'
 
 const TaskFragment = gql`
   fragment TaskFragment on Task {
@@ -213,13 +215,7 @@ export class ProjectSchedule extends ScopedElementsMixin(PageView) {
       <div header>
         <h2>${this.project.name}</h2>
         <div button-container>
-          <md-elevated-button href=${`project-update/${this.project.id}`}>
-            <md-icon slot="icon">assignment</md-icon>프로젝트 정보 수정
-          </md-elevated-button>
-          <md-elevated-button href=${`project-plan-management/${this.project.id}`}>
-            <md-icon slot="icon">description</md-icon>도면 관리
-          </md-elevated-button>
-          <md-elevated-button href=${`project-task-update/${this.project.id}`}>
+          <md-elevated-button @click=${this._openUploadSchedulePopup}>
             <md-icon slot="icon">event_note</md-icon>공정표 관리
           </md-elevated-button>
         </div>
@@ -286,6 +282,10 @@ export class ProjectSchedule extends ScopedElementsMixin(PageView) {
                 }
               }
             }
+            scheduleTable {
+              id
+              name
+            }
             buildingComplex {
               id
               planXScale
@@ -332,5 +332,20 @@ export class ProjectSchedule extends ScopedElementsMixin(PageView) {
   onChangePeriodRange() {
     this.fromDate = this.inputStartDate.value
     this.toDate = this.inputEndDate.value
+  }
+
+  private _openUploadSchedulePopup() {
+    openPopup(
+      html`<popup-schedule-upload
+        .projectId=${this.projectId}
+        .scheduleTable=${this.project?.scheduleTable}
+        @uploaded=${() => this.initProject(this.projectId)}
+      ></popup-schedule-upload>`,
+      {
+        backdrop: true,
+        size: 'medium',
+        title: `공정표 업로드`
+      }
+    )
   }
 }
