@@ -19,9 +19,30 @@ class PDFDrawingService {
   }
 
   async getDrawing(dwgId: string): Promise<PDFDrawing> {
+    const drawingPairs = await this.getDrawings()
+    const pair = drawingPairs.find(pair => pair.dwgId == dwgId)
+
     /* drawing의 기본정보도 같이 제공해주길.. */
     const response = await axios.get(`${API_BASE_URL}/api/dwglinks/${dwgId}`)
-    return response.data
+    return {
+      ...response.data,
+      ...pair
+    }
+  }
+
+  async getDrawingByName(filename: string): Promise<PDFDrawing> {
+    const drawingPairs = await this.getDrawings()
+    const pair = drawingPairs.find(pair => pair.title == filename)
+
+    if (!pair) {
+      throw new Error('Drawing Not Found.')
+    }
+    /* drawing의 기본정보도 같이 제공해주길.. */
+    const response = await axios.get(`${API_BASE_URL}/api/dwglinks/${pair.dwgId}`)
+    return {
+      ...response.data,
+      ...pair
+    }
   }
 
   async getDrawingLinks(dwgId: string): Promise<PDFDrawingLink[]> {

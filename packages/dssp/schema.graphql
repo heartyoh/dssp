@@ -1593,22 +1593,6 @@ input InspectionPartPatch {
   sequence: Int
 }
 
-type InsulationSection {
-  box: String
-  dwgId: String
-  id: String
-  symbol: String
-  type: String
-}
-
-type InternalWallPart {
-  box: String
-  dwgId: String
-  id: String
-  symbol: String
-  type: String
-}
-
 type Invitation {
   createdAt: DateTimeISO
   creator: User
@@ -3156,6 +3140,9 @@ type Mutation {
 
   """To update roles for a user"""
   updateUserRoles(availableRoles: [ObjectRef!]!, selectedRoles: [ObjectRef!]!, userId: String!): User!
+
+  """프로젝트 공정표 업로드"""
+  uploadProjectScheduleTable(param: UploadProjectScheduleTable!): Boolean!
 }
 
 input NewActionPlan {
@@ -4362,6 +4349,7 @@ type Project {
   name: String!
   robotProgressRate: Float
   rootTasks: [Task!]
+  scheduleTable: Attachment
   startDate: String
   state: String!
   structuralSafetyRate: Float
@@ -4759,11 +4747,9 @@ type Query {
 
   """To fetch multiple InspectionParts"""
   inspectionParts(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): InspectionPartList!
-  insulationSection(symbol: String!): InsulationSection!
 
   """To fetch integration Analyses"""
   integrationAnalysis: Object!
-  internalWallPart(rmname: String!, symbol: String!): InternalWallPart!
   invitation(email: EmailAddress!, reference: String!, type: String!): Invitation!
   invitations(reference: String!, type: String!): InvitationList!
 
@@ -4903,6 +4889,9 @@ type Query {
   """To fetch a PDFDrawing"""
   pdfDrawing(dwgId: String!): PDFDrawing!
 
+  """To fetch a PDFDrawing by title"""
+  pdfDrawingByTitle(title: String!): PDFDrawing!
+
   """To fetch multiple PDFDrawings"""
   pdfDrawings: [PDFDrawing!]!
 
@@ -4962,7 +4951,6 @@ type Query {
 
   """To fetch multiple users"""
   roles(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): RoleList!
-  roomFinish(rmname: String!, symbol: String!): RoomFinish!
 
   """To fetch a scenario"""
   scenario(id: String!): Scenario!
@@ -5054,7 +5042,6 @@ type Query {
   """
   users(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): UserList!
   vendors: [Domain!]!
-  window(sn: String!, symbol: String!): WindowPart!
 
   """To fetch a WorkerType"""
   workerType(id: String!): WorkerType
@@ -5135,12 +5122,6 @@ type RolePrivilege {
   category: String
   description: String
   id: String
-  name: String
-}
-
-type RoomFinish {
-  code: String
-  finDetItems: [RoomFinishDetail!]!
   name: String
 }
 
@@ -5681,6 +5662,14 @@ input UpdateBuildingInspectionSubmitType {
 """The `Upload` scalar type represents a file upload."""
 scalar Upload
 
+input UploadProjectScheduleTable {
+  """수정할 프로젝트의 ID"""
+  projectId: String!
+
+  """프로젝트 공정표 업로드"""
+  scheduleTable: Upload
+}
+
 type UploadURL {
   fields: Any!
   url: String!
@@ -5766,15 +5755,6 @@ type UsersAuthProviders {
   ssoId: String
   updatedAt: DateTimeISO
   user: User
-}
-
-type WindowPart {
-  box: String
-  dwgId: String
-  id: String
-  sn: String
-  symbol: String
-  type: String
 }
 
 """작업자 타입"""

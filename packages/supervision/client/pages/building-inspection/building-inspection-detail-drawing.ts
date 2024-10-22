@@ -13,7 +13,7 @@ import { CommonGristStyles, ScrollbarStyles } from '@operato/styles'
 import { PageLifecycle } from '@operato/shell/dist/src/app/pages/page-view'
 import { client } from '@operato/graphql'
 import { notify } from '@operato/layout'
-import { ImageProvider, Shape } from '@operato/image-marker'
+import { Shape } from '@operato/image-marker'
 
 import { DrawingImageProvider } from '@dssp/drawing/dist-client/drawing-management/drawing-image-provider.js'
 
@@ -163,7 +163,10 @@ export class BuildingInspectionDetailDrawing extends ScopedElementsMixin(PageVie
 
   protected async updated(changes: PropertyValues): Promise<void> {
     if (changes.has('buildingInspection')) {
-      const dwgId = 'GA-3006' // this.buildingInspection?.buildingLevel?.mainDrawingImage || '/assets/images/img-drawing-default.png'
+      // TODO 위치 및 도면정보 가져올 수 있어야 하고, (이미 가지고 있다면) pdf 파일 filepath 가져올 수 있으면 됨.
+      // const filename = this.buildingInspection?.buildingLevel?.mainDrawingImage || '/assets/images/img-drawing-default.png'
+
+      const dwgId = 'GA-3006'
 
       const shapes = JSON.parse(this.buildingInspection?.drawingMarker || null) || []
       const markers = await this.drawingImageProvider.getMarkers(dwgId)

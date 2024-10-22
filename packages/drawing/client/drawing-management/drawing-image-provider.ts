@@ -51,28 +51,28 @@ export class DrawingImageProvider implements ImageProvider {
   private queryCache: Map<string, { data: PDFDrawing; expiry: number }> = new Map()
 
   // GraphQL 요청을 분리하여 재사용 가능하게 함
-  async getPdfDrawingData(dwgId: string): Promise<PDFDrawing | undefined> {
-    if (!dwgId) {
+  async getPdfDrawingData(title: string): Promise<PDFDrawing | undefined> {
+    if (!title) {
       return
     }
 
     const currentTime = Date.now()
 
-    // 캐시에서 해당 dwgId의 쿼리 결과 확인
-    if (this.queryCache.has(dwgId)) {
-      const cachedQuery = this.queryCache.get(dwgId)!
+    // 캐시에서 해당 title의 쿼리 결과 확인
+    if (this.queryCache.has(title)) {
+      const cachedQuery = this.queryCache.get(title)!
       if (currentTime < cachedQuery.expiry) {
         return cachedQuery.data // 캐시된 데이터 반환
       } else {
-        this.queryCache.delete(dwgId) // 만료된 쿼리 삭제
+        this.queryCache.delete(title) // 만료된 쿼리 삭제
       }
     }
 
     // GraphQL 쿼리 실행
     const response = await client.query({
       query: gql`
-        query ($dwgId: String!) {
-          pdfDrawing(dwgId: $dwgId) {
+        query ($title: String!) {
+          pdfDrawingByTitle(title: $title) {
             id
             dwgId
             drawingURL
@@ -103,13 +103,13 @@ export class DrawingImageProvider implements ImageProvider {
           }
         }
       `,
-      variables: { dwgId }
+      variables: { title }
     })
 
     const pdfDrawing = response.data?.pdfDrawing
 
     // 쿼리 결과를 캐시에 저장
-    this.queryCache.set(dwgId, {
+    this.queryCache.set(title, {
       data: pdfDrawing,
       expiry: currentTime + this.cacheTTL // 5분 후 캐시 만료
     })
@@ -125,7 +125,7 @@ export class DrawingImageProvider implements ImageProvider {
       return ''
     }
 
-    const { dwgId, drawingURL } = pdfDrawing
+    const { title, drawingURL } = pdfDrawing
 
     const allowedScales = [2, 4, 8]
     let closestScale = allowedScales.reduce((prev, curr) =>
@@ -140,10 +140,10 @@ export class DrawingImageProvider implements ImageProvider {
     const currentTime = Date.now()
 
     // 캐시에서 문서별 캐시 확인
-    if (!this.cache.has(dwgId)) {
-      this.cache.set(dwgId, new Map()) // 해당 문서에 대한 캐시가 없으면 새로 생성
+    if (!this.cache.has(title!)) {
+      this.cache.set(title!, new Map()) // 해당 문서에 대한 캐시가 없으면 새로 생성
     }
-    const documentCache = this.cache.get(dwgId)!
+    const documentCache = this.cache.get(title!)!
 
     // 이미 해당 배수로 캐시가 존재하면 반환
     if (documentCache.has(closestScale)) {
