@@ -26,7 +26,7 @@ export class ProjectSettingList extends ScopedElementsMixin(PageView) {
 
         width: 100%;
         height: 100%;
-        background-color: #f7f7f7;
+        background-color: var(--md-sys-color-background, #fcf8f8);
 
         --grid-record-emphasized-background-color: red;
         --grid-record-emphasized-color: yellow;
@@ -34,40 +34,42 @@ export class ProjectSettingList extends ScopedElementsMixin(PageView) {
 
       div[management-header-container] {
         display: flex;
-        margin: 15px 23px 0px 23px;
-        gap: 13px;
+        margin: var(--spacing-large, 12px);
+        margin-bottom:0;
+        gap: var(--spacing-medium, 8px);
         overflow-x: auto;
 
         a {
-          min-width: 140px;
+          flex:1;
           text-align: center;
-          padding: 12px 15px;
-          background-color: #fff;
-          color: #586878;
+          padding: var(--spacing-medium, 8px);
+          background-color: var(--md-sys-color-on-primary);
+          color: var(--md-sys-color-tertiary);
           font-weight: 700;
-          border-radius: 7px;
+          border-radius: var(--md-sys-shape-corner-small, 5px);
           display: flex;
           flex-direction: column;
           justify-content: center;
           align-items: center;
-          gap: 5px;
+          gap: var(--spacing-small, 4px);
           border: solid 1px #0000004d;
           text-decoration: none;
           cursor: pointer;
 
           md-icon {
-            font-size: 40px;
+            font-size: 35px;
             width: auto;
             height: auto;
           }
           div[label] {
-            font-size: 15px;
+            font-size: 14px;
+            line-height:1.3;
           }
         }
 
         a[green] {
           background-color: #24be7b;
-          color: #fff;
+          color: var(--md-sys-color-on-primary);
         }
       }
 
@@ -77,19 +79,21 @@ export class ProjectSettingList extends ScopedElementsMixin(PageView) {
         align-items: center;
         background-color: #2ea4df1a;
         border: 1px solid #2ea4df33;
-        margin: 15px 23px;
-        font-size: 18px;
-        padding: 7px;
-        border-radius: 5px;
+        margin: var(--spacing-large, 12px);
+        margin-bottom:var(--spacing-small, 5px);
+        padding: var(--spacing-medium, 8px) var(--spacing-large, 12px);
+        border-radius: var(--md-sys-shape-corner-small, 5px);
 
         md-filled-text-field[type='search'] {
-          margin-left: 5px;
-          margin-right: 26px;
-
           --md-filled-text-field-container-shape: 0px;
           --md-filled-text-field-container-color: transparent;
           --md-filled-text-field-label-text-color: #999999;
           --md-filled-text-field-input-text-color: #4e5055;
+        }
+        strong{
+          flex:1;
+          padding-right:var(--spacing-medium, 8px);
+          text-align:right
         }
 
         md-elevated-button[add-project] {
@@ -116,15 +120,18 @@ export class ProjectSettingList extends ScopedElementsMixin(PageView) {
         div[project-container] {
           display: flex;
           flex-direction: row;
-          min-height: 140px;
-          margin: 17px 23px;
-          background-color: #ffffff;
+          min-height: 130px;
+          margin: var(--spacing-large, 12px);
+          background-color: var(--md-sys-color-on-primary);
           border: 1px solid #cccccc80;
-          border-radius: 5px;
+          border-radius: var(--md-sys-shape-corner-small, 5px);
           align-items: center;
+          gap: var(--spacing-medium, 8px);
+          overflow:hidden;
 
           img[project-img] {
-            width: 285px;
+            width: 240px;
+            height: 130px;
             aspect-ratio: 2;
             background-color: #cccccc80;
           }
@@ -134,9 +141,9 @@ export class ProjectSettingList extends ScopedElementsMixin(PageView) {
           }
 
           span[project-info] {
-            flex: 0.45;
-            padding: 6px 15px;
-            font-size: 16px;
+            flex: 0.5;
+            padding: var(--spacing-small, 4px);
+            font-size: 14px;
 
             white-space: nowrap;
             overflow: hidden;
@@ -145,42 +152,42 @@ export class ProjectSettingList extends ScopedElementsMixin(PageView) {
             div[name] {
               color: #2e79be;
               font-weight: bold;
-              font-size: 19px;
-              margin-bottom: 2px;
+              font-size: 18px;
             }
           }
 
           span[project-state] {
-            flex: 0.55;
-            padding: 10px 20px;
-            min-width: 350px;
+            flex: 0.5;
+            padding: var(--spacing-medium, 8px);
+            min-width: 340px;
 
             & > div {
-              margin-bottom: 13px;
+              margin-bottom: var(--spacing-small, 4px);
             }
 
             div[progress] {
               position: relative;
 
               md-linear-progress {
+                margin:var(--spacing-tiny, 2px) 0;
                 --md-linear-progress-track-height: 18px;
                 --md-linear-progress-active-indicator-height: 18px;
                 --md-linear-progress-track-shape: 5px;
-                --md-linear-progress-active-indicator-color: #0595e51a;
-                --md-linear-progress-track-color: #0595e533;
+                --md-linear-progress-active-indicator-color: #0595e526;
+                --md-linear-progress-track-color: #0595e52a;
               }
 
               span {
                 position: absolute;
                 top: 0;
-                left: 12px;
+                left: var(--spacing-large, 12px);
                 font-size: 12px;
                 font-weight: bold;
                 color: #2e79be;
 
                 &:last-child {
                   left: unset;
-                  right: 12px;
+                  right: var(--spacing-large, 12px);
                 }
               }
             }
@@ -239,7 +246,7 @@ export class ProjectSettingList extends ScopedElementsMixin(PageView) {
           </a>
           <a href="inspection-drawing-type-management">
             <md-icon slot="leading-icon">stacks</md-icon>
-            <div label>도면타입/검측부위 관리</div>
+            <div label>도면타입/검측부위<br/>관리</div>
           </a>
           <a href="checklist-type-management">
             <md-icon slot="leading-icon">rule</md-icon>
@@ -247,13 +254,12 @@ export class ProjectSettingList extends ScopedElementsMixin(PageView) {
           </a>
           <a href="checklist-template-list">
             <md-icon slot="leading-icon">fact_check</md-icon>
-            <div label>체크리스트 템플릿 관리</div>
+            <div label>체크리스트 템플릿<br/>관리</div>
           </a>
         </div>
       </div>
 
       <div header>
-        <label>프로젝트 이름</label>
         <md-filled-text-field
           name="projectName"
           type="search"

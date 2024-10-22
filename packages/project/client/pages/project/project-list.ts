@@ -139,7 +139,7 @@ export class ProjectListPage extends ScopedElementsMixin(PageView) {
 
         width: 100%;
         height: 100%;
-        background-color: #f7f7f7;
+        background-color: var(--md-sys-color-background, #f6f6f6);
 
         --grid-record-emphasized-background-color: red;
         --grid-record-emphasized-color: yellow;
