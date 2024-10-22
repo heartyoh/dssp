@@ -1593,22 +1593,6 @@ input InspectionPartPatch {
   sequence: Int
 }
 
-type InsulationSection {
-  box: String
-  dwgId: String
-  id: String
-  symbol: String
-  type: String
-}
-
-type InternalWallPart {
-  box: String
-  dwgId: String
-  id: String
-  symbol: String
-  type: String
-}
-
 type Invitation {
   createdAt: DateTimeISO
   creator: User
@@ -4763,11 +4747,9 @@ type Query {
 
   """To fetch multiple InspectionParts"""
   inspectionParts(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): InspectionPartList!
-  insulationSection(symbol: String!): InsulationSection!
 
   """To fetch integration Analyses"""
   integrationAnalysis: Object!
-  internalWallPart(rmname: String!, symbol: String!): InternalWallPart!
   invitation(email: EmailAddress!, reference: String!, type: String!): Invitation!
   invitations(reference: String!, type: String!): InvitationList!
 
@@ -4907,6 +4889,9 @@ type Query {
   """To fetch a PDFDrawing"""
   pdfDrawing(dwgId: String!): PDFDrawing!
 
+  """To fetch a PDFDrawing by title"""
+  pdfDrawingByTitle(title: String!): PDFDrawing!
+
   """To fetch multiple PDFDrawings"""
   pdfDrawings: [PDFDrawing!]!
 
@@ -4966,7 +4951,6 @@ type Query {
 
   """To fetch multiple users"""
   roles(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): RoleList!
-  roomFinish(rmname: String!, symbol: String!): RoomFinish!
 
   """To fetch a scenario"""
   scenario(id: String!): Scenario!
@@ -5058,7 +5042,6 @@ type Query {
   """
   users(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): UserList!
   vendors: [Domain!]!
-  window(sn: String!, symbol: String!): WindowPart!
 
   """To fetch a WorkerType"""
   workerType(id: String!): WorkerType
@@ -5139,12 +5122,6 @@ type RolePrivilege {
   category: String
   description: String
   id: String
-  name: String
-}
-
-type RoomFinish {
-  code: String
-  finDetItems: [RoomFinishDetail!]!
   name: String
 }
 
@@ -5778,15 +5755,6 @@ type UsersAuthProviders {
   ssoId: String
   updatedAt: DateTimeISO
   user: User
-}
-
-type WindowPart {
-  box: String
-  dwgId: String
-  id: String
-  sn: String
-  symbol: String
-  type: String
 }
 
 """작업자 타입"""
