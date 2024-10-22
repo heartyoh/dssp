@@ -410,12 +410,6 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
             renderer: value => BUILDING_INSPECTION_STATUS_DISPLAY[value]
           },
           width: 120
-        },
-        {
-          type: 'datetime',
-          name: '',
-          header: '검측 결과 데이터',
-          width: 180
         }
       ],
       rows: {
