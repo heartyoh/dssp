@@ -166,6 +166,21 @@ export class BuildingInspectionDetailDrawing extends ScopedElementsMixin(PageVie
       // TODO 위치 및 도면정보 가져올 수 있어야 하고, (이미 가지고 있다면) pdf 파일 filepath 가져올 수 있으면 됨.
       // const filename = this.buildingInspection?.buildingLevel?.mainDrawingImage || '/assets/images/img-drawing-default.png'
 
+      // 1-1. 위치 정보 - 체크리스트에 들어가는 위치정보 텍스트
+      const location_1 = this.buildingInspection.checklist.location
+
+      // 1-2. 위치 정보 - 실제 위치정보 텍스트 (동 + 층) - ID 필드를 사용하면 DB ID 필드입니다.
+      const location_building = this.buildingInspection.buildingLevel.building.name
+      const location_floor = this.buildingInspection.buildingLevel.floor
+
+      // 2. 평면도 pdf 파일
+      // mainDrawing {
+      //   id
+      //   name
+      //   fullpath
+      // }
+      const mainDrawing = this.buildingInspection.buildingLevel.mainDrawing
+
       const dwgId = 'GA-3006'
 
       const shapes = JSON.parse(this.buildingInspection?.drawingMarker || null) || []
@@ -194,6 +209,9 @@ export class BuildingInspectionDetailDrawing extends ScopedElementsMixin(PageVie
             status
             requestDate
             drawingMarker
+            checklist {
+              location
+            }
             buildingLevel {
               id
               floor
