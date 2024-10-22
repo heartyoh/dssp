@@ -3156,6 +3156,9 @@ type Mutation {
 
   """To update roles for a user"""
   updateUserRoles(availableRoles: [ObjectRef!]!, selectedRoles: [ObjectRef!]!, userId: String!): User!
+
+  """프로젝트 공정표 업로드"""
+  uploadProjectScheduleTable(param: UploadProjectScheduleTable!): Boolean!
 }
 
 input NewActionPlan {
@@ -4362,6 +4365,7 @@ type Project {
   name: String!
   robotProgressRate: Float
   rootTasks: [Task!]
+  scheduleTable: Attachment
   startDate: String
   state: String!
   structuralSafetyRate: Float
@@ -5680,6 +5684,14 @@ input UpdateBuildingInspectionSubmitType {
 
 """The `Upload` scalar type represents a file upload."""
 scalar Upload
+
+input UploadProjectScheduleTable {
+  """수정할 프로젝트의 ID"""
+  projectId: String!
+
+  """프로젝트 공정표 업로드"""
+  scheduleTable: Upload
+}
 
 type UploadURL {
   fields: Any!
