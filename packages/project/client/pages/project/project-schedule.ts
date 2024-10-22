@@ -15,6 +15,7 @@ import { openPopup } from '@operato/layout'
 import gql from 'graphql-tag'
 import { Project } from './project-list'
 import { keyed } from 'lit/directives/keyed.js'
+import { ScrollbarStyles } from '@operato/styles'
 import '@operato/gantt/ox-gantt.js'
 import './popup/popup-schedule-upload'
 
@@ -38,6 +39,7 @@ const TaskFragment = gql`
 @customElement('project-schedule')
 export class ProjectSchedule extends ScopedElementsMixin(PageView) {
   static styles = [
+    ScrollbarStyles,
     css`
       :host {
         display: flex;
@@ -139,11 +141,25 @@ export class ProjectSchedule extends ScopedElementsMixin(PageView) {
             }
           }
 
-          div[button] {
+          div[construction-list-container] {
             flex: 1;
+            display: flex;
             border-radius: 5px;
             border: 1px solid #cccccc80;
             background-color: #fff;
+            padding: 8px 10px;
+            gap: 10px;
+            overflow-x: auto;
+
+            md-outlined-button {
+              --md-outlined-button-container-height: 30px;
+              --md-outlined-button-trailing-space: 15px;
+              --md-outlined-button-leading-space: 15px;
+              --md-outlined-button-label-text-color: #586878;
+              box-shadow: 1px 1px 1px #0000001a;
+              padding: 8px 16px;
+              font-weight: 700;
+            }
           }
         }
       }
@@ -173,6 +189,7 @@ export class ProjectSchedule extends ScopedElementsMixin(PageView) {
   @state() project: Project = { ...this.defaultProject }
   @state() selectedBuildingIdx: number = 0
   @state() tasks
+  @state() constructionTypeList = []
 
   @state() private fromDate = '2024-01-01'
   @state() private toDate = '2024-12-31'
@@ -227,9 +244,7 @@ export class ProjectSchedule extends ScopedElementsMixin(PageView) {
           to-date=${new Date(this.toDate).toISOString().split('T')[0]}
           .timeScale=${this.timeScale}
           .tasks=${this.tasks}
-          @date-range-selected=${(e: CustomEvent) => {
-            console.log('date-range-selected', e.detail)
-          }}
+          @date-range-selected=${this.onRangeSelected}
           @task-clicked=${(e: CustomEvent) => {
             console.log('task-clicked', e.detail)
           }}
@@ -249,7 +264,12 @@ export class ProjectSchedule extends ScopedElementsMixin(PageView) {
               <input type="date" name="endDate" project .value=${this.project.endDate || ''} max="9999-12-31" />
             </div>
           </div>
-          <div button></div>
+          <div construction-list-container>
+            ${this.constructionTypeList?.map(
+              (constructionType: any) =>
+                html` <md-outlined-button id=${constructionType.id}>${constructionType.title}</md-outlined-button>`
+            )}
+          </div>
         </div>
       </div>
     `
@@ -332,6 +352,18 @@ export class ProjectSchedule extends ScopedElementsMixin(PageView) {
   onChangePeriodRange() {
     this.fromDate = this.inputStartDate.value
     this.toDate = this.inputEndDate.value
+  }
+
+  onRangeSelected(e: CustomEvent) {
+    const selectedFromDate = new Date(e.detail.start + 'T00:00:00.000Z')
+    const selectedToDate = new Date(e.detail.end + 'T23:59:59.000Z')
+
+    this.constructionTypeList = this.tasks.filter(constuction => {
+      const constuctionStartDate = new Date(constuction.startDate)
+      const constuctionEndDate = new Date(constuction.endDate)
+
+      return constuctionStartDate <= selectedToDate && constuctionEndDate >= selectedFromDate
+    })
   }
 
   private _openUploadSchedulePopup() {
