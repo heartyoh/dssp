@@ -181,6 +181,9 @@ export class BuildingInspectionDetailDrawing extends ScopedElementsMixin(PageVie
       // }
       const mainDrawing = this.buildingInspection.buildingLevel.mainDrawing
 
+      // 3. 선택 도면
+      const inspectionDrawingType = this.buildingInspection.checklist.inspectionDrawingType
+
       const dwgId = 'GA-3006'
 
       const shapes = JSON.parse(this.buildingInspection?.drawingMarker || null) || []
@@ -211,6 +214,7 @@ export class BuildingInspectionDetailDrawing extends ScopedElementsMixin(PageVie
             drawingMarker
             checklist {
               location
+              inspectionDrawingType
             }
             buildingLevel {
               id
