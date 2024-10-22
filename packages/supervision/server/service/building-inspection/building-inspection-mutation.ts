@@ -245,7 +245,7 @@ export class BuildingInspectionMutation {
       relations: ['building']
     })
 
-    const buildingName = buildingLevel.building.name.match(/\d+/g).join('').padStart(4, '0')
+    const buildingName = buildingLevel.building.name.match(/\d+/g)?.join('')?.padStart(4, '0') || '0000'
     const floorName = buildingLevel.floor.toString().padStart(3, '0')
     const latestChecklist = await getRepository(Checklist)
       .createQueryBuilder('c')
