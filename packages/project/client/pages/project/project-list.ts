@@ -147,24 +147,24 @@ export class ProjectListPage extends ScopedElementsMixin(PageView) {
 
       div[header] {
         display: flex;
-        height: 100px;
         align-items: center;
         background-color: #2ea4df1a;
         border: 1px solid #2ea4df33;
-        margin: 15px 23px;
-        font-size: 18px;
-        padding: 7px;
-        border-radius: 5px;
+        margin: var(--spacing-large, 12px);
+        margin-bottom:var(--spacing-small, 5px);
+        padding: var(--spacing-medium, 8px) var(--spacing-large, 12px);
+        border-radius: var(--md-sys-shape-corner-small, 5px);
 
         md-filled-text-field[type='search'] {
-          margin-left: 5px;
-          margin-right: 26px;
-
           --md-filled-text-field-container-shape: 0px;
-          --md-sys-color-primary: #006a6a;
+          --md-sys-color-primary: #2e79be;
           --md-sys-color-surface-container-highest: transparent;
           --md-filled-text-field-label-text-color: #999999;
-          --md-filled-text-field-input-text-color: #4e5055;
+        }
+        strong{
+          flex:1;
+          padding-right:var(--spacing-medium, 8px);
+          text-align:right
         }
 
         md-elevated-button[add-project] {
@@ -182,13 +182,15 @@ export class ProjectListPage extends ScopedElementsMixin(PageView) {
       div[body] {
         div[project-container] {
           height: 140px;
-          margin: 17px 23px;
-          background-color: #ffffff;
+          margin: var(--spacing-large, 12px);
+          background-color: var(--md-sys-color-on-primary);
           border: 1px solid #cccccc80;
-          border-radius: 5px;
+          border-radius: var(--md-sys-shape-corner-small, 5px);
+          overflow:hidden;
 
           & > a {
             display: flex;
+            gap:0 var(--spacing-large, 12px);
             width: 100%;
             height: 100%;
             text-decoration: none;
@@ -196,7 +198,7 @@ export class ProjectListPage extends ScopedElementsMixin(PageView) {
           }
 
           img[project-img] {
-            width: 285px;
+            width: 240px;
             background-color: #cccccc80;
           }
           img[project-img][no-image] {
@@ -205,9 +207,9 @@ export class ProjectListPage extends ScopedElementsMixin(PageView) {
           }
 
           span[project-info] {
-            flex: 0.45;
-            padding: 6px 15px;
-            font-size: 16px;
+            flex: 0.55;
+            padding: var(--spacing-small, 4px);
+            font-size: 14px;
 
             white-space: nowrap;
             overflow: hidden;
@@ -216,17 +218,17 @@ export class ProjectListPage extends ScopedElementsMixin(PageView) {
             div[name] {
               color: #2e79be;
               font-weight: bold;
-              font-size: 19px;
-              margin-bottom: 2px;
+              font-size: 18px;
+              margin: var(--spacing-small, 4px);
             }
           }
 
           span[project-state] {
-            flex: 0.55;
-            padding: 10px 20px;
+            flex: 0.45;
+            padding: var(--spacing-medium, 8px);
 
             & > div {
-              margin-bottom: 3px;
+              margin: var(--spacing-tiny, 2px);
             }
 
             div[progress] {
@@ -236,21 +238,21 @@ export class ProjectListPage extends ScopedElementsMixin(PageView) {
                 --md-linear-progress-track-height: 18px;
                 --md-linear-progress-active-indicator-height: 18px;
                 --md-linear-progress-track-shape: 5px;
-                --md-sys-color-primary: #0595e51a;
-                --md-sys-color-surface-container-highest: #0595e533;
+                --md-sys-color-primary: #0595e526;
+                --md-sys-color-surface-container-highest: #0595e52a;
               }
 
               span {
                 position: absolute;
                 top: 0;
-                left: 12px;
+                left: var(--spacing-large, 12px);
                 font-size: 12px;
                 font-weight: bold;
                 color: #2e79be;
 
                 &:last-child {
                   left: unset;
-                  right: 12px;
+                  right: var(--spacing-large, 12px);
                 }
               }
             }
@@ -273,11 +275,10 @@ export class ProjectListPage extends ScopedElementsMixin(PageView) {
   render() {
     return html`
       <div header>
-        <label>프로젝트 이름</label>
         <md-filled-text-field
           name="projectName"
           type="search"
-          label="프로젝트 이름"
+          label="프로젝트명"
           .value=${this.projectName}
           @input=${this._onInputChange}
           @keypress=${this._onKeypress}
