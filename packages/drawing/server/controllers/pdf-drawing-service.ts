@@ -32,7 +32,7 @@ class PDFDrawingService {
 
   async getDrawingByName(filename: string): Promise<PDFDrawing> {
     const drawingPairs = await this.getDrawings()
-    const pair = drawingPairs.find(pair => pair.title == filename)
+    const pair = drawingPairs.find(pair => pair.title.normalize('NFC') == filename.normalize('NFC'))
 
     if (!pair) {
       throw new Error('Drawing Not Found.')

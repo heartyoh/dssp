@@ -122,7 +122,7 @@ export class BuildingInspectionDetailDrawing extends ScopedElementsMixin(PageVie
           const { id, type, symbol, box, dwgId } = JSON.parse(link)
           const [x, y, width, height] = box?.split(',').map(Number) || []
 
-          this.linkUrl = dwgId
+          this.linkUrl = `DWGID:${dwgId}`
           this.linkShapes = [
             {
               id: id!,
@@ -162,12 +162,9 @@ export class BuildingInspectionDetailDrawing extends ScopedElementsMixin(PageVie
   }
 
   protected async updated(changes: PropertyValues): Promise<void> {
-    if (changes.has('buildingInspection')) {
-      // TODO 위치 및 도면정보 가져올 수 있어야 하고, (이미 가지고 있다면) pdf 파일 filepath 가져올 수 있으면 됨.
-      // const filename = this.buildingInspection?.buildingLevel?.mainDrawingImage || '/assets/images/img-drawing-default.png'
-
+    if (changes.has('buildingInspection') && this.buildingInspection?.checklist) {
       // 1-1. 위치 정보 - 체크리스트에 들어가는 위치정보 텍스트
-      const location_1 = this.buildingInspection.checklist.location
+      const location_1 = this.buildingInspection.checklist?.location
 
       // 1-2. 위치 정보 - 실제 위치정보 텍스트 (동 + 층) - ID 필드를 사용하면 DB ID 필드입니다.
       const location_building = this.buildingInspection.buildingLevel.building.name
@@ -184,12 +181,10 @@ export class BuildingInspectionDetailDrawing extends ScopedElementsMixin(PageVie
       // 3. 선택 도면
       const inspectionDrawingType = this.buildingInspection.checklist.inspectionDrawingType
 
-      const dwgId = 'GA-3006'
-
       const shapes = JSON.parse(this.buildingInspection?.drawingMarker || null) || []
-      const markers = await this.drawingImageProvider.getMarkers(dwgId)
+      const markers = await this.drawingImageProvider.getMarkers(inspectionDrawingType)
 
-      this.imageUrl = dwgId
+      this.imageUrl = String(inspectionDrawingType).normalize('NFC')
       this.shapes = [...shapes, ...markers]
     }
   }
