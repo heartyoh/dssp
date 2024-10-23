@@ -93,8 +93,8 @@ class BuildingInspectionDetailHeader extends LitElement {
             <md-icon slot="icon">description</md-icon>검측 체크리스트
           </md-elevated-button>
           <md-elevated-button
-            ?disabled=${path.includes('building-inspection-detail-photo/')}
-            href=${`building-inspection-detail-photo/${this.buildingInspectionId}`}
+            ?disabled=${path.includes('building-inspection-detail-camera/')}
+            href=${`building-inspection-detail-camera/${this.buildingInspectionId}`}
             disabled
           >
             <md-icon slot="icon">description</md-icon>사진촬영

@@ -9,6 +9,7 @@ export default {
     'building-inspection-list', // 층 검측 현황
     'building-inspection-detail-drawing', // 층 검측 상세 - 검측 도면
     'building-inspection-detail-checklist', // 층 검측 상세 - 검측 체크리스트
+    'building-inspection-detail-camera' // 층 검측 상세 - 사진 촬영
   ].map(page => {
     return {
       page,

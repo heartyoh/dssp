@@ -19,5 +19,9 @@ export default function route(page: string) {
     case 'building-inspection-detail-checklist':
       import('./pages/building-inspection/building-inspection-detail-checklist')
       return page
+
+    case 'building-inspection-detail-camera':
+      import('./pages/building-inspection/building-inspection-detail-camera')
+      return page
   }
 }

@@ -34,6 +34,7 @@
     "@operato/graphql": "^8.0.0-alpha",
     "@operato/image-marker": "^8.0.0-alpha",
     "@operato/input": "^8.0.0-alpha",
+    "@operato/mini-map": "^8.0.0-alpha",
     "@operato/shell": "^8.0.0-alpha",
     "@things-factory/auth-base": "^8.0.0-alpha",
     "@things-factory/shell": "^8.0.0-alpha"

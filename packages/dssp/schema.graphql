@@ -4886,8 +4886,8 @@ type Query {
   """To fetch multiple PayloadLogs"""
   payloadLogs(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): PayloadLogList!
 
-  """To fetch a PDFDrawing"""
-  pdfDrawing(dwgId: String!): PDFDrawing!
+  """To fetch a PDFDrawing by dwgId"""
+  pdfDrawingByDwgId(dwgId: String!): PDFDrawing!
 
   """To fetch a PDFDrawing by title"""
   pdfDrawingByTitle(title: String!): PDFDrawing!
