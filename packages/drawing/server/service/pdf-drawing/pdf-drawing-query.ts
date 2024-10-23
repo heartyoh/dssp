@@ -1,4 +1,5 @@
 import { Resolver, Query, Arg, FieldResolver, Ctx, Root } from 'type-graphql'
+import { ILike } from 'typeorm'
 
 import { getRepository } from '@things-factory/shell'
 import { Attachment } from '@things-factory/attachment-base'
@@ -14,8 +15,8 @@ export class PDFDrawingQuery {
     return await pdfDrawingService.getDrawings()
   }
 
-  @Query(returns => PDFDrawing, { description: 'To fetch a PDFDrawing' })
-  async pdfDrawing(@Arg('dwgId') dwgId: string): Promise<PDFDrawing> {
+  @Query(returns => PDFDrawing, { description: 'To fetch a PDFDrawing by dwgId' })
+  async pdfDrawingByDwgId(@Arg('dwgId') dwgId: string): Promise<PDFDrawing> {
     try {
       return await pdfDrawingService.getDrawing(dwgId)
     } catch (error) {
@@ -59,29 +60,32 @@ export class PDFDrawingQuery {
 
   @FieldResolver(type => String)
   async drawingURL(@Root() pdfDrawing: PDFDrawing, @Ctx() context: ResolverContext): Promise<string> {
-    const { title } = pdfDrawing
+    const { domain } = context.state
+    const { title, dwgId } = pdfDrawing
 
     const attachmentRepository = getRepository(Attachment)
 
-    const { domain } = context.state
+    let attachment
 
-    // const tag = dwgId.replace('-', '_')
+    if (title) {
+      attachment = await attachmentRepository.findOne({
+        where: {
+          domain: { id: domain.id },
+          name: title + '.pdf'
+        }
+      })
+    } else if (dwgId) {
+      const tag = dwgId.replace('-', '_')
 
-    // const attachments = await attachmentRepository.find({
-    //   where: {
-    //     domain: { id: domain.id },
-    //     tags: ILike('%' + tag + '%')
-    //   }
-    // })
-    //
-    // const attachment = attachments.find(attachment => attachment.tags.includes(tag))
+      const attachments = await attachmentRepository.find({
+        where: {
+          domain: { id: domain.id },
+          tags: ILike('%' + tag + '%')
+        }
+      })
 
-    const attachment = await attachmentRepository.findOne({
-      where: {
-        domain: { id: domain.id },
-        name: title + '.pdf'
-      }
-    })
+      attachment = attachments.find(attachment => attachment.tags.includes(tag))
+    }
 
     return attachment?.fullpath
   }

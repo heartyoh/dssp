@@ -43,14 +43,11 @@ type PDFDrawing = {
 }
 
 export class DrawingImageProvider implements ImageProvider {
-  // 문서 ID별로 다양한 배수의 이미지를 캐시
   private cache: Map<string, Map<number, { data: string; expiry: number }>> = new Map()
   private cacheTTL = 1000 * 60 * 5 // 5분 후 캐시 만료
 
-  // Query 결과를 위한 캐시
   private queryCache: Map<string, { data: PDFDrawing; expiry: number }> = new Map()
 
-  // GraphQL 요청을 분리하여 재사용 가능하게 함
   async getPdfDrawingData(title: string): Promise<PDFDrawing | undefined> {
     if (!title) {
       return
@@ -58,7 +55,6 @@ export class DrawingImageProvider implements ImageProvider {
 
     const currentTime = Date.now()
 
-    // 캐시에서 해당 title의 쿼리 결과 확인
     if (this.queryCache.has(title)) {
       const cachedQuery = this.queryCache.get(title)!
       if (currentTime < cachedQuery.expiry) {
@@ -68,45 +64,87 @@ export class DrawingImageProvider implements ImageProvider {
       }
     }
 
-    // GraphQL 쿼리 실행
-    const response = await client.query({
-      query: gql`
-        query ($title: String!) {
-          pdfDrawingByTitle(title: $title) {
-            id
-            dwgId
-            drawingURL
-            title
-            links {
+    var pdfDrawing
+
+    if (title.startsWith('DWGID:')) {
+      const response = await client.query({
+        query: gql`
+          query ($dwgId: String!) {
+            pdfDrawingByDwgId(dwgId: $dwgId) {
               id
-              type
-              symbol
-              story
-              box
-              data {
+              dwgId
+              drawingURL
+              title
+              links {
                 id
                 type
                 symbol
-                dwgId
+                story
                 box
-                rmname
-                code
-                sn
-                finDetItems {
-                  part
+                data {
+                  id
+                  type
                   symbol
                   dwgId
                   box
+                  rmname
+                  code
+                  sn
+                  finDetItems {
+                    part
+                    symbol
+                    dwgId
+                    box
+                  }
                 }
               }
             }
           }
-        }
-      `,
-      variables: { title }
-    })
+        `,
+        variables: { dwgId: title.substring(6) }
+      })
 
-    const pdfDrawing = response.data?.pdfDrawing
+      pdfDrawing = response.data?.pdfDrawingByDwgId
+    } else {
+      const response = await client.query({
+        query: gql`
+          query ($title: String!) {
+            pdfDrawingByTitle(title: $title) {
+              id
+              dwgId
+              drawingURL
+              title
+              links {
+                id
+                type
+                symbol
+                story
+                box
+                data {
+                  id
+                  type
+                  symbol
+                  dwgId
+                  box
+                  rmname
+                  code
+                  sn
+                  finDetItems {
+                    part
+                    symbol
+                    dwgId
+                    box
+                  }
+                }
+              }
+            }
+          }
+        `,
+        variables: { title }
+      })
+
+      pdfDrawing = response.data?.pdfDrawingByTitle
+    }
 
     // 쿼리 결과를 캐시에 저장
     this.queryCache.set(title, {
@@ -127,7 +165,7 @@ export class DrawingImageProvider implements ImageProvider {
 
     const { title, drawingURL } = pdfDrawing
 
-    const allowedScales = [2, 4, 8]
+    const allowedScales = [2, 4]
     let closestScale = allowedScales.reduce((prev, curr) =>
       Math.abs(curr - options.scale) < Math.abs(prev - options.scale) ? curr : prev
     )
