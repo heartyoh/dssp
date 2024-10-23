@@ -75,7 +75,6 @@ export class ProjectSettingList extends ScopedElementsMixin(PageView) {
 
       div[header] {
         display: flex;
-        height: 100px;
         align-items: center;
         background-color: #2ea4df1a;
         border: 1px solid #2ea4df33;
@@ -193,7 +192,7 @@ export class ProjectSettingList extends ScopedElementsMixin(PageView) {
             }
 
             div[filled] div {
-              margin-right: 18px;
+              margin-right: var(--spacing-large, 12px);
               display: inline-block;
             }
 
@@ -206,11 +205,12 @@ export class ProjectSettingList extends ScopedElementsMixin(PageView) {
 
             md-outlined-button {
               min-height: 33px;
-              padding: 0px 13px;
-              margin-right: 2px;
-              box-shadow: 1px 1px 1px #0000001a;
+              padding: 0 var(--spacing-large, 12px);
+              margin-right: var(--spacing-tiny, 2px);
+              box-shadow: 1px 1px 1px 1px #0000001a;
               --md-outlined-button-label-text-color: #586878;
               --md-outlined-button-label-text-weight: bold;
+              --md-sys-color-outline: rgba(51,51,51,.20);
             }
           }
         }
