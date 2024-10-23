@@ -15,6 +15,7 @@ import { navigate, store } from '@operato/shell'
 import { appendViewpart, updateViewpart, toggleOverlay, TOOL_POSITION, VIEWPART_POSITION, VIEWPART_LEVEL } from '@operato/layout'
 import { APPEND_APP_TOOL } from '@things-factory/apptool-base/client'
 import { setupAppToolPart } from '@things-factory/apptool-ui/dist-client'
+import { setupContextUIPart } from '@things-factory/context-ui/dist-client'
 import { hasPrivilege } from '@things-factory/auth-base/dist-client'
 import { setAuthManagementMenus } from '@things-factory/auth-ui/dist-client'
 import { ADD_MORENDA } from '@things-factory/more-base/client'
@@ -39,6 +40,11 @@ export default async function bootstrap() {
     toolbar: true,
     busybar: true,
     mdibar: false
+  })
+
+  await setupContextUIPart({
+    titlebar: 'header',
+    contextToolbar: 'page-footer'
   })
 
   /* append top-menu to layout */
@@ -106,15 +112,6 @@ export default async function bootstrap() {
     },
     position: VIEWPART_POSITION.ASIDEBAR
   })
-
-  // store.dispatch({
-  //   type: APPEND_APP_TOOL,
-  //   tool: {
-  //     name: 'user-circle',
-  //     template: html` <user-circle> </user-circle> `,
-  //     position: TOOL_POSITION.REAR
-  //   }
-  // })
 
   /* add setting morenda */
   store.dispatch({

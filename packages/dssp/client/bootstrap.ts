@@ -85,15 +85,6 @@ export default async function bootstrap() {
     }
   })
 
-  // store.dispatch({
-  //   type: APPEND_APP_TOOL,
-  //   tool: {
-  //     name: 'user-circle',
-  //     template: html` <user-circle> </user-circle> `,
-  //     position: TOOL_POSITION.REAR
-  //   }
-  // })
-
   store.dispatch({
     type: APPEND_APP_TOOL,
     tool: {
