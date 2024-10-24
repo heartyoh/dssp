@@ -184,7 +184,7 @@ export class BuildingComplexDetail extends ScopedElementsMixin(PageView) {
       div[status] span {
         display: flex;
         align-items: center;
-        width: 48px;
+        width: 40px;
         font-weight:bold;
       }
 
@@ -212,16 +212,16 @@ export class BuildingComplexDetail extends ScopedElementsMixin(PageView) {
       }
 
       span[name] {
-        width: 40px;
         color: #4e5055;
-        margin-left: 6px;
-        text-align: center;
+        margin-left:var(--spacing-small, 4px);
+        padding:var(--spacing-tiny, 2px) var(--spacing-small, 4px);
       }
 
       span[name][active] {
         color: var(--md-sys-color-on-error);
         background-color: var(--md-sys-color-error);
-        border-radius: 999px;
+        border-radius:5px;
+        opacity:.7
       }
     `
   ]
@@ -304,7 +304,7 @@ export class BuildingComplexDetail extends ScopedElementsMixin(PageView) {
                   <a href=${`building-inspection-list/${id}`} slot="template-${idx}">
                     <div status>
                       <div content>
-                        <span><md-icon wait slot="icon">hourglass_empty</md-icon>${inspectionSummary.wait}</span>
+                        <span><md-icon pending_actions slot="icon">frame_inspect</md-icon>${inspectionSummary.wait}</span>
                         <span><md-icon request slot="icon">exclamation</md-icon>${inspectionSummary.request}</span>
                         <span><md-icon pass slot="icon">check</md-icon>${inspectionSummary.pass}</span>
                         <span><md-icon fail slot="icon">close</md-icon>${inspectionSummary.fail}</span>
