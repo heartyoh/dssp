@@ -20,11 +20,11 @@ export class BuildingComplexDetail extends ScopedElementsMixin(PageView) {
     css`
       :host {
         display: grid;
-        grid-template-rows: 75px auto;
+        grid-template-rows: 55px auto;
         color: #4e5055;
 
         width: 100%;
-        background-color: #f7f7f7;
+        background-color: var(--md-sys-color-background, #f6f6f6);
         overflow-y: auto;
 
         --grid-record-emphasized-background-color: red;
@@ -34,14 +34,15 @@ export class BuildingComplexDetail extends ScopedElementsMixin(PageView) {
       md-filled-button {
         --md-filled-button-container-color: #0595e5;
         --md-filled-button-container-height: 30px;
-        --md-filled-button-trailing-space: 15px;
-        --md-filled-button-leading-space: 15px;
+        --md-filled-button-trailing-space: var(--spacing-medium, 8px);
+        --md-filled-button-leading-space: var(--spacing-medium, 8px);
       }
 
       md-outlined-button {
         --md-outlined-button-container-height: 30px;
-        --md-outlined-button-trailing-space: 15px;
-        --md-outlined-button-leading-space: 15px;
+        --md-outlined-button-trailing-space: var(--spacing-medium, 8px);
+        --md-outlined-button-leading-space: var(--spacing-medium, 8px);
+        --md-sys-color-outline: rgba(51,51,51,.20);
       }
 
       *[bold] {
@@ -50,12 +51,13 @@ export class BuildingComplexDetail extends ScopedElementsMixin(PageView) {
 
       div[header] {
         display: flex;
-        margin: 0px 20px;
+        margin: 0px var(--spacing-large, 12px);
       }
 
       div[header] h2 {
         flex: 0.5;
         color: #3f71a0;
+        font-size:18px;
       }
 
       div[header] div[button-container] {
@@ -66,47 +68,48 @@ export class BuildingComplexDetail extends ScopedElementsMixin(PageView) {
       }
 
       md-elevated-button {
-        margin: 0px 3px;
+        margin: 0 var(--spacing-small, 4px);
 
-        --md-elevated-button-container-height: 35px;
+        --md-elevated-button-container-height: 32px;
         --md-elevated-button-label-text-size: 16px;
         --md-elevated-button-container-color: #0595e5;
 
-        --md-elevated-button-label-text-color: #fff;
-        --md-elevated-button-hover-label-text-color: #fff;
-        --md-elevated-button-pressed-label-text-color: #fff;
-        --md-elevated-button-focus-label-text-color: #fff;
-        --md-elevated-button-icon-color: #fff;
-        --md-elevated-button-hover-icon-color: #fff;
-        --md-elevated-button-pressed-icon-color: #fff;
-        --md-elevated-button-focus-icon-color: #fff;
+        --md-elevated-button-label-text-color: var(--md-sys-color-on-primary);
+        --md-elevated-button-hover-label-text-color: var(--md-sys-color-on-primary);
+        --md-elevated-button-pressed-label-text-color: var(--md-sys-color-on-primary);
+        --md-elevated-button-focus-label-text-color: var(--md-sys-color-on-primary);
+        --md-elevated-button-icon-color: var(--md-sys-color-on-primary);
+        --md-elevated-button-hover-icon-color: var(--md-sys-color-on-primary);
+        --md-elevated-button-pressed-icon-color: var(--md-sys-color-on-primary);
+        --md-elevated-button-focus-icon-color: var(--md-sys-color-on-primary);
       }
 
       div[body] {
         display: grid;
         grid-template-columns: 4fr 6fr;
-        margin: 0px 25px 25px 25px;
-        gap: 10px;
+        margin: var(--spacing-large, 12px);
+        margin-top:0;
+        gap: var(--spacing-medium, 8px);
         min-height: fit-content;
         overflow-x: hidden;
       }
 
       h3 {
         color: #2e79be;
-        font-size: 18px;
+        font-size: 16px;
         margin: 0px;
       }
 
       div[body] > div {
         display: flex;
-        gap: 10px;
-        padding: 15px;
+        gap: var(--spacing-medium, 8px);
+        padding: var(--spacing-large, 12px);
         border-radius: 5px;
       }
 
       div[left] {
         flex-direction: column;
-        background-color: #ffffff;
+        background-color: var(--md-sys-color-on-primary);
         border: 1px solid #cccccc80;
       }
 
@@ -127,15 +130,15 @@ export class BuildingComplexDetail extends ScopedElementsMixin(PageView) {
       }
 
       div[subject] {
-        margin-bottom: 7px;
+        margin-bottom: var(--spacing-small, 4px);
       }
 
       div[building-container] {
         display: block;
 
         & > * {
-          margin-right: 2px;
-          margin-bottom: 7px;
+          margin-right: var(--spacing-medium, 8px);
+          margin-bottom: var(--spacing-medium, 8px);
         }
       }
 
@@ -172,9 +175,9 @@ export class BuildingComplexDetail extends ScopedElementsMixin(PageView) {
         display: flex;
         background-color: #4e5055;
         color: #fff;
-        padding: 5px 7px;
-        border-radius: 7px;
-        gap: 10px;
+        padding: var(--spacing-small, 4px) var(--spacing-medium, 8px);
+        border-radius: 5px;
+        gap: var(--spacing-medium, 8px);
         font-size: 14px;
       }
 
@@ -182,14 +185,15 @@ export class BuildingComplexDetail extends ScopedElementsMixin(PageView) {
         display: flex;
         align-items: center;
         width: 48px;
+        font-weight:bold;
       }
 
       div[status] md-icon {
-        width: 20px;
-        height: 20px;
-        margin-right: 4px;
+        width: 16px;
+        height: 16px;
+        margin-right: var(--spacing-small, 4px);
         border-radius: 5px;
-        font-size: 21px;
+        font-size: 16px;
         font-weight: 700;
       }
       div[status] md-icon[wait] {

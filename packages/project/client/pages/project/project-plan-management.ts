@@ -27,7 +27,7 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
         grid-template-rows: 55px auto;
         color: #4e5055;
 
-        background-color: #f7f7f7;
+        background-color: var(--md-sys-color-background, #f6f6f6);
         overflow: hidden;
         overflow-y: auto;
 
@@ -110,38 +110,40 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
             display: flex;
             justify-content: space-between;
             height: fit-content;
-            gap: 50px;
+            gap: var(--spacing-huge, 24px);
             overflow: hidden;
 
             span[building-button] {
               display: flex;
               margin-left: auto;
-              gap: 10px;
+              gap: var(--spacing-small, 4px);
               overflow-x: auto;
               overflow-y: hidden;
 
               md-filled-button {
                 --md-filled-button-container-color: #0595e5;
                 --md-filled-button-container-height: 30px;
-                --md-filled-button-trailing-space: 15px;
-                --md-filled-button-leading-space: 15px;
+                --md-filled-button-trailing-space: var(--spacing-medium, 8px);
+                --md-filled-button-leading-space: var(--spacing-medium, 8px);
               }
               md-outlined-button {
                 --md-outlined-button-container-height: 30px;
-                --md-outlined-button-trailing-space: 15px;
-                --md-outlined-button-leading-space: 15px;
+                --md-outlined-button-trailing-space: var(--spacing-medium, 8px);
+                --md-outlined-button-leading-space: var(--spacing-medium, 8px);
+                --md-sys-color-outline: rgba(51,51,51,.20);
               }
             }
           }
 
           div[floor-plan] {
             overflow-y: auto;
-            margin-top: 10px;
+            margin-top: var(--spacing-medium, 8px);
 
             & > span {
               display: inline-block;
               text-align: center;
-              margin: 0px 10px 15px 0px;
+              margin-right:var(--spacing-medium, 8px);
+              margin-bottom:var(--spacing-medium, 8px);
               cursor: pointer;
 
               & > [name='building-plan'] {
@@ -150,19 +152,20 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
-                border: 1px solid #333;
-                box-shadow: 2px 2px 2px #0000001a;
+                border: 1px solid rgba(51,51,51,.1);
+                box-shadow: 1px 1px 1px #0000001a;
                 align-items: center;
-                border-radius: 7px;
+                border-radius: 5px;
                 font-size: 13px;
 
                 md-icon {
-                  margin-bottom: 6px;
+                  margin-bottom: var(--spacing-small, 4px);
                 }
               }
 
               & > div[floor-name] {
-                margin-top: 7px;
+                margin-top: var(--spacing-small, 4px);
+                font-size:14px;
 
                 &[no-data] {
                   color: #f16154;
@@ -179,8 +182,8 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
           & > div {
             display: flex;
             align-items: center;
-            gap: 12px;
-            margin-left: 10px;
+            gap: var(--spacing-medium, 8px);
+            margin-left: var(--spacing-medium, 8px);
 
             md-outlined-text-field {
               width: 100px;

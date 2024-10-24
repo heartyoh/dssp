@@ -37,11 +37,11 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
     css`
       :host {
         display: grid;
-        grid-template-rows: 75px auto;
+        grid-template-rows: 55px auto;
         color: #4e5055;
 
         width: 100%;
-        background-color: #f7f7f7;
+        background-color: var(--md-sys-color-background, #f6f6f6);
         overflow-y: auto;
 
         --grid-record-emphasized-background-color: red;
@@ -50,8 +50,9 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
 
       md-outlined-button {
         --md-outlined-button-container-height: 30px;
-        --md-outlined-button-trailing-space: 15px;
-        --md-outlined-button-leading-space: 15px;
+        --md-outlined-button-trailing-space: var(--spacing-medium, 8px);
+        --md-outlined-button-leading-space: var(--spacing-medium, 8px);
+        --md-sys-color-outline: rgba(51,51,51,.20);
       }
 
       *[bold] {
@@ -60,11 +61,12 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
 
       div[header] {
         display: flex;
-        margin: 0px 20px;
+        margin: 0px var(--spacing-large, 12px);
 
         h2 {
           flex: 0.5;
           color: #3f71a0;
+          font-size:18px;
         }
 
         div[button-container] {
@@ -74,32 +76,33 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
           flex: 0.5;
 
           md-elevated-button {
-            margin: 0px 3px;
+            margin: 0 var(--spacing-small, 4px);
 
-            --md-elevated-button-container-height: 35px;
+            --md-elevated-button-container-height: 32px;
             --md-elevated-button-label-text-size: 16px;
             --md-elevated-button-container-color: #0595e5;
 
-            --md-elevated-button-label-text-color: #fff;
-            --md-elevated-button-hover-label-text-color: #fff;
-            --md-elevated-button-pressed-label-text-color: #fff;
-            --md-elevated-button-focus-label-text-color: #fff;
-            --md-elevated-button-icon-color: #fff;
-            --md-elevated-button-hover-icon-color: #fff;
-            --md-elevated-button-pressed-icon-color: #fff;
-            --md-elevated-button-focus-icon-color: #fff;
+            --md-elevated-button-label-text-color: var(--md-sys-color-on-primary);
+            --md-elevated-button-hover-label-text-color: var(--md-sys-color-on-primary);
+            --md-elevated-button-pressed-label-text-color: var(--md-sys-color-on-primary);
+            --md-elevated-button-focus-label-text-color: var(--md-sys-color-on-primary);
+            --md-elevated-button-icon-color: var(--md-sys-color-on-primary);
+            --md-elevated-button-hover-icon-color: var(--md-sys-color-on-primary);
+            --md-elevated-button-pressed-icon-color: var(--md-sys-color-on-primary);
+            --md-elevated-button-focus-icon-color: var(--md-sys-color-on-primary);
           }
         }
       }
 
       div[body] {
         display: flex;
-        margin: 0px 25px 25px 25px;
-        gap: 10px;
+        margin: var(--spacing-large, 12px);
+        margin-top:0;
+        gap: var(--spacing-medium, 8px);
 
         h3 {
           color: #2e79be;
-          font-size: 18px;
+          font-size: 16px;
           margin: 0px;
 
           a {
@@ -111,16 +114,16 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
         & > div {
           display: flex;
           flex: 1;
-          gap: 10px;
+          gap: var(--spacing-medium, 8px);
           flex-direction: column;
 
           & > div {
             display: flex;
             flex-direction: column;
-            background-color: #ffffff;
+            background-color: var(--md-sys-color-on-primary);
             border: 1px solid #cccccc80;
-            gap: 10px;
-            padding: 15px;
+            gap: var(--spacing-medium, 8px);
+            padding: var(--spacing-large, 12px);
             border-radius: 5px;
           }
 
@@ -128,25 +131,24 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
             div[content-1] {
               display: flex;
               align-items: center;
-              gap: 15px;
+              gap: var(--spacing-medium, 8px);
+              font-size: 14px;
 
               img {
                 width: 42%;
                 height: auto;
                 aspect-ratio: 1920 / 1080;
+                border: 1px solid #cccccc80;
               }
               img[no-image] {
                 object-fit: contain;
                 opacity: 0.5;
               }
-
-              div[row] {
-                line-height: 25px;
-              }
             }
             div[content-2] {
               height: 65px;
               overflow-y: auto;
+              font-size: 14px;
             }
           }
 
@@ -167,15 +169,21 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
             }
 
             div[subject] {
-              margin-bottom: 7px;
+              margin-bottom: var(--spacing-small, 4px);
             }
 
             div[building-container] {
               display: block;
 
               & > * {
-                margin-right: 10px;
-                margin-bottom: 7px;
+                margin-right: var(--spacing-medium, 8px);
+                margin-bottom: var(--spacing-medium, 8px);
+              }
+              md-outlined-button {
+                --md-outlined-button-container-height: 30px;
+                --md-outlined-button-trailing-space: var(--spacing-medium, 8px);
+                --md-outlined-button-leading-space: var(--spacing-medium, 8px);
+                --md-sys-color-outline: rgba(51,51,51,.20);
               }
             }
           }
@@ -184,10 +192,10 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
             div[state] {
               display: grid;
               grid-template-columns: 0.95fr 0.95fr 1.1fr;
-              gap: 15px;
+              gap: var(--spacing-large, 12px);
 
               span[progress] {
-                max-width: 170px;
+                max-width: 150px;
                 text-align: center;
                 display: flex;
                 justify-self: center;
@@ -198,7 +206,7 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
                   font-weight: bold;
                   color: #2e79be;
                   font-size: 12px;
-                  margin-top: 5px;
+                  margin-top: var(--spacing-small, 4px);
                 }
                 & > div[week] {
                   color: #06b5af;
@@ -207,15 +215,18 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
               span[weather] {
                 display: flex;
                 flex-direction: column;
-                gap: 5px;
-                margin-left: 10px;
+                gap: var(--spacing-small, 4px);
+                margin-left: var(--spacing-medium, 8px);
 
                 & > div {
                   display: flex;
                   justify-content: space-between;
+                  --md-icon-size: 18px;
 
                   & > span {
                     display: flex;
+                    align-item:center;
+                    var(--spacing-tiny, 2px);
                   }
                 }
               }
@@ -223,10 +234,10 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
             div[inspection] {
               display: grid;
               grid-template-columns: 1.4fr 0.9fr 0.9fr 0.9fr 0.9fr;
-              margin-top: 5px;
+              margin-top: var(--spacing-small, 4px);
               background: #f6f6f6;
               border-radius: 7px;
-              padding: 7px 0px;
+              padding: var(--spacing-small, 4px) 0px;
 
               & > span {
                 display: flex;
@@ -250,7 +261,7 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
               & > span[name] {
                 flex-direction: row;
                 text-align: right;
-                gap: 10px;
+                gap: var(--spacing-medium, 8px);
 
                 md-icon {
                   width: 40px;
@@ -262,7 +273,7 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
               }
             }
             div[notice] {
-              margin-top: 7px;
+              margin-top: var(--spacing-medium, 8px);
 
               div[name] {
                 margin-left: 4px;
@@ -270,9 +281,9 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
               div[content] {
                 background-color: #ebc8321a;
                 border-radius: 10px;
-                padding: 10px;
+                padding: var(--spacing-medium, 8px);
                 font-size: 14px;
-                margin-top: 6px;
+                margin-top: var(--spacing-small, 4px);
               }
             }
           }
@@ -306,21 +317,21 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
 
             thead {
               position: sticky;
-              top: 2px;
+              top: var(--spacing-tiny, 2px);
               background-color: #464651;
-              color: #fff;
+              color: var(--md-sys-color-on-primary);
               z-index: 1;
             }
 
             thead th {
-              padding: 5px;
+              padding: var(--spacing-small, 4px);
               font-size: 15px;
               text-wrap: pretty;
             }
 
             tbody td {
-              border-bottom: 1px solid #cccccc;
-              padding: 5px 3px;
+              border-bottom: 1px solid rgba(51,51,51,.20);
+              padding: var(--spacing-small, 4px);
               text-align: center;
               white-space: nowrap;
               text-overflow: ellipsis;
@@ -329,20 +340,20 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
             }
 
             md-elevated-button {
-              margin: 0px 3px;
+              margin: 0 var(--spacing-small, 4px);
 
-              --md-elevated-button-container-height: 35px;
+              --md-elevated-button-container-height: 32px;
               --md-elevated-button-label-text-size: 16px;
               --md-elevated-button-container-color: #0595e5;
 
-              --md-elevated-button-label-text-color: #fff;
-              --md-elevated-button-hover-label-text-color: #fff;
-              --md-elevated-button-pressed-label-text-color: #fff;
-              --md-elevated-button-focus-label-text-color: #fff;
-              --md-elevated-button-icon-color: #fff;
-              --md-elevated-button-hover-icon-color: #fff;
-              --md-elevated-button-pressed-icon-color: #fff;
-              --md-elevated-button-focus-icon-color: #fff;
+              --md-elevated-button-label-text-color: var(--md-sys-color-on-primary);
+              --md-elevated-button-hover-label-text-color: var(--md-sys-color-on-primary);
+              --md-elevated-button-pressed-label-text-color: var(--md-sys-color-on-primary);
+              --md-elevated-button-focus-label-text-color: var(--md-sys-color-on-primary);
+              --md-elevated-button-icon-color: var(--md-sys-color-on-primary);
+              --md-elevated-button-hover-icon-color: var(--md-sys-color-on-primary);
+              --md-elevated-button-pressed-icon-color: var(--md-sys-color-on-primary);
+              --md-elevated-button-focus-icon-color: var(--md-sys-color-on-primary);
 
               &[red] {
                 --md-elevated-button-container-color: #e15757;
@@ -423,8 +434,8 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
                   <span>${this.project.buildingComplex?.area?.toLocaleString()} ㎡</span>
                 </div>
                 <div row>
-                  <span>- 착공 ~ 준공 : </span>
-                  <span bold>${this.project.startDate} ~ ${this.project.endDate}</span>
+                  <span>- 착공~준공 : </span>
+                  <span bold>${this.project.startDate}~${this.project.endDate}</span>
                 </div>
                 <div row>
                   <span>- 발주처 : </span>
