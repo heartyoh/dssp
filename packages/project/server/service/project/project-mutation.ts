@@ -1,19 +1,21 @@
 import { Resolver, Mutation, Arg, Ctx, Directive } from 'type-graphql'
 import { In } from 'typeorm'
-import { createAttachment, deleteAttachmentsByRef, ATTACHMENT_PATH } from '@things-factory/attachment-base'
+import { getRepository } from '@things-factory/shell'
+import { Attachment, createAttachment, deleteAttachmentsByRef, ATTACHMENT_PATH } from '@things-factory/attachment-base'
 import { Project, ProjectState } from './project'
 import { NewProject, ProjectPatch, UploadProjectScheduleTable } from './project-type'
 import { BuildingComplex, Building, BuildingLevel } from '@dssp/building-complex'
 import { pdfToImage } from '@things-factory/board-service/dist-server/controllers/headless-pdf-to-image'
 
+import { parseExcelAndImportTasks } from '../../controllers/parse-excel'
 @Resolver(Project)
 export class ProjectMutation {
   @Directive('@transaction')
   @Mutation(returns => Project, { description: '프로젝트 생성' })
   async createProject(@Arg('project') project: NewProject, @Ctx() context: ResolverContext): Promise<Project> {
     const { domain, user, tx } = context.state
-    const projectRepo = tx.getRepository(Project)
-    const buildingComplexRepo = tx.getRepository(BuildingComplex)
+    const projectRepo = getRepository(Project, tx)
+    const buildingComplexRepo = getRepository(BuildingComplex, tx)
 
     const newBuildingComplex = await buildingComplexRepo.save({
       domain,
@@ -36,10 +38,10 @@ export class ProjectMutation {
   @Mutation(returns => Project, { description: '프로젝트 업데이트' })
   async updateProject(@Arg('project') project: ProjectPatch, @Ctx() context: ResolverContext): Promise<Project> {
     const { user, tx } = context.state
-    const projectRepo = tx.getRepository(Project)
-    const buildingComplexRepo = tx.getRepository(BuildingComplex)
-    const buildingRepo = tx.getRepository(Building)
-    const buildingLevelRepo = tx.getRepository(BuildingLevel)
+    const projectRepo = getRepository(Project, tx)
+    const buildingComplexRepo = getRepository(BuildingComplex, tx)
+    const buildingRepo = getRepository(Building, tx)
+    const buildingLevelRepo = getRepository(BuildingLevel, tx)
 
     const buildingComplex = project.buildingComplex
     const buildings = project.buildingComplex?.buildings || []
@@ -97,10 +99,10 @@ export class ProjectMutation {
   @Mutation(returns => Project, { description: '프로젝트 도면 업데이트' })
   async updateProjectPlan(@Arg('project') project: ProjectPatch, @Ctx() context: ResolverContext): Promise<Project> {
     const { user, tx, domain } = context.state
-    const projectRepo = tx.getRepository(Project)
-    const buildingComplexRepo = tx.getRepository(BuildingComplex)
-    const buildingRepo = tx.getRepository(Building)
-    const buildingLevelRepo = tx.getRepository(BuildingLevel)
+    const projectRepo = getRepository(Project, tx)
+    const buildingComplexRepo = getRepository(BuildingComplex, tx)
+    const buildingRepo = getRepository(Building, tx)
+    const buildingLevelRepo = getRepository(BuildingLevel, tx)
     const buildingComplex = project.buildingComplex
     const buildings = project.buildingComplex?.buildings || []
 
@@ -126,7 +128,7 @@ export class ProjectMutation {
         // 첨부된 PDF가 있으면 PDF 파일대로 썸네일 생성
         if (mainDrawingAttatchment) {
           const mainDrawingUpload = await buildingLevel.mainDrawingUpload
-          const pdfPath = `/${ATTACHMENT_PATH}/${mainDrawingAttatchment.path}`
+          const pdfPath = `/${ATTACHMENT_PATH}/${mainDrawingAttatchment.path}` // TODO ATTACHMENT_PATH 제거, mainDrawingAttachment.fullpath 로 해도 될 것 같은데...
           const fileName = mainDrawingUpload.filename.replace('.pdf', '')
           const pngFile = await pdfToImage({ pdfPath, fileName })
           await createAttachmentAfterDelete(context, pngFile, buildingLevel.id, BuildingLevel.name + '_mainDrawing_image')
@@ -200,11 +202,27 @@ export class ProjectMutation {
     @Arg('param') param: UploadProjectScheduleTable,
     @Ctx() context: ResolverContext
   ): Promise<boolean> {
-    const { user, tx } = context.state
+    const { domain, user, tx } = context.state
     const { projectId, scheduleTable } = param
 
-    // 프로젝트 공정표 파일 업로드
-    await createAttachmentAfterDelete(context, scheduleTable, projectId, Project.name + '_schedule_table')
+    const projectRepo = getRepository(Project, tx)
+    const project = await projectRepo.findOne({
+      where: { domain: { id: domain.id }, id: projectId }
+    })
+
+    const { createReadStream, filename, mimetype } = await scheduleTable
+
+    const stream = createReadStream()
+
+    const chunks = []
+    for await (const chunk of stream) {
+      chunks.push(chunk)
+    }
+
+    const buffer = Buffer.concat(chunks)
+
+    await parseExcelAndImportTasks(buffer, project, context)
+    // await parseExcelAndImportTasks(attachment.fullpath, project, context)
 
     return true
   }
@@ -214,7 +232,7 @@ export class ProjectMutation {
   async deleteProject(@Arg('id') id: string, @Ctx() context: ResolverContext): Promise<boolean> {
     const { domain, tx } = context.state
 
-    await tx.getRepository(Project).delete({ domain: { id: domain.id }, id })
+    await getRepository(Project, tx).delete({ domain: { id: domain.id }, id })
     await deleteAttachmentsByRef(null, { refBys: [id] }, context)
 
     return true
@@ -222,18 +240,16 @@ export class ProjectMutation {
 }
 
 export async function createAttachmentAfterDelete(context: ResolverContext, file: any, refBy: any, refType: any) {
-  let result = null
+  if (file === undefined) {
+    return null
+  }
 
-  // undefined = 기존 파일 그대로
-  if (file === undefined) return result
+  const { tx } = context.state
 
   // 기존 첨부 파일이 있으면 삭제
   await deleteAttachmentsByRef(null, { refBys: [refBy], refType }, context)
 
-  // 파일이 있으면 생성 (null로 들어올 경우 delete까지만)
-  if (file) {
-    result = await createAttachment(null, { attachment: { file, refType, refBy } }, context)
-  }
+  let result = await createAttachment(null, { attachment: { file, refType, refBy } }, context)
 
-  return result
+  return await getRepository(Attachment, tx).findOne({ where: { id: result.id } })
 }

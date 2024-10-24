@@ -192,7 +192,7 @@ export class ProjectSchedule extends ScopedElementsMixin(PageView) {
   @state() constructionTypeList = []
 
   @state() private fromDate = '2024-01-01'
-  @state() private toDate = '2024-12-31'
+  @state() private toDate = '2026-12-31'
 
   @query('input[name="startDate"]') inputStartDate!: HTMLInputElement
   @query('input[name="endDate"]') inputEndDate!: HTMLInputElement
@@ -343,7 +343,7 @@ export class ProjectSchedule extends ScopedElementsMixin(PageView) {
 
     if (this.project) {
       this.fromDate = this.project.startDate || '2024-01-01' /* TODO default: start date of this year - 3 */
-      this.toDate = this.project.endDate || '2024-12-31' /* TODO defaule: end date of this year + 3 */
+      this.toDate = this.project.endDate || '2026-12-31' /* TODO defaule: end date of this year + 3 */
     }
 
     console.log('init project : ', this.project)

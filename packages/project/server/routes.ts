@@ -1,6 +1,6 @@
 import contentDisposition from 'content-disposition'
 
-import { Task, generateExcel } from './controllers/project-to-excel'
+import { Task, generateExcel } from './controllers/export-tasks'
 
 // const debug = require('debug')('dssp:project:routes')
 

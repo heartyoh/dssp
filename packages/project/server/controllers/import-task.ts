@@ -4,23 +4,15 @@ import { Project } from '../service/project/project'
 import { Task, TaskType } from '../service/task/task'
 import { TaskResource } from '../service/task-resource/task-resource'
 import { Resource } from '../service/resource/resource'
+import { RawTask } from './types'
 
-export interface RawResource {
-  type: string
-  allocated: number
-}
+function excelSerialToJSDate(serial) {
+  const excelEpoch = new Date(1899, 11, 30) // Excel epoch (30th December 1899)
+  const days = Math.floor(serial) // Get the number of days
+  const milliseconds = (serial - days) * 86400 * 1000 // Convert the fractional day part to milliseconds
 
-export interface RawTask {
-  code: string
-  title: string
-  type?: TaskType
-  duration?: number
-  startDate?: string /* YYYY-MM-DD */
-  dependsOn?: string
-  progress?: number
-  tags?: string[]
-  resources?: RawResource[]
-  children?: RawTask[]
+  const jsDate = new Date(excelEpoch.getTime() + days * 86400 * 1000 + milliseconds)
+  return jsDate
 }
 
 export async function importTasks(project: Project, tasks: RawTask[], context: ResolverContext) {
@@ -34,7 +26,6 @@ export async function importTasks(project: Project, tasks: RawTask[], context: R
   await taskRepository.softDelete({ project: { id: project.id } })
 
   // 2. 태스크 임포트
-
   const importTaskData = async (rawTask: RawTask, parent?: Task) => {
     if (rawTask.children && rawTask.children.length > 0) {
       rawTask.type = TaskType.GROUP
@@ -49,27 +40,34 @@ export async function importTasks(project: Project, tasks: RawTask[], context: R
 
     if (rawTask.type == TaskType.TASK) {
       // 시작일, 종료일 계산
-      var startDate: Date | undefined = rawTask.startDate ? new Date(rawTask.startDate) : undefined
+      var startDate: Date
+      if (typeof rawTask.startDate === 'number') {
+        startDate = excelSerialToJSDate(rawTask.startDate) // Convert Excel serial number to JS date
+      }
+
+      var endDate: Date
       if (!startDate && rawTask.dependsOn) {
         const dependsOnTask = await taskRepository.findOne({ where: { code: rawTask.dependsOn, project: { id: project.id } } })
-        if (!dependsOnTask || !dependsOnTask.endDate) {
-          throw new Error(`Task '${rawTask.code}' depends on a task '${rawTask.dependsOn}' that doesn't have a valid end date.`)
+        if (dependsOnTask && dependsOnTask.endDate) {
+          startDate = new Date(dependsOnTask.endDate)
+          startDate.setDate(startDate.getDate() + 1)
+        } else {
+          // TODO handler error
+          // throw new Error(`Task '${rawTask.code}' depends on a task '${rawTask.dependsOn}' that doesn't have a valid end date.`)
         }
-        startDate = new Date(dependsOnTask.endDate)
-        startDate.setDate(startDate.getDate() + 1)
       }
 
       if (!startDate) {
         throw new Error(`Task '${rawTask.code}' must have either a start date or a valid dependency.`)
       }
 
-      var duration = rawTask.duration
-      var endDate = new Date(startDate)
+      const duration = rawTask.duration
+      endDate = new Date(startDate)
       endDate.setDate(startDate.getDate() + duration - 1)
     }
 
     // 태스크 생성 및 저장
-    var task = await taskRepository.save({
+    var task: Task = await taskRepository.save({
       code: rawTask.code,
       name: rawTask.title,
       type: rawTask.type,
@@ -77,7 +75,7 @@ export async function importTasks(project: Project, tasks: RawTask[], context: R
       endDate,
       project,
       parent,
-      duration,
+      duration: rawTask.duration,
       dependsOn: rawTask.dependsOn,
       progress: rawTask.progress,
       tags: rawTask.tags,
@@ -102,9 +100,9 @@ export async function importTasks(project: Project, tasks: RawTask[], context: R
     }
 
     // 자식 태스크 처리
-    if (rawTask.children) {
-      var lastEndDate = null
-      var lastStartDate = null
+    if (rawTask.children && rawTask.children.length > 0) {
+      let lastEndDate = null
+      let lastStartDate = null
       for (const childTask of rawTask.children) {
         const subtask = await importTaskData(childTask, task)
 
@@ -118,9 +116,7 @@ export async function importTasks(project: Project, tasks: RawTask[], context: R
           ? Math.ceil((lastEndDate.getTime() - lastStartDate.getTime()) / (1000 * 60 * 60 * 24)) + 1
           : 0
 
-      task = (await taskRepository.findOne({
-        where: { id: task.id }
-      })) as any
+      task = await taskRepository.findOne({ where: { id: task.id } })
 
       return await taskRepository.save({
         ...task,
