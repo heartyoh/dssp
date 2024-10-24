@@ -6,17 +6,19 @@ export class Select2Component extends LitElement {
   static styles = css`
     div[select-container] {
       position: relative;
-      width: 300px;
-      border: 1px solid #000;
-      border-radius: 6px;
-      padding: 4px 16px;
+      border: 1px solid rgba(51,51,51,.20);
+      border-radius: 5px;
+      padding: var(--spacing-small, 4px) var(--spacing-medium, 8px);
       font-size: 14px;
       color: var(--md-sys-color-primary);
+    }
+    div[select-container]:focus {
+      border: 1px solid #1f7fd9;
     }
 
     div[dropdown] {
       border: 1px solid #ccc;
-      padding: 5px;
+      padding: var(--spacing-small, 4px);
       cursor: pointer;
     }
 
@@ -24,9 +26,10 @@ export class Select2Component extends LitElement {
       position: absolute;
       left: 0;
       top: 30px;
-      width: 100%;
+      min-width: 50%;
       border: 1px solid #ccc;
-      background-color: white;
+      background-color: var(--md-sys-color-surface-tint);
+      color:var(--md-sys-color-on-primary);
       max-height: 150px;
       overflow-y: auto;
       display: block;
@@ -34,42 +37,44 @@ export class Select2Component extends LitElement {
     }
 
     div[option] {
-      padding: 10px;
+      padding: var(--spacing-small, 4px) var(--spacing-medium, 8px);
       cursor: pointer;
-      border-bottom: 1px solid #ccc;
+      border-bottom: 1px solid rgba(0,0,0,.4);
     }
     div[option]:last-child {
       border-bottom: none;
     }
 
     div[option]:hover {
-      background-color: #f0f0f0;
+      background-color: var(--md-sys-color-tertiary-container);
     }
 
     div[option][selected] {
-      background-color: #d3f9d8;
+      background-color: var(--md-sys-color-tertiary-container);
+      font-weight: bold;
+      color:var(--md-sys-color-on-primary);
     }
 
     div[selected-tags] {
       display: flex;
       flex-wrap: wrap;
-      gap: 5px;
-      margin-top: 10px;
+      gap: var(--spacing-small, 4px);
+      margin-top: var(--spacing-small, 4px);
     }
 
     div[tag] {
       background-color: #2e79be;
       color: white;
-      padding: 5px 10px;
+      padding: var(--spacing-tiny, 2px) var(--spacing-medium, 8px);
       border-radius: 20px;
-      font-size: 13px;
+      font-size: 12px;
       display: inline-flex;
       align-items: center;
       cursor: pointer;
     }
 
     span[tag-close] {
-      margin-left: 8px;
+      margin-left: var(--spacing-small, 4px);
     }
   `
 

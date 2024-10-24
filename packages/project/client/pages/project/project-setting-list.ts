@@ -26,7 +26,7 @@ export class ProjectSettingList extends ScopedElementsMixin(PageView) {
 
         width: 100%;
         height: 100%;
-        background-color: var(--md-sys-color-background, #fcf8f8);
+        background-color: var(--md-sys-color-background, #f6f6f6);
 
         --grid-record-emphasized-background-color: red;
         --grid-record-emphasized-color: yellow;
@@ -102,14 +102,14 @@ export class ProjectSettingList extends ScopedElementsMixin(PageView) {
           padding: 13px 20px;
 
           --md-elevated-button-container-color: #24be7b;
-          --md-elevated-button-label-text-color: #ffffff;
-          --md-elevated-button-hover-label-text-color: #fff;
-          --md-elevated-button-pressed-label-text-color: #fff;
-          --md-elevated-button-focus-label-text-color: #fff;
-          --md-elevated-button-icon-color: #fff;
-          --md-elevated-button-hover-icon-color: #fff;
-          --md-elevated-button-pressed-icon-color: #fff;
-          --md-elevated-button-focus-icon-color: #fff;
+          --md-elevated-button-label-text-color: var(--md-sys-color-on-primary);
+          --md-elevated-button-hover-label-text-color:var(--md-sys-color-on-primary);
+          --md-elevated-button-pressed-label-text-color:var(--md-sys-color-on-primary);
+          --md-elevated-button-focus-label-text-color:var(--md-sys-color-on-primary);
+          --md-elevated-button-icon-color:var(--md-sys-color-on-primary);
+          --md-elevated-button-hover-icon-color:var(--md-sys-color-on-primary);
+          --md-elevated-button-pressed-icon-color:var(--md-sys-color-on-primary);
+          --md-elevated-button-focus-icon-color:var(--md-sys-color-on-primary);
 
           --md-elevated-button-container-shape: 7px;
         }

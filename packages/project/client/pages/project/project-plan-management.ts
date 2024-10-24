@@ -24,7 +24,7 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
     css`
       :host {
         display: grid;
-        grid-template-rows: 75px auto;
+        grid-template-rows: 55px auto;
         color: #4e5055;
 
         background-color: #f7f7f7;
@@ -39,10 +39,15 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
         width: 100%;
 
         --md-outlined-text-field-container-shape: 5px;
+        --md-outlined-text-field-outline-color: rgba(51,51,51,.20);
+        --md-outlined-text-field-focus-outline-color: #1f7fd9;
+        --md-outlined-text-field-focus-outline-width: 1px;
         --md-sys-color-primary: #586878;
         --md-outlined-text-field-input-text-size: 14px;
-        --md-outlined-field-bottom-space: 4px;
-        --md-outlined-field-top-space: 4px;
+        --md-outlined-field-bottom-space: 3px;
+        --md-outlined-field-top-space: 3px;
+        --md-outlined-field-leading-space: var(--spacing-medium, 8px);
+        --md-outlined-field-trailing-space: var(--spacing-medium, 8px);
       }
 
       ox-input-image {
@@ -56,22 +61,23 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
 
       div[body] {
         display: grid;
-        grid-template-rows: 240px 1fr 60px;
-        margin: 0px 25px 25px 25px;
-        gap: 8px;
+        grid-template-rows: 205px 1fr 60px;
+        margin: var(--spacing-large, 12px);
+        margin-top:0;
+        gap: var(--spacing-medium, 8px);
 
         & > div {
           display: grid;
           grid-template-rows: 25px auto;
-          padding: 15px;
-          background-color: #ffffff;
+          padding: var(--spacing-large, 12px);
+          background-color: var(--md-sys-color-on-primary);
           border: 1px solid #cccccc80;
           border-radius: 5px;
-          gap: 14px;
+          gap: var(--spacing-medium, 8px);
 
           h3 {
             color: #2e79be;
-            font-size: 18px;
+            font-size: 16px;
             margin: 0px;
             text-wrap: nowrap;
           }
@@ -79,12 +85,12 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
 
         & > div[building-container] > div {
           display: flex;
-          gap: 16px;
+          gap: var(--spacing-medium, 8px);
           overflow-x: auto;
           overflow-y: hidden;
 
           ox-input-file {
-            height: 120px;
+            height: 100px;
           }
 
           span[building] {
@@ -93,7 +99,8 @@ export class ProjectPlanManagement extends ScopedElementsMixin(PageView) {
 
             div {
               color: #586878;
-              margin-top: 7px;
+              margin-top:var(--spacing-small, 4px);
+              font-size: 14px;
             }
           }
         }

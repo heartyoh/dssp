@@ -20,11 +20,11 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
     css`
       :host {
         display: grid;
-        grid-template-rows: 75px auto;
+        grid-template-rows: 55px auto;
         color: #4e5055;
 
         width: 100%;
-        background-color: #f7f7f7;
+        background-color: var(--md-sys-color-background, #f6f6f6);
         overflow-y: auto;
 
         --grid-record-emphasized-background-color: red;
@@ -35,45 +35,59 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
         width: 100%;
 
         --md-outlined-text-field-container-shape: 5px;
+        --md-outlined-text-field-outline-color: rgba(51,51,51,.20);
+        --md-outlined-text-field-focus-outline-color: #1f7fd9;
+        --md-outlined-text-field-focus-outline-width: 1px;
         --md-sys-color-primary: #586878;
         --md-outlined-text-field-input-text-size: 14px;
-        --md-outlined-field-bottom-space: 4px;
-        --md-outlined-field-top-space: 4px;
+        --md-outlined-field-bottom-space: 3px;
+        --md-outlined-field-top-space: 3px;
+        --md-outlined-field-leading-space: var(--spacing-medium, 8px);
+        --md-outlined-field-trailing-space: var(--spacing-medium, 8px);
+      }
+      select2-component {
+        width:100%;
+      }
+      input[type="date"] {
+        border:1px solid rgba(51,51,51,.20);
+        padding:var(--spacing-small, 4px) var(--spacing-medium, 8px);
+        border-radius: 5px;
       }
       md-outlined-text-field[type='textarea'] {
         width: 100%;
-        height: 130px;
+        height: 120px;
         resize: none;
       }
 
       ox-input-image {
-        width: 100px;
-        height: 100px;
+        width: 120px;
+        height: 90px;
       }
       ox-input-file {
-        width: 100px;
-        height: 100px;
+        width: 120px;
+        height: 90px;
         padding: 0;
       }
 
       div[body] {
         display: flex;
-        margin: 0px 25px 25px 25px;
-        gap: 10px;
+        margin: var(--spacing-large, 12px);
+        margin-top:0;
+        gap: var(--spacing-medium, 8px);
 
         & > div {
           display: flex;
           height: fit-content;
           flex-direction: column;
-          padding: 15px;
-          background-color: #ffffff;
+          padding: var(--spacing-large, 12px);
+          background-color: var(--md-sys-color-on-primary);
           border: 1px solid #cccccc80;
           border-radius: 5px;
-          gap: 10px;
+          gap: var(--spacing-medium, 8px);
 
           h3 {
             color: #2e79be;
-            font-size: 18px;
+            font-size: 16px;
             margin: 0px;
           }
 
@@ -84,13 +98,14 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
             span:first-child {
               flex: 0.3;
               text-align: right;
+              font-size: 14px;
             }
 
             span:last-child {
               flex: 0.7;
               display: flex;
-              gap: 10px;
-              margin-left: 12px;
+              gap: var(--spacing-medium, 8px);
+              margin-left: var(--spacing-medium, 8px);
               align-items: center;
 
               &[align-end] {
@@ -114,11 +129,11 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
           & > div {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: var(--spacing-medium, 8px);
             border: 1px solid #cccccc80;
             border-radius: 5px;
-            padding: 15px;
-            background-color: #fff;
+            padding: var(--spacing-large, 12px);
+            background-color: var(--md-sys-color-on-primary);
 
             md-outlined-text-field[type='text'] {
               width: 60%;
@@ -126,19 +141,28 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
 
             md-elevated-button {
               --md-elevated-button-container-height: 30px;
-              --md-elevated-button-container-color: #fff;
+              --md-elevated-button-container-color: var(--md-sys-color-on-primary);
               --md-elevated-button-label-text-size: 16px;
             }
             hr {
-              border: 1px #cccccc dashed;
+              border: 1px rgba(51,51,51,.1) dashed;
               width: 100%;
-              margin-bottom: 2px;
+              margin-bottom: var(--spacing-tiny, 2px);
             }
             div[warn] {
               font-size: 12px;
               color: red;
-              margin-left: 5px;
-              margin-bottom: 5px;
+              margin-left: var(--spacing-small, 4px);
+              margin-bottom: var(--spacing-small, 4px);
+            }
+            
+            md-outlined-button {
+              min-height: 30px;
+              padding: 0 var(--spacing-large, 12px);
+              box-shadow: 1px 1px 1px #0000001a;
+              --md-outlined-button-label-text-color: #586878;
+              --md-outlined-button-label-text-weight: bold;
+              --md-sys-color-outline: rgba(51,51,51,.20);
             }
 
             div[row] {
@@ -153,7 +177,7 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
             div[separate-container] {
               display: grid;
               grid-template-columns: repeat(2, 1fr);
-              gap: 10px;
+              gap: var(--spacing-medium, 8px);
 
               md-outlined-text-field {
                 width: 70px;
@@ -164,7 +188,7 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
 
                 span[floor-title] {
                   min-width: 33px;
-                  margin-right: 5px;
+                  margin-right: var(--spacing-small, 4px);
                 }
                 span:first-child {
                   flex: 0.4;
@@ -175,7 +199,7 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
                   flex: 0.6;
                   display: flex;
                   align-items: center;
-                  padding-left: 17px;
+                  padding-left: var(--spacing-medium, 8px);
                 }
               }
             }
@@ -505,7 +529,7 @@ export class ProjectUpdate extends ScopedElementsMixin(PageView) {
                   value=${this.project?.buildingComplex?.buildingCount?.toString() || ''}
                   @input=${this._onInputChange}
                 ></md-outlined-text-field>
-                <md-elevated-button @click=${this._setBuilding}>적용</md-elevated-button>
+                <md-outlined-button @click=${this._setBuilding}>적용</md-outlined-button>
               </span>
             </div>
             <hr />
