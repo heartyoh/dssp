@@ -29,6 +29,7 @@ const TaskFragment = gql`
     endDate
     dependsOn
     progress
+    style
     resources {
       type
       allocated
@@ -251,7 +252,7 @@ export class ProjectSchedule extends ScopedElementsMixin(PageView) {
           ?extend-grid-lines=${this.extendGridLines}
           .columnConfigProvider=${this.columnConfigProvider}
           .colorProvider=${task => {
-            return task.type == 'group' ? 'green' : 'orange'
+            return task.style || 'gray'
           }}
         >
         </ox-gantt>

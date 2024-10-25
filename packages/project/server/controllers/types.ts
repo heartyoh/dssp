@@ -10,10 +10,11 @@ export interface RawTask {
   title: string
   type?: TaskType
   duration?: number
-  startDate?: string /* YYYY-MM-DD */
+  startDate?: Date | string
   dependsOn?: string
   progress?: number
   tags?: string[]
+  style?: string
   resources?: RawResource[]
   children?: RawTask[]
 }

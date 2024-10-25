@@ -40,12 +40,9 @@ export async function importTasks(project: Project, tasks: RawTask[], context: R
 
     if (rawTask.type == TaskType.TASK) {
       // 시작일, 종료일 계산
-      var startDate: Date
-      if (typeof rawTask.startDate === 'number') {
-        startDate = excelSerialToJSDate(rawTask.startDate) // Convert Excel serial number to JS date
-      }
+      var startDate: Date = new Date(rawTask.startDate)
 
-      var endDate: Date
+      var endDate
       if (!startDate && rawTask.dependsOn) {
         const dependsOnTask = await taskRepository.findOne({ where: { code: rawTask.dependsOn, project: { id: project.id } } })
         if (dependsOnTask && dependsOnTask.endDate) {
@@ -79,6 +76,7 @@ export async function importTasks(project: Project, tasks: RawTask[], context: R
       dependsOn: rawTask.dependsOn,
       progress: rawTask.progress,
       tags: rawTask.tags,
+      style: rawTask.style,
       updater: user,
       creator: user
     })
