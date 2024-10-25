@@ -15,7 +15,8 @@ export async function parseExcelAndImportTasks(buffer: Buffer, project: Project,
   const headers: string[] = []
   let taskCodeColumnIndex = -1
 
-  worksheet.getRow(1).eachCell((cell, colNumber) => {
+  const headerRow = worksheet.getRow(1)
+  headerRow.eachCell((cell, colNumber) => {
     const headerText = cell.text.toString()
     headers[colNumber - 1] = headerText // Store headers in an array
 
@@ -24,14 +25,16 @@ export async function parseExcelAndImportTasks(buffer: Buffer, project: Project,
     }
   })
 
+  if (taskCodeColumnIndex === -1) {
+    throw new Error('작업코드 column not found')
+  }
+
   // 4. 엑셀 데이터를 RawTask 형식으로 변환합니다.
   const tasks: RawTask[] = []
 
-  worksheet.eachRow({ includeEmpty: false }, (row, rowIndex) => {
-    if (rowIndex === 1) {
-      return
-    }
-
+  // Start processing from the second row onward to skip the header
+  for (let rowIndex = 2; rowIndex <= worksheet.rowCount; rowIndex++) {
+    const row = worksheet.getRow(rowIndex)
     const taskData: any = {}
 
     row.eachCell((cell, colNumber) => {
@@ -73,8 +76,11 @@ export async function parseExcelAndImportTasks(buffer: Buffer, project: Project,
       children: []
     }
 
-    tasks.push(task)
-  })
+    if (task.code && task.type) {
+      tasks.push(task)
+    }
+  }
 
+  // 5. 변환된 데이터를 importTasks 함수로 전달합니다.
   await importTasks(project, tasks, context)
 }
