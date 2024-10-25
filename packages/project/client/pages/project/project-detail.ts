@@ -217,11 +217,13 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
                 flex-direction: column;
                 gap: var(--spacing-small, 4px);
                 margin-left: var(--spacing-medium, 8px);
+                font-size:14px;
 
                 & > div {
                   display: flex;
                   justify-content: space-between;
                   --md-icon-size: 18px;
+                  margin-right: var(--spacing-small, 4px);
 
                   & > span {
                     display: flex;
@@ -262,6 +264,7 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
                 flex-direction: row;
                 text-align: right;
                 gap: var(--spacing-medium, 8px);
+                line-height:1.3;
 
                 md-icon {
                   width: 40px;
@@ -324,7 +327,7 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
             }
 
             thead th {
-              padding: var(--spacing-small, 4px);
+              padding: var(--spacing-tiny, 2px) var(--spacing-small, 4px);
               font-size: 15px;
               text-wrap: pretty;
             }
@@ -583,10 +586,10 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
               <table>
                 <thead>
                   <tr>
-                    <th width="5%"></th>
+                    <th width="3%"></th>
                     <th width="10%">검측 위치</th>
                     <th width="10%">공종</th>
-                    <th width="20%">내용</th>
+                    <th width="22%">내용</th>
                     <th width="15%">검측 요청일</th>
                     <th width="10%">검측 결과</th>
                   </tr>

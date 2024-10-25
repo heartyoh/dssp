@@ -27,12 +27,13 @@ class BuildingInspectionDetailHeader extends LitElement {
 
       div[header] {
         display: flex;
-        margin: 0px 20px;
+        margin: 0px var(--spacing-large, 12px);
       }
 
       h2 {
         flex: 0.5;
         color: #3f71a0;
+        font-size:18px;
       }
 
       div[button-container] {
@@ -43,20 +44,23 @@ class BuildingInspectionDetailHeader extends LitElement {
       }
 
       md-elevated-button {
-        margin: 0px 3px;
+        margin-left: var(--spacing-small, 4px);
 
-        --md-elevated-button-container-height: 35px;
+        --md-elevated-button-container-height: 32px;
         --md-elevated-button-label-text-size: 16px;
         --md-elevated-button-container-color: #0595e5;
 
-        --md-elevated-button-label-text-color: #fff;
-        --md-elevated-button-hover-label-text-color: #fff;
-        --md-elevated-button-pressed-label-text-color: #fff;
-        --md-elevated-button-focus-label-text-color: #fff;
-        --md-elevated-button-icon-color: #fff;
-        --md-elevated-button-hover-icon-color: #fff;
-        --md-elevated-button-pressed-icon-color: #fff;
-        --md-elevated-button-focus-icon-color: #fff;
+        --md-elevated-button-label-text-color: var(--md-sys-color-on-primary);
+        --md-elevated-button-hover-label-text-color: var(--md-sys-color-on-primary);
+        --md-elevated-button-pressed-label-text-color: var(--md-sys-color-on-primary);
+        --md-elevated-button-focus-label-text-color: var(--md-sys-color-on-primary);
+        --md-elevated-button-icon-color: var(--md-sys-color-on-primary);
+        --md-elevated-button-hover-icon-color: var(--md-sys-color-on-primary);
+        --md-elevated-button-pressed-icon-color: var(--md-sys-color-on-primary);
+        --md-elevated-button-focus-icon-color: var(--md-sys-color-on-primary);
+
+        --_with-leading-icon-leading-space: var(--spacing-medium, 8px);
+        --_with-leading-icon-trailing-space: var(--spacing-medium, 8px);
       }
     `
   ]

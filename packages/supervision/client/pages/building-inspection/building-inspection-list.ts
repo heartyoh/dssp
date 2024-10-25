@@ -51,11 +51,11 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
     css`
       :host {
         display: grid;
-        grid-template-rows: 75px auto;
+        grid-template-rows: 55px auto;
         color: #4e5055;
 
         width: 100%;
-        background-color: #f7f7f7;
+        background-color: var(--md-sys-color-background, #f6f6f6);
         overflow-y: auto;
 
         --grid-record-emphasized-background-color: red;
@@ -71,8 +71,9 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
 
       md-outlined-button {
         --md-outlined-button-container-height: 30px;
-        --md-outlined-button-trailing-space: 15px;
-        --md-outlined-button-leading-space: 15px;
+        --md-outlined-button-trailing-space: var(--spacing-medium, 8px);
+        --md-outlined-button-leading-space: var(--spacing-medium, 8px);
+        --md-sys-color-outline: rgba(51,51,51,.20);
       }
 
       *[bold] {
@@ -81,32 +82,35 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
 
       div[header] {
         display: flex;
-        margin: 0px 20px;
+        margin: 0px var(--spacing-large, 12px);
+        margin-bottom:var(--spacing-small, 5px);
       }
 
       div[header] h2 {
         flex: 0.5;
         color: #3f71a0;
+        font-size:18px;
       }
 
       div[body] {
         display: flex;
         flex-direction: column;
-        margin: 0px 25px 0px 25px;
-        gap: 10px;
+        margin: var(--spacing-large, 12px);
+        margin-top:0;
+        gap: var(--spacing-medium, 8px);
         min-height: fit-content;
         overflow-x: hidden;
       }
 
       div[body] h3 {
         color: #2e79be;
-        font-size: 18px;
+        font-size: 16px;
         margin: 0px;
       }
 
       div[body] > div {
         display: flex;
-        gap: 10px;
+        gap: var(--spacing-medium, 8px);
         border-radius: 5px;
       }
 
@@ -118,10 +122,10 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
       }
 
       div[drawing] {
-        flex: 0.4;
+        flex: 1;
         border: 1px solid #cccccc80;
-        background-color: #fff;
-        padding: 10px;
+        background-color: var(--md-sys-color-on-primary);
+        padding: var(--spacing-large, 12px);
         border-radius: 5px;
 
         img {
@@ -134,52 +138,65 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
       }
 
       div[inspection-container] {
-        flex: 0.6;
-        gap: 5px;
+        flex: 1;
+        gap: var(--spacing-medium, 8px);
 
         display: flex;
         flex-direction: column;
 
         div[inspection] {
           display: grid;
-          grid-template-columns: 120px 0.9fr 0.9fr 0.9fr 0.9fr;
-          margin-top: 5px;
+          grid-template-columns: 90px 1fr 1fr 1fr 1fr;
           background: #ebc8321a;
-          border-radius: 7px;
-          padding: 7px 0px;
+          border-radius: 5px;
+          padding: var(--spacing-medium, 8px) var(--spacing-large, 12px);
 
-          & > span {
+          & > div {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
 
-            div[status='wait'] {
-              color: #4e5055;
+            span::before{
+              display: inline-block;
+              position: relative;
+              content: "";
+              width: 10px;
+              height: 10px;
+              border-radius: 6px;
+              top: -1px;
+              margin-right: 2px;
             }
-            div[status='request'] {
-              color: #3395f1;
+
+            span[status='wait']::before{
+              background-color: #4e5055;
             }
-            div[status='pass'] {
-              color: #1bb401;
+            span[status='request']::before {
+              background-color: #3395f1;
             }
-            div[status='fail'] {
-              color: #ff4444;
+            span[status='pass']::before {
+              background-color: #1bb401;
+            }
+            span[status='fail']::before {
+              background-color: #ff4444;
             }
             span[dot] {
               font-size: 1.3em;
             }
           }
-          & > span[name] {
+          & > div[name] {
             flex-direction: row;
             text-align: right;
-            gap: 10px;
+            gap: var(--spacing-small, 4px);
+            padding-right:var(--spacing-large, 12px);
             border-right: 2px dotted #ccc;
+            max-width: 100%;
+            line-height:1.3; 
 
             md-icon {
               width: 40px;
               height: 40px;
-              border-radius: 7px;
+              border-radius: 5px;
               color: #fff;
               background: #f16154;
             }
@@ -259,35 +276,35 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
 
           <div inspection-container>
             <div inspection>
-              <span name bold>
+              <div name bold>
                 <md-icon slot="icon">fact_check</md-icon>
-                검측<br />현황
-              </span>
+                검측 현황
+              </div>
 
-              <span>
-                <div>${BUILDING_INSPECTION_STATUS_DISPLAY[BuildingInspectionStatus.WAIT]}</div>
-                <div bold status=${BuildingInspectionStatus.WAIT.toLowerCase()}>
-                  <span dot>●</span> ${this.buildingInspectionSummary[BuildingInspectionStatus.WAIT.toLowerCase()]}
-                </div>
-              </span>
-              <span>
-                <div>${BUILDING_INSPECTION_STATUS_DISPLAY[BuildingInspectionStatus.REQUEST]}</div>
-                <div bold status=${BuildingInspectionStatus.REQUEST.toLowerCase()}>
-                  <span dot>●</span> ${this.buildingInspectionSummary[BuildingInspectionStatus.REQUEST.toLowerCase()]}
-                </div>
-              </span>
-              <span>
-                <div>${BUILDING_INSPECTION_STATUS_DISPLAY[BuildingInspectionStatus.PASS]}</div>
-                <div bold status=${BuildingInspectionStatus.PASS.toLowerCase()}>
-                  <span dot>●</span> ${this.buildingInspectionSummary[BuildingInspectionStatus.PASS.toLowerCase()]}
-                </div>
-              </span>
-              <span>
-                <div>${BUILDING_INSPECTION_STATUS_DISPLAY[BuildingInspectionStatus.FAIL]}</div>
-                <div bold status=${BuildingInspectionStatus.FAIL.toLowerCase()}>
-                  <span dot>●</span> ${this.buildingInspectionSummary[BuildingInspectionStatus.FAIL.toLowerCase()]}
-                </div>
-              </span>
+              <div>
+                <label>${BUILDING_INSPECTION_STATUS_DISPLAY[BuildingInspectionStatus.WAIT]}</label>
+                <span bold status=${BuildingInspectionStatus.WAIT.toLowerCase()}>
+                  ${this.buildingInspectionSummary[BuildingInspectionStatus.WAIT.toLowerCase()]}
+                </span>
+              </div>
+              <div>
+                <label>${BUILDING_INSPECTION_STATUS_DISPLAY[BuildingInspectionStatus.REQUEST]}</label>
+                <span bold status=${BuildingInspectionStatus.REQUEST.toLowerCase()}>
+                  ${this.buildingInspectionSummary[BuildingInspectionStatus.REQUEST.toLowerCase()]}
+                </span>
+              </div>
+              <div>
+                <label>${BUILDING_INSPECTION_STATUS_DISPLAY[BuildingInspectionStatus.PASS]}</label>
+                <span bold status=${BuildingInspectionStatus.PASS.toLowerCase()}>
+                  ${this.buildingInspectionSummary[BuildingInspectionStatus.PASS.toLowerCase()]}
+                </span>
+              </div>
+              <div>
+                <label>${BUILDING_INSPECTION_STATUS_DISPLAY[BuildingInspectionStatus.FAIL]}</label>
+                <span bold status=${BuildingInspectionStatus.FAIL.toLowerCase()}>
+                  ${this.buildingInspectionSummary[BuildingInspectionStatus.FAIL.toLowerCase()]}
+                </span>
+              </div>
             </div>
 
             <ox-event-view
