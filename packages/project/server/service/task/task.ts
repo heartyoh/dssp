@@ -90,6 +90,10 @@ export class Task {
   @Field({ nullable: true })
   progress?: number
 
+  @Column({ nullable: true, comment: '스타일' })
+  @Field({ nullable: true })
+  style?: string
+
   // @OneToMany(type => Checklist, checklist => checklist.task, { nullable: true })
   // @Field(type => [Checklist], { nullable: true })
   // checklists?: Checklist[]
