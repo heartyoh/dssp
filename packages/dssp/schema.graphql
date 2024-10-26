@@ -5509,6 +5509,7 @@ type Task {
   """Return the simple list of resources allocated to the task"""
   resources: [DigestedResource!]!
   startDate: DateTimeISO
+  style: String
   tags: Object
   taskResources: [TaskResource!]
   type: String

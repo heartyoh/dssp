@@ -3140,6 +3140,9 @@ type Mutation {
 
   """To update roles for a user"""
   updateUserRoles(availableRoles: [ObjectRef!]!, selectedRoles: [ObjectRef!]!, userId: String!): User!
+
+  """프로젝트 공정표 업로드"""
+  uploadProjectScheduleTable(param: UploadProjectScheduleTable!): Boolean!
 }
 
 input NewActionPlan {
@@ -4062,6 +4065,35 @@ enum OrgMemberTargetType {
   Role
 }
 
+type PDFDrawing {
+  drawingURL: String
+  dwgId: String
+  id: String
+  links: [PDFDrawingLink!]
+  title: String
+}
+
+type PDFDrawingLink {
+  box: String
+  data: PDFDrawingLinkData
+  id: String
+  story: String
+  symbol: String
+  type: String
+}
+
+type PDFDrawingLinkData {
+  box: String
+  code: String
+  dwgId: String
+  finDetItems: [RoomFinishDetail!]
+  id: String
+  rmname: String
+  sn: String
+  symbol: String
+  type: String
+}
+
 """Entity for PagePreference"""
 type PagePreference {
   createdAt: DateTimeISO
@@ -4317,6 +4349,7 @@ type Project {
   name: String!
   robotProgressRate: Float
   rootTasks: [Task!]
+  scheduleTable: Attachment
   startDate: String
   state: String!
   structuralSafetyRate: Float
@@ -4853,6 +4886,15 @@ type Query {
   """To fetch multiple PayloadLogs"""
   payloadLogs(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): PayloadLogList!
 
+  """To fetch a PDFDrawing by dwgId"""
+  pdfDrawingByDwgId(dwgId: String!): PDFDrawing!
+
+  """To fetch a PDFDrawing by title"""
+  pdfDrawingByTitle(title: String!): PDFDrawing!
+
+  """To fetch multiple PDFDrawings"""
+  pdfDrawings: [PDFDrawing!]!
+
   """To fetch a PlayGroup"""
   playGroup(id: String!): PlayGroup
 
@@ -5081,6 +5123,13 @@ type RolePrivilege {
   description: String
   id: String
   name: String
+}
+
+type RoomFinishDetail {
+  box: String
+  dwgId: String
+  part: String
+  symbol: String
 }
 
 type Scenario {
@@ -5460,6 +5509,7 @@ type Task {
   """Return the simple list of resources allocated to the task"""
   resources: [DigestedResource!]!
   startDate: DateTimeISO
+  style: String
   tags: Object
   taskResources: [TaskResource!]
   type: String
@@ -5612,6 +5662,14 @@ input UpdateBuildingInspectionSubmitType {
 
 """The `Upload` scalar type represents a file upload."""
 scalar Upload
+
+input UploadProjectScheduleTable {
+  """수정할 프로젝트의 ID"""
+  projectId: String!
+
+  """프로젝트 공정표 업로드"""
+  scheduleTable: Upload
+}
 
 type UploadURL {
   fields: Any!
