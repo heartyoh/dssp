@@ -17,6 +17,7 @@ export class ChecklistItemCommentMutation {
     const result = await getRepository(ChecklistItemComment, tx).save({
       comment,
       checklistItem: { id: checklistItemId },
+      createdAt: new Date(),
       creator: user,
       updater: user
     })

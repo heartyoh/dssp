@@ -703,7 +703,8 @@ input ChecklistInputType {
 
 type ChecklistItem {
   checklist: Checklist
-  comment: String
+  checklistItemCommentCount: Float!
+  checklistItemComments: [ChecklistItemComment!]!
   constructionConfirmStatus: String
   createdAt: DateTimeISO
   creator: User
@@ -717,6 +718,22 @@ type ChecklistItem {
   supervisoryConfirmStatus: String
   updatedAt: DateTimeISO
   updater: User
+}
+
+"""Entity for ChecklistItemComment"""
+type ChecklistItemComment {
+  checklistItem: ChecklistItem
+  comment: String
+  createdAt: DateTimeISO
+  creator: User
+  deletedAt: DateTimeISO
+  id: ID!
+}
+
+input ChecklistItemCommentPatch {
+  checklistItemId: String
+  comment: String
+  id: ID
 }
 
 input ChecklistItemInputType {
@@ -2159,6 +2176,9 @@ type Mutation {
   """To create new Checklist"""
   createChecklist(checklist: NewChecklist!): Checklist!
 
+  """To create new ChecklistItemComment"""
+  createChecklistItemComment(checklistItemComment: NewChecklistItemComment!): ChecklistItemComment!
+
   """To create new CommonCode"""
   createCommonCode(commonCode: NewCommonCode!): CommonCode!
 
@@ -2341,6 +2361,9 @@ type Mutation {
 
   """To delete multiple Buildings"""
   deleteBuildings(ids: [String!]!): Boolean!
+
+  """To delete ChecklistItemComment"""
+  deleteChecklistItemComment(id: String!): Boolean!
 
   """To delete ChecklistTemplateItem"""
   deleteChecklistTemplateItem(id: String!): Boolean!
@@ -2860,6 +2883,9 @@ type Mutation {
   """To modify Checklist information"""
   updateChecklist(id: String!, patch: ChecklistPatch!): Checklist!
 
+  """To modify ChecklistItemComment information"""
+  updateChecklistItemComment(id: String!, patch: ChecklistItemCommentPatch!): ChecklistItemComment!
+
   """To modify CommonCode information"""
   updateCommonCode(name: String!, patch: CommonCodePatch!): CommonCode!
 
@@ -3235,6 +3261,11 @@ input NewChecklist {
   description: String
   name: String!
   params: String
+}
+
+input NewChecklistItemComment {
+  checklistItemId: String
+  comment: String
 }
 
 input NewCommonCode {
@@ -4595,6 +4626,9 @@ type Query {
 
   """To fetch a ChecklistItem"""
   checklistItem(id: String!): ChecklistItem
+
+  """To fetch multiple ChecklistItemComments"""
+  checklistItemComments(checklistItemId: String!, pagination: Pagination!): [ChecklistItemComment!]!
 
   """To fetch multiple ChecklistItems"""
   checklistItems(filters: [Filter!], inherited: InheritedValueType, pagination: Pagination, sortings: [Sorting!]): ChecklistItemList!

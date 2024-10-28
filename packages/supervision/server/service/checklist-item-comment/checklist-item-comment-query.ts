@@ -1,9 +1,7 @@
-import { Resolver, Query, FieldResolver, Root, Args, Arg, Ctx, Directive } from 'type-graphql'
-import { Domain, getQueryBuilderFromListParams, getRepository, ListParam, Pagination } from '@things-factory/shell'
+import { Resolver, Query, FieldResolver, Root, Arg, Ctx } from 'type-graphql'
+import { getRepository, Pagination } from '@things-factory/shell'
 import { User } from '@things-factory/auth-base'
 import { ChecklistItemComment } from './checklist-item-comment'
-import { ChecklistItemCommentList } from './checklist-item-comment-type'
-import { ChecklistItem } from '../checklist-item/checklist-item'
 
 @Resolver(ChecklistItemComment)
 export class ChecklistItemCommentQuery {
@@ -23,9 +21,9 @@ export class ChecklistItemCommentQuery {
       .createQueryBuilder('cic')
       .innerJoin('cic.checklistItem', 'ci')
       .where('cic.checklistItem = :checklistItemId', { checklistItemId })
-      .skip(offset) // offset을 통해 페이지네이션
-      .take(limit) // limit을 통해 한 번에 가져올 데이터 수 제한
-      .orderBy('cic.createdAt', 'DESC') // 최신 순으로 정렬
+      .skip(offset)
+      .take(limit)
+      .orderBy('cic.createdAt', 'DESC')
       .getMany()
 
     return items

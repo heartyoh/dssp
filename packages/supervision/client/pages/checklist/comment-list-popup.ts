@@ -292,7 +292,6 @@ class CommentListPopup extends connect(store)(LitElement) {
   }
 
   private _formatDate(date) {
-    console.log('date :', date)
     const _date = new Date(date.toLocaleString('en-US', { timeZone: 'Asia/Seoul' }))
 
     const year = _date.getFullYear()
