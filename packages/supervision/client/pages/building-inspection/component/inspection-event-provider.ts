@@ -43,7 +43,7 @@ export class InspectionEventProvider implements EventProvider {
     const calendarData = this.getCalendarTemplate(response.data?.buildingInspectionDateSummaryOfLevelAndPeriod)
 
     calendar.forEach(({ date }) => {
-      const formattedDate = date.toISOString().split('T')[0]
+      const formattedDate = date.toLocaleDateString('en-CA') // 'en-CA'는 'YYYY-MM-DD' 형식으로 반환됩니다.
       const template = calendarData[formattedDate]
 
       if (!template) return
