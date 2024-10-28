@@ -7,12 +7,14 @@ import {
   Column,
   RelationId,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn
 } from 'typeorm'
 import { ObjectType, Field, ID, Int, registerEnumType } from 'type-graphql'
 
 import { User } from '@things-factory/auth-base'
 import { Checklist } from '../checklist/checklist'
+import { ChecklistItemComment } from '../checklist-item-comment/checklist-item-comment'
 
 export enum ChecklistItemConfirmStatus {
   T = '적합',
@@ -60,9 +62,10 @@ export class ChecklistItem {
   @Field({ nullable: true })
   supervisoryConfirmStatus?: ChecklistItemConfirmStatus
 
-  @Column({ nullable: true, comment: '참고 사항' })
-  @Field({ nullable: true })
-  comment?: string
+  // 조치 사항 정보 (하위 테이블 참조)
+  @OneToMany(() => ChecklistItemComment, checklistItemComment => checklistItemComment.checklistItem)
+  @Field(() => [ChecklistItemComment])
+  checklistItemComments?: ChecklistItemComment[]
 
   // 체크리스트 정보 (상위 테이블 참조)
   @ManyToOne(type => Checklist)

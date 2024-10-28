@@ -1,4 +1,6 @@
 import '@material/web/icon/icon.js'
+import gql from 'graphql-tag'
+import { client } from '@operato/graphql'
 import { css, html, LitElement } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
 import { ButtonContainerStyles, ScrollbarStyles } from '@operato/styles'
@@ -8,9 +10,10 @@ import {
   BUILDING_INSPECTION_STATUS_DISPLAY
 } from '../building-inspection/building-inspection-list'
 import '@operato/input/ox-input-signature.js'
-// import { BuildingComplex } from '@dssp/building-complex'
 import { store } from '@operato/shell'
 import { connect } from 'pwa-helpers/connect-mixin.js'
+import { openPopup } from '@operato/layout'
+import './comment-list-popup'
 
 export const enum ChecklistMode {
   VIEWER = 'VIEWER',
@@ -56,6 +59,7 @@ class ChecklistView extends connect(store)(LitElement) {
         th {
           border: 1px #999999 solid;
           padding-inline: 8px;
+          vertical-align: middle;
         }
         th {
           background-color: #efefef;
@@ -65,11 +69,7 @@ class ChecklistView extends connect(store)(LitElement) {
           height: 35px;
           &[radio] {
             text-align: center;
-            vertical-align: middle;
             width: 55px;
-          }
-          &[attachment] {
-            width: 90px;
           }
         }
       }
@@ -116,6 +116,19 @@ class ChecklistView extends connect(store)(LitElement) {
             width: 50px;
             text-align: center;
             word-break: keep-all;
+          }
+
+          &[attachment] {
+            width: 90px;
+            text-align: center;
+          }
+          &[comment] {
+            cursor: pointer;
+            text-align: center;
+
+            * {
+              vertical-align: middle;
+            }
           }
         }
       }
@@ -331,8 +344,11 @@ class ChecklistView extends connect(store)(LitElement) {
                     @change=${this._onChangeConfirmStatus}
                   ></md-radio>
                 </td>
-                <td attachment></td>
-                <td></td>
+                <td attachment><md-icon slot="icon">attach_file</md-icon></td>
+                <td comment @click=${() => this._onClickComment(item.id)}>
+                  <md-icon slot="icon">chat</md-icon>
+                  <span>${item?.checklistItemCommentCount || ''}</span>
+                </td>
               </tr>`
             })}
           </tbody>
@@ -485,5 +501,45 @@ class ChecklistView extends connect(store)(LitElement) {
         detailTypeRowspan
       }
     })
+  }
+
+  private _onClickComment(checklistItemId: string) {
+    openPopup(
+      html`
+        <comment-list-popup
+          .checklistItemId=${checklistItemId}
+          @change-comment=${this._refreshComment.bind(this)}
+        ></comment-list-popup>
+      `,
+      {
+        backdrop: true,
+        size: 'medium',
+        title: '조치사항'
+      }
+    )
+  }
+
+  private async _refreshComment(e) {
+    const { checklistItemId } = e.detail
+    const response = await client.query({
+      query: gql`
+        query ChecklistItem($checklistItemId: String!) {
+          checklistItem(id: $checklistItemId) {
+            id
+            checklistItemCommentCount
+          }
+        }
+      `,
+      variables: {
+        checklistItemId: checklistItemId
+      }
+    })
+
+    const checklistItemCommentCount = response.data?.checklistItem?.checklistItemCommentCount || []
+    this.checklist.checklistItems = this.checklist.checklistItems.map(item => {
+      return item.id != checklistItemId ? item : { ...item, checklistItemCommentCount: checklistItemCommentCount }
+    })
+
+    this.requestUpdate()
   }
 }

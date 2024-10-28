@@ -6,6 +6,7 @@ export * from './supervisor/supervisor'
 export * from './checklist-type/checklist-type'
 export * from './checklist/checklist'
 export * from './checklist-item/checklist-item'
+export * from './checklist-item-comment/checklist-item-comment'
 export * from './checklist-template/checklist-template'
 export * from './checklist-template-item/checklist-template-item'
 export * from './building-inspection/building-inspection'
@@ -29,6 +30,11 @@ import {
 } from './supervisor'
 import { entities as ChecklistEntities, resolvers as ChecklistResolvers, subscribers as ChecklistSubscribers } from './checklist'
 import { entities as ChecklistItemEntities, resolvers as ChecklistItemResolvers } from './checklist-item'
+import {
+  entities as ChecklistItemCommentEntities,
+  resolvers as ChecklistItemCommentResolvers,
+  subscribers as ChecklistItemCommentSubscribers
+} from './checklist-item-comment'
 import { entities as ChecklistTypeEntities, resolvers as ChecklistTypeResolvers } from './checklist-type'
 import { entities as ChecklistTemplateEntities, resolvers as ChecklistTemplateResolvers } from './checklist-template'
 import { entities as ChecklistTemplateItemEntities, resolvers as ChecklistTemplateItemResolvers } from './checklist-template-item'
@@ -46,6 +52,7 @@ export const entities = [
   ...SupervisorEntities,
   ...ChecklistEntities,
   ...ChecklistItemEntities,
+  ...ChecklistItemCommentEntities,
   ...ChecklistTypeEntities,
   ...ChecklistTemplateItemEntities,
   ...ChecklistTemplateEntities,
@@ -59,7 +66,8 @@ export const subscribers = [
   ...ProjectReportSubscribers,
   ...SupervisorSubscribers,
   ...BuildingInspectionSubscribers,
-  ...ChecklistSubscribers
+  ...ChecklistSubscribers,
+  ...ChecklistItemCommentSubscribers
 ]
 
 export const schema = {
@@ -71,6 +79,7 @@ export const schema = {
     ...SupervisorResolvers,
     ...ChecklistResolvers,
     ...ChecklistItemResolvers,
+    ...ChecklistItemCommentResolvers,
     ...ChecklistTypeResolvers,
     ...ChecklistTemplateItemResolvers,
     ...ChecklistTemplateResolvers,

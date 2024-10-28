@@ -4,6 +4,7 @@ import { Domain, getQueryBuilderFromListParams, getRepository, ListParam } from 
 import { User } from '@things-factory/auth-base'
 import { ChecklistItem } from './checklist-item'
 import { ChecklistItemList } from './checklist-item-type'
+import { ChecklistItemComment } from '../checklist-item-comment/checklist-item-comment'
 
 @Resolver(ChecklistItem)
 export class ChecklistItemQuery {
@@ -29,6 +30,16 @@ export class ChecklistItemQuery {
     const [items, total] = await queryBuilder.getManyAndCount()
 
     return { items, total }
+  }
+
+  @FieldResolver(type => [ChecklistItemComment])
+  async checklistItemComments(@Root() checklistItem: ChecklistItem): Promise<ChecklistItemComment[]> {
+    return await getRepository(ChecklistItemComment).findBy({ checklistItem: { id: checklistItem.id } })
+  }
+
+  @FieldResolver(type => Number)
+  async checklistItemCommentCount(@Root() checklistItem: ChecklistItem): Promise<number> {
+    return await getRepository(ChecklistItemComment).countBy({ checklistItem: { id: checklistItem.id } })
   }
 
   @FieldResolver(type => User)

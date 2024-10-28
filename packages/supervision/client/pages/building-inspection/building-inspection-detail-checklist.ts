@@ -141,7 +141,7 @@ export class BuildingInspectionDetailChecklist extends PageView {
                 inspctionCriteria
                 constructionConfirmStatus
                 supervisoryConfirmStatus
-                comment
+                checklistItemCommentCount
               }
             }
             buildingLevel {
