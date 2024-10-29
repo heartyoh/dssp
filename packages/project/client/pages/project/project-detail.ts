@@ -415,7 +415,7 @@ export class ProjectDetail extends ScopedElementsMixin(PageView) {
           <md-elevated-button href=${`project-plan-management/${this.project.id}`}>
             <md-icon slot="icon">description</md-icon>도면 관리
           </md-elevated-button>
-          <md-elevated-button href=${`project-task-update/${this.project.id}`}>
+          <md-elevated-button href=${`project-schedule/${this.project.id}`}>
             <md-icon slot="icon">event_note</md-icon>공정표 관리
           </md-elevated-button>
         </div>

@@ -172,6 +172,7 @@ class CommentListPopup extends connect(store)(LitElement) {
             creator {
               id
               email
+              name
             }
             createdAt
           }
