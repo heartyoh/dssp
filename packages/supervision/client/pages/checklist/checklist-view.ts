@@ -14,6 +14,7 @@ import { store } from '@operato/shell'
 import { connect } from 'pwa-helpers/connect-mixin.js'
 import { openPopup } from '@operato/layout'
 import './comment-list-popup'
+import './attachment-list-popup'
 
 export const enum ChecklistMode {
   VIEWER = 'VIEWER',
@@ -119,8 +120,12 @@ class ChecklistView extends connect(store)(LitElement) {
           }
 
           &[attachment] {
-            width: 90px;
             text-align: center;
+            cursor: pointer;
+
+            * {
+              vertical-align: middle;
+            }
           }
           &[comment] {
             cursor: pointer;
@@ -344,7 +349,10 @@ class ChecklistView extends connect(store)(LitElement) {
                     @change=${this._onChangeConfirmStatus}
                   ></md-radio>
                 </td>
-                <td attachment><md-icon slot="icon">attach_file</md-icon></td>
+                <td attachment @click=${() => this._onClickAttachment(item.id)}>
+                  <md-icon slot="icon">attach_file</md-icon>
+                  <span>${item?.checklistItemAttachmentCount || ''}</span>
+                </td>
                 <td comment @click=${() => this._onClickComment(item.id)}>
                   <md-icon slot="icon">chat</md-icon>
                   <span>${item?.checklistItemCommentCount || ''}</span>
@@ -508,18 +516,34 @@ class ChecklistView extends connect(store)(LitElement) {
       html`
         <comment-list-popup
           .checklistItemId=${checklistItemId}
-          @change-comment=${this._refreshComment.bind(this)}
+          @change-comment=${this._refreshItem.bind(this)}
         ></comment-list-popup>
       `,
       {
         backdrop: true,
         size: 'medium',
-        title: '조치사항'
+        title: '조치 사항'
       }
     )
   }
 
-  private async _refreshComment(e) {
+  private _onClickAttachment(checklistItemId: string) {
+    openPopup(
+      html`
+        <attachment-list-popup
+          .checklistItemId=${checklistItemId}
+          @change-attachment=${this._refreshItem.bind(this)}
+        ></attachment-list-popup>
+      `,
+      {
+        backdrop: true,
+        size: 'medium',
+        title: '첨부 자료'
+      }
+    )
+  }
+
+  private async _refreshItem(e) {
     const { checklistItemId } = e.detail
     const response = await client.query({
       query: gql`
@@ -527,6 +551,7 @@ class ChecklistView extends connect(store)(LitElement) {
           checklistItem(id: $checklistItemId) {
             id
             checklistItemCommentCount
+            checklistItemAttachmentCount
           }
         }
       `,
@@ -535,9 +560,9 @@ class ChecklistView extends connect(store)(LitElement) {
       }
     })
 
-    const checklistItemCommentCount = response.data?.checklistItem?.checklistItemCommentCount || []
+    const checklistItem = response.data?.checklistItem || []
     this.checklist.checklistItems = this.checklist.checklistItems.map(item => {
-      return item.id != checklistItemId ? item : { ...item, checklistItemCommentCount: checklistItemCommentCount }
+      return item.id != checklistItemId ? item : { ...item, ...checklistItem }
     })
 
     this.requestUpdate()

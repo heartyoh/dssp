@@ -8,7 +8,6 @@ import { notify } from '@operato/layout'
 import { store, User } from '@operato/shell'
 import { connect } from 'pwa-helpers/connect-mixin.js'
 import { OxPrompt } from '@operato/popup/ox-prompt.js'
-import './checklist-view'
 
 @customElement('comment-list-popup')
 class CommentListPopup extends connect(store)(LitElement) {
@@ -80,6 +79,7 @@ class CommentListPopup extends connect(store)(LitElement) {
 
       textarea {
         height: 75px;
+        border: 1px solid #ccc;
       }
 
       div[button-container] {

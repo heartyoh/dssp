@@ -703,6 +703,8 @@ input ChecklistInputType {
 
 type ChecklistItem {
   checklist: Checklist
+  checklistItemAttachmentCount: Float!
+  checklistItemAttachments: [Attachment!]!
   checklistItemCommentCount: Float!
   checklistItemComments: [ChecklistItemComment!]!
   constructionConfirmStatus: String

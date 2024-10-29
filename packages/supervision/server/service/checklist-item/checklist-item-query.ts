@@ -42,6 +42,26 @@ export class ChecklistItemQuery {
     return await getRepository(ChecklistItemComment).countBy({ checklistItem: { id: checklistItem.id } })
   }
 
+  @FieldResolver(type => [Attachment])
+  async checklistItemAttachments(@Root() checklistItem: ChecklistItem): Promise<Attachment[]> {
+    return await getRepository(Attachment).find({
+      where: {
+        refType: ChecklistItem.name,
+        refBy: checklistItem.id
+      }
+    })
+  }
+
+  @FieldResolver(type => Number)
+  async checklistItemAttachmentCount(@Root() checklistItem: ChecklistItem): Promise<number> {
+    return await getRepository(Attachment).count({
+      where: {
+        refType: ChecklistItem.name,
+        refBy: checklistItem.id
+      }
+    })
+  }
+
   @FieldResolver(type => User)
   async updater(@Root() checklistItem: ChecklistItem): Promise<User> {
     return await getRepository(User).findOneBy({ id: checklistItem.updaterId })
