@@ -8,6 +8,8 @@ import { notify } from '@operato/layout'
 import { store, User } from '@operato/shell'
 import { connect } from 'pwa-helpers/connect-mixin.js'
 import { OxPrompt } from '@operato/popup/ox-prompt.js'
+import { openPopup } from '@operato/layout'
+import './file-preview-popup'
 
 @customElement('attachment-list-popup')
 class AttachmentListPopup extends connect(store)(LitElement) {
@@ -58,11 +60,18 @@ class AttachmentListPopup extends connect(store)(LitElement) {
               md-icon[delete] {
                 cursor: pointer;
               }
+
+              a[button-download] {
+                display: flex;
+                color: #000;
+              }
             }
           }
 
-          div[attachment] {
+          a[attachment] {
             margin-left: 20px;
+            text-decoration: none;
+            color: #000;
           }
         }
       }
@@ -77,28 +86,10 @@ class AttachmentListPopup extends connect(store)(LitElement) {
         margin-bottom: 5px;
       }
 
-      textarea {
-        height: 75px;
-        border: 1px solid #ccc;
-      }
-
       div[button-container] {
         display: flex;
         justify-content: flex-end;
         gap: 10px;
-
-        md-elevated-button[blue] {
-          --md-elevated-button-container-color: #0595e5;
-
-          --md-elevated-button-label-text-color: #fff;
-          --md-elevated-button-hover-label-text-color: #fff;
-          --md-elevated-button-pressed-label-text-color: #fff;
-          --md-elevated-button-focus-label-text-color: #fff;
-          --md-elevated-button-icon-color: #fff;
-          --md-elevated-button-hover-icon-color: #fff;
-          --md-elevated-button-pressed-icon-color: #fff;
-          --md-elevated-button-focus-icon-color: #fff;
-        }
       }
     `
   ]
@@ -117,7 +108,7 @@ class AttachmentListPopup extends connect(store)(LitElement) {
         <h3>제품검사에 대한 파일: ${this.checklistItemAttachmentCount || 0}건</h3>
 
         <div attachment-container>
-          ${this.checklistItemAttachments.map(attachment => {
+          ${this.checklistItemAttachments.reverse().map(attachment => {
             return html`
               <div attachment-row>
                 <div creator-container>
@@ -127,8 +118,12 @@ class AttachmentListPopup extends connect(store)(LitElement) {
                     ${attachment.creator.email === this.user.email
                       ? html` <md-icon delete slot="icon" @click=${() => this._deleteAttachment(attachment.id)}>delete</md-icon>`
                       : ''}
+                    <a button-download href=${attachment.fullpath} download=${attachment.name}>
+                      <md-icon slot="icon">download</md-icon></a
+                    >
                   </span>
                 </div>
+                <a attachment @click=${() => this._onClickPreview(attachment.fullpath)}>${attachment.name}</a>
               </div>
             `
           })}
@@ -163,7 +158,9 @@ class AttachmentListPopup extends connect(store)(LitElement) {
               creator {
                 id
                 name
+                email
               }
+              createdAt
             }
           }
         }
@@ -175,7 +172,7 @@ class AttachmentListPopup extends connect(store)(LitElement) {
 
     if (response.errors) return
 
-    this.checklistItemAttachments = response.data.checklistItemAttachments || []
+    this.checklistItemAttachments = response.data.checklistItem.checklistItemAttachments || []
     this.checklistItemAttachmentCount = response.data.checklistItem.checklistItemAttachmentCount
   }
 
@@ -190,12 +187,12 @@ class AttachmentListPopup extends connect(store)(LitElement) {
     ) {
       const response = await client.mutate({
         mutation: gql`
-          mutation DeleteChecklistItemComment($id: String!) {
-            deleteChecklistItemComment(id: $id)
+          mutation DeleteAttachment($deleteAttachmentId: String!) {
+            deleteAttachment(id: $deleteAttachmentId)
           }
         `,
         variables: {
-          id: attachmentId
+          deleteAttachmentId: attachmentId
         }
       })
 
@@ -216,11 +213,11 @@ class AttachmentListPopup extends connect(store)(LitElement) {
 
   // 파일 변경 시 파일을 저장할 핸들러
   private async onCreateAttachment(e: CustomEvent) {
-    console.log(e.detail)
-
     const files = e.detail
 
     await this._createAttachments(files)
+
+    this._dispatchEvent()
   }
 
   async _createAttachments(files: File[]) {
@@ -233,6 +230,11 @@ class AttachmentListPopup extends connect(store)(LitElement) {
             id
             name
             fullpath
+            creator {
+              id
+              name
+              email
+            }
             createdAt
           }
         }
@@ -246,26 +248,11 @@ class AttachmentListPopup extends connect(store)(LitElement) {
         hasUpload: true
       }
     })
-  }
 
-  async _createAttachment(attachment) {
-    const response = await client.mutate({
-      mutation: gql`
-        mutation createAttachment($attachment: NewAttachment!) {
-          createAttachment(attachment: $attachment) {
-            id
-            name
-            path
-          }
-        }
-      `,
-      variables: { attachment },
-      context: { hasUpload: true }
-    })
+    const attachments = response.data.createAttachments
 
-    if (!response.errors) {
-      return response.data.createAttachment
-    }
+    this.checklistItemAttachments = [...this.checklistItemAttachments, ...attachments]
+    this.checklistItemAttachmentCount = this.checklistItemAttachmentCount + attachments.length
   }
 
   private _formatDate(date) {
@@ -284,5 +271,13 @@ class AttachmentListPopup extends connect(store)(LitElement) {
   // 첨부 자료 변경 이벤트 디스패치
   _dispatchEvent() {
     this.dispatchEvent(new CustomEvent('change-attachment', { detail: { checklistItemId: this.checklistItemId } }))
+  }
+
+  private _onClickPreview(filepath: string) {
+    openPopup(html` <file-preview-popup .filepath=${filepath}></file-preview-popup> `, {
+      backdrop: true,
+      size: 'large',
+      title: '미리보기'
+    })
   }
 }

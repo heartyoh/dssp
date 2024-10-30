@@ -48,6 +48,9 @@ export class ChecklistItemQuery {
       where: {
         refType: ChecklistItem.name,
         refBy: checklistItem.id
+      },
+      order: {
+        createdAt: 'DESC'
       }
     })
   }
