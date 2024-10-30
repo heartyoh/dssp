@@ -108,7 +108,7 @@ class AttachmentListPopup extends connect(store)(LitElement) {
         <h3>제품검사에 대한 파일: ${this.checklistItemAttachmentCount || 0}건</h3>
 
         <div attachment-container>
-          ${this.checklistItemAttachments.reverse().map(attachment => {
+          ${this.checklistItemAttachments.map(attachment => {
             return html`
               <div attachment-row>
                 <div creator-container>
@@ -251,7 +251,7 @@ class AttachmentListPopup extends connect(store)(LitElement) {
 
     const attachments = response.data.createAttachments
 
-    this.checklistItemAttachments = [...this.checklistItemAttachments, ...attachments]
+    this.checklistItemAttachments = [...attachments, ...this.checklistItemAttachments]
     this.checklistItemAttachmentCount = this.checklistItemAttachmentCount + attachments.length
   }
 
