@@ -1,0 +1,390 @@
+{
+  "dwgId": "GA-3006",
+  "links": [
+    {
+      "id": "1",
+      "type": "insulsect",
+      "symbol": "G1",
+      "story": "1",
+      "box": "182.17,375.02,16.69,17.24"
+    },
+    {
+      "id": "2",
+      "type": "insulsect",
+      "symbol": "W3",
+      "story": "1",
+      "box": "191.86,392.26,16.69,17.24"
+    },
+    {
+      "id": "3",
+      "type": "insulsect",
+      "symbol": "W2",
+      "story": "1",
+      "box": "275.59,231.22,16.69,17.24"
+    },
+    {
+      "id": "4",
+      "type": "insulsect",
+      "symbol": "F2",
+      "story": "1",
+      "box": "327.8,281.59,16.69,17.24"
+    },
+    {
+      "id": "5",
+      "type": "insulsect",
+      "symbol": "W2",
+      "story": "1",
+      "box": "524.65,141.63,16.69,17.24"
+    },
+    {
+      "id": "6",
+      "type": "insulsect",
+      "symbol": "W1",
+      "story": "1",
+      "box": "620.07,251.91,16.69,17.24"
+    },
+    {
+      "id": "7",
+      "type": "insulsect",
+      "symbol": "W2",
+      "story": "1",
+      "box": "620.08,231.22,16.69,17.24"
+    },
+    {
+      "id": "8",
+      "type": "insulsect",
+      "symbol": "G2",
+      "story": "1",
+      "box": "620.08,211.98,16.69,17.24"
+    },
+    {
+      "id": "9",
+      "type": "insulsect",
+      "symbol": "G1",
+      "story": "1",
+      "box": "609.24,344.49,16.69,17.24"
+    },
+    {
+      "id": "10",
+      "type": "insulsect",
+      "symbol": "W3",
+      "story": "1",
+      "box": "609.24,325.25,16.69,17.24"
+    },
+    {
+      "id": "11",
+      "type": "insulsect",
+      "symbol": "W1",
+      "story": "1",
+      "box": "397.7,482.28,16.69,17.24"
+    },
+    {
+      "id": "12",
+      "type": "insulsect",
+      "symbol": "G2",
+      "story": "1",
+      "box": "417.39,482.29,16.69,17.24"
+    },
+    {
+      "id": "13",
+      "type": "insulsect",
+      "symbol": "W1",
+      "story": "1",
+      "box": "622.08,431.07,16.69,17.24"
+    },
+    {
+      "id": "14",
+      "type": "insulsect",
+      "symbol": "W2",
+      "story": "1",
+      "box": "622.08,410.83,16.69,17.24"
+    },
+    {
+      "id": "15",
+      "type": "insulsect",
+      "symbol": "G2",
+      "story": "1",
+      "box": "622.09,390.26,16.69,17.24"
+    },
+    {
+      "id": "16",
+      "type": "insulsect",
+      "symbol": "R2",
+      "story": "1",
+      "box": "201.7,489.52,16.69,17.24"
+    },
+    {
+      "id": "17",
+      "type": "insulsect",
+      "symbol": "W1",
+      "story": "2",
+      "box": "968.41,240.67,16.69,17.24"
+    },
+    {
+      "id": "18",
+      "type": "insulsect",
+      "symbol": "G2",
+      "story": "2",
+      "box": "986.1,230.67,16.69,17.24"
+    },
+    {
+      "id": "19",
+      "type": "insulsect",
+      "symbol": "G1",
+      "story": "2",
+      "box": "895.67,404.1,16.69,17.24"
+    },
+    {
+      "id": "20",
+      "type": "insulsect",
+      "symbol": "W3",
+      "story": "2",
+      "box": "904.51,420.94,16.69,17.24"
+    },
+    {
+      "id": "21",
+      "type": "insulsect",
+      "symbol": "W1",
+      "story": "2",
+      "box": "1096.52,488.28,16.69,17.24"
+    },
+    {
+      "id": "22",
+      "type": "insulsect",
+      "symbol": "G2",
+      "story": "2",
+      "box": "1117.05,488.29,16.69,17.24"
+    },
+    {
+      "id": "23",
+      "type": "insulsect",
+      "symbol": "W1",
+      "story": "2",
+      "box": "1217.63,147.64,16.69,17.24"
+    },
+    {
+      "id": "24",
+      "type": "insulsect",
+      "symbol": "G2",
+      "story": "2",
+      "box": "1237.33,147.65,16.69,17.24"
+    },
+    {
+      "id": "25",
+      "type": "insulsect",
+      "symbol": "G1",
+      "story": "2",
+      "box": "1258.02,139.63,16.69,17.24"
+    },
+    {
+      "id": "26",
+      "type": "insulsect",
+      "symbol": "W3",
+      "story": "2",
+      "box": "1276.71,139.64,16.69,17.24"
+    },
+    {
+      "id": "27",
+      "type": "insulsect",
+      "symbol": "G2",
+      "story": "2",
+      "box": "1320.9,227.22,16.69,17.24"
+    },
+    {
+      "id": "28",
+      "type": "insulsect",
+      "symbol": "W1",
+      "story": "2",
+      "box": "1320.9,247.91,16.69,17.24"
+    },
+    {
+      "id": "29",
+      "type": "insulsect",
+      "symbol": "W3",
+      "story": "2",
+      "box": "1330.74,304.83,16.69,17.24"
+    },
+    {
+      "id": "30",
+      "type": "insulsect",
+      "symbol": "G1",
+      "story": "2",
+      "box": "1330.75,326.25,16.69,17.24"
+    },
+    {
+      "id": "31",
+      "type": "insulsect",
+      "symbol": "W1",
+      "story": "3",
+      "box": "493.13,981.26,16.69,17.24"
+    },
+    {
+      "id": "32",
+      "type": "insulsect",
+      "symbol": "G2",
+      "story": "3",
+      "box": "493.13,960.02,16.69,17.24"
+    },
+    {
+      "id": "33",
+      "type": "insulsect",
+      "symbol": "G2",
+      "story": "3",
+      "box": "421.39,1031.47,16.69,17.24"
+    },
+    {
+      "id": "34",
+      "type": "insulsect",
+      "symbol": "G2",
+      "story": "3",
+      "box": "332.8,1032.46,16.69,17.24"
+    },
+    {
+      "id": "35",
+      "type": "insulsect",
+      "symbol": "W1",
+      "story": "3",
+      "box": "311.11,1032.46,16.69,17.24"
+    },
+    {
+      "id": "36",
+      "type": "insulsect",
+      "symbol": "F1",
+      "story": "3",
+      "box": "225.39,935.04,16.69,17.24"
+    },
+    {
+      "id": "37",
+      "type": "insulsect",
+      "symbol": "G1",
+      "story": "3",
+      "box": "183.02,982.26,16.69,17.24"
+    },
+    {
+      "id": "38",
+      "type": "insulsect",
+      "symbol": "W3",
+      "story": "3",
+      "box": "192.86,1000.5,16.69,17.24"
+    },
+    {
+      "id": "39",
+      "type": "insulsect",
+      "symbol": "W1",
+      "story": "3",
+      "box": "298.42,772.56,16.69,17.24"
+    },
+    {
+      "id": "40",
+      "type": "insulsect",
+      "symbol": "G2",
+      "story": "3",
+      "box": "315.11,762.87,16.69,17.24"
+    },
+    {
+      "id": "41",
+      "type": "insulsect",
+      "symbol": "W1",
+      "story": "3",
+      "box": "469.44,690.99,16.69,17.24"
+    },
+    {
+      "id": "42",
+      "type": "insulsect",
+      "symbol": "G2",
+      "story": "3",
+      "box": "490.13,690.98,16.69,17.24"
+    },
+    {
+      "id": "43",
+      "type": "insulsect",
+      "symbol": "R1",
+      "story": "3",
+      "box": "572.87,869.99,16.69,17.24"
+    },
+    {
+      "id": "44",
+      "type": "insulsect",
+      "symbol": "W1",
+      "story": "3",
+      "box": "499.12,817.93,16.69,17.24"
+    },
+    {
+      "id": "45",
+      "type": "insulsect",
+      "symbol": "G2",
+      "story": "3",
+      "box": "498.81,797.7,16.69,17.24"
+    },
+    {
+      "id": "46",
+      "type": "insulsect",
+      "symbol": "W1",
+      "story": "4",
+      "box": "1171.26,690.98,16.69,17.24"
+    },
+    {
+      "id": "47",
+      "type": "insulsect",
+      "symbol": "G2",
+      "story": "4",
+      "box": "1191.94,690.98,16.69,17.24"
+    },
+    {
+      "id": "48",
+      "type": "insulsect",
+      "symbol": "W1",
+      "story": "4",
+      "box": "1215.63,877.98,16.69,17.24"
+    },
+    {
+      "id": "49",
+      "type": "insulsect",
+      "symbol": "G2",
+      "story": "4",
+      "box": "1215.64,856.75,16.69,17.24"
+    },
+    {
+      "id": "50",
+      "type": "insulsect",
+      "symbol": "W1",
+      "story": "4",
+      "box": "1062.99,1031.46,16.69,17.24"
+    },
+    {
+      "id": "51",
+      "type": "insulsect",
+      "symbol": "G2",
+      "story": "4",
+      "box": "1082.67,1031.46,16.69,17.24"
+    },
+    {
+      "id": "52",
+      "type": "insulsect",
+      "symbol": "G1",
+      "story": "4",
+      "box": "883.82,983.25,16.69,17.24"
+    },
+    {
+      "id": "53",
+      "type": "insulsect",
+      "symbol": "W3",
+      "story": "4",
+      "box": "894.67,1000.5,16.69,17.24"
+    },
+    {
+      "id": "54",
+      "type": "insulsect",
+      "symbol": "W1",
+      "story": "4",
+      "box": "999.1,772.56,16.69,17.24"
+    },
+    {
+      "id": "55",
+      "type": "insulsect",
+      "symbol": "G2",
+      "story": "4",
+      "box": "1016.79,762.87,16.69,17.24"
+    }
+  ]
+}

@@ -1,0 +1,138 @@
+{
+  "dwgId": "A-7002",
+  "links": [
+    {
+      "id": "1",
+      "type": "stairrail",
+      "symbol": "TYPE-1",
+      "story": "3",
+      "box": "262.75,295.28,31.25,12.72"
+    },
+    {
+      "id": "2",
+      "type": "stairrail",
+      "symbol": "TYPE-2",
+      "story": "3",
+      "box": "365.17,337.64,31.25,12.72"
+    },
+    {
+      "id": "3",
+      "type": "stairrail",
+      "symbol": "TYPE-1",
+      "story": "3",
+      "box": "312.96,438.07,31.25,12.72"
+    },
+    {
+      "id": "4",
+      "type": "stairrail",
+      "symbol": "TYPE-3",
+      "story": "3",
+      "box": "239.22,379.02,31.25,12.72"
+    },
+    {
+      "id": "5",
+      "type": "stairrail",
+      "symbol": "TYPE-1",
+      "story": "3",
+      "box": "511.96,283.56,31.25,12.72"
+    },
+    {
+      "id": "6",
+      "type": "stairrail",
+      "symbol": "TYPE-5",
+      "story": "3",
+      "box": "532.8,152.48,31.25,12.72"
+    },
+    {
+      "id": "7",
+      "type": "stairrail",
+      "symbol": "TYPE-1",
+      "story": "4",
+      "box": "1013.78,438.08,31.25,12.72"
+    },
+    {
+      "id": "8",
+      "type": "stairrail",
+      "symbol": "TYPE-3",
+      "story": "4",
+      "box": "1071.83,340.64,31.25,12.72"
+    },
+    {
+      "id": "9",
+      "type": "stairrail",
+      "symbol": "TYPE-1",
+      "story": "4",
+      "box": "1201.78,283.56,31.25,12.72"
+    },
+    {
+      "id": "10",
+      "type": "stairrail",
+      "symbol": "TYPE-1",
+      "story": "4",
+      "box": "964.41,295.28,31.25,12.72"
+    },
+    {
+      "id": "11",
+      "type": "stairrail",
+      "symbol": "TYPE-1",
+      "story": "5",
+      "box": "498.13,826.78,31.25,12.72"
+    },
+    {
+      "id": "12",
+      "type": "stairrail",
+      "symbol": "TYPE-3",
+      "story": "5",
+      "box": "370.02,877.99,31.25,12.72"
+    },
+    {
+      "id": "13",
+      "type": "stairrail",
+      "symbol": "TYPE-1",
+      "story": "5",
+      "box": "261.91,837.49,31.25,12.72"
+    },
+    {
+      "id": "14",
+      "type": "stairrail",
+      "symbol": "TYPE-1",
+      "story": "5",
+      "box": "311.96,981.25,31.25,12.72"
+    },
+    {
+      "id": "15",
+      "type": "stairrail",
+      "symbol": "TYPE-6",
+      "story": "5",
+      "box": "216.38,981.25,31.25,12.72"
+    },
+    {
+      "id": "16",
+      "type": "stairrail",
+      "symbol": "TYPE-3",
+      "story": "6",
+      "box": "1072.83,882.83,31.25,12.72"
+    },
+    {
+      "id": "17",
+      "type": "stairrail",
+      "symbol": "TYPE-1",
+      "story": "6",
+      "box": "1213.47,827.77,31.25,12.72"
+    },
+    {
+      "id": "18",
+      "type": "stairrail",
+      "symbol": "TYPE-1",
+      "story": "6",
+      "box": "1013.77,982.25,31.25,12.72"
+    },
+    {
+      "id": "19",
+      "type": "stairrail",
+      "symbol": "TYPE-1",
+      "story": "6",
+      "box": "963.56,838.49,31.25,12.72"
+    }
+  ]
+}

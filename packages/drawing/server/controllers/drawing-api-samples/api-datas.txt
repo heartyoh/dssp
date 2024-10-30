@@ -1,0 +1,17 @@
+curl-command:
+
+curl -X 'GET' \
+  'https://pdfn.ndfolder.com/api/Datas?type=insulsect&symbol=G1' \
+  -H 'accept: */*'
+
+request-url:
+
+https://pdfn.ndfolder.com/api/Datas?type=insulsect&symbol=G1
+
+response-header:
+
+ connection: keep-alive 
+ content-type: application/json; charset=utf-8 
+ date: Wed,30 Oct 2024 15:04:32 GMT 
+ server: nginx 
+ transfer-encoding: chunked 
