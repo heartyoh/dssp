@@ -30,11 +30,10 @@ class ChecklistView extends connect(store)(LitElement) {
       :host {
         display: flex;
         flex-direction: column;
+        padding: var(--spacing-large, 12px);
+        padding-top:0;
         font-size: 14px;
-        padding: 20px;
         min-width: 800px;
-
-        background-color: var(--md-sys-color-surface);
       }
 
       [bold] {
@@ -45,7 +44,6 @@ class ChecklistView extends connect(store)(LitElement) {
         display: flex;
         color: #586878;
         font-size: 24px;
-        font-weight: bold;
         align-items: center;
         justify-content: center;
       }
@@ -58,8 +56,8 @@ class ChecklistView extends connect(store)(LitElement) {
         border-collapse: collapse;
         td,
         th {
-          border: 1px #999999 solid;
-          padding-inline: 8px;
+          border: 1px rgba(51,51,51,.20) solid;
+          padding-inline: var(--spacing-medium, 8px);
           vertical-align: middle;
         }
         th {
@@ -67,7 +65,8 @@ class ChecklistView extends connect(store)(LitElement) {
           font-weight: bold;
         }
         td {
-          height: 35px;
+          height: 33px;
+          background-color: var(--md-sys-color-on-primary);
           &[radio] {
             text-align: center;
             width: 55px;
@@ -76,7 +75,7 @@ class ChecklistView extends connect(store)(LitElement) {
       }
 
       table[header] {
-        margin-top: 5px;
+        margin-top: var(--spacing-small, 4px);;
 
         td {
           min-width: 180px;
@@ -89,9 +88,9 @@ class ChecklistView extends connect(store)(LitElement) {
       }
 
       table[body] {
-        border: 2px solid #999999;
+        border: 2px solid var(--md-sys-color-on-primary-container);
         border-bottom: none;
-        margin-top: 10px;
+        margin-top: var(--spacing-medium, 8px);
 
         th {
           text-align: center;
@@ -139,7 +138,7 @@ class ChecklistView extends connect(store)(LitElement) {
       }
 
       table[tail] {
-        border: 2px solid #999999;
+        border: 2px solid var(--md-sys-color-on-primary-container);
         border-top: none;
         margin-top: -1px;
 
@@ -151,6 +150,8 @@ class ChecklistView extends connect(store)(LitElement) {
           border-left: none;
           text-align: center;
           position: relative;
+          background-color: var(--md-sys-color-on-primary);
+          font-size: 14px;
         }
         th {
           width: 25%;
@@ -165,7 +166,7 @@ class ChecklistView extends connect(store)(LitElement) {
           pointer-events: none;
         }
         ox-input-signature {
-          margin: 10px;
+          margin: var(--spacing-medium, 8px);
 
           &[disabled] {
             background: #eee;
@@ -176,12 +177,12 @@ class ChecklistView extends connect(store)(LitElement) {
       div[footer] {
         display: flex;
         flex-direction: column;
-        gap: 3px;
+        gap: var(--spacing-tiny, 2px);
         font-size: 12px;
-        margin-top: 10px;
+        margin-top: var(--spacing-medium, 8px);
         color: #586878;
         text-indent: -9px;
-        padding-left: 9px;
+        padding-left: var(--spacing-medium, 8px);
       }
     `
   ]
@@ -251,7 +252,7 @@ class ChecklistView extends connect(store)(LitElement) {
 
     return html`
       <div wrapper>
-        <div name>${this.checklist.name}</div>
+        <div name bold>${this.checklist.name}</div>
 
         <table header>
           <tr>

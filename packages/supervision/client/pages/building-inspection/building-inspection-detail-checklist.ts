@@ -26,11 +26,11 @@ export class BuildingInspectionDetailChecklist extends PageView {
     css`
       :host {
         display: grid;
-        grid-template-rows: 75px auto;
+        grid-template-rows: 55px auto;
         color: #4e5055;
 
         width: 100%;
-        background-color: #f7f7f7;
+        background-color: var(--md-sys-color-background, #f6f6f6);
         overflow-y: auto;
 
         --grid-record-emphasized-background-color: red;

@@ -45,6 +45,7 @@ class BuildingInspectionDetailHeader extends LitElement {
 
       md-elevated-button {
         margin-left: var(--spacing-small, 4px);
+        letter-spacing: -1px; 
 
         --md-elevated-button-container-height: 32px;
         --md-elevated-button-label-text-size: 16px;
@@ -58,9 +59,14 @@ class BuildingInspectionDetailHeader extends LitElement {
         --md-elevated-button-hover-icon-color: var(--md-sys-color-on-primary);
         --md-elevated-button-pressed-icon-color: var(--md-sys-color-on-primary);
         --md-elevated-button-focus-icon-color: var(--md-sys-color-on-primary);
+        --_leading-space:var(--spacing-tiny, 2px);
 
         --_with-leading-icon-leading-space: var(--spacing-medium, 8px);
         --_with-leading-icon-trailing-space: var(--spacing-medium, 8px);
+
+        md-icon{
+          margin-right: -2px;
+        }
       }
     `
   ]
@@ -82,33 +88,33 @@ class BuildingInspectionDetailHeader extends LitElement {
             ?disabled=${path.includes('building-inspection-list/')}
             href=${`building-inspection-list/${this.buildingLevelId}`}
           >
-            <md-icon slot="icon">assignment</md-icon>검측 리스트
+            <md-icon slot="icon">list_alt</md-icon>검측 리스트
           </md-elevated-button>
           <md-elevated-button
             ?disabled=${path.includes('building-inspection-detail-drawing/')}
             href=${`building-inspection-detail-drawing/${this.buildingInspectionId}`}
           >
-            <md-icon slot="icon">assignment</md-icon>검측도면
+            <md-icon slot="icon">fact_check</md-icon>검측도면
           </md-elevated-button>
           <md-elevated-button
             ?disabled=${path.includes('building-inspection-detail-checklist/')}
             href=${`building-inspection-detail-checklist/${this.buildingInspectionId}`}
           >
-            <md-icon slot="icon">description</md-icon>검측 체크리스트
+            <md-icon slot="icon">task</md-icon>검측 체크리스트
           </md-elevated-button>
           <md-elevated-button
             ?disabled=${path.includes('building-inspection-detail-camera/')}
             href=${`building-inspection-detail-camera/${this.buildingInspectionId}`}
             disabled
           >
-            <md-icon slot="icon">description</md-icon>사진촬영
+            <md-icon slot="icon">photo_camera</md-icon>사진촬영
           </md-elevated-button>
           <md-elevated-button
             ?disabled=${path.includes('building-inspection-detail-history/')}
             href=${`building-inspection-detail-history/${this.buildingInspectionId}`}
             disabled
           >
-            <md-icon slot="icon">description</md-icon>감리이력
+            <md-icon slot="icon">pending_actions</md-icon>감리이력
           </md-elevated-button>
         </div>
       </div>
