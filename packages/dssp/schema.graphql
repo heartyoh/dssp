@@ -4772,6 +4772,9 @@ type Query {
   i18nCompletion(input: i18nCompletionInput!): i18nCompletionOutput!
   imageCompletion(input: ImageCompletionInput!): ImageCompletionOutput!
 
+  """BuildingInspection By ChecklistItemId"""
+  inspectionByChecklistItemId: BuildingInspection!
+
   """To fetch a InspectionDrawingType"""
   inspectionDrawingType(id: String!): InspectionDrawingType
 

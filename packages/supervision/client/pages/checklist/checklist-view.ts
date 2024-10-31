@@ -31,7 +31,7 @@ class ChecklistView extends connect(store)(LitElement) {
         display: flex;
         flex-direction: column;
         padding: var(--spacing-large, 12px);
-        padding-top:0;
+        padding-top: 0;
         font-size: 14px;
         min-width: 800px;
       }
@@ -56,7 +56,7 @@ class ChecklistView extends connect(store)(LitElement) {
         border-collapse: collapse;
         td,
         th {
-          border: 1px rgba(51,51,51,.20) solid;
+          border: 1px rgba(51, 51, 51, 0.2) solid;
           padding-inline: var(--spacing-medium, 8px);
           vertical-align: middle;
         }
@@ -75,7 +75,7 @@ class ChecklistView extends connect(store)(LitElement) {
       }
 
       table[header] {
-        margin-top: var(--spacing-small, 4px);;
+        margin-top: var(--spacing-small, 4px);
 
         td {
           min-width: 180px;
@@ -133,6 +133,9 @@ class ChecklistView extends connect(store)(LitElement) {
             * {
               vertical-align: middle;
             }
+          }
+          &[disabled] * {
+            opacity: 0.6;
           }
         }
       }
@@ -350,11 +353,19 @@ class ChecklistView extends connect(store)(LitElement) {
                     @change=${this._onChangeConfirmStatus}
                   ></md-radio>
                 </td>
-                <td attachment @click=${() => this._onClickAttachment(item.id)}>
+                <td
+                  attachment
+                  ?disabled=${this.status == BuildingInspectionStatus.PASS}
+                  @click=${() => this._onClickAttachment(item.id)}
+                >
                   <md-icon slot="icon">attach_file</md-icon>
                   <span>${item?.checklistItemAttachmentCount || ''}</span>
                 </td>
-                <td comment @click=${() => this._onClickComment(item.id)}>
+                <td
+                  comment
+                  ?disabled=${this.status == BuildingInspectionStatus.PASS}
+                  @click=${() => this._onClickComment(item.id)}
+                >
                   <md-icon slot="icon">chat</md-icon>
                   <span>${item?.checklistItemCommentCount || ''}</span>
                 </td>
@@ -517,6 +528,7 @@ class ChecklistView extends connect(store)(LitElement) {
       html`
         <comment-list-popup
           .checklistItemId=${checklistItemId}
+          .status=${this.status}
           @change-comment=${this._refreshItem.bind(this)}
         ></comment-list-popup>
       `,
@@ -533,6 +545,7 @@ class ChecklistView extends connect(store)(LitElement) {
       html`
         <attachment-list-popup
           .checklistItemId=${checklistItemId}
+          .status=${this.status}
           @change-attachment=${this._refreshItem.bind(this)}
         ></attachment-list-popup>
       `,

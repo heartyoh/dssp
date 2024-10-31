@@ -5,6 +5,7 @@ import { User } from '@things-factory/auth-base'
 import { ChecklistItem } from './checklist-item'
 import { ChecklistItemList } from './checklist-item-type'
 import { ChecklistItemComment } from '../checklist-item-comment/checklist-item-comment'
+import { BuildingInspection } from '../building-inspection/building-inspection'
 
 @Resolver(ChecklistItem)
 export class ChecklistItemQuery {
@@ -26,6 +27,16 @@ export class ChecklistItemQuery {
     const [items, total] = await queryBuilder.getManyAndCount()
 
     return { items, total }
+  }
+
+  @Query(returns => BuildingInspection, { description: 'BuildingInspection By ChecklistItemId' })
+  async inspectionByChecklistItemId(checklistItemId: string): Promise<BuildingInspection> {
+    return getRepository(BuildingInspection)
+      .createQueryBuilder('bi')
+      .innerJoin('checklists', 'c', 'bi.checklist_id = c.id')
+      .innerJoin('checklist_items', 'ci', 'c.id = ci.checklist_id')
+      .where('ci.id = :checklistItemId', { checklistItemId })
+      .getOne()
   }
 
   @FieldResolver(type => [ChecklistItemComment])

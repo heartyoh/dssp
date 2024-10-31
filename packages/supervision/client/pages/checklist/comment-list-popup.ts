@@ -8,6 +8,7 @@ import { notify } from '@operato/layout'
 import { store, User } from '@operato/shell'
 import { connect } from 'pwa-helpers/connect-mixin.js'
 import { OxPrompt } from '@operato/popup/ox-prompt.js'
+import { BuildingInspectionStatus } from '../building-inspection/building-inspection-list'
 
 @customElement('comment-list-popup')
 class CommentListPopup extends connect(store)(LitElement) {
@@ -39,6 +40,7 @@ class CommentListPopup extends connect(store)(LitElement) {
         div[comment-row] {
           display: flex;
           flex-direction: column;
+          padding-right: 10px;
 
           div[creator-container] {
             display: flex;
@@ -104,6 +106,7 @@ class CommentListPopup extends connect(store)(LitElement) {
   ]
 
   @property({ type: String }) checklistItemId: string = ''
+  @property({ type: String }) status: BuildingInspectionStatus = BuildingInspectionStatus.WAIT
 
   @state() item: any = { count: 0 }
   @state() checklistItemComments: any = []
@@ -129,7 +132,7 @@ class CommentListPopup extends connect(store)(LitElement) {
                   <span creator><md-icon slot="icon">account_circle</md-icon> ${comment.creator.name}</span>
                   <span createdAt>
                     <md-icon slot="icon">schedule</md-icon> ${this._formatDate(comment.createdAt)}
-                    ${comment.creator.email === this.user.email
+                    ${comment.creator.email === this.user.email && this.status != BuildingInspectionStatus.PASS
                       ? html` <md-icon delete slot="icon" @click=${() => this._deleteComment(comment.id)}>delete</md-icon>`
                       : ''}
                   </span>
@@ -140,10 +143,16 @@ class CommentListPopup extends connect(store)(LitElement) {
           })}
         </div>
 
-        <textarea .value=${this.comment || ''} @input=${this._onInputChange}></textarea>
+        <textarea
+          .value=${this.comment || ''}
+          ?disabled=${this.status == BuildingInspectionStatus.PASS}
+          @input=${this._onInputChange}
+        ></textarea>
 
         <div button-container>
-          <md-elevated-button blue @click=${this._createComment}> <md-icon slot="icon">task</md-icon>저장 </md-elevated-button>
+          <md-elevated-button blue ?disabled=${this.status == BuildingInspectionStatus.PASS} @click=${this._createComment}>
+            <md-icon slot="icon">task</md-icon>저장
+          </md-elevated-button>
           <md-elevated-button @click=${this._close}> <md-icon slot="icon">cancel</md-icon>취소 </md-elevated-button>
         </div>
       </div>

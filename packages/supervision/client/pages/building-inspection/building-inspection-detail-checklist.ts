@@ -245,7 +245,7 @@ export class BuildingInspectionDetailChecklist extends PageView {
     })
 
     if (!response.errors) {
-      notify({ message: '검측요청서를 등록하였습니다.' })
+      notify({ message: '검측 요청서를 등록하였습니다.' })
       this.initBuildingInspection(this.buildingInspection.id)
     } else {
       notify({ message: response.errors?.[0]?.message || '검측 요청서 등록에 실패하였습니다.', level: 'error' })
