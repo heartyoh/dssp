@@ -10,6 +10,7 @@ import { connect } from 'pwa-helpers/connect-mixin.js'
 import { OxPrompt } from '@operato/popup/ox-prompt.js'
 import { openPopup } from '@operato/layout'
 import './file-preview-popup'
+import { BuildingInspectionStatus } from '../building-inspection/building-inspection-list'
 
 @customElement('attachment-list-popup')
 class AttachmentListPopup extends connect(store)(LitElement) {
@@ -95,6 +96,7 @@ class AttachmentListPopup extends connect(store)(LitElement) {
   ]
 
   @property({ type: String }) checklistItemId: string = ''
+  @property({ type: String }) status: BuildingInspectionStatus = BuildingInspectionStatus.WAIT
 
   @state() item: any = { count: 0 }
   @state() checklistItemAttachments: any = []
@@ -115,7 +117,7 @@ class AttachmentListPopup extends connect(store)(LitElement) {
                   <span creator><md-icon slot="icon">account_circle</md-icon> ${attachment.creator.name}</span>
                   <span createdAt>
                     <md-icon slot="icon">schedule</md-icon> ${this._formatDate(attachment.createdAt)}
-                    ${attachment.creator.email === this.user.email
+                    ${attachment.creator.email === this.user.email && this.status != BuildingInspectionStatus.PASS
                       ? html` <md-icon delete slot="icon" @click=${() => this._deleteAttachment(attachment.id)}>delete</md-icon>`
                       : ''}
                     <a button-download href=${attachment.fullpath} download=${attachment.name}>
@@ -129,7 +131,13 @@ class AttachmentListPopup extends connect(store)(LitElement) {
           })}
         </div>
 
-        <ox-input-file accept="*/*" multiple="true" hide-filelist @change=${this.onCreateAttachment.bind(this)}></ox-input-file>
+        <ox-input-file
+          accept="*/*"
+          multiple="true"
+          hide-filelist
+          ?disabled=${this.status == BuildingInspectionStatus.PASS}
+          @change=${this.onCreateAttachment.bind(this)}
+        ></ox-input-file>
 
         <div button-container>
           <md-elevated-button @click=${this._close}> <md-icon slot="icon">cancel</md-icon>취소 </md-elevated-button>
@@ -177,6 +185,11 @@ class AttachmentListPopup extends connect(store)(LitElement) {
   }
 
   private async _deleteAttachment(attachmentId: string) {
+    if (this.status == BuildingInspectionStatus.PASS) {
+      notify({ message: '완료 상태인 검측정보를 변경할 수 없습니다.', level: 'error' })
+      return
+    }
+
     if (
       await OxPrompt.open({
         title: '첨부 자료를 삭제',
@@ -213,6 +226,11 @@ class AttachmentListPopup extends connect(store)(LitElement) {
 
   // 파일 변경 시 파일을 저장할 핸들러
   private async onCreateAttachment(e: CustomEvent) {
+    if (this.status == BuildingInspectionStatus.PASS) {
+      notify({ message: '완료 상태인 검측정보를 변경할 수 없습니다.', level: 'error' })
+      return
+    }
+
     const files = e.detail
 
     await this._createAttachments(files)
