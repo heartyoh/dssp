@@ -17,6 +17,7 @@ import { verifyBiometric } from '@things-factory/auth-base/client'
 import './component/building-inspection-detail-header'
 import '../checklist/checklist-view'
 import { ChecklistMode } from '../checklist/checklist-view'
+import { BuildingInspectionStatus } from './building-inspection-list'
 
 @customElement('building-inspection-detail-checklist')
 export class BuildingInspectionDetailChecklist extends PageView {
@@ -92,7 +93,10 @@ export class BuildingInspectionDetailChecklist extends PageView {
         )}
 
         <div button-container>
-          <md-elevated-button @click=${this._onClickModifyChecklist}>
+          <md-elevated-button
+            ?disabled=${this.buildingInspection.status == BuildingInspectionStatus.PASS}
+            @click=${this._onClickModifyChecklist}
+          >
             <md-icon slot="icon">assignment</md-icon>등록
           </md-elevated-button>
         </div>

@@ -197,6 +197,12 @@ export class BuildingInspectionMutation {
     if (!patch.id) throw new Error('검측 아이디가 없습니다.')
 
     const buildingInspection = await buildingInspectionRepo.findOneBy({ id: patch.id })
+
+    // 완료 상태인 검측데이터면 삭제 못함
+    if (buildingInspection.status === BuildingInspectionStatus.PASS) {
+      throw new Error('완료 상태인 검측정보를 변경할 수 없습니다.')
+    }
+
     const result = await buildingInspectionRepo.save({
       ...buildingInspection,
       ...patch,
@@ -217,8 +223,14 @@ export class BuildingInspectionMutation {
     const checklistRepository = tx.getRepository(Checklist)
     const checklistItemRepository = tx.getRepository(ChecklistItem)
 
-    // 검측 데이터 제거
     const buildingInspections = await buildingInspectionRepository.createQueryBuilder('bi').whereInIds(ids).getMany()
+
+    // 완료 상태인 검측데이터가 한개라도 있으면 삭제 못함
+    if (buildingInspections.filter(bi => bi.status === BuildingInspectionStatus.PASS).length > 0) {
+      throw new Error('완료 상태인 검측정보를 변경할 수 없습니다.')
+    }
+
+    // 검측 데이터 제거
     await buildingInspectionRepository.softDelete({
       id: In(ids)
     })

@@ -73,7 +73,7 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
         --md-outlined-button-container-height: 30px;
         --md-outlined-button-trailing-space: var(--spacing-medium, 8px);
         --md-outlined-button-leading-space: var(--spacing-medium, 8px);
-        --md-sys-color-outline: rgba(51,51,51,.20);
+        --md-sys-color-outline: rgba(51, 51, 51, 0.2);
       }
 
       *[bold] {
@@ -83,20 +83,20 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
       div[header] {
         display: flex;
         margin: 0px var(--spacing-large, 12px);
-        margin-bottom:var(--spacing-small, 5px);
+        margin-bottom: var(--spacing-small, 5px);
       }
 
       div[header] h2 {
         flex: 0.5;
         color: #3f71a0;
-        font-size:18px;
+        font-size: 18px;
       }
 
       div[body] {
         display: flex;
         flex-direction: column;
         margin: var(--spacing-large, 12px);
-        margin-top:0;
+        margin-top: 0;
         gap: var(--spacing-medium, 8px);
         min-height: fit-content;
         overflow-x: hidden;
@@ -157,10 +157,10 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
             align-items: center;
             justify-content: center;
 
-            span::before{
+            span::before {
               display: inline-block;
               position: relative;
-              content: "";
+              content: '';
               width: 10px;
               height: 10px;
               border-radius: 6px;
@@ -168,7 +168,7 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
               margin-right: 2px;
             }
 
-            span[status='wait']::before{
+            span[status='wait']::before {
               background-color: #4e5055;
             }
             span[status='request']::before {
@@ -188,10 +188,10 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
             flex-direction: row;
             text-align: right;
             gap: var(--spacing-small, 4px);
-            padding-right:var(--spacing-large, 12px);
+            padding-right: var(--spacing-large, 12px);
             border-right: 2px dotted #ccc;
             max-width: 100%;
-            line-height:1.3; 
+            line-height: 1.3;
 
             md-icon {
               width: 40px;
@@ -311,6 +311,7 @@ export class BuildingInspectionList extends ScopedElementsMixin(PageView) {
               .mode=${'monthly'}
               .eventProvider=${this.calendarData}
               @select-date=${(e: CustomEvent) => {
+                // TODO 선택된 날짜의 검측데이터만 그리드에 보여야함
                 console.log('select-date', e.detail)
               }}
             >
