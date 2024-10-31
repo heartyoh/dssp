@@ -81,7 +81,7 @@ export class BuildingInspectionDetailChecklist extends PageView {
 
       <div body>
         ${keyed(
-          this.buildingInspection.id,
+          new Date(),
           html`
             <checklist-view
               .mode=${ChecklistMode.EDITOR}
