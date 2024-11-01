@@ -49,7 +49,7 @@ export class ProjectSchedule extends ScopedElementsMixin(PageView) {
         color: #4e5055;
 
         width: 100%;
-        background-color: #f7f7f7;
+        background-color: var(--md-sys-color-background, #f6f6f6);
         overflow-y: auto;
 
         --grid-record-emphasized-background-color: red;
@@ -62,11 +62,12 @@ export class ProjectSchedule extends ScopedElementsMixin(PageView) {
 
       div[header] {
         display: flex;
-        margin: 0px 20px;
+        margin: 0px var(--spacing-large, 12px);
 
         h2 {
           flex: 0.5;
           color: #3f71a0;
+          font-size:18px;
         }
 
         div[button-container] {
@@ -76,20 +77,20 @@ export class ProjectSchedule extends ScopedElementsMixin(PageView) {
           flex: 0.5;
 
           md-elevated-button {
-            margin: 0px 3px;
+            margin: 0px margin-left: var(--spacing-small, 4px);
 
-            --md-elevated-button-container-height: 35px;
+            --md-elevated-button-container-height: 32px;
             --md-elevated-button-label-text-size: 16px;
             --md-elevated-button-container-color: #0595e5;
 
-            --md-elevated-button-label-text-color: #fff;
-            --md-elevated-button-hover-label-text-color: #fff;
-            --md-elevated-button-pressed-label-text-color: #fff;
-            --md-elevated-button-focus-label-text-color: #fff;
-            --md-elevated-button-icon-color: #fff;
-            --md-elevated-button-hover-icon-color: #fff;
-            --md-elevated-button-pressed-icon-color: #fff;
-            --md-elevated-button-focus-icon-color: #fff;
+            --md-elevated-button-label-text-color: var(--md-sys-color-on-primary);
+            --md-elevated-button-hover-label-text-color: var(--md-sys-color-on-primary);
+            --md-elevated-button-pressed-label-text-color: var(--md-sys-color-on-primary);
+            --md-elevated-button-focus-label-text-color: var(--md-sys-color-on-primary);
+            --md-elevated-button-icon-color: var(--md-sys-color-on-primary);
+            --md-elevated-button-hover-icon-color: var(--md-sys-color-on-primary);
+            --md-elevated-button-pressed-icon-color: var(--md-sys-color-on-primary);
+            --md-elevated-button-focus-icon-color: var(--md-sys-color-on-primary);
           }
         }
       }
@@ -99,13 +100,14 @@ export class ProjectSchedule extends ScopedElementsMixin(PageView) {
 
         display: flex;
         flex-direction: column;
-        margin: 0px 25px 25px 25px;
-        gap: 15px;
+        margin: var(--spacing-large, 12px);
+        margin-top:0;
+        gap: var(--spacing-medium, 8px);
         overflow: hidden;
 
         h3 {
           color: #2e79be;
-          font-size: 18px;
+          font-size: 16px;
           margin: 0px;
         }
 
@@ -124,7 +126,7 @@ export class ProjectSchedule extends ScopedElementsMixin(PageView) {
         }
 
         div[select-container] {
-          gap: 15px;
+          gap: var(--spacing-medium, 8px);
 
           div[date] {
             display: flex;
@@ -133,12 +135,18 @@ export class ProjectSchedule extends ScopedElementsMixin(PageView) {
             background-color: #2ea4df1a;
             border: 1px solid #2ea4df33;
             border-radius: 5px;
-            gap: 12px;
+            gap: var(--spacing-medium, 8px);
             padding: 12px 36px 12px 15px;
 
             span[name] {
               font-size: 16px;
               font-weight: bold;
+            }
+
+            input[type="date"] {
+              border:1px solid rgba(51,51,51,.20);
+              padding:var(--spacing-small, 4px) var(--spacing-medium, 8px);
+              border-radius: 5px;
             }
           }
 
@@ -148,17 +156,18 @@ export class ProjectSchedule extends ScopedElementsMixin(PageView) {
             border-radius: 5px;
             border: 1px solid #cccccc80;
             background-color: #fff;
-            padding: 8px 10px;
-            gap: 10px;
+            padding: var(--spacing-medium, 8px) var(--spacing-large, 12px);
+            gap: var(--spacing-medium, 8px);
             overflow-x: auto;
 
             md-outlined-button {
               --md-outlined-button-container-height: 30px;
-              --md-outlined-button-trailing-space: 15px;
-              --md-outlined-button-leading-space: 15px;
+              --md-outlined-button-trailing-space: var(--spacing-medium, 8px);
+              --md-outlined-button-leading-space: var(--spacing-medium, 8px);
               --md-outlined-button-label-text-color: #586878;
+              --md-sys-color-outline: rgba(51,51,51,.20);
               box-shadow: 1px 1px 1px #0000001a;
-              padding: 8px 16px;
+              padding: var(--spacing-medium, 8px) var(--spacing-large, 12px);
               font-weight: 700;
             }
           }

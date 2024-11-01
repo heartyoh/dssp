@@ -69,7 +69,7 @@ class ChecklistView extends connect(store)(LitElement) {
           background-color: var(--md-sys-color-on-primary);
           &[radio] {
             text-align: center;
-            width: 55px;
+            width: 50px;
           }
         }
       }
@@ -145,9 +145,6 @@ class ChecklistView extends connect(store)(LitElement) {
         border-top: none;
         margin-top: -1px;
 
-        tr[first] td {
-          border-top: none;
-        }
         td {
           width: 25%;
           border-left: none;
@@ -307,7 +304,7 @@ class ChecklistView extends connect(store)(LitElement) {
                   : ''}
                 ${showDetailTypeCell ? html` <td bold rowspan="${detailTypeRowspan}">${item.detailType}</td> ` : ''}
 
-                <td bold>${idx + 1}. ${item.name}</td>
+                <td>${idx + 1}. ${item.name}</td>
                 <td>${item.inspctionCriteria}</td>
                 <td radio>
                   <md-radio
